@@ -4,6 +4,7 @@ nasr_diff.py - tell pilots what changed at their airports between two FAA NASR c
 
 usage:
     python nasr_diff.py OLD.zip NEW.zip VRB DAB ISM [--json] [--raw] [--all] [--llm]
+    python nasr_diff.py OLD.zip NEW.zip --all-airports [--llm]
 
 OLD/NEW  "Data in CSV format" zips from
          https://www.faa.gov/air_traffic/flight_info/aeronav/aero_data/NASR_Subscription/
@@ -13,6 +14,8 @@ ids      FAA 3-letter ids (VRB, not KVRB). K-prefixed 4-letter ids get stripped.
 --raw    print field-level before/after under each summary line
 --all    also print hidden noise changes
 --routes list every preferred route / procedure change instead of one summary line
+--all-airports  diff EVERY airport (no ids needed). writes out/ json + prints a summary.
+               add --print to also dump every airport to the terminal.
 --llm    translate FAA remarks to plain english with Claude
          (key comes from .env or ANTHROPIC_API_KEY; results cached in remark_cache.json)
 
@@ -119,26 +122,47 @@ def iter_csvs(zf):
 STRICT_FILES = ("FRQ", "PFR")
 
 
-def attribute(row, ids, fname=""):
-    """which of our airports this row belongs to, or None."""
+def attribute(row, ids, fname="", strict=False):
+    """which of our airports this row belongs to (list; routes can belong to both ends)."""
+    if base(fname).startswith("PFR"):
+        return sorted({row[c].upper() for c in ("Orig", "Dest", "ORIGIN_ID", "DSTN_ID")
+                       if row.get(c, "").upper() in ids})
     for col in ATTRIB_COLS:
         if col in row and row[col].upper() in ids:
-            return row[col].upper()
-    if base(fname).startswith(STRICT_FILES):
-        return None  # row is about some other airport
+            return [row[col].upper()]
+    if strict or base(fname).startswith(STRICT_FILES):
+        return []  # row is about something else
     for v in row.values():
         if v.upper() in ids:
-            return v.upper()
-    return None
+            return [v.upper()]
+    return []
 
 
-def load(zip_path, ids):
+def airport_ids(zip_path):
+    """every airport id in a cycle, from APT_BASE."""
+    out = set()
+    with zipfile.ZipFile(zip_path) as zf:
+        for fname, raw in iter_csvs(zf):
+            if fname.upper() == "APT_BASE.CSV":
+                text = raw.decode("latin-1").lstrip("\ufeff").lstrip("ï»¿")
+                text = text.replace("\r\n", "\n").replace("\r", "\n")
+                for row in csv.DictReader(io.StringIO(text, newline="")):
+                    a = (row.get("ARPT_ID") or "").strip().upper()
+                    if a:
+                        out.add(a)
+                break
+    return out
+
+
+def load(zip_path, ids, strict=False):
     """return {filename: [(airport, row), ...]}"""
     out = defaultdict(list)
     seen = set()
     with zipfile.ZipFile(zip_path) as zf:
         for fname, raw in iter_csvs(zf):
-            if "_CHG_RPT" in fname.upper() or fname in seen:
+            up = fname.upper()
+            if ("_CHG_RPT" in up or "DATA_STRUCTURE" in up or fname in seen
+                    or base(fname).startswith(HIDDEN_FILES)):
                 continue
             seen.add(fname)
             try:
@@ -154,8 +178,7 @@ def load(zip_path, ids):
                         continue
                     clean = {k.strip(): (v or "").strip() for k, v in row.items()
                              if k and k.strip() not in IGNORE_COLS}
-                    apt = attribute(clean, ids, fname)
-                    if apt:
+                    for apt in attribute(clean, ids, fname, strict):
                         out[fname].append((apt, clean))
             except csv.Error as e:
                 print(f"  warning: skipped rest of {fname}: {e}")
@@ -212,6 +235,15 @@ def priority(fname, kind, cols, values):
     return "fyi"
 
 
+def just_reworded(old, new):
+    """same numbers/ids and mostly the same words -> the FAA just reworded it."""
+    import difflib
+    nums = lambda s: set(re.findall(r"[A-Z]*\d+[A-Z0-9/]*", s.upper()))
+    if nums(old) != nums(new):
+        return False
+    return difflib.SequenceMatcher(None, old.upper(), new.upper()).ratio() >= 0.6
+
+
 def diff(old, new):
     records = []
     for fname in sorted(set(old) | set(new)):
@@ -240,14 +272,18 @@ def diff(old, new):
                 cols = sorted(c for c in set(r) | set(best)
                               if r.get(c, "") != best.get(c, "") and not is_noise_col(c))
                 vals = [r.get(c, "") for c in cols] + [best.get(c, "") for c in cols]
+                pri = priority(fname, "changed", cols, vals)
+                if cols == ["REMARK"] and just_reworded(r["REMARK"], best["REMARK"]):
+                    pri = "fyi"
                 records.append({
                     "airport": apt, "source": fname, "kind": "changed",
-                    "priority": priority(fname, "changed", cols, vals),
+                    "priority": pri,
                     "fields": [{"field": c, "old": r.get(c, ""), "new": best.get(c, "")} for c in cols],
                     "context": {c: best[c] for c in CONTEXT_COLS if best.get(c)},
                 })
 
             still_there = {r.get("FREQ") for r in n[apt].values()}
+            existed = {r.get("FREQ") for r in o[apt].values()}
             for kind, rows in (("removed", removed), ("added", added)):
                 for r in rows:
                     if base(fname) == "FRQ" and kind == "removed" and r.get("FREQ") in still_there:
@@ -257,9 +293,14 @@ def diff(old, new):
                             "context": {"FREQ": r.get("FREQ", "")},
                             "note": "frequency still in use, one listed use was dropped"})
                         continue
+                    pri = priority(fname, kind, list(r.keys()), list(r.values()))
+                    if base(fname) == "FRQ" and (
+                            (kind == "added" and r.get("FREQ") in existed)
+                            or re.search(r"\b(STAR|SID|DP)\b", r.get("FREQ_USE", "").upper())):
+                        pri = "fyi"  # same freq, new label / procedure listing: not a new frequency
                     records.append({
                         "airport": apt, "source": fname, "kind": kind,
-                        "priority": priority(fname, kind, list(r.keys()), list(r.values())),
+                        "priority": pri,
                         "row": {k: v for k, v in r.items()
                                 if v and k not in ID_COLS and not is_noise_col(k)},
                     })
@@ -278,8 +319,12 @@ def translate_remarks(texts, use_llm):
     if use_llm and todo and not key:
         print("  warning: --llm set but ANTHROPIC_API_KEY missing, using raw remarks")
     if use_llm and todo and key:
+        if len(todo) > 30:
+            print(f"  translating {len(todo)} remarks with Claude ...")
         for i in range(0, len(todo), 30):
             batch = todo[i:i + 30]
+            if len(todo) > 300 and i % 300 == 0:
+                print(f"    {i}/{len(todo)}")
             prompt = (
                 "Translate each FAA airport/ATC remark below into ONE short plain-English "
                 "sentence a student pilot would understand.\n"
@@ -354,7 +399,7 @@ def field_phrases(fields, source, ctx=None):
     if "FREQ_USE" in by:
         f = by["FREQ_USE"]
         if f["new"]:
-            phrases.append(f"frequency {ctx.get('FREQ', '')} use renamed: {f['old']} -> {f['new']}")
+            phrases.append(f"frequency {ctx.get('FREQ', '')} now listed for {f['new']} (was {f['old']})")
         else:
             phrases.append(f"frequency {ctx.get('FREQ', '')} no longer listed for {f['old']}")
     obst = {"OBSTN_HGT", "DIST_FROM_THR", "CNTRLN_OFFSET", "CNTRLN_DIR_CODE", "OBSTN_CLNC_SLOPE"}
@@ -446,6 +491,8 @@ def summarize(rec, remarks):
 
     if b == "FRQ" and kind != "changed":
         use = row.get("FREQ_USE", "")
+        if kind == "added" and rec["priority"] == "fyi":
+            return f"frequency {row.get('FREQ', '?')} now also listed for {use}"
         return f"frequency {row.get('FREQ', '?')} ({use}) {kind}"
 
     if kind == "changed":
@@ -464,6 +511,28 @@ def summarize(rec, remarks):
     return f"{kind} ({b.lower()}): {shown}"
 
 # ---------------------------------------------------------------- output
+
+def merge_freq_uses(records):
+    """several 'freq X use renamed/dropped' records for one frequency -> one record."""
+    groups, rest = defaultdict(list), []
+    for r in records:
+        f = r.get("fields", [])
+        if (base(r["source"]) == "FRQ" and r["kind"] == "changed" and len(f) == 1
+                and f[0]["field"] == "FREQ_USE"):
+            groups[(r["airport"], r.get("context", {}).get("FREQ", ""))].append(r)
+        else:
+            rest.append(r)
+    for (apt, freq), rs in groups.items():
+        if len(rs) == 1:
+            rest.append(rs[0])
+            continue
+        old = sorted({r["fields"][0]["old"] for r in rs if r["fields"][0]["old"]})
+        new = sorted({r["fields"][0]["new"] for r in rs if r["fields"][0]["new"]})
+        rest.append({"airport": apt, "source": "FRQ.csv", "kind": "changed", "priority": "fyi",
+                     "fields": [{"field": "FREQ_USE", "old": ", ".join(old), "new": ", ".join(new)}],
+                     "context": {"FREQ": freq}})
+    return rest
+
 
 def write_json(by_apt, out_dir, old_zip, new_zip):
     os.makedirs(out_dir, exist_ok=True)
@@ -524,17 +593,25 @@ def main():
     load_env()
     args = [a for a in sys.argv[1:] if not a.startswith("--")]
     flags = {a for a in sys.argv[1:] if a.startswith("--")}
-    if len(args) < 3:
+    all_mode = "--all-airports" in flags
+    if len(args) < 2 or (len(args) < 3 and not all_mode):
         print(__doc__)
         sys.exit(1)
     old_zip, new_zip = args[0], args[1]
-    ids = {a.upper()[1:] if len(a) == 4 and a.upper().startswith("K") else a.upper()
-           for a in args[2:]}
+    import time
+    t0 = time.time()
+    if all_mode:
+        ids = airport_ids(old_zip) | airport_ids(new_zip)
+        print(f"all-airports mode: {len(ids)} airports")
+    else:
+        ids = {a.upper()[1:] if len(a) == 4 and a.upper().startswith("K") else a.upper()
+               for a in args[2:]}
 
     print(f"loading {old_zip} ...")
-    old = load(old_zip, ids)
+    old = load(old_zip, ids, strict=all_mode)
     print(f"loading {new_zip} ...")
-    new = load(new_zip, ids)
+    new = load(new_zip, ids, strict=all_mode)
+    print(f"  loaded in {time.time() - t0:.0f}s, diffing ...")
 
     records = diff(old, new)
     remark_texts = []
@@ -543,6 +620,8 @@ def main():
             remark_texts.append(r.get("row", {}).get("REMARK", ""))
             remark_texts += [f["new"] for f in r.get("fields", []) if f["field"] == "REMARK"]
     remarks = translate_remarks(remark_texts, "--llm" in flags)
+
+    records = merge_freq_uses(records)
 
     # attach summaries, drop duplicate summaries per airport (same change in several files)
     by_apt = defaultdict(list)
@@ -563,8 +642,20 @@ def main():
             uniq.append({k: v for k, v in r.items() if k != "airport"})
         by_apt[apt] = uniq
 
-    if "--json" in flags:
+    if "--json" in flags or all_mode:
         write_json(by_apt, "out", old_zip, new_zip)
+
+    if all_mode and "--print" not in flags:
+        ranked = sorted(by_apt.items(), key=lambda kv: -sum(r["priority"] == "action" for r in kv[1]))
+        n_action = sum(1 for _, rs in by_apt.items() if any(r["priority"] == "action" for r in rs))
+        print(f"\ndone in {time.time() - t0:.0f}s. {len(by_apt)} airports changed, "
+              f"{n_action} with action items.")
+        print("most action items:")
+        for apt, rs in ranked[:15]:
+            print(f"  {apt:5} {sum(r['priority'] == 'action' for r in rs):3} action, "
+                  f"{sum(r['priority'] == 'fyi' for r in rs):3} fyi")
+        print("\nsee out/<AIRPORT>.json, or rerun with --print to dump everything")
+        return
 
     for apt in sorted(set(by_apt) | set(hidden)):
         recs = by_apt.get(apt, [])
