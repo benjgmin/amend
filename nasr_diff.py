@@ -16,6 +16,7 @@ ids      FAA 3-letter ids (VRB, not KVRB). K-prefixed 4-letter ids get stripped.
 --routes list every preferred route / procedure change instead of one summary line
 --all-airports  diff EVERY airport (no ids needed). writes out/ json + prints a summary.
                add --print to also dump every airport to the terminal.
+--out DIR      where json goes (default: out)
 --dtpp FILE    also report approach/departure/STAR/diagram chart changes from the FAA
                d-TPP metafile (d-TPP_Metafile.xml for the NEW cycle)
 --llm    translate FAA remarks to plain english with Claude
@@ -752,7 +753,7 @@ def main():
     load_env()
     raw = sys.argv[1:]
     args = [a for i, a in enumerate(raw) if not a.startswith("--")
-            and not (i > 0 and raw[i - 1] == "--dtpp")]
+            and not (i > 0 and raw[i - 1] in ("--dtpp", "--out"))]
     flags = {a for a in sys.argv[1:] if a.startswith("--")}
     all_mode = "--all-airports" in flags
     if len(args) < 2 or (len(args) < 3 and not all_mode):
@@ -812,8 +813,10 @@ def main():
             by_apt[apt].extend(recs)
         print(f"  {sum(len(v) for v in dtpp.values())} chart changes at {len(dtpp)} airports")
 
+    out_dir = next((sys.argv[i + 1] for i, a in enumerate(sys.argv)
+                    if a == "--out" and i + 1 < len(sys.argv)), "out")
     if "--json" in flags or all_mode:
-        write_json(by_apt, "out", old_zip, new_zip)
+        write_json(by_apt, out_dir, old_zip, new_zip)
 
     if all_mode and "--print" not in flags:
         ranked = sorted(by_apt.items(), key=lambda kv: -sum(r["priority"] == "action" for r in kv[1]))
@@ -825,7 +828,7 @@ def main():
             print(f"  {apt:5} {sum(r['priority'] == 'action' for r in rs):3} action, "
                   f"{sum(r['priority'] == 'ifr' for r in rs):3} ifr, "
                   f"{sum(r['priority'] == 'fyi' for r in rs):3} fyi")
-        print("\nsee out/<AIRPORT>.json, or rerun with --print to dump everything")
+        print(f"\nsee {out_dir}/<AIRPORT>.json, or rerun with --print to dump everything")
         return
 
     for apt in sorted(set(by_apt) | set(hidden)):

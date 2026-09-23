@@ -1,0 +1,61 @@
+name: update FAA changes
+
+on:
+  schedule:
+    - cron: "0 12 * * *"      # every day 12:00 UTC; cheap when nothing changed
+  workflow_dispatch:           # "Run workflow" button in the Actions tab
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # keep translated remarks between runs so each remark is only paid for once
+      - uses: actions/cache@v4
+        with:
+          path: remark_cache.json
+          key: remark-cache-${{ github.run_id }}
+          restore-keys: remark-cache-
+
+      # FAA zips for the cycles we need (saves re-downloading every day)
+      - uses: actions/cache@v4
+        with:
+          path: data
+          key: faa-data-${{ github.run_id }}
+          restore-keys: faa-data-
+
+      - name: build site
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: python run_cycle.py
+
+      - name: trim old FAA files from cache
+        run: ls -t data/*_CSV.zip 2>/dev/null | tail -n +4 | xargs -r rm -f
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
