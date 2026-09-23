@@ -1,0 +1,610 @@
+#!/usr/bin/env python3
+"""
+nasr_diff.py - tell pilots what changed at their airports between two FAA NASR cycles.
+
+usage:
+    python nasr_diff.py OLD.zip NEW.zip VRB DAB ISM [--json] [--raw] [--all] [--llm]
+
+OLD/NEW  "Data in CSV format" zips from
+         https://www.faa.gov/air_traffic/flight_info/aeronav/aero_data/NASR_Subscription/
+ids      FAA 3-letter ids (VRB, not KVRB). K-prefixed 4-letter ids get stripped.
+
+--json   write out/<AIRPORT>.json + out/index.json (what the app reads)
+--raw    print field-level before/after under each summary line
+--all    also print hidden noise changes
+--routes list every preferred route / procedure change instead of one summary line
+--llm    translate FAA remarks to plain english with Claude
+         (key comes from .env or ANTHROPIC_API_KEY; results cached in remark_cache.json)
+
+one-time setup:
+    python nasr_diff.py --set-key      (paste your key, saved to .env, never printed)
+"""
+import csv
+import io
+import re
+import json
+import os
+import sys
+import urllib.request
+import zipfile
+from collections import defaultdict
+
+# ---------------------------------------------------------------- config
+
+IGNORE_COLS = {"EFF_DATE", "LAST_INFO_RESPONSE", "LAST_INFO_RESPONSE_DATE"}
+
+# identity columns: hidden in summaries
+ID_COLS = {"SITE_NO", "SITE_TYPE_CODE", "STATE_CODE", "CITY", "COUNTRY_CODE", "ARPT_ID"}
+
+# columns that decide which airport a row belongs to, in order of preference.
+# FRQ rows use SERVICED_FACILITY so "DAB approach serving NSB" goes to NSB, not DAB.
+ATTRIB_COLS = ("ARPT_ID", "SERVICED_FACILITY", "FACILITY_ID", "NAV_ID", "LOC_ID",
+               "ASOS_AWOS_ID", "Orig", "Dest", "ORIGIN_ID", "DSTN_ID")
+
+# when pairing an old row with a new row, these must match (if the file has them)
+PAIR_KEYS = {
+    "PFR_RMT_FMT": ("Orig", "Dest", "Type"),
+    "APT_RMK": ("LEGACY_ELEMENT_NUMBER",),
+    "ATC_RMK": ("LEGACY_ELEMENT_NUMBER", "REMARK_NO"),
+    "APT_RWY_END": ("RWY_ID", "RWY_END_ID"),
+    "APT_RWY": ("RWY_ID",),
+    "FRQ": ("SERVICED_FACILITY", "FREQ"),
+    "NAV_BASE": ("NAV_ID",),
+    "ATC_BASE": ("FACILITY_ID",),
+    "CLS_ARSP": ("ARPT_ID",),
+    "AWOS": ("ASOS_AWOS_ID",),
+    "APT_ATT": ("ARPT_ID",),
+    "APT_BASE": ("ARPT_ID",),
+}
+
+# columns that are rounding / bookkeeping noise and get stripped from changes
+def is_noise_col(c):
+    if c in HIDDEN_ONLY_COLS:
+        return True
+    c = c.upper()
+    return (c.startswith(("LAT_", "LONG_", "MAG_VARN")) or
+            c in {"LEGACY_ELEMENT_NUMBER", "REF_COL_SEQ_NO", "SEQ", "ALT_CODE", "ELEV", "DME_SSV"})
+
+HIDDEN_FILES = ("PFR_SEG", "PFR_BASE", "LID")
+HIDDEN_ONLY_COLS = {"AIR_TAXI_OPS", "ANNUAL_OPS_DATE", "BASED_GLIDERS", "BASED_HEL",
+                    "BASED_JET_ENG", "BASED_MIL_ACFT", "BASED_MULTI_ENG", "BASED_SINGLE_ENG",
+                    "BASED_ULTRALGT_ACFT", "COMMERCIAL_OPS", "COMMUTER_OPS", "ITNRNT_OPS",
+                    "LOCAL_OPS", "MIL_ACFT_OPS", "LAST_INSPECTION", "LENGTH_SOURCE_DATE",
+                    "PAVEMENT_CLASSIFICATION", "PCN_PCR_NUMBER", "PCN", "PAVEMENT_TYPE_CODE",
+                    "SUBGRADE_STRENGTH_CODE", "TIRE_PRES_CODE", "DTRM_METHOD_CODE",
+                    "GROSS_WT_SW", "GROSS_WT_DW", "GROSS_WT_DTW", "GROSS_WT_DDTW"}
+NAME_COLS = {"FACILITY_NAME", "FAC_NAME", "SERVICED_FAC_NAME", "NAME", "ARPT_NAME"}
+FYI_ONLY_COLS = {"OBSTN_HGT", "OBSTN_CLNC_SLOPE", "CNTRLN_OFFSET", "CNTRLN_DIR_CODE",
+                 "DIST_FROM_THR", "FREQ_USE", "RWY_MARKING_COND", "COND"}
+
+ACTION_PREFIXES = ("ATC", "CLS_ARSP", "FRQ", "ILS", "APT_ATT", "AWOS")
+ACTION_COL_WORDS = {"NAV", "PROVIDER", "HRS", "HOURS", "FREQ", "CLASS", "AIRSPACE", "CLOSED",
+                    "STATUS", "LGT", "LIGHT", "LIGHTS", "LEN", "WIDTH", "TPA", "ATTEND"}
+ACTION_TEXT_WORDS = ("CLSD", "CLOSED", "TWR", "PPR", "NOT AVBL", "UNAVBL", "CTAF", "TPA",
+                     "PROHIBITED", "RSTD", "NOISE", "TRANSPONDER")
+
+CONTEXT_COLS = ("Orig", "Dest", "Route String", "FREQ", "FREQ_USE", "NAV_ID", "NAV_TYPE",
+                "RWY_ID", "RWY_END_ID", "ELEMENT", "SERVICED_FACILITY", "REMARK",
+                "STAR_COMPUTER_CODE", "DP_COMPUTER_CODE", "NAME", "OBSTN_HGT", "DIST_FROM_THR",
+                "CNTRLN_OFFSET", "CNTRLN_DIR_CODE", "OBSTN_CLNC_SLOPE", "OBSTN_TYPE")
+
+NAV_NAMES = {"VOT": "VOR test signal (VOT)", "VORTAC": "VORTAC", "VOR/DME": "VOR/DME",
+             "DME": "DME", "NDB": "NDB", "VOR": "VOR", "TACAN": "TACAN"}
+
+LLM_MODEL = "claude-haiku-4-5-20251001"
+# FAA contractions the model is allowed to expand. anything not here and not certain stays as-is.
+GLOSSARY = ("ACFT=aircraft, ACR=air carrier, AP=airport, ARPT=airport, ARR=arrival, "
+            "AVBL=available, CK=check, CLSD=closed, CTC=contact, CTN=caution, DEP=departure, "
+            "DTLS=details, HOL=holidays, INVOF=in vicinity of, LGTD=lighted, "
+            "MNT/MNTD=monitored, MRKGS=markings, NA=not authorized, OPS=operations, "
+            "PAX=passengers, PPR=prior permission required, RSCD=runway surface condition, "
+            "RWY=runway, SKED=scheduled, TWY=taxiway, UNSKED=unscheduled, WKEND=weekend, "
+            "WX=weather, M-F=Monday through Friday")
+CACHE_FILE = "remark_cache.json"
+
+# ---------------------------------------------------------------- loading
+
+def iter_csvs(zf):
+    for name in zf.namelist():
+        low = name.lower()
+        if low.endswith(".csv"):
+            yield name.split("/")[-1], zf.read(name)
+        elif low.endswith(".zip"):
+            with zipfile.ZipFile(io.BytesIO(zf.read(name))) as inner:
+                yield from iter_csvs(inner)
+
+
+# files where a row can mention our airport while being ABOUT another one
+# (DAB approach serving NSB, a route from DAB to ATL). only these use strict attribution.
+STRICT_FILES = ("FRQ", "PFR")
+
+
+def attribute(row, ids, fname=""):
+    """which of our airports this row belongs to, or None."""
+    for col in ATTRIB_COLS:
+        if col in row and row[col].upper() in ids:
+            return row[col].upper()
+    if base(fname).startswith(STRICT_FILES):
+        return None  # row is about some other airport
+    for v in row.values():
+        if v.upper() in ids:
+            return v.upper()
+    return None
+
+
+def load(zip_path, ids):
+    """return {filename: [(airport, row), ...]}"""
+    out = defaultdict(list)
+    seen = set()
+    with zipfile.ZipFile(zip_path) as zf:
+        for fname, raw in iter_csvs(zf):
+            if "_CHG_RPT" in fname.upper() or fname in seen:
+                continue
+            seen.add(fname)
+            try:
+                text = raw.decode("utf-8-sig")
+            except UnicodeDecodeError:
+                text = raw.decode("latin-1")
+            text = text.lstrip("\ufeff").replace("\r\n", "\n").replace("\r", "\n")
+            reader = csv.DictReader(io.StringIO(text, newline=""))
+            try:
+                for row in reader:
+                    vals = {(v or "").strip().upper() for v in row.values() if isinstance(v, str)}
+                    if not vals & ids:
+                        continue
+                    clean = {k.strip(): (v or "").strip() for k, v in row.items()
+                             if k and k.strip() not in IGNORE_COLS}
+                    apt = attribute(clean, ids, fname)
+                    if apt:
+                        out[fname].append((apt, clean))
+            except csv.Error as e:
+                print(f"  warning: skipped rest of {fname}: {e}")
+    return out
+
+# ---------------------------------------------------------------- diffing
+
+def base(fname):
+    return fname.upper().replace(".CSV", "")
+
+
+def similarity(a, b):
+    keys = set(a) | set(b)
+    return sum(a.get(k) == b.get(k) for k in keys) / max(len(keys), 1)
+
+
+def can_pair(fname, a, b):
+    for k in PAIR_KEYS.get(base(fname), ()):
+        if k in a and a.get(k) != b.get(k):
+            return False
+    return True
+
+
+def keyed(fname, a):
+    """true if this file has pair keys and the row has them - a key match is enough to pair."""
+    keys = PAIR_KEYS.get(base(fname), ())
+    return bool(keys) and all(k in a for k in keys)
+
+
+def priority(fname, kind, cols, values):
+    b = base(fname)
+    cols = [c for c in cols if c not in ID_COLS]
+    if b.startswith(HIDDEN_FILES):
+        return "hidden"
+    if kind == "changed" and not cols:
+        return "hidden"
+    if cols and all(c in HIDDEN_ONLY_COLS for c in cols):
+        return "hidden"
+    if any("PCR VALUE" in v.upper() for v in values):
+        return "hidden"
+    if cols and all(c in NAME_COLS or c in FYI_ONLY_COLS or c in HIDDEN_ONLY_COLS for c in cols):
+        return "fyi"
+    if b.startswith(ACTION_PREFIXES):
+        return "action"
+    for c in cols:
+        if set(c.upper().split("_")) & ACTION_COL_WORDS:
+            return "action"
+    # routes and procedures are never action (they're long strings full of fix names)
+    if b.startswith(("PFR", "STAR", "DP")):
+        return "fyi"
+    for v in values:
+        if any(re.search(rf"\b{re.escape(w)}\b", v.upper()) for w in ACTION_TEXT_WORDS):
+            return "action"
+    return "fyi"
+
+
+def diff(old, new):
+    records = []
+    for fname in sorted(set(old) | set(new)):
+        o, n = defaultdict(dict), defaultdict(dict)
+        for apt, r in old.get(fname, []):
+            o[apt][tuple(sorted(r.items()))] = r
+        for apt, r in new.get(fname, []):
+            n[apt][tuple(sorted(r.items()))] = r
+
+        for apt in sorted(set(o) | set(n)):
+            removed = [o[apt][k] for k in o[apt].keys() - n[apt].keys()]
+            added = [n[apt][k] for k in n[apt].keys() - o[apt].keys()]
+
+            for r in list(removed):
+                best, score = None, 0.0
+                for a in added:
+                    if not can_pair(fname, r, a):
+                        continue
+                    s = similarity(r, a)
+                    if best is None or s > score:
+                        best, score = a, s
+                if best is None or (score < 0.5 and not keyed(fname, r)):
+                    continue
+                removed.remove(r)
+                added.remove(best)
+                cols = sorted(c for c in set(r) | set(best)
+                              if r.get(c, "") != best.get(c, "") and not is_noise_col(c))
+                vals = [r.get(c, "") for c in cols] + [best.get(c, "") for c in cols]
+                records.append({
+                    "airport": apt, "source": fname, "kind": "changed",
+                    "priority": priority(fname, "changed", cols, vals),
+                    "fields": [{"field": c, "old": r.get(c, ""), "new": best.get(c, "")} for c in cols],
+                    "context": {c: best[c] for c in CONTEXT_COLS if best.get(c)},
+                })
+
+            still_there = {r.get("FREQ") for r in n[apt].values()}
+            for kind, rows in (("removed", removed), ("added", added)):
+                for r in rows:
+                    if base(fname) == "FRQ" and kind == "removed" and r.get("FREQ") in still_there:
+                        records.append({
+                            "airport": apt, "source": fname, "kind": "changed", "priority": "fyi",
+                            "fields": [{"field": "FREQ_USE", "old": r.get("FREQ_USE", ""), "new": ""}],
+                            "context": {"FREQ": r.get("FREQ", "")},
+                            "note": "frequency still in use, one listed use was dropped"})
+                        continue
+                    records.append({
+                        "airport": apt, "source": fname, "kind": kind,
+                        "priority": priority(fname, kind, list(r.keys()), list(r.values())),
+                        "row": {k: v for k, v in r.items()
+                                if v and k not in ID_COLS and not is_noise_col(k)},
+                    })
+    return records
+
+# ---------------------------------------------------------------- plain english
+
+def translate_remarks(texts, use_llm):
+    """map raw FAA remark -> plain english. cached; falls back to raw text."""
+    cache = {}
+    if os.path.exists(CACHE_FILE):
+        with open(CACHE_FILE) as f:
+            cache = json.load(f)
+    todo = sorted({t for t in texts if t and t not in cache})
+    key = os.environ.get("ANTHROPIC_API_KEY")
+    if use_llm and todo and not key:
+        print("  warning: --llm set but ANTHROPIC_API_KEY missing, using raw remarks")
+    if use_llm and todo and key:
+        for i in range(0, len(todo), 30):
+            batch = todo[i:i + 30]
+            prompt = (
+                "Translate each FAA airport/ATC remark below into ONE short plain-English "
+                "sentence a student pilot would understand.\n"
+                "Rules:\n"
+                "- Expand ONLY abbreviations listed in the glossary or ones you are certain of.\n"
+                "- If you are not certain what an abbreviation or acronym means, leave it "
+                "exactly as written. Never guess an expansion. A wrong expansion is dangerous.\n"
+                "- Keep all numbers, times, runway ids, frequencies and phone numbers exactly.\n"
+                "- Do not add or remove information. Keep every regulatory reference "
+                "(Part 121, Part 135, Part 380, FAR, etc.) exactly as written.\n"
+                "Glossary: " + GLOSSARY + "\n"
+                "Return ONLY a JSON array of strings, same order and same length as the input.\n\n"
+                + json.dumps(batch, indent=1))
+            body = json.dumps({"model": LLM_MODEL, "max_tokens": 4000,
+                               "messages": [{"role": "user", "content": prompt}]}).encode()
+            req = urllib.request.Request(
+                "https://api.anthropic.com/v1/messages", data=body,
+                headers={"content-type": "application/json", "x-api-key": key,
+                         "anthropic-version": "2023-06-01"})
+            try:
+                with urllib.request.urlopen(req, timeout=120) as resp:
+                    data = json.load(resp)
+                text = "".join(b.get("text", "") for b in data.get("content", []))
+                text = text.strip().removeprefix("```json").removeprefix("```").removesuffix("```")
+                out = json.loads(text)
+                if len(out) == len(batch):
+                    cache.update(dict(zip(batch, out)))
+                else:
+                    print("  warning: llm returned wrong number of remarks, skipping batch")
+            except Exception as e:
+                print(f"  warning: llm call failed ({e}), using raw remarks")
+        with open(CACHE_FILE, "w") as f:
+            json.dump(cache, f, indent=1)
+    return cache
+
+
+def label(field):
+    return field.replace("_", " ").lower()
+
+
+def field_phrases(fields, source, ctx=None):
+    ctx = ctx or {}
+    by = {f["field"]: f for f in fields}
+    phrases = []
+    done = set()
+
+    def hrs(f):
+        return f or "none listed"
+
+    for k in ("TWR_HRS", "TOWER_HRS"):
+        if k in by and "tower" not in done:
+            f = by[k]
+            phrases.append(f"tower hours changed: {hrs(f['old'])} -> {hrs(f['new'])} local")
+            done |= {"tower", k}
+    if "AIRSPACE_HRS" in by:
+        f = by["AIRSPACE_HRS"]
+        phrases.append(f"airspace is now: {f['new'].lower()} (was: {f['old'].lower()})")
+    prov = [by[k] for k in ("APCH_P_PROVIDER", "DEP_P_PROVIDER") if k in by]
+    if prov:
+        phrases.append(f"approach/departure control now provided by {prov[0]['new']} "
+                       f"(was {prov[0]['old']})")
+    if "HOUR" in by and base(source) == "APT_ATT":
+        f = by["HOUR"]
+        phrases.append(f"airport attendance hours changed: {f['old']} -> {f['new']}")
+    if "PHONE_NO" in by:
+        what = ("AWOS/ASOS " if base(source).startswith("AWOS")
+                else "airport " if base(source).startswith("APT") else "")
+        phrases.append(f"{what}phone number changed to {by['PHONE_NO']['new']}")
+    if "LNDG_FEE_FLAG" in by:
+        phrases.append("landing fee now charged" if by["LNDG_FEE_FLAG"]["new"] == "Y"
+                       else "landing fee removed")
+    if "FREQ_USE" in by:
+        f = by["FREQ_USE"]
+        if f["new"]:
+            phrases.append(f"frequency {ctx.get('FREQ', '')} use renamed: {f['old']} -> {f['new']}")
+        else:
+            phrases.append(f"frequency {ctx.get('FREQ', '')} no longer listed for {f['old']}")
+    obst = {"OBSTN_HGT", "DIST_FROM_THR", "CNTRLN_OFFSET", "CNTRLN_DIR_CODE", "OBSTN_CLNC_SLOPE"}
+    if obst & set(by):
+        side = {"L": "left of", "R": "right of", "B": "either side of"}.get(ctx.get("CNTRLN_DIR_CODE", ""), "off")
+        bits = []
+        if ctx.get("OBSTN_HGT"):
+            bits.append(f"{ctx['OBSTN_HGT']} ft tall")
+        if ctx.get("DIST_FROM_THR"):
+            bits.append(f"{ctx['DIST_FROM_THR']} ft from threshold")
+        if ctx.get("CNTRLN_OFFSET"):
+            bits.append(f"{ctx['CNTRLN_OFFSET']} ft {side} centerline")
+        slope = f", clearance slope {ctx['OBSTN_CLNC_SLOPE']}:1" if ctx.get("OBSTN_CLNC_SLOPE") else ""
+        phrases.append(f"controlling obstacle changed (now {', '.join(bits)}{slope})")
+    if "RWY_MARKING_COND" in by:
+        phrases.append(f"markings now in {by['RWY_MARKING_COND']['new'].lower()} condition")
+    if "COND" in by:
+        phrases.append(f"pavement now in {by['COND']['new'].lower()} condition")
+    if "NAV_TYPE" in by:
+        f = by["NAV_TYPE"]
+        phrases.append(f"now a {NAV_NAMES.get(f['new'], f['new'])} "
+                       f"(was a {NAV_NAMES.get(f['old'], f['old'])})")
+    if "TACAN_DME_STATUS" in by:
+        phrases.append(f"status: {by['TACAN_DME_STATUS']['new'].lower() or 'none listed'}")
+    if "FREQ" in by:
+        f = by["FREQ"]
+        phrases.append(f"frequency changed: {f['old']} -> {f['new']}")
+    if "FACILITY" in by:
+        f = by["FACILITY"]
+        phrases.append(f"frequency now provided by {f['new']} (was {f['old']})")
+    handled = {"TWR_HRS", "TOWER_HRS", "AIRSPACE_HRS", "APCH_P_PROVIDER", "DEP_P_PROVIDER",
+               "PHONE_NO", "NAV_TYPE", "FREQ", "FACILITY", "FAC_NAME", "LNDG_FEE_FLAG", "FREQ_USE",
+               "RWY_MARKING_COND", "COND", "TACAN_DME_STATUS"} | obst
+    if base(source) == "APT_ATT":
+        handled.add("HOUR")
+    for k, f in by.items():
+        if k in handled:
+            continue
+        if k in NAME_COLS:
+            phrases.append(f"name changed: {f['old'].title()} -> {f['new'].title()}")
+        else:
+            phrases.append(f"{label(k)}: {f['old'] or '(none)'} -> {f['new'] or '(none)'}")
+    return phrases
+
+
+def summarize(rec, remarks):
+    b = base(rec["source"])
+    kind = rec["kind"]
+    row = rec.get("row", {})
+    ctx = rec.get("context", {})
+
+    if b in ("APT_RMK", "ATC_RMK"):
+        if kind == "changed":
+            new = next((f["new"] for f in rec["fields"] if f["field"] == "REMARK"), ctx.get("REMARK", ""))
+            rec["original"] = new
+            return f"remark updated: {remarks.get(new, new)}"
+        text = row.get("REMARK", "")
+        rec["original"] = text
+        return f"{'new remark' if kind == 'added' else 'remark removed'}: {remarks.get(text, text)}"
+
+    if b == "PFR_RMT_FMT":
+        o, d = (row or ctx).get("Orig", "?"), (row or ctx).get("Dest", "?")
+        route = (row or ctx).get("Route String", "")
+        if kind == "added":
+            return f"new preferred IFR route {o} -> {d}: {route}"
+        if kind == "removed":
+            return f"preferred IFR route {o} -> {d} removed"
+        return f"preferred IFR route {o} -> {d} is now: {route}"
+
+    if b.startswith(("STAR", "DP")):
+        what = "arrival (STAR)" if b.startswith("STAR") else "departure (DP)"
+        codes = []
+        for src_row in (row, ctx):
+            for k, v in src_row.items():
+                if k.endswith("COMPUTER_CODE") and v:
+                    codes.append(v)
+        for f in rec.get("fields", []):
+            if f["field"].endswith("COMPUTER_CODE") and f["new"]:
+                codes.append(f["new"])
+        name = codes[0].split(".")[-1] if codes else "procedure"
+        verb = {"added": "added", "removed": "removed"}.get(kind, "updated")
+        return f"{what} {name} {verb}"
+
+    if b == "NAV_BASE" and kind != "changed":
+        t = NAV_NAMES.get(row.get("NAV_TYPE", ""), row.get("NAV_TYPE", "navaid"))
+        freq = f" ({row['FREQ']})" if row.get("FREQ") else ""
+        verb = "decommissioned/removed" if kind == "removed" else "added"
+        return f"{row.get('NAV_ID', '')} {t}{freq} {verb}"
+
+    if b == "FRQ" and kind != "changed":
+        use = row.get("FREQ_USE", "")
+        return f"frequency {row.get('FREQ', '?')} ({use}) {kind}"
+
+    if kind == "changed":
+        where = ""
+        if ctx.get("RWY_END_ID"):
+            where = f"runway {ctx['RWY_END_ID']}: "
+        elif ctx.get("RWY_ID"):
+            where = f"runway {ctx['RWY_ID']}: "
+        elif ctx.get("NAV_ID"):
+            nm = f" ({ctx['NAME'].title()})" if ctx.get("NAME") else ""
+            where = f"{ctx['NAV_ID']}{nm} navaid: "
+        phrases = field_phrases(rec["fields"], rec["source"], ctx)
+        return [where + "; ".join(phrases)] if where else phrases
+
+    shown = ", ".join(f"{label(k)}={v}" for k, v in list(row.items())[:6])
+    return f"{kind} ({b.lower()}): {shown}"
+
+# ---------------------------------------------------------------- output
+
+def write_json(by_apt, out_dir, old_zip, new_zip):
+    os.makedirs(out_dir, exist_ok=True)
+    for apt, recs in by_apt.items():
+        with open(os.path.join(out_dir, f"{apt}.json"), "w") as f:
+            json.dump({"airport": apt,
+                       "from_cycle": os.path.basename(old_zip),
+                       "to_cycle": os.path.basename(new_zip),
+                       "action_count": sum(r["priority"] == "action" for r in recs),
+                       "changes": recs}, f, indent=2)
+    with open(os.path.join(out_dir, "index.json"), "w") as f:
+        json.dump(sorted(by_apt), f)
+    print(f"wrote {len(by_apt)} airport file(s) to {out_dir}/")
+
+
+def load_env(path=".env"):
+    """read KEY=value lines from .env into the environment (doesn't override real env vars)."""
+    if not os.path.exists(path):
+        return
+    with open(path) as f:
+        for line in f:
+            line = line.strip()
+            if line and not line.startswith("#") and "=" in line:
+                k, v = line.split("=", 1)
+                os.environ.setdefault(k.strip(), v.strip().strip('"').strip("'"))
+
+
+def set_key():
+    """prompt for the api key without echoing it, save to .env, make sure git ignores it."""
+    import getpass
+    key = getpass.getpass("paste your Anthropic API key (it won't show while typing): ").strip()
+    if not key.startswith("sk-"):
+        print("that doesn't look like an Anthropic key (should start with sk-). nothing saved.")
+        return
+    lines = []
+    if os.path.exists(".env"):
+        with open(".env") as f:
+            lines = [l for l in f if not l.startswith("ANTHROPIC_API_KEY=")]
+    lines.append(f"ANTHROPIC_API_KEY={key}\n")
+    with open(".env", "w") as f:
+        f.writelines(lines)
+    os.chmod(".env", 0o600)
+    ignore = set()
+    if os.path.exists(".gitignore"):
+        with open(".gitignore") as f:
+            ignore = {l.strip() for l in f}
+    missing = [x for x in (".env", ".venv/", "__pycache__/") if x not in ignore]
+    if missing:
+        with open(".gitignore", "a") as f:
+            f.write("\n".join(missing) + "\n")
+    print("saved to .env (and .env is in .gitignore). you can now just use --llm.")
+
+
+def main():
+    if "--set-key" in sys.argv:
+        set_key()
+        return
+    load_env()
+    args = [a for a in sys.argv[1:] if not a.startswith("--")]
+    flags = {a for a in sys.argv[1:] if a.startswith("--")}
+    if len(args) < 3:
+        print(__doc__)
+        sys.exit(1)
+    old_zip, new_zip = args[0], args[1]
+    ids = {a.upper()[1:] if len(a) == 4 and a.upper().startswith("K") else a.upper()
+           for a in args[2:]}
+
+    print(f"loading {old_zip} ...")
+    old = load(old_zip, ids)
+    print(f"loading {new_zip} ...")
+    new = load(new_zip, ids)
+
+    records = diff(old, new)
+    remark_texts = []
+    for r in records:
+        if base(r["source"]) in ("APT_RMK", "ATC_RMK"):
+            remark_texts.append(r.get("row", {}).get("REMARK", ""))
+            remark_texts += [f["new"] for f in r.get("fields", []) if f["field"] == "REMARK"]
+    remarks = translate_remarks(remark_texts, "--llm" in flags)
+
+    # attach summaries, drop duplicate summaries per airport (same change in several files)
+    by_apt = defaultdict(list)
+    hidden = defaultdict(list)
+    for r in records:
+        s = summarize(r, remarks)
+        r["_phrases"] = s if isinstance(s, list) else [s]
+        (hidden if r["priority"] == "hidden" else by_apt)[r["airport"]].append(r)
+    for apt in by_apt:
+        # drop phrases already said (tower hours live in ATC_BASE, FRQ and CLS_ARSP)
+        seen, uniq = set(), []
+        for r in sorted(by_apt[apt], key=lambda r: (r["priority"] != "action", r["_phrases"])):
+            phrases = [p for p in r.pop("_phrases") if p not in seen]
+            if not phrases:
+                continue
+            seen.update(phrases)
+            r["summary"] = "; ".join(phrases)
+            uniq.append({k: v for k, v in r.items() if k != "airport"})
+        by_apt[apt] = uniq
+
+    if "--json" in flags:
+        write_json(by_apt, "out", old_zip, new_zip)
+
+    for apt in sorted(set(by_apt) | set(hidden)):
+        recs = by_apt.get(apt, [])
+        print(f"\n==================== {apt} ====================")
+        for pri, icon in (("action", "!!"), ("fyi", "--")):
+            group = [r for r in recs if r["priority"] == pri]
+            if group:
+                print(f"\n{pri.upper()}")
+            if pri == "fyi" and "--routes" not in flags:
+                routes = [r for r in group if base(r["source"]).startswith("PFR")]
+                procs = [r for r in group if base(r["source"]).startswith(("STAR", "DP"))]
+                group = [r for r in group if r not in routes and r not in procs]
+                if routes:
+                    k = defaultdict(int)
+                    for r in routes:
+                        k[r["kind"]] += 1
+                    parts = ", ".join(f"{n} {kind}" for kind, n in sorted(k.items()))
+                    print(f" {icon} preferred IFR routes: {parts} (--routes to list)")
+                if procs:
+                    new = sorted({r["summary"].split()[-2] for r in procs if r["kind"] != "removed"})
+                    gone = sorted({r["summary"].split()[-2] for r in procs if r["kind"] == "removed"} - set(new))
+                    line = f"arrival/departure procedures new or updated: {', '.join(new) or 'none'}"
+                    if gone:
+                        line += f"; removed: {', '.join(gone)}"
+                    print(f" {icon} {line}")
+            for r in group:
+                print(f" {icon} {r['summary']}")
+                if "--raw" in flags and r.get("original"):
+                    print(f"      FAA: {r['original']}")
+                if "--raw" in flags:
+                    for f in r.get("fields", []):
+                        print(f"      {f['field']}: '{f['old']}' -> '{f['new']}'")
+        h = hidden.get(apt, [])
+        if h and "--all" in flags:
+            print("\nHIDDEN")
+            for r in h:
+                print(f" .. {'; '.join(r['_phrases'])}")
+        elif h:
+            print(f"\n ({len(h)} noise changes hidden, --all to show)")
+
+
+if __name__ == "__main__":
+    main()
