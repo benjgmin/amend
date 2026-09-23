@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"NY42","entries":[{"cycle":"2026-05-14","from_cycle":"2026-04-16","id":"5af2e92c251b","priority":"fyi","category":"airport","kind":"changed","summary":"acreage: (none) -> 30","source":"APT_BASE","fields":[{"field":"ACREAGE","old":"","new":"30"}]}],"first_cycle":"2026-05-14","last_cycle":"2026-05-14"}

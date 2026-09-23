@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"40OH","entries":[{"cycle":"2026-07-09","from_cycle":"2026-06-11","id":"bec6c4a23b3e","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Bucks, runway 09/27 1300x100 ft turf, CTAF 122.9","source":"APT_BASE"}],"first_cycle":"2026-07-09","last_cycle":"2026-07-09"}

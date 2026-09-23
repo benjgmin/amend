@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"84K","entries":[{"cycle":"2024-12-26","from_cycle":"2024-11-28","id":"2c21ccda3cc5","priority":"fyi","category":"airport","kind":"changed","summary":"nasp code: N -> (none)","source":"APT_BASE","fields":[{"field":"NASP_CODE","old":"N","new":""}]}],"first_cycle":"2024-12-26","last_cycle":"2024-12-26"}

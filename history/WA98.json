@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"WA98","entries":[{"cycle":"2025-12-25","from_cycle":"2025-11-27","id":"fab5b8998af0","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Cascade, runway H1 110x100 ft asph","source":"APT_BASE"}],"first_cycle":"2025-12-25","last_cycle":"2025-12-25"}

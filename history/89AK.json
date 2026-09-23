@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"89AK","entries":[{"cycle":"2026-02-19","from_cycle":"2026-01-22","id":"9d74dba271e8","priority":"fyi","category":"airport","kind":"changed","summary":"airport phone number changed to 907-841-4933","source":"APT_CON","fields":[{"field":"PHONE_NO","old":"907-892-2010","new":"907-841-4933"}]}],"first_cycle":"2026-02-19","last_cycle":"2026-02-19"}

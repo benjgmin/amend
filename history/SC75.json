@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"SC75","entries":[{"cycle":"2025-05-15","from_cycle":"2025-04-17","id":"b61be0c20c4b","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Oolenoy Valley, runway 10/28 1800x50 ft turf","source":"APT_BASE"}],"first_cycle":"2025-05-15","last_cycle":"2025-05-15"}

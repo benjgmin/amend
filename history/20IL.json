@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"20IL","entries":[{"cycle":"2024-10-03","from_cycle":"2024-09-05","id":"e34fb62879b4","priority":"fyi","category":"airport","kind":"changed","summary":"name changed: Pat Rafferty -> David Ziman","source":"APT_CON","fields":[{"field":"NAME","old":"PAT RAFFERTY","new":"DAVID ZIMAN"}]}],"first_cycle":"2024-10-03","last_cycle":"2024-10-03"}

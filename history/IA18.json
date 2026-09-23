@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"IA18","entries":[{"cycle":"2026-06-11","from_cycle":"2026-05-14","id":"9070d1b2dc79","priority":"fyi","category":"airport","kind":"changed","summary":"wind indcr flag: N -> Y","source":"APT_BASE","fields":[{"field":"WIND_INDCR_FLAG","old":"N","new":"Y"}]}],"first_cycle":"2026-06-11","last_cycle":"2026-06-11"}

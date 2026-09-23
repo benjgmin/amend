@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"31KS","entries":[{"cycle":"2025-10-02","from_cycle":"2025-09-04","id":"2932b744216e","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Mills Fld, runway 17/35 2400x75 ft turf","source":"APT_BASE"}],"first_cycle":"2025-10-02","last_cycle":"2025-10-02"}

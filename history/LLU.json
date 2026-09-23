@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"LLU","entries":[{"cycle":"2026-09-03","from_cycle":"2026-08-06","id":"8825f872ea11","priority":"fyi","category":"airport","kind":"changed","summary":"name changed: Russ Worsley -> Rusty Rives","source":"APT_CON","fields":[{"field":"NAME","old":"RUSS WORSLEY","new":"RUSTY RIVES"}]}],"first_cycle":"2026-09-03","last_cycle":"2026-09-03"}

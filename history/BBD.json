@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"BBD","entries":[{"cycle":"2025-01-23","from_cycle":"2024-12-26","id":"48913b5fd72e","priority":"fyi","category":"airport","kind":"changed","summary":"name changed: Lisa Perry -> Scott Griffin","source":"APT_CON","fields":[{"field":"NAME","old":"LISA PERRY","new":"SCOTT GRIFFIN"}]}],"first_cycle":"2025-01-23","last_cycle":"2025-01-23"}

@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"0CT7","entries":[{"cycle":"2025-03-20","from_cycle":"2025-02-20","id":"3666781f6023","priority":"fyi","category":"airport","kind":"changed","summary":"airport phone number changed to 203-384-3000","source":"APT_CON","fields":[{"field":"PHONE_NO","old":"(203) 384-3116","new":"203-384-3000"}]}],"first_cycle":"2025-03-20","last_cycle":"2025-03-20"}

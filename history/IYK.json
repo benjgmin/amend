@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"IYK","entries":[{"cycle":"2026-03-19","from_cycle":"2026-02-19","id":"a6f4d90095a0","priority":"action","category":"airport","kind":"changed","summary":"airport attendance hours changed: 0700-1700 -> 0730-1600","source":"APT_ATT","fields":[{"field":"HOUR","old":"0700-1700","new":"0730-1600"}]}],"first_cycle":"2026-03-19","last_cycle":"2026-03-19"}

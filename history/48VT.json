@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"48VT","entries":[{"cycle":"2025-10-02","from_cycle":"2025-09-04","id":"27e34140d884","priority":"fyi","category":"airport","kind":"changed","summary":"airport phone number changed to 954-609-4945","source":"APT_CON","fields":[{"field":"PHONE_NO","old":"802-660-2641","new":"954-609-4945"}]}],"first_cycle":"2025-10-02","last_cycle":"2025-10-02"}

@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"PA32","entries":[{"cycle":"2026-03-19","from_cycle":"2026-02-19","id":"aeacefc7dd50","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: St Catherine Medical Center, runway H1 75x75 ft asph","source":"APT_BASE"}],"first_cycle":"2026-03-19","last_cycle":"2026-03-19"}

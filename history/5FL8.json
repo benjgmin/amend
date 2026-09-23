@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"5FL8","entries":[{"cycle":"2026-02-19","from_cycle":"2026-01-22","id":"f2a92b39a8b9","priority":"fyi","category":"airport","kind":"changed","summary":"airport phone number changed to 352-443-0365","source":"APT_CON","fields":[{"field":"PHONE_NO","old":"(352) 475-9736","new":"352-443-0365"}]}],"first_cycle":"2026-02-19","last_cycle":"2026-02-19"}

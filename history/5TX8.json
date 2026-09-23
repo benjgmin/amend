@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"5TX8","entries":[{"cycle":"2025-06-12","from_cycle":"2025-05-15","id":"261efa9227cf","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Boon/Lovelace, runway 18/36 2100x60 ft turf; runway 05/23 2500x60 ft turf","source":"APT_BASE"}],"first_cycle":"2025-06-12","last_cycle":"2025-06-12"}

@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"BFW","entries":[{"cycle":"2024-12-26","from_cycle":"2024-11-28","id":"0b1c14a0c019","priority":"fyi","category":"airport","kind":"changed","summary":"nasp code: NGY -> GY","source":"APT_BASE","fields":[{"field":"NASP_CODE","old":"NGY","new":"GY"}]}],"first_cycle":"2024-12-26","last_cycle":"2024-12-26"}

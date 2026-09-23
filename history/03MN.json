@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"03MN","entries":[{"cycle":"2026-03-19","from_cycle":"2026-02-19","id":"4dc931067416","priority":"fyi","category":"airport","kind":"changed","summary":"address1: RR 2 BOX 21 -> 86325 490TH AVE","source":"APT_CON","fields":[{"field":"ADDRESS1","old":"RR 2 BOX 21","new":"86325 490TH AVE"}]}],"first_cycle":"2026-03-19","last_cycle":"2026-03-19"}

@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"ME14","entries":[{"cycle":"2025-04-17","from_cycle":"2025-03-20","id":"1d8eebcf4877","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Bald Mountain, runway 04/22 1800x150 ft turf; runway 13/31 700x150 ft turf","source":"APT_BASE"}],"first_cycle":"2025-04-17","last_cycle":"2025-04-17"}

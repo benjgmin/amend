@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"05NR","entries":[{"cycle":"2024-10-03","from_cycle":"2024-09-05","id":"a275b4d48689","priority":"fyi","category":"airport","kind":"changed","summary":"name changed: Gary Fox -> Fox Fld","source":"APT_BASE","fields":[{"field":"ARPT_NAME","old":"GARY FOX","new":"FOX FLD"}]}],"first_cycle":"2024-10-03","last_cycle":"2024-10-03"}

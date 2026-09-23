@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"AZ12","entries":[{"cycle":"2025-07-10","from_cycle":"2025-06-12","id":"4165052ca1a8","priority":"fyi","category":"airport","kind":"changed","summary":"airport phone number changed to 928-769-2627","source":"APT_CON","fields":[{"field":"PHONE_NO","old":"602-769-2216","new":"928-769-2627"}]}],"first_cycle":"2025-07-10","last_cycle":"2025-07-10"}

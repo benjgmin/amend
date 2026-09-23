@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"42GA","entries":[{"cycle":"2025-12-25","from_cycle":"2025-11-27","id":"2fb211c82a4a","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Matthews, runway H1 25x25 ft conc","source":"APT_BASE"}],"first_cycle":"2025-12-25","last_cycle":"2025-12-25"}

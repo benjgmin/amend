@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"4X4","entries":[{"cycle":"2025-08-07","from_cycle":"2025-07-10","id":"db27a99b6446","priority":"action","category":"frequency","kind":"changed","summary":"sectorization: HIGH -> LOW","source":"FRQ","fields":[{"field":"SECTORIZATION","old":"HIGH","new":"LOW"}]}],"first_cycle":"2025-08-07","last_cycle":"2025-08-07"}

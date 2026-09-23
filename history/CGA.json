@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"CGA","entries":[{"cycle":"2026-09-03","from_cycle":"2026-08-06","id":"d86b667d37cf","priority":"fyi","category":"airport","kind":"changed","summary":"name changed: Jon Bolling -> Morriss Ververs","source":"APT_CON","fields":[{"field":"NAME","old":"JON BOLLING","new":"MORRISS VERVERS"}]}],"first_cycle":"2026-09-03","last_cycle":"2026-09-03"}

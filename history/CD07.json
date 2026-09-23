@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"CD07","entries":[{"cycle":"2024-09-05","from_cycle":"2024-08-08","id":"86c526ab2491","priority":"fyi","category":"airport","kind":"changed","summary":"name changed: Darren Boyle -> Chad Rock","source":"APT_CON","fields":[{"field":"NAME","old":"DARREN BOYLE","new":"CHAD ROCK"}]}],"first_cycle":"2024-09-05","last_cycle":"2024-09-05"}

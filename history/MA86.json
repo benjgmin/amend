@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"MA86","entries":[{"cycle":"2026-04-16","from_cycle":"2026-03-19","id":"dd2158a7e3e8","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Kendalls Lndg Area, runway E/W 1800x150 ft turf","source":"APT_BASE"}],"first_cycle":"2026-04-16","last_cycle":"2026-04-16"}

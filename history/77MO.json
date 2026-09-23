@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"77MO","entries":[{"cycle":"2025-04-17","from_cycle":"2025-03-20","id":"0bcfd0f7194b","priority":"action","category":"airport","kind":"changed","summary":"arpt status: O -> CI","source":"APT_BASE","fields":[{"field":"ARPT_STATUS","old":"O","new":"CI"}]}],"first_cycle":"2025-04-17","last_cycle":"2025-04-17"}

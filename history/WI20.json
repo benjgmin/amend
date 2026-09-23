@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"WI20","entries":[{"cycle":"2025-05-15","from_cycle":"2025-04-17","id":"12a94891743d","priority":"fyi","category":"airport","kind":"changed","summary":"name changed: Harvey Morley -> David Martin","source":"APT_CON","fields":[{"field":"NAME","old":"HARVEY MORLEY","new":"DAVID MARTIN"}]}],"first_cycle":"2025-05-15","last_cycle":"2025-05-15"}

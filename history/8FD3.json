@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"8FD3","entries":[{"cycle":"2026-02-19","from_cycle":"2026-01-22","id":"4cb7919e21da","priority":"fyi","category":"airport","kind":"changed","summary":"name changed: Brian Mckee -> Lance Lovett","source":"APT_CON","fields":[{"field":"NAME","old":"BRIAN MCKEE","new":"LANCE LOVETT"}]}],"first_cycle":"2026-02-19","last_cycle":"2026-02-19"}

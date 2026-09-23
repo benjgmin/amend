@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"GA71","entries":[{"cycle":"2026-04-16","from_cycle":"2026-03-19","id":"5cb2a5ba14c6","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: South Fulton Medical Center, runway H1 74x74 ft asph","source":"APT_BASE"}],"first_cycle":"2026-04-16","last_cycle":"2026-04-16"}

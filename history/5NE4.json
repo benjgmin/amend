@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"5NE4","entries":[{"cycle":"2026-04-16","from_cycle":"2026-03-19","id":"cc83e40a0d2f","priority":"fyi","category":"airport","kind":"changed","summary":"airport phone number changed to 308-587-2222","source":"APT_CON","fields":[{"field":"PHONE_NO","old":"308-587-2451","new":"308-587-2222"}]}],"first_cycle":"2026-04-16","last_cycle":"2026-04-16"}

@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"FD12","entries":[{"cycle":"2025-11-27","from_cycle":"2025-10-30","id":"f00d78522554","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Toho, runway 15W/33W 3000x100 ft water","source":"APT_BASE"}],"first_cycle":"2025-11-27","last_cycle":"2025-11-27"}

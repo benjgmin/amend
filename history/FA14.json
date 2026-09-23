@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"FA14","entries":[{"cycle":"2025-05-15","from_cycle":"2025-04-17","id":"8e856e3f34f3","priority":"action","category":"airport","kind":"changed","summary":"arpt status: O -> CI","source":"APT_BASE","fields":[{"field":"ARPT_STATUS","old":"O","new":"CI"}]}],"first_cycle":"2025-05-15","last_cycle":"2025-05-15"}

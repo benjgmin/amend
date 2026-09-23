@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"TX38","entries":[{"cycle":"2026-06-11","from_cycle":"2026-05-14","id":"6c71c0a4d1ab","priority":"fyi","category":"airport","kind":"changed","summary":"fuel types: 100LL -> (none)","source":"APT_BASE","fields":[{"field":"FUEL_TYPES","old":"100LL","new":""}]}],"first_cycle":"2026-06-11","last_cycle":"2026-06-11"}

@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"3KY4","entries":[{"cycle":"2026-02-19","from_cycle":"2026-01-22","id":"29462e3b7a01","priority":"fyi","category":"airport","kind":"changed","summary":"acreage: 50 -> 18","source":"APT_BASE","fields":[{"field":"ACREAGE","old":"50","new":"18"}]}],"first_cycle":"2026-02-19","last_cycle":"2026-02-19"}

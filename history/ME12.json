@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"ME12","entries":[{"cycle":"2026-05-14","from_cycle":"2026-04-16","id":"5556aef4be7b","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Brettuns Pond, runway 17W/35W 3500x700 ft water; runway 04W/22W 3000x200 ft water","source":"APT_BASE"}],"first_cycle":"2026-05-14","last_cycle":"2026-05-14"}

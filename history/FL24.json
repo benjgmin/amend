@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"FL24","entries":[{"cycle":"2024-10-03","from_cycle":"2024-09-05","id":"4010f0aceb08","priority":"fyi","category":"airport","kind":"changed","summary":"name changed: Doug Hirsch -> David Griffith","source":"APT_CON","fields":[{"field":"NAME","old":"DOUG HIRSCH","new":"DAVID GRIFFITH"}]}],"first_cycle":"2024-10-03","last_cycle":"2024-10-03"}

@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"IA47","entries":[{"cycle":"2024-10-03","from_cycle":"2024-09-05","id":"300833db56cb","priority":"fyi","category":"airport","kind":"changed","summary":"name changed: Bryan Williams -> Neil Dahle","source":"APT_CON","fields":[{"field":"NAME","old":"BRYAN WILLIAMS","new":"NEIL DAHLE"}]}],"first_cycle":"2024-10-03","last_cycle":"2024-10-03"}

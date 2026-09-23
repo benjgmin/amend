@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"A23","entries":[{"cycle":"2024-10-03","from_cycle":"2024-09-05","id":"29254a380f90","priority":"fyi","category":"airport","kind":"changed","summary":"other services: CARGO -> (none)","source":"APT_BASE","fields":[{"field":"OTHER_SERVICES","old":"CARGO","new":""}]}],"first_cycle":"2024-10-03","last_cycle":"2024-10-03"}

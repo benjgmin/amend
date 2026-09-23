@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"OG49","entries":[{"cycle":"2025-11-27","from_cycle":"2025-10-30","id":"4392f39e3435","priority":"fyi","category":"airport","kind":"changed","summary":"name changed: Coca Cola -> Country Twilight","source":"APT_BASE","fields":[{"field":"ARPT_NAME","old":"COCA COLA","new":"COUNTRY TWILIGHT"}]}],"first_cycle":"2025-11-27","last_cycle":"2025-11-27"}

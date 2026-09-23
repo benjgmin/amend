@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"2MI0","entries":[{"cycle":"2025-07-10","from_cycle":"2025-06-12","id":"33a83a988371","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Cherry Fld, runway 06/24 1500x75 ft turf, CTAF 122.9","source":"APT_BASE"}],"first_cycle":"2025-07-10","last_cycle":"2025-07-10"}

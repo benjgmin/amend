@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"63NY","entries":[{"cycle":"2025-10-30","from_cycle":"2025-10-02","id":"220dbc167dd9","priority":"fyi","category":"airport","kind":"changed","summary":"name changed: Windsor -> Windshear","source":"APT_BASE","fields":[{"field":"ARPT_NAME","old":"WINDSOR","new":"WINDSHEAR"}]}],"first_cycle":"2025-10-30","last_cycle":"2025-10-30"}

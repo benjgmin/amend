@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"6IN8","entries":[{"cycle":"2026-05-14","from_cycle":"2026-04-16","id":"1cc5c565cd6c","priority":"fyi","category":"airport","kind":"changed","summary":"airport phone number changed to 765-561-2667","source":"APT_CON","fields":[{"field":"PHONE_NO","old":"765-932-3171","new":"765-561-2667"}]}],"first_cycle":"2026-05-14","last_cycle":"2026-05-14"}

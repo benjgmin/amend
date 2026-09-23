@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"1OK5","entries":[{"cycle":"2026-07-09","from_cycle":"2026-06-11","id":"e5763f10377a","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Hohman, runway N/S 2600x20 ft trtd-dirt","source":"APT_BASE"}],"first_cycle":"2026-07-09","last_cycle":"2026-07-09"}

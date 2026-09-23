@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"64G","entries":[{"cycle":"2025-09-04","from_cycle":"2025-08-07","id":"9440eb8049dd","priority":"fyi","category":"airport","kind":"changed","summary":"fuel types: 100LL -> 100LL,A","source":"APT_BASE","fields":[{"field":"FUEL_TYPES","old":"100LL","new":"100LL,A"}]}],"first_cycle":"2025-09-04","last_cycle":"2025-09-04"}

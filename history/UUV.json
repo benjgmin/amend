@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"UUV","entries":[{"cycle":"2024-10-31","from_cycle":"2024-10-03","id":"e4240d5d1714","priority":"fyi","category":"airport","kind":"changed","summary":"name changed: Billy Parker -> Dean Blankenship","source":"APT_CON","fields":[{"field":"NAME","old":"BILLY PARKER","new":"DEAN BLANKENSHIP"}]}],"first_cycle":"2024-10-31","last_cycle":"2024-10-31"}

@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"N81","entries":[{"cycle":"2025-02-20","from_cycle":"2025-01-23","id":"284d64cd78fd","priority":"fyi","category":"airport","kind":"changed","summary":"inspector code: C -> S","source":"APT_BASE","fields":[{"field":"INSPECTOR_CODE","old":"C","new":"S"}]}],"first_cycle":"2025-02-20","last_cycle":"2025-02-20"}

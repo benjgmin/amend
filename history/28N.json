@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"28N","entries":[{"cycle":"2024-12-26","from_cycle":"2024-11-28","id":"03ed93e3a5b0","priority":"fyi","category":"airport","kind":"changed","summary":"airport phone number changed to 856-207-6027","source":"APT_CON","fields":[{"field":"PHONE_NO","old":"856-697-3300","new":"856-207-6027"}]}],"first_cycle":"2024-12-26","last_cycle":"2024-12-26"}

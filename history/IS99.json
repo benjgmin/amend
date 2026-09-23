@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"IS99","entries":[{"cycle":"2024-10-31","from_cycle":"2024-10-03","id":"f390ca83e34b","priority":"fyi","category":"airport","kind":"changed","summary":"name changed: Larry Derossett -> Larry Berossett","source":"APT_CON","fields":[{"field":"NAME","old":"LARRY DEROSSETT","new":"LARRY BEROSSETT"}]}],"first_cycle":"2024-10-31","last_cycle":"2024-10-31"}

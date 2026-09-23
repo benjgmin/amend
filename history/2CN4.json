@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"2CN4","entries":[{"cycle":"2025-12-25","from_cycle":"2025-11-27","id":"e41fc94d67cc","priority":"fyi","category":"airport","kind":"changed","summary":"mag hemis: (none) -> E","source":"APT_BASE","fields":[{"field":"MAG_HEMIS","old":"","new":"E"}]}],"first_cycle":"2025-12-25","last_cycle":"2025-12-25"}

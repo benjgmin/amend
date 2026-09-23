@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"4M3","entries":[{"cycle":"2025-06-12","from_cycle":"2025-05-15","id":"04d932423753","priority":"action","category":"weather","kind":"changed","summary":"AWOS/ASOS phone number changed to 870-639-4710","source":"AWOS","fields":[{"field":"PHONE_NO","old":"870-552-1445","new":"870-639-4710"}]}],"first_cycle":"2025-06-12","last_cycle":"2025-06-12"}

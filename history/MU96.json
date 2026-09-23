@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"MU96","entries":[{"cycle":"2026-03-19","from_cycle":"2026-02-19","id":"4d6ffb19a723","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: South City Hospital, runway H1 40x40 ft conc","source":"APT_BASE"}],"first_cycle":"2026-03-19","last_cycle":"2026-03-19"}

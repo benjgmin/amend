@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"NH10","entries":[{"cycle":"2025-05-15","from_cycle":"2025-04-17","id":"0ff746890311","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Springfield Cove, runway H1 70x150 ft turf","source":"APT_BASE"}],"first_cycle":"2025-05-15","last_cycle":"2025-05-15"}

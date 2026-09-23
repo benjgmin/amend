@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"37CL","entries":[{"cycle":"2026-03-19","from_cycle":"2026-02-19","id":"dca4b2a9777e","priority":"fyi","category":"airport","kind":"changed","summary":"airport phone number changed to 760-855-3637","source":"APT_CON","fields":[{"field":"PHONE_NO","old":"(760) 742-3538","new":"760-855-3637"}]}],"first_cycle":"2026-03-19","last_cycle":"2026-03-19"}

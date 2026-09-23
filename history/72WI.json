@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"72WI","entries":[{"cycle":"2026-03-19","from_cycle":"2026-02-19","id":"62fe7444fe02","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Mhlc Hospital, runway H1 45x45 ft conc, CTAF 122.9","source":"APT_BASE"}],"first_cycle":"2026-03-19","last_cycle":"2026-03-19"}

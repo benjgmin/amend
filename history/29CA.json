@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"29CA","entries":[{"cycle":"2025-12-25","from_cycle":"2025-11-27","id":"f81e35c5ead6","priority":"fyi","category":"airport","kind":"changed","summary":"airport phone number changed to 760-413-3639","source":"APT_CON","fields":[{"field":"PHONE_NO","old":"(760) 329-6468","new":"760-413-3639"}]}],"first_cycle":"2025-12-25","last_cycle":"2025-12-25"}

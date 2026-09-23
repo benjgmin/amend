@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"1H8","entries":[{"cycle":"2025-11-27","from_cycle":"2025-10-30","id":"50a2b12c965f","priority":"fyi","category":"airport","kind":"changed","summary":"airport phone number changed to 908-247-1000","source":"APT_CON","fields":[{"field":"PHONE_NO","old":"(217) 932-5600","new":"908-247-1000"}]}],"first_cycle":"2025-11-27","last_cycle":"2025-11-27"}

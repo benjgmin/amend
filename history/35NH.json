@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"35NH","entries":[{"cycle":"2026-03-19","from_cycle":"2026-02-19","id":"ca8e86fe7e8b","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Cobbetts Pond, runway 06W/24W 1500x100 ft water","source":"APT_BASE"}],"first_cycle":"2026-03-19","last_cycle":"2026-03-19"}

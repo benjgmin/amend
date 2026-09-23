@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"4V4","entries":[{"cycle":"2026-03-19","from_cycle":"2026-02-19","id":"dcab063b62a8","priority":"action","category":"frequency","kind":"changed","summary":"sectorization: HIGH -> LOW","source":"FRQ","fields":[{"field":"SECTORIZATION","old":"HIGH","new":"LOW"}]}],"first_cycle":"2026-03-19","last_cycle":"2026-03-19"}

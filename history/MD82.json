@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"MD82","entries":[{"cycle":"2026-04-16","from_cycle":"2026-03-19","id":"c7180c0f90f7","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Ragged Island, runway 16/34 2000x31 ft asph","source":"APT_BASE"}],"first_cycle":"2026-04-16","last_cycle":"2026-04-16"}

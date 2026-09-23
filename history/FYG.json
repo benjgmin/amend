@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"FYG","entries":[{"cycle":"2024-10-31","from_cycle":"2024-10-03","id":"7733441fb691","priority":"fyi","category":"airport","kind":"changed","summary":"airport phone number changed to 636-433-5454","source":"APT_CON","fields":[{"field":"PHONE_NO","old":"636-390-1006","new":"636-433-5454"}]}],"first_cycle":"2024-10-31","last_cycle":"2024-10-31"}

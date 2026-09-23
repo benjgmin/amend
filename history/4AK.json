@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"4AK","entries":[{"cycle":"2025-10-02","from_cycle":"2025-09-04","id":"c186e0a5f1a2","priority":"fyi","category":"airport","kind":"changed","summary":"inspector code: S -> C","source":"APT_BASE","fields":[{"field":"INSPECTOR_CODE","old":"S","new":"C"}]}],"first_cycle":"2025-10-02","last_cycle":"2025-10-02"}

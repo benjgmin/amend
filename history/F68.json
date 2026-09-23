@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"F68","entries":[{"cycle":"2024-10-03","from_cycle":"2024-09-05","id":"db7654648706","priority":"fyi","category":"airport","kind":"changed","summary":"name changed: Richard Rogalski -> Janice Cain","source":"APT_CON","fields":[{"field":"NAME","old":"RICHARD ROGALSKI","new":"JANICE CAIN"}]}],"first_cycle":"2024-10-03","last_cycle":"2024-10-03"}

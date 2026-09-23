@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"FL44","entries":[{"cycle":"2026-02-19","from_cycle":"2026-01-22","id":"41be08c4cad3","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Smokey'S, runway H1 250x135 ft turf","source":"APT_BASE"}],"first_cycle":"2026-02-19","last_cycle":"2026-02-19"}

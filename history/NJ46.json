@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"NJ46","entries":[{"cycle":"2026-04-16","from_cycle":"2026-03-19","id":"94af83426d03","priority":"fyi","category":"airport","kind":"changed","summary":"airport phone number changed to 732-239-1414","source":"APT_CON","fields":[{"field":"PHONE_NO","old":"201-446-9556","new":"732-239-1414"}]}],"first_cycle":"2026-04-16","last_cycle":"2026-04-16"}

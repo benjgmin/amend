@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"13FL","entries":[{"cycle":"2025-10-30","from_cycle":"2025-10-02","id":"94a3c2fda0b1","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Gator Lake, runway H1 500x200 ft turf","source":"APT_BASE"}],"first_cycle":"2025-10-30","last_cycle":"2025-10-30"}

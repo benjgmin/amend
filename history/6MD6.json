@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"6MD6","entries":[{"cycle":"2025-04-17","from_cycle":"2025-03-20","id":"9bff1bd20a2a","priority":"fyi","category":"airport","kind":"changed","summary":"mag hemis: (none) -> W","source":"APT_BASE","fields":[{"field":"MAG_HEMIS","old":"","new":"W"}]}],"first_cycle":"2025-04-17","last_cycle":"2025-04-17"}

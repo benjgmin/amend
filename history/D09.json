@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"D09","entries":[{"cycle":"2024-11-28","from_cycle":"2024-10-31","id":"f87cd7e3270a","priority":"fyi","category":"runway","kind":"changed","summary":"runway 13: far part 77 code: A(V) -> A(NP)","source":"APT_RWY_END","fields":[{"field":"FAR_PART_77_CODE","old":"A(V)","new":"A(NP)"}]}],"first_cycle":"2024-11-28","last_cycle":"2024-11-28"}

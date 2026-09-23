@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"1GA0","entries":[{"cycle":"2025-10-30","from_cycle":"2025-10-02","id":"1ce0b395cbcd","priority":"fyi","category":"airport","kind":"changed","summary":"airport phone number changed to 904-571-0366","source":"APT_CON","fields":[{"field":"PHONE_NO","old":"(912) 832-2083","new":"904-571-0366"}]}],"first_cycle":"2025-10-30","last_cycle":"2025-10-30"}

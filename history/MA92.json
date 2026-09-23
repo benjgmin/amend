@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"MA92","entries":[{"cycle":"2025-06-12","from_cycle":"2025-05-15","id":"9f3088109c9e","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Prospect Hill, runway H1 70x70 ft asph","source":"APT_BASE"}],"first_cycle":"2025-06-12","last_cycle":"2025-06-12"}

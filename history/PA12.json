@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"PA12","entries":[{"cycle":"2025-10-30","from_cycle":"2025-10-02","id":"3d22a4a6b9fa","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Commonwealth Security Systems, runway H1 30x30 ft conc","source":"APT_BASE"}],"first_cycle":"2025-10-30","last_cycle":"2025-10-30"}

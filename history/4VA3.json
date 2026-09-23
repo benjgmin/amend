@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"4VA3","entries":[{"cycle":"2025-01-23","from_cycle":"2024-12-26","id":"5aa649353093","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Flying W, runway 05/23 2250x50 ft turf","source":"APT_BASE"}],"first_cycle":"2025-01-23","last_cycle":"2025-01-23"}

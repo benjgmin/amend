@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"TX78","entries":[{"cycle":"2025-10-30","from_cycle":"2025-10-02","id":"a291c00ce472","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Block Ranch, runway 17/35 2100x40 ft turf","source":"APT_BASE"}],"first_cycle":"2025-10-30","last_cycle":"2025-10-30"}

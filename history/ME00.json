@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"ME00","entries":[{"cycle":"2025-10-02","from_cycle":"2025-09-04","id":"c2d595438a18","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Fort Fairfield, runway 08/26 1800x40 ft asph","source":"APT_BASE"}],"first_cycle":"2025-10-02","last_cycle":"2025-10-02"}

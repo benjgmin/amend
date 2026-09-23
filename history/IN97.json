@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"IN97","entries":[{"cycle":"2026-03-19","from_cycle":"2026-02-19","id":"480bd2fc406b","priority":"fyi","category":"airport","kind":"changed","summary":"name changed: Chad Owen -> Brett Steffen","source":"APT_CON","fields":[{"field":"NAME","old":"CHAD OWEN","new":"BRETT STEFFEN"}]}],"first_cycle":"2026-03-19","last_cycle":"2026-03-19"}

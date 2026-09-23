@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"7OK5","entries":[{"cycle":"2025-10-30","from_cycle":"2025-10-02","id":"727c7af6f599","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Sayre Community Hospital, runway H1 42x42 ft conc","source":"APT_BASE"}],"first_cycle":"2025-10-30","last_cycle":"2025-10-30"}

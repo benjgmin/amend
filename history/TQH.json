@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"TQH","entries":[{"cycle":"2024-09-05","from_cycle":"2024-08-08","id":"9f61d4866781","priority":"fyi","category":"airport","kind":"changed","summary":"fuel types: 100LL,A1+ -> 100LL,A+","source":"APT_BASE","fields":[{"field":"FUEL_TYPES","old":"100LL,A1+","new":"100LL,A+"}]}],"first_cycle":"2024-09-05","last_cycle":"2024-09-05"}

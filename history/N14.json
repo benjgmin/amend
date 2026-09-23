@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"N14","entries":[{"cycle":"2024-09-05","from_cycle":"2024-08-08","id":"adbbc49b2c01","priority":"ifr","category":"procedure","kind":"changed","summary":"arrival/departure procedures new or updated: WAALK2","source":"STAR/DP","procedures":{"updated":["WAALK2"],"removed":[]}}],"first_cycle":"2024-09-05","last_cycle":"2024-09-05"}

@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"2DE8","entries":[{"cycle":"2026-04-16","from_cycle":"2026-03-19","id":"e97f470d397f","priority":"fyi","category":"airport","kind":"changed","summary":"airport phone number changed to 302-236-3007","source":"APT_CON","fields":[{"field":"PHONE_NO","old":"3022363007","new":"302-236-3007"}]}],"first_cycle":"2026-04-16","last_cycle":"2026-04-16"}

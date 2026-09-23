@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"42M","entries":[{"cycle":"2026-05-14","from_cycle":"2026-04-16","id":"569706e02541","priority":"fyi","category":"airport","kind":"changed","summary":"name changed: City Of Thayer -> Brent Collins","source":"APT_CON","fields":[{"field":"NAME","old":"CITY OF THAYER","new":"BRENT COLLINS"}]}],"first_cycle":"2026-05-14","last_cycle":"2026-05-14"}

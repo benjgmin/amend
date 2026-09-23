@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"WS61","entries":[{"cycle":"2026-04-16","from_cycle":"2026-03-19","id":"4c8a6a8fd029","priority":"fyi","category":"airport","kind":"changed","summary":"name changed: Philip J. Stuart -> Derek Daly","source":"APT_CON","fields":[{"field":"NAME","old":"PHILIP J. STUART","new":"DEREK DALY"}]}],"first_cycle":"2026-04-16","last_cycle":"2026-04-16"}

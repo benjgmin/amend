@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"VG33","entries":[{"cycle":"2025-01-23","from_cycle":"2024-12-26","id":"43408328bfdb","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Bull Farm, runway 02/20 3000x50 ft turf","source":"APT_BASE"}],"first_cycle":"2025-01-23","last_cycle":"2025-01-23"}

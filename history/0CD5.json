@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"0CD5","entries":[{"cycle":"2025-11-27","from_cycle":"2025-10-30","id":"66691d0b0c89","priority":"fyi","category":"airport","kind":"changed","summary":"zip code: 36086 -> 80913","source":"APT_CON","fields":[{"field":"ZIP_CODE","old":"36086","new":"80913"}]}],"first_cycle":"2025-11-27","last_cycle":"2025-11-27"}

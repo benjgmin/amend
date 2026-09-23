@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"IL08","entries":[{"cycle":"2024-10-03","from_cycle":"2024-09-05","id":"8d54b690d41a","priority":"fyi","category":"airport","kind":"changed","summary":"name changed: John Pelz -> Rick Pinkowski","source":"APT_CON","fields":[{"field":"NAME","old":"JOHN PELZ","new":"RICK PINKOWSKI"}]}],"first_cycle":"2024-10-03","last_cycle":"2024-10-03"}

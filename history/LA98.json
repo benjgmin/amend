@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"LA98","entries":[{"cycle":"2026-02-19","from_cycle":"2026-01-22","id":"cc7fbdaab434","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: West Bay, runway 07W/25W 5000x75 ft water; runway H1 48x42 ft conc","source":"APT_BASE"}],"first_cycle":"2026-02-19","last_cycle":"2026-02-19"}

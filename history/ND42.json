@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"ND42","entries":[{"cycle":"2026-03-19","from_cycle":"2026-02-19","id":"370156c6fde4","priority":"fyi","category":"airport","kind":"changed","summary":"address1: 2216 N BDWY -> 2216 N BROADWAY","source":"APT_CON","fields":[{"field":"ADDRESS1","old":"2216 N BDWY","new":"2216 N BROADWAY"}]}],"first_cycle":"2026-03-19","last_cycle":"2026-03-19"}

@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"71NY","entries":[{"cycle":"2025-06-12","from_cycle":"2025-05-15","id":"bbb95cfc5bb4","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: St Elizabeth Hospital, runway H1 90x60 ft conc","source":"APT_BASE"}],"first_cycle":"2025-06-12","last_cycle":"2025-06-12"}

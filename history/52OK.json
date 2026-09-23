@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"52OK","entries":[{"cycle":"2025-10-30","from_cycle":"2025-10-02","id":"17815c22950b","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Tulsa Security, runway H1 60x45 ft conc","source":"APT_BASE"}],"first_cycle":"2025-10-30","last_cycle":"2025-10-30"}

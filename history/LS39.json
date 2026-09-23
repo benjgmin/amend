@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"LS39","entries":[{"cycle":"2026-07-09","from_cycle":"2026-06-11","id":"829cf2279520","priority":"fyi","category":"airport","kind":"changed","summary":"zip code: 70726 -> 70706","source":"APT_CON","fields":[{"field":"ZIP_CODE","old":"70726","new":"70706"}]}],"first_cycle":"2026-07-09","last_cycle":"2026-07-09"}

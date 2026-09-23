@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"89XS","entries":[{"cycle":"2025-07-10","from_cycle":"2025-06-12","id":"77ace10d1fe3","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Joe Rye, runway H1 290x113 ft turf","source":"APT_BASE"}],"first_cycle":"2025-07-10","last_cycle":"2025-07-10"}

@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"CA78","entries":[{"cycle":"2025-06-12","from_cycle":"2025-05-15","id":"613b5199398e","priority":"fyi","category":"airport","kind":"changed","summary":"name changed: Kim  Ellis -> Dr. Daniel Prather","source":"APT_CON","fields":[{"field":"NAME","old":"KIM  ELLIS","new":"DR. DANIEL PRATHER"}]}],"first_cycle":"2025-06-12","last_cycle":"2025-06-12"}

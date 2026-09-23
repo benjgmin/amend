@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"PLD","entries":[{"cycle":"2025-10-02","from_cycle":"2025-09-04","id":"424817dfa78f","priority":"fyi","category":"runway","kind":"changed","summary":"runway 27: obstn mrkd code: (none) -> M","source":"APT_RWY_END","fields":[{"field":"OBSTN_MRKD_CODE","old":"","new":"M"}]}],"first_cycle":"2025-10-02","last_cycle":"2025-10-02"}

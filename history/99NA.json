@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"99NA","entries":[{"cycle":"2026-01-22","from_cycle":"2025-12-25","id":"df82c2785f9c","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Fly I, runway H1 50x50 ft conc","source":"APT_BASE"}],"first_cycle":"2026-01-22","last_cycle":"2026-01-22"}

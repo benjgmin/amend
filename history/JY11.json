@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"JY11","entries":[{"cycle":"2025-01-23","from_cycle":"2024-12-26","id":"dc082774243b","priority":"fyi","category":"airport","kind":"changed","summary":"airport phone number changed to 215-760-8967","source":"APT_CON","fields":[{"field":"PHONE_NO","old":"215-955-2700","new":"215-760-8967"}]}],"first_cycle":"2025-01-23","last_cycle":"2025-01-23"}

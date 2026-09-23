@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"SN67","entries":[{"cycle":"2026-09-03","from_cycle":"2026-08-06","id":"97d1916d8309","priority":"fyi","category":"airport","kind":"changed","summary":"address1: RT 3 -> 1212 MCKINLEY ST","source":"APT_CON","fields":[{"field":"ADDRESS1","old":"RT 3","new":"1212 MCKINLEY ST"}]}],"first_cycle":"2026-09-03","last_cycle":"2026-09-03"}

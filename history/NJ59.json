@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"NJ59","entries":[{"cycle":"2026-03-19","from_cycle":"2026-02-19","id":"1fa9ba384bba","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Ekdahl, runway 02/20 1300x90 ft turf","source":"APT_BASE"}],"first_cycle":"2026-03-19","last_cycle":"2026-03-19"}

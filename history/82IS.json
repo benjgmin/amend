@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"82IS","entries":[{"cycle":"2026-09-03","from_cycle":"2026-08-06","id":"64e1f536bc32","priority":"fyi","category":"airport","kind":"changed","summary":"airport phone number changed to 815-587-6887","source":"APT_CON","fields":[{"field":"PHONE_NO","old":"847-669-3515","new":"815-587-6887"}]}],"first_cycle":"2026-09-03","last_cycle":"2026-09-03"}

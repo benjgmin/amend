@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"63CN","entries":[{"cycle":"2025-10-30","from_cycle":"2025-10-02","id":"07e48182d51f","priority":"fyi","category":"airport","kind":"changed","summary":"airport phone number changed to 925-980-9737","source":"APT_CON","fields":[{"field":"PHONE_NO","old":"925-606-1536","new":"925-980-9737"}]}],"first_cycle":"2025-10-30","last_cycle":"2025-10-30"}

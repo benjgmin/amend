@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"IN63","entries":[{"cycle":"2025-10-30","from_cycle":"2025-10-02","id":"c6d673807185","priority":"fyi","category":"airport","kind":"changed","summary":"airport phone number changed to 765-412-3485","source":"APT_CON","fields":[{"field":"PHONE_NO","old":"(317) 396-9368","new":"765-412-3485"}]}],"first_cycle":"2025-10-30","last_cycle":"2025-10-30"}

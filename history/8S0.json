@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"8S0","entries":[{"cycle":"2024-10-03","from_cycle":"2024-09-05","id":"1d72aa7c881c","priority":"fyi","category":"runway","kind":"changed","summary":"runway 06/24: pavement now in fair condition","source":"APT_RWY","fields":[{"field":"COND","old":"GOOD","new":"FAIR"}]}],"first_cycle":"2024-10-03","last_cycle":"2024-10-03"}

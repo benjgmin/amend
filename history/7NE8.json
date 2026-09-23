@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"7NE8","entries":[{"cycle":"2026-05-14","from_cycle":"2026-04-16","id":"62d6c9019f22","priority":"fyi","category":"airport","kind":"changed","summary":"airport phone number changed to 308-340-4067","source":"APT_CON","fields":[{"field":"PHONE_NO","old":"308-340-8969","new":"308-340-4067"}]}],"first_cycle":"2026-05-14","last_cycle":"2026-05-14"}

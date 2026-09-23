@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"KTB","entries":[{"cycle":"2024-09-05","from_cycle":"2024-08-08","id":"e1be46291668","priority":"fyi","category":"airport","kind":"changed","summary":"trns strg hgr flag: Y -> N","source":"APT_BASE","fields":[{"field":"TRNS_STRG_HGR_FLAG","old":"Y","new":"N"}]}],"first_cycle":"2024-09-05","last_cycle":"2024-09-05"}

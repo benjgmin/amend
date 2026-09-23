@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"TX58","entries":[{"cycle":"2025-06-12","from_cycle":"2025-05-15","id":"7a5a4bf01f83","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Southwest Custom Aircraft, runway H1 75x25 ft conc","source":"APT_BASE"}],"first_cycle":"2025-06-12","last_cycle":"2025-06-12"}

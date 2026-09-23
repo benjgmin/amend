@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"L08","entries":[{"cycle":"2026-04-16","from_cycle":"2026-03-19","id":"fda8c06096fa","priority":"fyi","category":"airport","kind":"changed","summary":"airport phone number changed to 760-788-3366","source":"APT_CON","fields":[{"field":"PHONE_NO","old":"(760) 767-7415","new":"760-788-3366"}]}],"first_cycle":"2026-04-16","last_cycle":"2026-04-16"}

@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"4TE1","entries":[{"cycle":"2026-03-19","from_cycle":"2026-02-19","id":"8982f73484cc","priority":"fyi","category":"airport","kind":"changed","summary":"county name: ANDERSON -> NAVARRO","source":"APT_BASE","fields":[{"field":"COUNTY_NAME","old":"ANDERSON","new":"NAVARRO"}]}],"first_cycle":"2026-03-19","last_cycle":"2026-03-19"}

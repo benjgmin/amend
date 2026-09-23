@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"GLV","entries":[{"cycle":"2025-08-07","from_cycle":"2025-07-10","id":"d9f5a04aafac","priority":"ifr","category":"procedure","kind":"changed","summary":"arrival/departure procedures new or updated: none; removed: OME","source":"STAR/DP","procedures":{"updated":[],"removed":["OME"]}}],"first_cycle":"2025-08-07","last_cycle":"2025-08-07"}

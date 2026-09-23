@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"WT55","entries":[{"cycle":"2025-10-02","from_cycle":"2025-09-04","id":"04f3d5b30332","priority":"fyi","category":"runway","kind":"changed","summary":"runway H1: pavement now in good condition","source":"APT_RWY","fields":[{"field":"COND","old":"","new":"GOOD"}]}],"first_cycle":"2025-10-02","last_cycle":"2025-10-02"}

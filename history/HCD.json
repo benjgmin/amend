@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"HCD","entries":[{"cycle":"2024-12-26","from_cycle":"2024-11-28","id":"3f42803cf5ee","priority":"fyi","category":"airport","kind":"changed","summary":"name changed: John Olson -> Donovan Schuette","source":"APT_CON","fields":[{"field":"NAME","old":"JOHN OLSON","new":"DONOVAN SCHUETTE"}]}],"first_cycle":"2024-12-26","last_cycle":"2024-12-26"}

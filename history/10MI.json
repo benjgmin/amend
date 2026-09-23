@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"10MI","entries":[{"cycle":"2026-05-14","from_cycle":"2026-04-16","id":"78441e9a9690","priority":"fyi","category":"airport","kind":"changed","summary":"notam id: FDC -> (none)","source":"APT_BASE","fields":[{"field":"NOTAM_ID","old":"FDC","new":""}]}],"first_cycle":"2026-05-14","last_cycle":"2026-05-14"}

@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"SGY","entries":[{"cycle":"2026-04-16","from_cycle":"2026-03-19","id":"1a6e06f57d14","priority":"fyi","category":"runway","kind":"changed","summary":"runway 20: rwy end elev: 59 -> 44","source":"APT_RWY_END","fields":[{"field":"RWY_END_ELEV","old":"59","new":"44"}]}],"first_cycle":"2026-04-16","last_cycle":"2026-04-16"}

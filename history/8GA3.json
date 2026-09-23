@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"8GA3","entries":[{"cycle":"2026-03-19","from_cycle":"2026-02-19","id":"c7c9487b42c4","priority":"fyi","category":"airport","kind":"changed","summary":"address1: 256 YORK ROAD -> 256 NEW YORK ROAD","source":"APT_CON","fields":[{"field":"ADDRESS1","old":"256 YORK ROAD","new":"256 NEW YORK ROAD"}]}],"first_cycle":"2026-03-19","last_cycle":"2026-03-19"}

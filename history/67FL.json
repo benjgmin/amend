@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"67FL","entries":[{"cycle":"2024-10-31","from_cycle":"2024-10-03","id":"ced24e8472c7","priority":"fyi","category":"airport","kind":"changed","summary":"airport phone number changed to 941-219-3491","source":"APT_CON","fields":[{"field":"PHONE_NO","old":"941-744-7303","new":"941-219-3491"}]}],"first_cycle":"2024-10-31","last_cycle":"2024-10-31"}

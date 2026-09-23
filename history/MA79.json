@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"MA79","entries":[{"cycle":"2026-04-16","from_cycle":"2026-03-19","id":"542edd0b183f","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Digital, runway H1 50x24 ft conc","source":"APT_BASE"}],"first_cycle":"2026-04-16","last_cycle":"2026-04-16"}

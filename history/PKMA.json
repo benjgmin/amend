@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"PKMA","entries":[{"cycle":"2025-11-27","from_cycle":"2025-10-30","id":"db4e130e4b3d","priority":"fyi","category":"airport","kind":"changed","summary":"icao id: (none) -> PKMA","source":"APT_BASE","fields":[{"field":"ICAO_ID","old":"","new":"PKMA"}]}],"first_cycle":"2025-11-27","last_cycle":"2025-11-27"}

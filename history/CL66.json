@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"CL66","entries":[{"cycle":"2026-09-03","from_cycle":"2026-08-06","id":"7f6c01a8ab90","priority":"fyi","category":"airport","kind":"changed","summary":"name changed: Thomas Short -> Ken Williams","source":"APT_CON","fields":[{"field":"NAME","old":"THOMAS SHORT","new":"KEN WILLIAMS"}]}],"first_cycle":"2026-09-03","last_cycle":"2026-09-03"}

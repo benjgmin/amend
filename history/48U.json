@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"48U","entries":[{"cycle":"2025-07-10","from_cycle":"2025-06-12","id":"b94de5b354ef","priority":"fyi","category":"airport","kind":"changed","summary":"seg circle mkr flag: N -> Y","source":"APT_BASE","fields":[{"field":"SEG_CIRCLE_MKR_FLAG","old":"N","new":"Y"}]}],"first_cycle":"2025-07-10","last_cycle":"2025-07-10"}

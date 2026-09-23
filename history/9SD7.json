@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"9SD7","entries":[{"cycle":"2026-03-19","from_cycle":"2026-02-19","id":"8f13b837b447","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Beaman, runway 17/35 3000x40 ft turf; runway 13/31 1500x40 ft turf","source":"APT_BASE"}],"first_cycle":"2026-03-19","last_cycle":"2026-03-19"}

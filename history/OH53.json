@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"OH53","entries":[{"cycle":"2026-09-03","from_cycle":"2026-08-06","id":"984d646db0ad","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Ohio Bldg Authority, runway H1 55x55 ft asph, CTAF 122.9","source":"APT_BASE"}],"first_cycle":"2026-09-03","last_cycle":"2026-09-03"}

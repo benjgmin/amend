@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"TTD","entries":[{"cycle":"2024-09-05","from_cycle":"2024-08-08","id":"82d92a40afd7","priority":"ifr","category":"procedure","kind":"changed","summary":"arrival/departure procedures new or updated: HELNS6, OCITY3","source":"STAR/DP","procedures":{"updated":["HELNS6","OCITY3"],"removed":[]}}],"first_cycle":"2024-09-05","last_cycle":"2024-09-05"}

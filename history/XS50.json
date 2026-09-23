@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"XS50","entries":[{"cycle":"2026-09-03","from_cycle":"2026-08-06","id":"d7505fb2f4fb","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: 4-G Ranch, runway 09/27 3515x100 ft turf; runway 13/31 3260x100 ft turf","source":"APT_BASE"}],"first_cycle":"2026-09-03","last_cycle":"2026-09-03"}

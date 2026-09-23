@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"37OK","entries":[{"cycle":"2025-08-07","from_cycle":"2025-07-10","id":"84bc78298f4a","priority":"fyi","category":"airport","kind":"changed","summary":"name changed: Terence Farrell -> Ron Thetford","source":"APT_CON","fields":[{"field":"NAME","old":"TERENCE FARRELL","new":"RON THETFORD"}]}],"first_cycle":"2025-08-07","last_cycle":"2025-08-07"}

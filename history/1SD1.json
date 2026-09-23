@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"1SD1","entries":[{"cycle":"2026-05-14","from_cycle":"2026-04-16","id":"24b40667eb8b","priority":"fyi","category":"airport","kind":"changed","summary":"airport phone number changed to 605-583-2304","source":"APT_CON","fields":[{"field":"PHONE_NO","old":"(605) 583-2304","new":"605-583-2304"}]}],"first_cycle":"2026-05-14","last_cycle":"2026-05-14"}

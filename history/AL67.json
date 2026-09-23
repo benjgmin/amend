@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"AL67","entries":[{"cycle":"2026-04-16","from_cycle":"2026-03-19","id":"0c4c2a97d27d","priority":"fyi","category":"airport","kind":"changed","summary":"airport phone number changed to 251-973-4634","source":"APT_CON","fields":[{"field":"PHONE_NO","old":"251-973-4624","new":"251-973-4634"}]}],"first_cycle":"2026-04-16","last_cycle":"2026-04-16"}

@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"1TA8","entries":[{"cycle":"2026-03-19","from_cycle":"2026-02-19","id":"044c9c75d9dd","priority":"action","category":"airport","kind":"changed","summary":"arpt status: O -> CI","source":"APT_BASE","fields":[{"field":"ARPT_STATUS","old":"O","new":"CI"}]}],"first_cycle":"2026-03-19","last_cycle":"2026-03-19"}

@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"NH96","entries":[{"cycle":"2026-01-22","from_cycle":"2025-12-25","id":"4c4b2a41f2dd","priority":"fyi","category":"airport","kind":"changed","summary":"airport phone number changed to 781-308-2451","source":"APT_CON","fields":[{"field":"PHONE_NO","old":"603-764-9894","new":"781-308-2451"}]}],"first_cycle":"2026-01-22","last_cycle":"2026-01-22"}

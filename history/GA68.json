@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"GA68","entries":[{"cycle":"2026-02-19","from_cycle":"2026-01-22","id":"99e2e3dd458e","priority":"fyi","category":"airport","kind":"changed","summary":"airport phone number changed to 770-658-4904","source":"APT_CON","fields":[{"field":"PHONE_NO","old":"770-884-3649","new":"770-658-4904"}]}],"first_cycle":"2026-02-19","last_cycle":"2026-02-19"}

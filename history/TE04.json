@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"TE04","entries":[{"cycle":"2026-08-06","from_cycle":"2026-07-09","id":"7ff768a46565","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Split B Ranch, runway 18/36 3000x100 ft turf","source":"APT_BASE"}],"first_cycle":"2026-08-06","last_cycle":"2026-08-06"}

@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"36NC","entries":[{"cycle":"2026-05-14","from_cycle":"2026-04-16","id":"6c047f68253e","priority":"fyi","category":"airport","kind":"changed","summary":"county name: ALAMANCE -> CATAWBA","source":"APT_BASE","fields":[{"field":"COUNTY_NAME","old":"ALAMANCE","new":"CATAWBA"}]}],"first_cycle":"2026-05-14","last_cycle":"2026-05-14"}

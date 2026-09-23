@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"00C","entries":[{"cycle":"2026-06-11","from_cycle":"2026-05-14","id":"7376b265a677","priority":"fyi","category":"airport","kind":"changed","summary":"fuel types: 100LL,A -> 100LL","source":"APT_BASE","fields":[{"field":"FUEL_TYPES","old":"100LL,A","new":"100LL"}]}],"first_cycle":"2026-06-11","last_cycle":"2026-06-11"}

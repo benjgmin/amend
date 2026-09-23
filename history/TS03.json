@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"TS03","entries":[{"cycle":"2026-09-03","from_cycle":"2026-08-06","id":"ea4bf0b50bd8","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Bryant'S Landing, runway 16/34 1500x100 ft dirt","source":"APT_BASE"}],"first_cycle":"2026-09-03","last_cycle":"2026-09-03"}

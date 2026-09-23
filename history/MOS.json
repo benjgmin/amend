@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"MOS","entries":[{"cycle":"2026-04-16","from_cycle":"2026-03-19","id":"08ce7ed4576f","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Moses Point, runway 06/24 3000x60 ft grvl, CTAF 122.8","source":"APT_BASE"}],"first_cycle":"2026-04-16","last_cycle":"2026-04-16"}

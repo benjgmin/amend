@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"AZ49","entries":[{"cycle":"2026-07-09","from_cycle":"2026-06-11","id":"bdc61529bc2e","priority":"fyi","category":"airport","kind":"changed","summary":"elev method code: (none) -> E","source":"APT_BASE","fields":[{"field":"ELEV_METHOD_CODE","old":"","new":"E"}]}],"first_cycle":"2026-07-09","last_cycle":"2026-07-09"}

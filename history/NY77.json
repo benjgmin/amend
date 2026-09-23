@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"NY77","entries":[{"cycle":"2026-02-19","from_cycle":"2026-01-22","id":"1427f98166b1","priority":"fyi","category":"airport","kind":"changed","summary":"address1: RD 1, BOX 61 -> 1768 KNOX CAVE RD","source":"APT_CON","fields":[{"field":"ADDRESS1","old":"RD 1, BOX 61","new":"1768 KNOX CAVE RD"}]}],"first_cycle":"2026-02-19","last_cycle":"2026-02-19"}

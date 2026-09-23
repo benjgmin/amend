@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"6W4","entries":[{"cycle":"2025-09-04","from_cycle":"2025-08-07","id":"039ab419b49d","priority":"fyi","category":"airport","kind":"changed","summary":"arpt elev source: (none) -> FAA-EST IMAGERY","source":"APT_BASE","fields":[{"field":"ARPT_ELEV_SOURCE","old":"","new":"FAA-EST IMAGERY"}]}],"first_cycle":"2025-09-04","last_cycle":"2025-09-04"}

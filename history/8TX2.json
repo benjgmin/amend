@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"8TX2","entries":[{"cycle":"2026-09-03","from_cycle":"2026-08-06","id":"f54097315806","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Freeman Ranch, runway 04/22 3000x20 ft grvl","source":"APT_BASE"}],"first_cycle":"2026-09-03","last_cycle":"2026-09-03"}

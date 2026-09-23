@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"02TE","entries":[{"cycle":"2025-07-10","from_cycle":"2025-06-12","id":"50b68af12c01","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Baylor Medical Center, runway H1 40x40 ft conc","source":"APT_BASE"}],"first_cycle":"2025-07-10","last_cycle":"2025-07-10"}

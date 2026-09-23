@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"MY80","entries":[{"cycle":"2026-03-19","from_cycle":"2026-02-19","id":"8aba3d924703","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Rosenberg, runway 10/28 2500x90 ft turf","source":"APT_BASE"}],"first_cycle":"2026-03-19","last_cycle":"2026-03-19"}

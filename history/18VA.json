@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"18VA","entries":[{"cycle":"2025-09-04","from_cycle":"2025-08-07","id":"9fc15562821e","priority":"fyi","category":"airport","kind":"changed","summary":"name changed: Rick Cantley -> Douglas Dalton","source":"APT_CON","fields":[{"field":"NAME","old":"RICK CANTLEY","new":"DOUGLAS DALTON"}]}],"first_cycle":"2025-09-04","last_cycle":"2025-09-04"}

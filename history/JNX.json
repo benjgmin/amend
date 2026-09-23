@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"JNX","entries":[{"cycle":"2025-03-20","from_cycle":"2025-02-20","id":"c8735ae88631","priority":"fyi","category":"airport","kind":"changed","summary":"name changed: Phil Lanier -> David Harris","source":"APT_CON","fields":[{"field":"NAME","old":"PHIL LANIER","new":"DAVID HARRIS"}]}],"first_cycle":"2025-03-20","last_cycle":"2025-03-20"}

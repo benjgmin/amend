@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"85NY","entries":[{"cycle":"2026-02-19","from_cycle":"2026-01-22","id":"528136c2cdfb","priority":"fyi","category":"airport","kind":"changed","summary":"address1: 11000 SAVAGE ROAD -> PO BOX 245","source":"APT_CON","fields":[{"field":"ADDRESS1","old":"11000 SAVAGE ROAD","new":"PO BOX 245"}]}],"first_cycle":"2026-02-19","last_cycle":"2026-02-19"}

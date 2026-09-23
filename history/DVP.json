@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"DVP","entries":[{"cycle":"2024-10-03","from_cycle":"2024-09-05","id":"8282e492fa7b","priority":"fyi","category":"airport","kind":"changed","summary":"other services: AGRI -> AGRI,SALES","source":"APT_BASE","fields":[{"field":"OTHER_SERVICES","old":"AGRI","new":"AGRI,SALES"}]}],"first_cycle":"2024-10-03","last_cycle":"2024-10-03"}

@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"5GA6","entries":[{"cycle":"2026-03-19","from_cycle":"2026-02-19","id":"7f2ab7159c21","priority":"fyi","category":"airport","kind":"changed","summary":"airport phone number changed to 229-938-6778","source":"APT_CON","fields":[{"field":"PHONE_NO","old":"(229) 268-6834","new":"229-938-6778"}]}],"first_cycle":"2026-03-19","last_cycle":"2026-03-19"}

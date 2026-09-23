@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"HEI","entries":[{"cycle":"2026-04-16","from_cycle":"2026-03-19","id":"c9c525d36d75","priority":"action","category":"weather","kind":"changed","summary":"AWOS/ASOS phone number changed to 701-937-6530","source":"AWOS","fields":[{"field":"PHONE_NO","old":"701-567-4594","new":"701-937-6530"}]}],"first_cycle":"2026-04-16","last_cycle":"2026-04-16"}

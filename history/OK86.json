@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"OK86","entries":[{"cycle":"2026-07-09","from_cycle":"2026-06-11","id":"f1b6e322ee1e","priority":"fyi","category":"airport","kind":"changed","summary":"address1: HIGHWAY 66 WEST -> PO BOX 530","source":"APT_CON","fields":[{"field":"ADDRESS1","old":"HIGHWAY 66 WEST","new":"PO BOX 530"}]}],"first_cycle":"2026-07-09","last_cycle":"2026-07-09"}

@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"IN52","entries":[{"cycle":"2026-02-19","from_cycle":"2026-01-22","id":"b8b727187962","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: 500, runway H1 50x50 ft turf","source":"APT_BASE"}],"first_cycle":"2026-02-19","last_cycle":"2026-02-19"}

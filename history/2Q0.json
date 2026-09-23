@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"2Q0","entries":[{"cycle":"2024-11-28","from_cycle":"2024-10-31","id":"506141f3561b","priority":"fyi","category":"airport","kind":"changed","summary":"notam id: (none) -> AND","source":"APT_BASE","fields":[{"field":"NOTAM_ID","old":"","new":"AND"}]}],"first_cycle":"2024-11-28","last_cycle":"2024-11-28"}

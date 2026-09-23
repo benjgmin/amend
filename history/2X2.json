@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"2X2","entries":[{"cycle":"2024-12-26","from_cycle":"2024-11-28","id":"7fb1c29b56f3","priority":"fyi","category":"airport","kind":"changed","summary":"inspector code: S -> C","source":"APT_BASE","fields":[{"field":"INSPECTOR_CODE","old":"S","new":"C"}]}],"first_cycle":"2024-12-26","last_cycle":"2024-12-26"}

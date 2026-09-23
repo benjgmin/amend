@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"72II","entries":[{"cycle":"2025-06-12","from_cycle":"2025-05-15","id":"638b9b142bf9","priority":"fyi","category":"airport","kind":"changed","summary":"name changed: Paul Krutulis -> Jim Patton","source":"APT_CON","fields":[{"field":"NAME","old":"PAUL KRUTULIS","new":"JIM PATTON"}]}],"first_cycle":"2025-06-12","last_cycle":"2025-06-12"}

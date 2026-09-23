@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"PA97","entries":[{"cycle":"2024-10-03","from_cycle":"2024-09-05","id":"df4d4dbcf091","priority":"fyi","category":"airport","kind":"changed","summary":"medical use flag: (none) -> Y","source":"APT_BASE","fields":[{"field":"MEDICAL_USE_FLAG","old":"","new":"Y"}]}],"first_cycle":"2024-10-03","last_cycle":"2024-10-03"}

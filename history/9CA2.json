@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"9CA2","entries":[{"cycle":"2026-04-16","from_cycle":"2026-03-19","id":"f0adb5c78b57","priority":"fyi","category":"airport","kind":"changed","summary":"name changed: Jaime Cristobal -> Yolanda Lopez","source":"APT_CON","fields":[{"field":"NAME","old":"JAIME CRISTOBAL","new":"YOLANDA LOPEZ"}]}],"first_cycle":"2026-04-16","last_cycle":"2026-04-16"}

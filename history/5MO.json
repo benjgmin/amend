@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"5MO","entries":[{"cycle":"2024-11-28","from_cycle":"2024-10-31","id":"23c8cf47369e","priority":"fyi","category":"airport","kind":"changed","summary":"notam id: (none) -> COU","source":"APT_BASE","fields":[{"field":"NOTAM_ID","old":"","new":"COU"}]}],"first_cycle":"2024-11-28","last_cycle":"2024-11-28"}

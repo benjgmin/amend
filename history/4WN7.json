@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"4WN7","entries":[{"cycle":"2026-09-03","from_cycle":"2026-08-06","id":"1388116a2c6e","priority":"action","category":"weather","kind":"removed","summary":"removed (awos): asos awos id=4WN7, asos awos type=AWOS-2, navaid flag=N, survey method code=E","source":"AWOS"}],"first_cycle":"2026-09-03","last_cycle":"2026-09-03"}

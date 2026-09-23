@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"0TS3","entries":[{"cycle":"2025-07-10","from_cycle":"2025-06-12","id":"7aede3103734","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Houston, runway H1 20x20 ft conc","source":"APT_BASE"}],"first_cycle":"2025-07-10","last_cycle":"2025-07-10"}

@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"NM18","entries":[{"cycle":"2025-05-15","from_cycle":"2025-04-17","id":"b0959e6084c5","priority":"fyi","category":"airport","kind":"changed","summary":"airport phone number changed to 303-775-7083","source":"APT_CON","fields":[{"field":"PHONE_NO","old":"(575) 546-4525","new":"303-775-7083"}]}],"first_cycle":"2025-05-15","last_cycle":"2025-05-15"}

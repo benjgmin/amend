@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"VT40","entries":[{"cycle":"2025-06-12","from_cycle":"2025-05-15","id":"b32734246599","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Wenlock Crossing, runway H1 195x150 ft gravel","source":"APT_BASE"}],"first_cycle":"2025-06-12","last_cycle":"2025-06-12"}

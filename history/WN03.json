@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"WN03","entries":[{"cycle":"2026-09-03","from_cycle":"2026-08-06","id":"2429176ff96c","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Van Der Vaart, runway 09/27 2500x100 ft turf","source":"APT_BASE"}],"first_cycle":"2026-09-03","last_cycle":"2026-09-03"}

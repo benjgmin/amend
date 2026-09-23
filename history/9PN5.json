@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"9PN5","entries":[{"cycle":"2026-02-19","from_cycle":"2026-01-22","id":"78bcfa87acad","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Franklin, runway H1 140x90 ft gravel","source":"APT_BASE"}],"first_cycle":"2026-02-19","last_cycle":"2026-02-19"}

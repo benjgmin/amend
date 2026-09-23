@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"AGN","entries":[{"cycle":"2026-06-11","from_cycle":"2026-05-14","id":"1c823e056cf7","priority":"action","category":"weather","kind":"changed","summary":"AWOS/ASOS phone number changed to 907-205-5480","source":"AWOS","fields":[{"field":"PHONE_NO","old":"907-788-3120","new":"907-205-5480"}]}],"first_cycle":"2026-06-11","last_cycle":"2026-06-11"}

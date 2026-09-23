@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"80GA","entries":[{"cycle":"2026-03-19","from_cycle":"2026-02-19","id":"9e9301f1bd05","priority":"fyi","category":"airport","kind":"changed","summary":"address1: P.O. BOX 13 -> 914 W GRANTVILLE RD","source":"APT_CON","fields":[{"field":"ADDRESS1","old":"P.O. BOX 13","new":"914 W GRANTVILLE RD"}]}],"first_cycle":"2026-03-19","last_cycle":"2026-03-19"}

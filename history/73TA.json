@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"73TA","entries":[{"cycle":"2026-09-03","from_cycle":"2026-08-06","id":"d73f301135dc","priority":"fyi","category":"airport","kind":"changed","summary":"address1: 27677 LOOP ROAD -> 39718 LOOP ROAD","source":"APT_CON","fields":[{"field":"ADDRESS1","old":"27677 LOOP ROAD","new":"39718 LOOP ROAD"}]}],"first_cycle":"2026-09-03","last_cycle":"2026-09-03"}

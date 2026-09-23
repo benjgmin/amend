@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"ID68","entries":[{"cycle":"2025-10-30","from_cycle":"2025-10-02","id":"e15efcd0a0c5","priority":"fyi","category":"airport","kind":"changed","summary":"airport phone number changed to 208-340-2969","source":"APT_CON","fields":[{"field":"PHONE_NO","old":"208-922-1300","new":"208-340-2969"}]}],"first_cycle":"2025-10-30","last_cycle":"2025-10-30"}

@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"8B5","entries":[{"cycle":"2024-11-28","from_cycle":"2024-10-31","id":"df0ee128d6c4","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Tanner-Hiller, runway 06/24 3027x40 ft asph, CTAF 123.0","source":"APT_BASE"}],"first_cycle":"2024-11-28","last_cycle":"2024-11-28"}

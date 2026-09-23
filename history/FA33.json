@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"FA33","entries":[{"cycle":"2025-05-15","from_cycle":"2025-04-17","id":"51e74d7d34b0","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Mosquito Ctl, runway H1 25x25 ft conc","source":"APT_BASE"}],"first_cycle":"2025-05-15","last_cycle":"2025-05-15"}

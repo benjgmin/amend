@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"01PA","entries":[{"cycle":"2026-04-16","from_cycle":"2026-03-19","id":"f1413dec779b","priority":"fyi","category":"airport","kind":"changed","summary":"airport phone number changed to 814-341-4824","source":"APT_CON","fields":[{"field":"PHONE_NO","old":"724-235-2412","new":"814-341-4824"}]}],"first_cycle":"2026-04-16","last_cycle":"2026-04-16"}

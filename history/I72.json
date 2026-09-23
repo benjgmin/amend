@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"I72","entries":[{"cycle":"2025-11-27","from_cycle":"2025-10-30","id":"a336a4621ff9","priority":"fyi","category":"airport","kind":"changed","summary":"airport phone number changed to 317-507-8281","source":"APT_CON","fields":[{"field":"PHONE_NO","old":"317-846-6060","new":"317-507-8281"}]}],"first_cycle":"2025-11-27","last_cycle":"2025-11-27"}

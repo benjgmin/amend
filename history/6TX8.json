@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"6TX8","entries":[{"cycle":"2026-08-06","from_cycle":"2026-07-09","id":"083eabb56620","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Hess, runway 08/26 1900x100 ft turf","source":"APT_BASE"}],"first_cycle":"2026-08-06","last_cycle":"2026-08-06"}

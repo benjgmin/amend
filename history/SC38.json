@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"SC38","entries":[{"cycle":"2026-04-16","from_cycle":"2026-03-19","id":"5bd37b8f460f","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Pocotaligo, runway 10/28 3340x80 ft turf","source":"APT_BASE"}],"first_cycle":"2026-04-16","last_cycle":"2026-04-16"}

@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"TE77","entries":[{"cycle":"2026-09-03","from_cycle":"2026-08-06","id":"83b8c7880fb5","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Clover Lake Farms, runway 17/35 2461x70 ft turf","source":"APT_BASE"}],"first_cycle":"2026-09-03","last_cycle":"2026-09-03"}

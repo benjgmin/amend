@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"24AK","entries":[{"cycle":"2025-10-30","from_cycle":"2025-10-02","id":"f3536e4e8634","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Toad Lake Strip, runway 14/32 1300x200 ft turf, CTAF 122.8","source":"APT_BASE"}],"first_cycle":"2025-10-30","last_cycle":"2025-10-30"}

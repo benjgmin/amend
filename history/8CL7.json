@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"8CL7","entries":[{"cycle":"2025-07-10","from_cycle":"2025-06-12","id":"03169283c741","priority":"fyi","category":"airport","kind":"changed","summary":"name changed: Tim Duncan -> Rick Barker","source":"APT_CON","fields":[{"field":"NAME","old":"TIM DUNCAN","new":"RICK BARKER"}]}],"first_cycle":"2025-07-10","last_cycle":"2025-07-10"}

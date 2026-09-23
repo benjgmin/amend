@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"9FD7","entries":[{"cycle":"2025-10-30","from_cycle":"2025-10-02","id":"8c7b6428d309","priority":"action","category":"airport","kind":"changed","summary":"arpt status: O -> CI","source":"APT_BASE","fields":[{"field":"ARPT_STATUS","old":"O","new":"CI"}]}],"first_cycle":"2025-10-30","last_cycle":"2025-10-30"}

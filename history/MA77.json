@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"MA77","entries":[{"cycle":"2026-04-16","from_cycle":"2026-03-19","id":"02965623d3bc","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Blueberry Hill, runway 16/34 1800x100 ft turf","source":"APT_BASE"}],"first_cycle":"2026-04-16","last_cycle":"2026-04-16"}

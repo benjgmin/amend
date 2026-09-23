@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"WN01","entries":[{"cycle":"2025-12-25","from_cycle":"2025-11-27","id":"0ab2938aa9bf","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Seattle Private Number One, runway H1 56x56 ft conc","source":"APT_BASE"}],"first_cycle":"2025-12-25","last_cycle":"2025-12-25"}

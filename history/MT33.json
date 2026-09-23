@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"MT33","entries":[{"cycle":"2026-04-16","from_cycle":"2026-03-19","id":"de15c2a54957","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Bair, runway 04/22 2000x40 ft turf","source":"APT_BASE"}],"first_cycle":"2026-04-16","last_cycle":"2026-04-16"}

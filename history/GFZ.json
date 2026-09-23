@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"GFZ","entries":[{"cycle":"2026-06-11","from_cycle":"2026-05-14","id":"5da676c07e10","priority":"fyi","category":"airport","kind":"changed","summary":"airport phone number changed to 641-743-2183","source":"APT_CON","fields":[{"field":"PHONE_NO","old":"641-743-6384","new":"641-743-2183"}]}],"first_cycle":"2026-06-11","last_cycle":"2026-06-11"}

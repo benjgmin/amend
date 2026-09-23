@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"PWD","entries":[{"cycle":"2025-12-25","from_cycle":"2025-11-27","id":"14a0365b0c67","priority":"fyi","category":"runway","kind":"changed","summary":"runway 12/30: pavement now in good condition","source":"APT_RWY","fields":[{"field":"COND","old":"EXCELLENT","new":"GOOD"}]}],"first_cycle":"2025-12-25","last_cycle":"2025-12-25"}

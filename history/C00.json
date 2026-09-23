@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"C00","entries":[{"cycle":"2026-09-03","from_cycle":"2026-08-06","id":"98dd4a03a51d","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Mercer County, runway 17/35 2480x45 ft asph, CTAF 122.9","source":"APT_BASE"}],"first_cycle":"2026-09-03","last_cycle":"2026-09-03"}

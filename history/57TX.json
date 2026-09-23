@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"57TX","entries":[{"cycle":"2026-07-09","from_cycle":"2026-06-11","id":"1039f4b864d1","priority":"fyi","category":"airport","kind":"changed","summary":"airport phone number changed to 936-581-1865","source":"APT_CON","fields":[{"field":"PHONE_NO","old":"936-581-2231","new":"936-581-1865"}]}],"first_cycle":"2026-07-09","last_cycle":"2026-07-09"}

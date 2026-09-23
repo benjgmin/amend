@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"FBY","entries":[{"cycle":"2026-05-14","from_cycle":"2026-04-16","id":"164c55531606","priority":"action","category":"other","kind":"removed","summary":"removed (hpf_base): hp name=BLOON INT*NE*K3, hp no=1, fix id=BLOON, icao region code=K3, nav id=FBY, nav type=NDB","source":"HPF_BASE"}],"first_cycle":"2026-05-14","last_cycle":"2026-05-14"}

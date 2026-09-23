@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"9G9","entries":[{"cycle":"2024-09-05","from_cycle":"2024-08-08","id":"95a0e762cdf5","priority":"fyi","category":"airport","kind":"changed","summary":"airport phone number changed to 701-251-8370","source":"APT_CON","fields":[{"field":"PHONE_NO","old":"701-320-3655","new":"701-251-8370"}]}],"first_cycle":"2024-09-05","last_cycle":"2024-09-05"}

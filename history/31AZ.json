@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"31AZ","entries":[{"cycle":"2026-07-09","from_cycle":"2026-06-11","id":"dc554744cdde","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Benson, runway 08/26 4800x140 ft dirt","source":"APT_BASE"}],"first_cycle":"2026-07-09","last_cycle":"2026-07-09"}

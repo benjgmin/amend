@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"IA54","entries":[{"cycle":"2024-10-03","from_cycle":"2024-09-05","id":"60407c6ec36d","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Anderson, runway 11/29 2000x60 ft turf","source":"APT_BASE"}],"first_cycle":"2024-10-03","last_cycle":"2024-10-03"}

@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"48S","entries":[{"cycle":"2026-08-06","from_cycle":"2026-07-09","id":"3abe420ef7d3","priority":"fyi","category":"runway","kind":"changed","summary":"runway 11/29: pavement now in good condition","source":"APT_RWY","fields":[{"field":"COND","old":"EXCELLENT","new":"GOOD"}]}],"first_cycle":"2026-08-06","last_cycle":"2026-08-06"}

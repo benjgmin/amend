@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"VT51","entries":[{"cycle":"2026-01-22","from_cycle":"2025-12-25","id":"853d3a0710c1","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Essex Junction, runway H1 90x90 ft conc","source":"APT_BASE"}],"first_cycle":"2026-01-22","last_cycle":"2026-01-22"}

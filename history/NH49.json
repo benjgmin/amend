@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"NH49","entries":[{"cycle":"2026-01-22","from_cycle":"2025-12-25","id":"6a185632e74a","priority":"fyi","category":"airport","kind":"changed","summary":"airport phone number changed to 603-290-2548","source":"APT_CON","fields":[{"field":"PHONE_NO","old":"603-745-2586","new":"603-290-2548"}]}],"first_cycle":"2026-01-22","last_cycle":"2026-01-22"}

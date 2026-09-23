@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"NM29","entries":[{"cycle":"2026-03-19","from_cycle":"2026-02-19","id":"4ea0ae598bd7","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Rosebud, runway 02/20 3000x60 ft dirt","source":"APT_BASE"}],"first_cycle":"2026-03-19","last_cycle":"2026-03-19"}

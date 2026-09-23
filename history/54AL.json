@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"54AL","entries":[{"cycle":"2024-09-05","from_cycle":"2024-08-08","id":"ab9ac3e5c7fd","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Belforest Fld, runway 16/34 2300x80 ft turf, CTAF 122.9","source":"APT_BASE"}],"first_cycle":"2024-09-05","last_cycle":"2024-09-05"}

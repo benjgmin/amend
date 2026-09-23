@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"3V0","entries":[{"cycle":"2024-10-03","from_cycle":"2024-09-05","id":"2c40c41573ab","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Custer State Park, runway 15/33 4000x50 ft asph, CTAF 122.9","source":"APT_BASE"}],"first_cycle":"2024-10-03","last_cycle":"2024-10-03"}

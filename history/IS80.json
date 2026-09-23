@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"IS80","entries":[{"cycle":"2025-02-20","from_cycle":"2025-01-23","id":"dc7b25a2d10d","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Uncle Chuck'S, runway N/S 2300x70 ft turf","source":"APT_BASE"}],"first_cycle":"2025-02-20","last_cycle":"2025-02-20"}

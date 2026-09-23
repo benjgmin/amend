@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"CL63","entries":[{"cycle":"2024-09-05","from_cycle":"2024-08-08","id":"de7345c913b7","priority":"fyi","category":"airport","kind":"changed","summary":"name changed: Bruce Jackson -> Dion Hatch","source":"APT_CON","fields":[{"field":"NAME","old":"BRUCE JACKSON","new":"DION HATCH"}]}],"first_cycle":"2024-09-05","last_cycle":"2024-09-05"}

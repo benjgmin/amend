@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"94NH","entries":[{"cycle":"2024-11-28","from_cycle":"2024-10-31","id":"f0bdf1d7ded2","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Tucker Farm, runway 12/30 900x50 ft turf","source":"APT_BASE"}],"first_cycle":"2024-11-28","last_cycle":"2024-11-28"}

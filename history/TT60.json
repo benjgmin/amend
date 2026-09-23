@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"TT60","entries":[{"cycle":"2025-02-20","from_cycle":"2025-01-23","id":"5bb75e4f8ac9","priority":"fyi","category":"runway","kind":"changed","summary":"runway H1: surface type code: TURF-DIRT -> CONC","source":"APT_RWY","fields":[{"field":"SURFACE_TYPE_CODE","old":"TURF-DIRT","new":"CONC"}]}],"first_cycle":"2025-02-20","last_cycle":"2025-02-20"}

@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"FD00","entries":[{"cycle":"2024-10-31","from_cycle":"2024-10-03","id":"40e4340ec251","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Dade County Mosquito Control, runway H1 50x50 ft conc","source":"APT_BASE"}],"first_cycle":"2024-10-31","last_cycle":"2024-10-31"}

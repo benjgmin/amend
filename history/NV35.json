@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"NV35","entries":[{"cycle":"2025-10-02","from_cycle":"2025-09-04","id":"89f33db54ab7","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Hudson, runway 17/35 5050x100 ft dirt","source":"APT_BASE"}],"first_cycle":"2025-10-02","last_cycle":"2025-10-02"}

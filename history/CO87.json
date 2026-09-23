@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"CO87","entries":[{"cycle":"2024-09-05","from_cycle":"2024-08-08","id":"78d3bc76eca6","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Dbs Air, runway H1 17x17 ft conc","source":"APT_BASE"}],"first_cycle":"2024-09-05","last_cycle":"2024-09-05"}

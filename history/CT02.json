@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"CT02","entries":[{"cycle":"2025-12-25","from_cycle":"2025-11-27","id":"05d3db177816","priority":"fyi","category":"airport","kind":"changed","summary":"airport phone number changed to 860-633-2279","source":"APT_CON","fields":[{"field":"PHONE_NO","old":"860-522-3129","new":"860-633-2279"}]}],"first_cycle":"2025-12-25","last_cycle":"2025-12-25"}

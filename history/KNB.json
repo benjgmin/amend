@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"KNB","entries":[{"cycle":"2024-12-26","from_cycle":"2024-11-28","id":"5e38f79e9401","priority":"fyi","category":"airport","kind":"changed","summary":"name changed: Jeff Turner -> Brennan Jones","source":"APT_CON","fields":[{"field":"NAME","old":"JEFF TURNER","new":"BRENNAN JONES"}]}],"first_cycle":"2024-12-26","last_cycle":"2024-12-26"}

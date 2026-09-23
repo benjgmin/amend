@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"38LL","entries":[{"cycle":"2025-11-27","from_cycle":"2025-10-30","id":"6ac8621e9fae","priority":"fyi","category":"airport","kind":"changed","summary":"name changed: Rick Wolf -> Robert Mackel","source":"APT_CON","fields":[{"field":"NAME","old":"RICK WOLF","new":"ROBERT MACKEL"}]}],"first_cycle":"2025-11-27","last_cycle":"2025-11-27"}

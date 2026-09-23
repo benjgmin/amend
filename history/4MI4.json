@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"4MI4","entries":[{"cycle":"2026-03-19","from_cycle":"2026-02-19","id":"7eb41d1e0c9d","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Davids Landing, runway 18/36 2500x100 ft turf, CTAF 122.9","source":"APT_BASE"}],"first_cycle":"2026-03-19","last_cycle":"2026-03-19"}

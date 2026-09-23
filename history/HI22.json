@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"HI22","entries":[{"cycle":"2025-12-25","from_cycle":"2025-11-27","id":"dac9ac52137f","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Tinian, runway H1 200x200 ft turf","source":"APT_BASE"}],"first_cycle":"2025-12-25","last_cycle":"2025-12-25"}

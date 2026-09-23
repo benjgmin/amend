@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"77OI","entries":[{"cycle":"2026-04-16","from_cycle":"2026-03-19","id":"837fc907aae3","priority":"fyi","category":"airport","kind":"changed","summary":"notam id: (none) -> FDC","source":"APT_BASE","fields":[{"field":"NOTAM_ID","old":"","new":"FDC"}]}],"first_cycle":"2026-04-16","last_cycle":"2026-04-16"}

@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"3GA5","entries":[{"cycle":"2026-03-19","from_cycle":"2026-02-19","id":"d4efa754ac01","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Diamond R Ranch, runway 10/28 1800x60 ft turf","source":"APT_BASE"}],"first_cycle":"2026-03-19","last_cycle":"2026-03-19"}

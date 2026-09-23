@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"MI44","entries":[{"cycle":"2026-07-09","from_cycle":"2026-06-11","id":"f46188f35b5d","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: D J, runway N/S 1950x70 ft turf","source":"APT_BASE"}],"first_cycle":"2026-07-09","last_cycle":"2026-07-09"}

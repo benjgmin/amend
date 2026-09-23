@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"6LL0","entries":[{"cycle":"2025-02-20","from_cycle":"2025-01-23","id":"5d2dd595ff4b","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Williamson, runway N/S 2150x75 ft turf","source":"APT_BASE"}],"first_cycle":"2025-02-20","last_cycle":"2025-02-20"}

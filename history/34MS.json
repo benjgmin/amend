@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"34MS","entries":[{"cycle":"2026-04-16","from_cycle":"2026-03-19","id":"f49812a84b8c","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Colle Fld, runway 07/25 1000x60 ft turf","source":"APT_BASE"}],"first_cycle":"2026-04-16","last_cycle":"2026-04-16"}

@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"22KY","entries":[{"cycle":"2026-02-19","from_cycle":"2026-01-22","id":"d19e2b28cad7","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Churchill Downs, runway H1 250x125 ft brick","source":"APT_BASE"}],"first_cycle":"2026-02-19","last_cycle":"2026-02-19"}

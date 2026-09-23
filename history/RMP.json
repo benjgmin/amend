@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"RMP","entries":[{"cycle":"2025-10-02","from_cycle":"2025-09-04","id":"2bd441bece37","priority":"fyi","category":"airport","kind":"changed","summary":"inspector code: S -> C","source":"APT_BASE","fields":[{"field":"INSPECTOR_CODE","old":"S","new":"C"}]}],"first_cycle":"2025-10-02","last_cycle":"2025-10-02"}

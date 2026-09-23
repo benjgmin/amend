@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"UT66","entries":[{"cycle":"2025-10-02","from_cycle":"2025-09-04","id":"f1c8045e9b70","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Zion Helicopters, runway H2 20x20 ft conc; runway H1 20x20 ft conc","source":"APT_BASE"}],"first_cycle":"2025-10-02","last_cycle":"2025-10-02"}

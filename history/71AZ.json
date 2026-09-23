@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"71AZ","entries":[{"cycle":"2025-06-12","from_cycle":"2025-05-15","id":"8532690313aa","priority":"fyi","category":"airport","kind":"changed","summary":"mag hemis: E -> (none)","source":"APT_BASE","fields":[{"field":"MAG_HEMIS","old":"E","new":""}]}],"first_cycle":"2025-06-12","last_cycle":"2025-06-12"}

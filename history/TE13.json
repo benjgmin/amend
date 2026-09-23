@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"TE13","entries":[{"cycle":"2026-07-09","from_cycle":"2026-06-11","id":"2ea5eac09d31","priority":"fyi","category":"airport","kind":"changed","summary":"airport phone number changed to 210-216-7040","source":"APT_CON","fields":[{"field":"PHONE_NO","old":"830-931-3049","new":"210-216-7040"}]}],"first_cycle":"2026-07-09","last_cycle":"2026-07-09"}

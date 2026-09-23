@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"NH38","entries":[{"cycle":"2025-05-15","from_cycle":"2025-04-17","id":"89a709777958","priority":"fyi","category":"airport","kind":"changed","summary":"name changed: Leavitt -> Dolittle Fld","source":"APT_BASE","fields":[{"field":"ARPT_NAME","old":"LEAVITT","new":"DOLITTLE FLD"}]}],"first_cycle":"2025-05-15","last_cycle":"2025-05-15"}

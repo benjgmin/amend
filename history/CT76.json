@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"CT76","entries":[{"cycle":"2025-09-04","from_cycle":"2025-08-07","id":"51f7a87e9c93","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Chase Manhattan Bank Of Ct, runway H1 325x140 ft turf","source":"APT_BASE"}],"first_cycle":"2025-09-04","last_cycle":"2025-09-04"}

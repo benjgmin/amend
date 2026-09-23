@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"96GA","entries":[{"cycle":"2026-03-19","from_cycle":"2026-02-19","id":"c41187245bb3","priority":"fyi","category":"airport","kind":"changed","summary":"address1: P.O. BOX 125 -> 417 MIDLAND ST","source":"APT_CON","fields":[{"field":"ADDRESS1","old":"P.O. BOX 125","new":"417 MIDLAND ST"}]}],"first_cycle":"2026-03-19","last_cycle":"2026-03-19"}

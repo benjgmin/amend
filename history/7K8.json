@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"7K8","entries":[{"cycle":"2024-12-26","from_cycle":"2024-11-28","id":"da3ab7975fd7","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Martin Fld, runway 14/32 3320x50 ft asph, CTAF 122.8","source":"APT_BASE"}],"first_cycle":"2024-12-26","last_cycle":"2024-12-26"}

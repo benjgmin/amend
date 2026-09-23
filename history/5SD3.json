@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"5SD3","entries":[{"cycle":"2026-02-19","from_cycle":"2026-01-22","id":"b66ace186f6e","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Bowdle Muni, runway 13/31 3600x150 ft turf, CTAF 122.9","source":"APT_BASE"}],"first_cycle":"2026-02-19","last_cycle":"2026-02-19"}

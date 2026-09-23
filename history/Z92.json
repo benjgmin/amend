@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"Z92","entries":[{"cycle":"2024-11-28","from_cycle":"2024-10-31","id":"f7a65fc83990","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Harsens Island, runway 04/22 2200x60 ft turf, CTAF 122.9","source":"APT_BASE"}],"first_cycle":"2024-11-28","last_cycle":"2024-11-28"}

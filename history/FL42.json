@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"FL42","entries":[{"cycle":"2025-11-27","from_cycle":"2025-10-30","id":"3f93a0dae0ff","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: King Seaaero, runway ALL/WAY 4500x4500 ft water","source":"APT_BASE"}],"first_cycle":"2025-11-27","last_cycle":"2025-11-27"}

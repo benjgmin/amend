@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"VT16","entries":[{"cycle":"2025-01-23","from_cycle":"2024-12-26","id":"7ad1b088aee0","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Velco, runway H1 195x125 ft asph","source":"APT_BASE"}],"first_cycle":"2025-01-23","last_cycle":"2025-01-23"}

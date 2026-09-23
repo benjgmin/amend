@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"12IS","entries":[{"cycle":"2025-08-07","from_cycle":"2025-07-10","id":"f520256fe391","priority":"fyi","category":"airport","kind":"changed","summary":"name changed: Joe Seier -> Nathan Hall","source":"APT_CON","fields":[{"field":"NAME","old":"JOE SEIER","new":"NATHAN HALL"}]}],"first_cycle":"2025-08-07","last_cycle":"2025-08-07"}

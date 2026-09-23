@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"LL53","entries":[{"cycle":"2024-11-28","from_cycle":"2024-10-31","id":"4f574cd065b5","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Olson, runway NE/SW 2400x70 ft asph-turf","source":"APT_BASE"}],"first_cycle":"2024-11-28","last_cycle":"2024-11-28"}

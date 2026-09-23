@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"OG47","entries":[{"cycle":"2025-10-02","from_cycle":"2025-09-04","id":"ac2fbfe2040d","priority":"fyi","category":"airport","kind":"changed","summary":"address2: BRIDGEPORT LA -> (none)","source":"APT_CON","fields":[{"field":"ADDRESS2","old":"BRIDGEPORT LA","new":""}]}],"first_cycle":"2025-10-02","last_cycle":"2025-10-02"}

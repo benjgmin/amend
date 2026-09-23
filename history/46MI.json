@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"46MI","entries":[{"cycle":"2025-10-30","from_cycle":"2025-10-02","id":"2a3b20df53a8","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Rotors & Wings, runway 18/36 2400x100 ft turf","source":"APT_BASE"}],"first_cycle":"2025-10-30","last_cycle":"2025-10-30"}

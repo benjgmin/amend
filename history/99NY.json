@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"99NY","entries":[{"cycle":"2026-03-19","from_cycle":"2026-02-19","id":"fd036d04d142","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Hibbard'S, runway 01/19 1700x100 ft turf","source":"APT_BASE"}],"first_cycle":"2026-03-19","last_cycle":"2026-03-19"}

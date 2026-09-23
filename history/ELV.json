@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"ELV","entries":[{"cycle":"2024-10-03","from_cycle":"2024-09-05","id":"87bb2be78dd6","priority":"fyi","category":"airport","kind":"changed","summary":"wind indcr flag: (none) -> Y","source":"APT_BASE","fields":[{"field":"WIND_INDCR_FLAG","old":"","new":"Y"}]}],"first_cycle":"2024-10-03","last_cycle":"2024-10-03"}

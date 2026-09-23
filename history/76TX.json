@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"76TX","entries":[{"cycle":"2026-06-11","from_cycle":"2026-05-14","id":"4885d2a4d32c","priority":"fyi","category":"airport","kind":"changed","summary":"mag hemis: (none) -> E","source":"APT_BASE","fields":[{"field":"MAG_HEMIS","old":"","new":"E"}]}],"first_cycle":"2026-06-11","last_cycle":"2026-06-11"}

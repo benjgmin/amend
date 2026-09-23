@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"NC42","entries":[{"cycle":"2026-07-09","from_cycle":"2026-06-11","id":"98f276b3ea5d","priority":"fyi","category":"airport","kind":"changed","summary":"airport phone number changed to 336-468-7014","source":"APT_CON","fields":[{"field":"PHONE_NO","old":"336-463-2303","new":"336-468-7014"}]}],"first_cycle":"2026-07-09","last_cycle":"2026-07-09"}

@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"LL09","entries":[{"cycle":"2025-01-23","from_cycle":"2024-12-26","id":"3dd86fed36de","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Air Estates Inc, runway N/S 2000x150 ft turf","source":"APT_BASE"}],"first_cycle":"2025-01-23","last_cycle":"2025-01-23"}

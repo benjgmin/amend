@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"70TS","entries":[{"cycle":"2026-06-11","from_cycle":"2026-05-14","id":"3dad0af290aa","priority":"fyi","category":"airport","kind":"changed","summary":"name changed: Juan Hertad -> Juan Hurtado","source":"APT_CON","fields":[{"field":"NAME","old":"JUAN HERTAD","new":"JUAN HURTADO"}]}],"first_cycle":"2026-06-11","last_cycle":"2026-06-11"}

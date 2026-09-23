@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"VG43","entries":[{"cycle":"2026-03-19","from_cycle":"2026-02-19","id":"8587fc697570","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Arrowpoint, runway 13/31 1125x60 ft turf","source":"APT_BASE"}],"first_cycle":"2026-03-19","last_cycle":"2026-03-19"}

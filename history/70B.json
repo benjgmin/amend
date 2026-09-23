@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"70B","entries":[{"cycle":"2024-10-03","from_cycle":"2024-09-05","id":"0a5e6f321735","priority":"fyi","category":"airport","kind":"changed","summary":"name changed: Jim Strang -> Andy Hartt","source":"APT_CON","fields":[{"field":"NAME","old":"JIM STRANG","new":"ANDY HARTT"}]}],"first_cycle":"2024-10-03","last_cycle":"2024-10-03"}

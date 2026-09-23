@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"2GE7","entries":[{"cycle":"2026-03-19","from_cycle":"2026-02-19","id":"f0b9c517b5cf","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Petty Farms, runway 01/19 2500x50 ft turf, CTAF 122.9","source":"APT_BASE"}],"first_cycle":"2026-03-19","last_cycle":"2026-03-19"}

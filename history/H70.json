@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"H70","entries":[{"cycle":"2025-10-02","from_cycle":"2025-09-04","id":"2e68389b235c","priority":"fyi","category":"airport","kind":"changed","summary":"airport phone number changed to 806-753-7866","source":"APT_CON","fields":[{"field":"PHONE_NO","old":"(806) 753-7866","new":"806-753-7866"}]}],"first_cycle":"2025-10-02","last_cycle":"2025-10-02"}

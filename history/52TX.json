@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"52TX","entries":[{"cycle":"2025-07-10","from_cycle":"2025-06-12","id":"abc65f8cd762","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Hercules Marine Services Corp, runway H1 39x32 ft mats","source":"APT_BASE"}],"first_cycle":"2025-07-10","last_cycle":"2025-07-10"}

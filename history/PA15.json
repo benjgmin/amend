@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"PA15","entries":[{"cycle":"2026-04-16","from_cycle":"2026-03-19","id":"80c656a89c93","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Couillard, runway 10W/28W 3000x200 ft water","source":"APT_BASE"}],"first_cycle":"2026-04-16","last_cycle":"2026-04-16"}

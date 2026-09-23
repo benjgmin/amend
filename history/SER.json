@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"SER","entries":[{"cycle":"2025-07-10","from_cycle":"2025-06-12","id":"74f0d0fc98a3","priority":"fyi","category":"runway","kind":"changed","summary":"runway 05: ils type: LOCALIZER -> (none)","source":"APT_RWY_END","fields":[{"field":"ILS_TYPE","old":"LOCALIZER","new":""}]}],"first_cycle":"2025-07-10","last_cycle":"2025-07-10"}

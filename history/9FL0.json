@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"9FL0","entries":[{"cycle":"2025-03-20","from_cycle":"2025-02-20","id":"440c99454305","priority":"fyi","category":"airport","kind":"changed","summary":"landing fee removed","source":"APT_BASE","fields":[{"field":"LNDG_FEE_FLAG","old":"Y","new":"N"}]}],"first_cycle":"2025-03-20","last_cycle":"2025-03-20"}

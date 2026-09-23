@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"4KS5","entries":[{"cycle":"2026-02-19","from_cycle":"2026-01-22","id":"d835bf4d4fa0","priority":"action","category":"airport","kind":"changed","summary":"arpt status: O -> CI","source":"APT_BASE","fields":[{"field":"ARPT_STATUS","old":"O","new":"CI"}]}],"first_cycle":"2026-02-19","last_cycle":"2026-02-19"}

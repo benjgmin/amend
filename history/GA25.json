@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"GA25","entries":[{"cycle":"2024-12-26","from_cycle":"2024-11-28","id":"438db4bddd73","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Fargo, runway 15/33 2200x200 ft turf","source":"APT_BASE"}],"first_cycle":"2024-12-26","last_cycle":"2024-12-26"}

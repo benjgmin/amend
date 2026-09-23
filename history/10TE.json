@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"10TE","entries":[{"cycle":"2026-05-14","from_cycle":"2026-04-16","id":"e5bb0ed95ffd","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Gottwald Fld, runway 14/32 1975x50 ft turf","source":"APT_BASE"}],"first_cycle":"2026-05-14","last_cycle":"2026-05-14"}

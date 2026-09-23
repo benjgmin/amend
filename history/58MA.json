@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"58MA","entries":[{"cycle":"2025-11-27","from_cycle":"2025-10-30","id":"8ca3e2dcb185","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Boston Scientific Marlboro, runway H1 60x60 ft conc","source":"APT_BASE"}],"first_cycle":"2025-11-27","last_cycle":"2025-11-27"}

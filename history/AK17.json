@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"AK17","entries":[{"cycle":"2025-12-25","from_cycle":"2025-11-27","id":"71b423249576","priority":"fyi","category":"airport","kind":"changed","summary":"mag hemis: E -> (none)","source":"APT_BASE","fields":[{"field":"MAG_HEMIS","old":"E","new":""}]}],"first_cycle":"2025-12-25","last_cycle":"2025-12-25"}

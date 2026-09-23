@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"TKE","entries":[{"cycle":"2026-04-16","from_cycle":"2026-03-19","id":"de7b38855a94","priority":"fyi","category":"airport","kind":"changed","summary":"icao id: (none) -> PAJJ","source":"APT_BASE","fields":[{"field":"ICAO_ID","old":"","new":"PAJJ"}]}],"first_cycle":"2026-04-16","last_cycle":"2026-04-16"}

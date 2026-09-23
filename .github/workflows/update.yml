@@ -6,7 +6,7 @@ on:
   workflow_dispatch:           # "Run workflow" button in the Actions tab
 
 permissions:
-  contents: read
+  contents: write              # to commit new history
   pages: write
   id-token: write
 
@@ -25,24 +25,39 @@ jobs:
         with:
           python-version: "3.12"
 
-      # keep translated remarks between runs so each remark is only paid for once
+      - name: tests
+        run: python -m unittest discover -s tests -t .
+
+      # translated remarks, so each remark is only paid for once
       - uses: actions/cache@v4
         with:
           path: remark_cache.json
           key: remark-cache-${{ github.run_id }}
           restore-keys: remark-cache-
 
-      # FAA zips for the cycles we need (saves re-downloading every day)
+      # FAA downloads
       - uses: actions/cache@v4
         with:
           path: data
           key: faa-data-${{ github.run_id }}
           restore-keys: faa-data-
 
-      - name: build site
+      - name: append new cycles to history
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-        run: python run_cycle.py
+        run: python -m cyclewatch history --llm
+
+      - name: commit history
+        run: |
+          git config user.name "cyclewatch-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add history
+          git diff --cached --quiet || (git commit -m "history: new cycle" && git push)
+
+      - name: build site (latest + history)
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: python -m cyclewatch latest
 
       - name: trim old FAA files from cache
         run: ls -t data/*_CSV.zip 2>/dev/null | tail -n +4 | xargs -r rm -f

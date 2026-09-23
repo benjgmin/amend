@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"1D1","entries":[{"cycle":"2026-07-09","from_cycle":"2026-06-11","id":"5b914ba252c5","priority":"fyi","category":"airport","kind":"changed","summary":"other services: AGRI -> AGRI,INSTR","source":"APT_BASE","fields":[{"field":"OTHER_SERVICES","old":"AGRI","new":"AGRI,INSTR"}]}],"first_cycle":"2026-07-09","last_cycle":"2026-07-09"}

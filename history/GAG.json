@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"GAG","entries":[{"cycle":"2026-04-16","from_cycle":"2026-03-19","id":"b572dbd8503b","priority":"action","category":"weather","kind":"changed","summary":"AWOS/ASOS phone number changed to 580-300-0735","source":"AWOS","fields":[{"field":"PHONE_NO","old":"580-923-7581","new":"580-300-0735"}]}],"first_cycle":"2026-04-16","last_cycle":"2026-04-16"}

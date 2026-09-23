@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"25II","entries":[{"cycle":"2025-10-30","from_cycle":"2025-10-02","id":"ca1cf4249495","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Gm, runway H1 80x80 ft conc","source":"APT_BASE"}],"first_cycle":"2025-10-30","last_cycle":"2025-10-30"}

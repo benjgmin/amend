@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"9AK9","entries":[{"cycle":"2026-03-19","from_cycle":"2026-02-19","id":"f74bce5a243b","priority":"fyi","category":"airport","kind":"changed","summary":"mag hemis: E -> (none)","source":"APT_BASE","fields":[{"field":"MAG_HEMIS","old":"E","new":""}]}],"first_cycle":"2026-03-19","last_cycle":"2026-03-19"}

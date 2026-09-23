@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"OI42","entries":[{"cycle":"2026-08-06","from_cycle":"2026-07-09","id":"3b9e4b729868","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: D A Chandler, runway 09/27 2000x75 ft turf","source":"APT_BASE"}],"first_cycle":"2026-08-06","last_cycle":"2026-08-06"}

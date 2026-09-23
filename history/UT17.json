@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"UT17","entries":[{"cycle":"2026-04-16","from_cycle":"2026-03-19","id":"1b78d634aedd","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Pfeiler Ranch, runway 08/26 4200x50 ft dirt","source":"APT_BASE"}],"first_cycle":"2026-04-16","last_cycle":"2026-04-16"}

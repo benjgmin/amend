@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"75WV","entries":[{"cycle":"2026-03-19","from_cycle":"2026-02-19","id":"bf84496aaf4c","priority":"fyi","category":"airport","kind":"changed","summary":"wind indcr flag: Y -> N","source":"APT_BASE","fields":[{"field":"WIND_INDCR_FLAG","old":"Y","new":"N"}]}],"first_cycle":"2026-03-19","last_cycle":"2026-03-19"}

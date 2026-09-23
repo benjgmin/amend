@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"67TT","entries":[{"cycle":"2025-01-23","from_cycle":"2024-12-26","id":"9ba88d9708c8","priority":"fyi","category":"airport","kind":"changed","summary":"asp anlys dtrm code: CONDL -> OBJECTIONABLE","source":"APT_BASE","fields":[{"field":"ASP_ANLYS_DTRM_CODE","old":"CONDL","new":"OBJECTIONABLE"}]}],"first_cycle":"2025-01-23","last_cycle":"2025-01-23"}

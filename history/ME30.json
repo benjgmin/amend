@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"ME30","entries":[{"cycle":"2026-05-14","from_cycle":"2026-04-16","id":"9a6559b570f3","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Greenville Forestry, runway NW/SE 6000x1200 ft water; runway N/S 5000x1000 ft water","source":"APT_BASE"}],"first_cycle":"2026-05-14","last_cycle":"2026-05-14"}

@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"12CO","entries":[{"cycle":"2025-12-25","from_cycle":"2025-11-27","id":"4a0d2975a790","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Omega 1, runway 17/35 1400x50 ft dirt","source":"APT_BASE"}],"first_cycle":"2025-12-25","last_cycle":"2025-12-25"}

@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"00F","entries":[{"cycle":"2025-10-30","from_cycle":"2025-10-02","id":"28a087db9d70","priority":"fyi","category":"runway","kind":"changed","summary":"runway 10/28: pavement now in good condition","source":"APT_RWY","fields":[{"field":"COND","old":"EXCELLENT","new":"GOOD"}]}],"first_cycle":"2025-10-30","last_cycle":"2025-10-30"}

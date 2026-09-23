@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"LS00","entries":[{"cycle":"2026-02-19","from_cycle":"2026-01-22","id":"cbd5f55e2c99","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Whitehead, runway 09/27 1000x200 ft turf","source":"APT_BASE"}],"first_cycle":"2026-02-19","last_cycle":"2026-02-19"}

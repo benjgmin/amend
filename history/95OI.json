@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"95OI","entries":[{"cycle":"2025-09-04","from_cycle":"2025-08-07","id":"3c34b959af3a","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: C C A, runway H1 20x20 ft conc","source":"APT_BASE"}],"first_cycle":"2025-09-04","last_cycle":"2025-09-04"}

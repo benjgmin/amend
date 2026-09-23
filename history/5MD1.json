@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"5MD1","entries":[{"cycle":"2025-08-07","from_cycle":"2025-07-10","id":"dc1453fbbb74","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Brooklandville, runway H1 90x90 ft conc; runway 08/26 1200x120 ft turf","source":"APT_BASE"}],"first_cycle":"2025-08-07","last_cycle":"2025-08-07"}

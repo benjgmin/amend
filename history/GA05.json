@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"GA05","entries":[{"cycle":"2025-06-12","from_cycle":"2025-05-15","id":"b4eeb42c9b1e","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Ramada Inn Antebellum, runway H1 400x400 ft turf","source":"APT_BASE"}],"first_cycle":"2025-06-12","last_cycle":"2025-06-12"}

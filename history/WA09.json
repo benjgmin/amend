@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"WA09","entries":[{"cycle":"2024-10-03","from_cycle":"2024-09-05","id":"0b97144cd586","priority":"fyi","category":"airport","kind":"changed","summary":"name changed: Dan Root -> Mike Otis","source":"APT_CON","fields":[{"field":"NAME","old":"DAN ROOT","new":"MIKE OTIS"}]}],"first_cycle":"2024-10-03","last_cycle":"2024-10-03"}

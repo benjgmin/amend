@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"TX55","entries":[{"cycle":"2025-04-17","from_cycle":"2025-03-20","id":"0b060915be90","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Southland Center, runway H1 60x60 ft conc","source":"APT_BASE"}],"first_cycle":"2025-04-17","last_cycle":"2025-04-17"}

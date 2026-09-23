@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"52Z","entries":[{"cycle":"2024-10-31","from_cycle":"2024-10-03","id":"e4700a10e0e8","priority":"fyi","category":"airport","kind":"changed","summary":"other services: CARGO -> (none)","source":"APT_BASE","fields":[{"field":"OTHER_SERVICES","old":"CARGO","new":""}]}],"first_cycle":"2024-10-31","last_cycle":"2024-10-31"}

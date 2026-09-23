@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"MD33","entries":[{"cycle":"2026-04-16","from_cycle":"2026-03-19","id":"7a21a19da90a","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Dorchester General Hospital, runway H1 140x140 ft conc","source":"APT_BASE"}],"first_cycle":"2026-04-16","last_cycle":"2026-04-16"}

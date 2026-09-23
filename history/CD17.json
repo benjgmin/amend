@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"CD17","entries":[{"cycle":"2025-12-25","from_cycle":"2025-11-27","id":"1fc93dcf6b8b","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Bijou Basin, runway 08/26 2200x30 ft dirt","source":"APT_BASE"}],"first_cycle":"2025-12-25","last_cycle":"2025-12-25"}

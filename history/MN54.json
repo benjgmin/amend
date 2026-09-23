@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"MN54","entries":[{"cycle":"2025-04-17","from_cycle":"2025-03-20","id":"7b9fae4e8830","priority":"fyi","category":"airport","kind":"changed","summary":"county name: ISANTI -> ITASCA","source":"APT_BASE","fields":[{"field":"COUNTY_NAME","old":"ISANTI","new":"ITASCA"}]}],"first_cycle":"2025-04-17","last_cycle":"2025-04-17"}

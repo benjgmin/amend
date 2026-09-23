@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"MO60","entries":[{"cycle":"2024-12-26","from_cycle":"2024-11-28","id":"95777227c111","priority":"fyi","category":"runway","kind":"changed","summary":"runway H1: rwy end lat min: 41 -> 31","source":"APT_RWY_END","fields":[{"field":"RWY_END_LAT_MIN","old":"41","new":"31"}]}],"first_cycle":"2024-12-26","last_cycle":"2024-12-26"}

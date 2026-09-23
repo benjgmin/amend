@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"2UT5","entries":[{"cycle":"2026-04-16","from_cycle":"2026-03-19","id":"5c183ed71b46","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Charlevoix, runway 02/20 400x80 ft dirt","source":"APT_BASE"}],"first_cycle":"2026-04-16","last_cycle":"2026-04-16"}

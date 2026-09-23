@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"IA71","entries":[{"cycle":"2025-07-10","from_cycle":"2025-06-12","id":"8d78d315b204","priority":"fyi","category":"airport","kind":"changed","summary":"name changed: Chief Greg Chia -> Aaron Hurt","source":"APT_CON","fields":[{"field":"NAME","old":"CHIEF GREG CHIA","new":"AARON HURT"}]}],"first_cycle":"2025-07-10","last_cycle":"2025-07-10"}

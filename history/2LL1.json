@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"2LL1","entries":[{"cycle":"2025-03-20","from_cycle":"2025-02-20","id":"3eb4bb6c30da","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Cwian Fld, runway N/S 2160x80 ft turf","source":"APT_BASE"}],"first_cycle":"2025-03-20","last_cycle":"2025-03-20"}

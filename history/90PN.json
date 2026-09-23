@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"90PN","entries":[{"cycle":"2025-10-30","from_cycle":"2025-10-02","id":"45c45066a323","priority":"fyi","category":"airport","kind":"changed","summary":"airport phone number changed to 814-247-3247","source":"APT_CON","fields":[{"field":"PHONE_NO","old":"814-247-3100","new":"814-247-3247"}]}],"first_cycle":"2025-10-30","last_cycle":"2025-10-30"}

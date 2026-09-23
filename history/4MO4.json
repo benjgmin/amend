@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"4MO4","entries":[{"cycle":"2026-03-19","from_cycle":"2026-02-19","id":"c0f3543f2f4e","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Liberty Landing, runway 04/22 2400x36 ft grvl","source":"APT_BASE"}],"first_cycle":"2026-03-19","last_cycle":"2026-03-19"}

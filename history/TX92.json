@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"TX92","entries":[{"cycle":"2026-09-03","from_cycle":"2026-08-06","id":"c9cb2f184539","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Green, runway 04/22 1800x30 ft turf","source":"APT_BASE"}],"first_cycle":"2026-09-03","last_cycle":"2026-09-03"}

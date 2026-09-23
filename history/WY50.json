@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"WY50","entries":[{"cycle":"2025-12-25","from_cycle":"2025-11-27","id":"565167e20858","priority":"action","category":"airport","kind":"changed","summary":"arpt status: O -> CI","source":"APT_BASE","fields":[{"field":"ARPT_STATUS","old":"O","new":"CI"}]}],"first_cycle":"2025-12-25","last_cycle":"2025-12-25"}

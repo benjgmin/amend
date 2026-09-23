@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"LA21","entries":[{"cycle":"2026-02-19","from_cycle":"2026-01-22","id":"ddfd0de1587e","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Chloe, runway 15/33 4000x70 ft turf","source":"APT_BASE"}],"first_cycle":"2026-02-19","last_cycle":"2026-02-19"}

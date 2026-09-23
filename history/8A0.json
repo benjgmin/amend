@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"8A0","entries":[{"cycle":"2025-04-17","from_cycle":"2025-03-20","id":"5fdacab89f61","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Albertville Rgnl/Thomas J Brumlik Fld, runway 05/23 6114x100 ft asph, CTAF 123.0","source":"APT_BASE"}],"first_cycle":"2025-04-17","last_cycle":"2025-04-17"}

@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"5OK7","entries":[{"cycle":"2025-10-02","from_cycle":"2025-09-04","id":"e4281eba11d4","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Jernigan Drilling, runway H1 25x25 ft gravel","source":"APT_BASE"}],"first_cycle":"2025-10-02","last_cycle":"2025-10-02"}

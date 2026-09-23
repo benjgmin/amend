@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"11K","entries":[{"cycle":"2024-10-03","from_cycle":"2024-09-05","id":"e382abf28270","priority":"fyi","category":"airport","kind":"changed","summary":"inspector code: N -> S","source":"APT_BASE","fields":[{"field":"INSPECTOR_CODE","old":"N","new":"S"}]}],"first_cycle":"2024-10-03","last_cycle":"2024-10-03"}

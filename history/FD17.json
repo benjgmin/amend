@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"FD17","entries":[{"cycle":"2025-06-12","from_cycle":"2025-05-15","id":"9927fea63117","priority":"fyi","category":"airport","kind":"changed","summary":"airport phone number changed to 305-230-5252","source":"APT_CON","fields":[{"field":"PHONE_NO","old":"305-230-5174","new":"305-230-5252"}]}],"first_cycle":"2025-06-12","last_cycle":"2025-06-12"}

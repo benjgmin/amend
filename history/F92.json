@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"F92","entries":[{"cycle":"2025-05-15","from_cycle":"2025-04-17","id":"a082d750d244","priority":"fyi","category":"runway","kind":"changed","summary":"runway 36: right hand traffic pat flag: Y -> N","source":"APT_RWY_END","fields":[{"field":"RIGHT_HAND_TRAFFIC_PAT_FLAG","old":"Y","new":"N"}]}],"first_cycle":"2025-05-15","last_cycle":"2025-05-15"}

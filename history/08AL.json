@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"08AL","entries":[{"cycle":"2026-03-19","from_cycle":"2026-02-19","id":"99f876505369","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Little Lagoon, runway 09W/27W 4000x200 ft water","source":"APT_BASE"}],"first_cycle":"2026-03-19","last_cycle":"2026-03-19"}

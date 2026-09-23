@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"C92","entries":[{"cycle":"2025-06-12","from_cycle":"2025-05-15","id":"af9766e3bef0","priority":"action","category":"other","kind":"changed","summary":"GSH navaid: now a TACAN (was a VORTAC)","source":"PJA_BASE","fields":[{"field":"NAV_TYPE","old":"VORTAC","new":"TACAN"}]}],"first_cycle":"2025-06-12","last_cycle":"2025-06-12"}

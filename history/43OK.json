@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"43OK","entries":[{"cycle":"2024-09-05","from_cycle":"2024-08-08","id":"08199004908a","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Biggs Skypatch, runway N/S 4200x60 ft turf","source":"APT_BASE"}],"first_cycle":"2024-09-05","last_cycle":"2024-09-05"}

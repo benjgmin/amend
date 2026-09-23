@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"Y63","entries":[{"cycle":"2025-10-02","from_cycle":"2025-09-04","id":"538c022f9cce","priority":"fyi","category":"runway","kind":"changed","summary":"runway 14/32: pavement now in fair condition","source":"APT_RWY","fields":[{"field":"COND","old":"GOOD","new":"FAIR"}]}],"first_cycle":"2025-10-02","last_cycle":"2025-10-02"}

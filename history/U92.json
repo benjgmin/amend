@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"U92","entries":[{"cycle":"2026-09-03","from_cycle":"2026-08-06","id":"f89df0550ed2","priority":"fyi","category":"airport","kind":"changed","summary":"name changed: Div Admin -> Id Div Of Aeronautics","source":"APT_CON","fields":[{"field":"NAME","old":"DIV ADMIN","new":"ID DIV OF AERONAUTICS"}]}],"first_cycle":"2026-09-03","last_cycle":"2026-09-03"}

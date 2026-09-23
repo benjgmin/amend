@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"7C5","entries":[{"cycle":"2025-07-10","from_cycle":"2025-06-12","id":"4cd69f070f9d","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Sig Fld, runway 18/36 2600x105 ft turf, CTAF 122.9","source":"APT_BASE"}],"first_cycle":"2025-07-10","last_cycle":"2025-07-10"}

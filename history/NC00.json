@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"NC00","entries":[{"cycle":"2026-05-14","from_cycle":"2026-04-16","id":"fde7ce1c6ada","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Moretz Riverside Landing, runway 18/36 2000x24 ft asph","source":"APT_BASE"}],"first_cycle":"2026-05-14","last_cycle":"2026-05-14"}

@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"OK12","entries":[{"cycle":"2025-10-30","from_cycle":"2025-10-02","id":"970118247c37","priority":"fyi","category":"airport","kind":"changed","summary":"airport phone number changed to 580-695-7002","source":"APT_CON","fields":[{"field":"PHONE_NO","old":"580-875-3970","new":"580-695-7002"}]}],"first_cycle":"2025-10-30","last_cycle":"2025-10-30"}

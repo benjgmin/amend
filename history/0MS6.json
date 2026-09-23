@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"0MS6","entries":[{"cycle":"2026-01-22","from_cycle":"2025-12-25","id":"2f08204f1c83","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Levert, runway H1 240x150 ft turf","source":"APT_BASE"}],"first_cycle":"2026-01-22","last_cycle":"2026-01-22"}

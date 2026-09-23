@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"IL03","entries":[{"cycle":"2024-09-05","from_cycle":"2024-08-08","id":"34a032659110","priority":"fyi","category":"airport","kind":"changed","summary":"name changed: Rick Chaussey -> Kevin Loss","source":"APT_CON","fields":[{"field":"NAME","old":"RICK CHAUSSEY","new":"KEVIN LOSS"}]}],"first_cycle":"2024-09-05","last_cycle":"2024-09-05"}

@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"SC89","entries":[{"cycle":"2026-04-16","from_cycle":"2026-03-19","id":"5f3275ad4f07","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Price, runway 04/22 2500x125 ft turf","source":"APT_BASE"}],"first_cycle":"2026-04-16","last_cycle":"2026-04-16"}

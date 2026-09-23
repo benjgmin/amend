@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"3LA1","entries":[{"cycle":"2026-02-19","from_cycle":"2026-01-22","id":"6ad894b6e636","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Wilder, runway 02/20 2000x85 ft turf","source":"APT_BASE"}],"first_cycle":"2026-02-19","last_cycle":"2026-02-19"}

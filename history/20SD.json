@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"20SD","entries":[{"cycle":"2026-04-16","from_cycle":"2026-03-19","id":"e94091c9c147","priority":"fyi","category":"airport","kind":"changed","summary":"airport phone number changed to 507-829-9001","source":"APT_CON","fields":[{"field":"PHONE_NO","old":"605-479-3005","new":"507-829-9001"}]}],"first_cycle":"2026-04-16","last_cycle":"2026-04-16"}

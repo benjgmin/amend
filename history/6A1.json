@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"6A1","entries":[{"cycle":"2024-11-28","from_cycle":"2024-10-31","id":"6638a5eff908","priority":"fyi","category":"runway","kind":"changed","summary":"runway 01: visual glide path angle: 2.75 -> 3","source":"APT_RWY_END","fields":[{"field":"VISUAL_GLIDE_PATH_ANGLE","old":"2.75","new":"3"}]}],"first_cycle":"2024-11-28","last_cycle":"2024-11-28"}

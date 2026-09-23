@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"SC19","entries":[{"cycle":"2026-04-16","from_cycle":"2026-03-19","id":"a6db79ef721a","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Lamar, runway NE/SW 3150x75 ft turf","source":"APT_BASE"}],"first_cycle":"2026-04-16","last_cycle":"2026-04-16"}

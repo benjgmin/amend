@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"80FA","entries":[{"cycle":"2025-10-30","from_cycle":"2025-10-02","id":"ed939a4879bc","priority":"action","category":"airport","kind":"changed","summary":"arpt status: O -> CI","source":"APT_BASE","fields":[{"field":"ARPT_STATUS","old":"O","new":"CI"}]}],"first_cycle":"2025-10-30","last_cycle":"2025-10-30"}

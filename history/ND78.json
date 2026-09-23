@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"ND78","entries":[{"cycle":"2024-10-31","from_cycle":"2024-10-03","id":"6bc4fb83e1c9","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Wilcox Farm, runway N/S 2600x50 ft turf","source":"APT_BASE"}],"first_cycle":"2024-10-31","last_cycle":"2024-10-31"}

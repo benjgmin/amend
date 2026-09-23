@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"JY28","entries":[{"cycle":"2025-09-04","from_cycle":"2025-08-07","id":"44c6007215c1","priority":"fyi","category":"airport","kind":"changed","summary":"name changed: James Walsh -> Bill Seip","source":"APT_CON","fields":[{"field":"NAME","old":"JAMES WALSH","new":"BILL SEIP"}]}],"first_cycle":"2025-09-04","last_cycle":"2025-09-04"}

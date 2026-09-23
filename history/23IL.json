@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"23IL","entries":[{"cycle":"2024-09-05","from_cycle":"2024-08-08","id":"115a619aee35","priority":"fyi","category":"airport","kind":"changed","summary":"name changed: Jennifer Brennan -> Marty Lutz","source":"APT_CON","fields":[{"field":"NAME","old":"JENNIFER BRENNAN","new":"MARTY LUTZ"}]}],"first_cycle":"2024-09-05","last_cycle":"2024-09-05"}

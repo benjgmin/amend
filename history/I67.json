@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"I67","entries":[{"cycle":"2025-05-15","from_cycle":"2025-04-17","id":"7257d5478f05","priority":"fyi","category":"airport","kind":"changed","summary":"notam id: DAY -> I67","source":"APT_BASE","fields":[{"field":"NOTAM_ID","old":"DAY","new":"I67"}]}],"first_cycle":"2025-05-15","last_cycle":"2025-05-15"}

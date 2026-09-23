@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"OH47","entries":[{"cycle":"2025-05-15","from_cycle":"2025-04-17","id":"f55ad502a851","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: District 9, runway H1 75x75 ft asph-conc, CTAF 122.9","source":"APT_BASE"}],"first_cycle":"2025-05-15","last_cycle":"2025-05-15"}

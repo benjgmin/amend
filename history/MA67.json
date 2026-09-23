@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"MA67","entries":[{"cycle":"2025-11-27","from_cycle":"2025-10-30","id":"704fc4981bed","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Tgp, runway H1 90x40 ft conc","source":"APT_BASE"}],"first_cycle":"2025-11-27","last_cycle":"2025-11-27"}

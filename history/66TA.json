@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"66TA","entries":[{"cycle":"2025-07-10","from_cycle":"2025-06-12","id":"f0ae35b42d00","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Bradair, runway H1 50x50 ft conc","source":"APT_BASE"}],"first_cycle":"2025-07-10","last_cycle":"2025-07-10"}

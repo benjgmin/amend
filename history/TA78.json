@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"TA78","entries":[{"cycle":"2026-05-14","from_cycle":"2026-04-16","id":"930f9abd2657","priority":"fyi","category":"airport","kind":"changed","summary":"airport phone number changed to 817-637-4783","source":"APT_CON","fields":[{"field":"PHONE_NO","old":"817-796-4165","new":"817-637-4783"}]}],"first_cycle":"2026-05-14","last_cycle":"2026-05-14"}

@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"TX37","entries":[{"cycle":"2026-09-03","from_cycle":"2026-08-06","id":"4598d89f10bf","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Flying S Ranch, runway N/S 1800x160 ft turf","source":"APT_BASE"}],"first_cycle":"2026-09-03","last_cycle":"2026-09-03"}

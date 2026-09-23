@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"7IL0","entries":[{"cycle":"2026-04-16","from_cycle":"2026-03-19","id":"1c00897b7680","priority":"fyi","category":"airport","kind":"changed","summary":"airport phone number changed to 815-450-3692","source":"APT_CON","fields":[{"field":"PHONE_NO","old":"(815) 465-6477","new":"815-450-3692"}]}],"first_cycle":"2026-04-16","last_cycle":"2026-04-16"}

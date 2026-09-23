@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"BKN","entries":[{"cycle":"2025-09-04","from_cycle":"2025-08-07","id":"64a940ad37bd","priority":"fyi","category":"runway","kind":"changed","summary":"runway 17/35: pavement now in excellent condition","source":"APT_RWY","fields":[{"field":"COND","old":"FAIR","new":"EXCELLENT"}]}],"first_cycle":"2025-09-04","last_cycle":"2025-09-04"}

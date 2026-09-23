@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"CO40","entries":[{"cycle":"2025-06-12","from_cycle":"2025-05-15","id":"32c2d3786340","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Vtol, runway H1 60x60 ft conc","source":"APT_BASE"}],"first_cycle":"2025-06-12","last_cycle":"2025-06-12"}

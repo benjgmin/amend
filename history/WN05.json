@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"WN05","entries":[{"cycle":"2024-10-31","from_cycle":"2024-10-03","id":"8d62eeabba87","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Harris, runway 16/34 2100x50 ft turf","source":"APT_BASE"}],"first_cycle":"2024-10-31","last_cycle":"2024-10-31"}

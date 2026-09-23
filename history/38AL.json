@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"38AL","entries":[{"cycle":"2026-07-09","from_cycle":"2026-06-11","id":"58a2932d839a","priority":"fyi","category":"airport","kind":"changed","summary":"address1: 65 JACKSON TRAIL -> PO BOX 612","source":"APT_CON","fields":[{"field":"ADDRESS1","old":"65 JACKSON TRAIL","new":"PO BOX 612"}]}],"first_cycle":"2026-07-09","last_cycle":"2026-07-09"}

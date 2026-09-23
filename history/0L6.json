@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"0L6","entries":[{"cycle":"2025-10-30","from_cycle":"2025-10-02","id":"2d09fea90af8","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Winn Parish Medical Center, runway H1 50x50 ft conc, CTAF 122.9","source":"APT_BASE"}],"first_cycle":"2025-10-30","last_cycle":"2025-10-30"}

@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"SHN","entries":[{"cycle":"2025-03-20","from_cycle":"2025-02-20","id":"63b8b0747ec2","priority":"action","category":"weather","kind":"changed","summary":"AWOS/ASOS phone number changed to 360-358-3006","source":"AWOS","fields":[{"field":"PHONE_NO","old":"360 426-6332","new":"360-358-3006"}]}],"first_cycle":"2025-03-20","last_cycle":"2025-03-20"}

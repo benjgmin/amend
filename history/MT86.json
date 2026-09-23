@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"MT86","entries":[{"cycle":"2025-04-17","from_cycle":"2025-03-20","id":"8b4c94c9d74f","priority":"fyi","category":"airport","kind":"changed","summary":"elev method code: (none) -> E","source":"APT_BASE","fields":[{"field":"ELEV_METHOD_CODE","old":"","new":"E"}]}],"first_cycle":"2025-04-17","last_cycle":"2025-04-17"}

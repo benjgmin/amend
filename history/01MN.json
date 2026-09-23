@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"01MN","entries":[{"cycle":"2026-05-14","from_cycle":"2026-04-16","id":"15479612b7f1","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Barnes, runway E/W 10000x600 ft water; runway NW/SE 10000x600 ft water","source":"APT_BASE"}],"first_cycle":"2026-05-14","last_cycle":"2026-05-14"}

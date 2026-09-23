@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"2V5","entries":[{"cycle":"2026-07-09","from_cycle":"2026-06-11","id":"ceefc03fb47f","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Wray Muni, runway 17/35 5399x75 ft asph, CTAF 122.8","source":"APT_BASE"}],"first_cycle":"2026-07-09","last_cycle":"2026-07-09"}

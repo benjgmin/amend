@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"MS67","entries":[{"cycle":"2025-10-30","from_cycle":"2025-10-02","id":"e521f1cce0bb","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Gulf Coast Community Hosp-Emerg, runway H1 30x30 ft conc","source":"APT_BASE"}],"first_cycle":"2025-10-30","last_cycle":"2025-10-30"}

@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"LL08","entries":[{"cycle":"2025-03-20","from_cycle":"2025-02-20","id":"152d3f475140","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Advanced Asphalt, runway H1 40x40 ft conc","source":"APT_BASE"}],"first_cycle":"2025-03-20","last_cycle":"2025-03-20"}

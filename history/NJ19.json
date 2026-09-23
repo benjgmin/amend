@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"NJ19","entries":[{"cycle":"2025-07-10","from_cycle":"2025-06-12","id":"a8bc4a3ad107","priority":"fyi","category":"airport","kind":"changed","summary":"name changed: Joseph Manni -> Nicholas Cattolico","source":"APT_CON","fields":[{"field":"NAME","old":"JOSEPH MANNI","new":"NICHOLAS CATTOLICO"}]}],"first_cycle":"2025-07-10","last_cycle":"2025-07-10"}

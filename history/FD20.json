@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"FD20","entries":[{"cycle":"2025-11-27","from_cycle":"2025-10-30","id":"dca3a5d5c588","priority":"fyi","category":"airport","kind":"changed","summary":"zip code: 33935 -> 33975","source":"APT_CON","fields":[{"field":"ZIP_CODE","old":"33935","new":"33975"}]}],"first_cycle":"2025-11-27","last_cycle":"2025-11-27"}

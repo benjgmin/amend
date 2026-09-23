@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"Y59","entries":[{"cycle":"2024-11-28","from_cycle":"2024-10-31","id":"10cd30debd5c","priority":"fyi","category":"airport","kind":"changed","summary":"inspector code: N -> S","source":"APT_BASE","fields":[{"field":"INSPECTOR_CODE","old":"N","new":"S"}]}],"first_cycle":"2024-11-28","last_cycle":"2024-11-28"}

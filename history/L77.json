@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"L77","entries":[{"cycle":"2024-10-31","from_cycle":"2024-10-03","id":"83cf8c79ad7c","priority":"fyi","category":"runway","kind":"changed","summary":"runway 06/24: pavement now in good condition","source":"APT_RWY","fields":[{"field":"COND","old":"EXCELLENT","new":"GOOD"}]}],"first_cycle":"2024-10-31","last_cycle":"2024-10-31"}

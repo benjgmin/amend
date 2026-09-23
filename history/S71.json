@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"S71","entries":[{"cycle":"2026-09-03","from_cycle":"2026-08-06","id":"56bd0a552d9e","priority":"fyi","category":"runway","kind":"changed","summary":"runway 08/26: pavement now in good condition","source":"APT_RWY","fields":[{"field":"COND","old":"EXCELLENT","new":"GOOD"}]}],"first_cycle":"2026-09-03","last_cycle":"2026-09-03"}

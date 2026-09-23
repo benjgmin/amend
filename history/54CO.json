@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"54CO","entries":[{"cycle":"2025-06-12","from_cycle":"2025-05-15","id":"6b2d8308d57e","priority":"fyi","category":"airport","kind":"changed","summary":"name changed: Jeff Click -> Todd Jourgensen","source":"APT_CON","fields":[{"field":"NAME","old":"JEFF CLICK","new":"TODD JOURGENSEN"}]}],"first_cycle":"2025-06-12","last_cycle":"2025-06-12"}

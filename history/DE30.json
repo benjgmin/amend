@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"DE30","entries":[{"cycle":"2025-08-07","from_cycle":"2025-07-10","id":"4567cc73b554","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Bracebridge Iii, runway H1 83x75 ft conc","source":"APT_BASE"}],"first_cycle":"2025-08-07","last_cycle":"2025-08-07"}

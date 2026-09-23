@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"0PA6","entries":[{"cycle":"2026-01-22","from_cycle":"2025-12-25","id":"a701add90741","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Hostetler, runway NE/SW 1800x100 ft turf","source":"APT_BASE"}],"first_cycle":"2026-01-22","last_cycle":"2026-01-22"}

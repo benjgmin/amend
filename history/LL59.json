@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"LL59","entries":[{"cycle":"2025-11-27","from_cycle":"2025-10-30","id":"65e93b8b4ce4","priority":"fyi","category":"airport","kind":"changed","summary":"name changed: Thomas Konradt -> James Wood","source":"APT_CON","fields":[{"field":"NAME","old":"THOMAS KONRADT","new":"JAMES WOOD"}]}],"first_cycle":"2025-11-27","last_cycle":"2025-11-27"}

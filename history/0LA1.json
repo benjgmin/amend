@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"0LA1","entries":[{"cycle":"2026-02-19","from_cycle":"2026-01-22","id":"a1a5bc871a84","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Double H Ranch, runway 17/35 3000x100 ft turf","source":"APT_BASE"}],"first_cycle":"2026-02-19","last_cycle":"2026-02-19"}

@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"47NY","entries":[{"cycle":"2026-03-19","from_cycle":"2026-02-19","id":"dc0e07b2f1b9","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Elk Creek, runway 09/27 1800x60 ft turf","source":"APT_BASE"}],"first_cycle":"2026-03-19","last_cycle":"2026-03-19"}

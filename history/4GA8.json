@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"4GA8","entries":[{"cycle":"2026-03-19","from_cycle":"2026-02-19","id":"123c732efd47","priority":"fyi","category":"airport","kind":"changed","summary":"address1: 5561 HWY 2165 -> 5561 GA-216","source":"APT_CON","fields":[{"field":"ADDRESS1","old":"5561 HWY 2165","new":"5561 GA-216"}]}],"first_cycle":"2026-03-19","last_cycle":"2026-03-19"}

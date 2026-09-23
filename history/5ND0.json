@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"5ND0","entries":[{"cycle":"2026-03-19","from_cycle":"2026-02-19","id":"d3219b3e6b72","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Stiehl, runway N/S 1600x35 ft turf; runway E/W 1400x50 ft turf","source":"APT_BASE"}],"first_cycle":"2026-03-19","last_cycle":"2026-03-19"}

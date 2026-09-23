@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"77F","entries":[{"cycle":"2025-06-12","from_cycle":"2025-05-15","id":"b46677c592e6","priority":"action","category":"runway","kind":"changed","summary":"runway 17/35 renumbered to 18/36","source":"APT_RWY","fields":[{"field":"RWY_ID","old":"17/35","new":"18/36"}]}],"first_cycle":"2025-06-12","last_cycle":"2025-06-12"}

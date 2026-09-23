@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"78TE","entries":[{"cycle":"2026-08-06","from_cycle":"2026-07-09","id":"ab2eaaa549e4","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Rocking A, runway 12/30 1350x40 ft turf; runway 06/24 1000x40 ft turf","source":"APT_BASE"}],"first_cycle":"2026-08-06","last_cycle":"2026-08-06"}

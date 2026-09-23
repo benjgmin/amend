@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"AA08","entries":[{"cycle":"2025-06-12","from_cycle":"2025-05-15","id":"31bc2a62f0d3","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Alaska Heliworx, runway H1 200x100 ft asph-turf","source":"APT_BASE"}],"first_cycle":"2025-06-12","last_cycle":"2025-06-12"}

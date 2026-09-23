@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"2J5","entries":[{"cycle":"2026-08-06","from_cycle":"2026-07-09","id":"fd9fc66d2c18","priority":"fyi","category":"runway","kind":"changed","summary":"runway 17/35: pavement now in fair condition","source":"APT_RWY","fields":[{"field":"COND","old":"GOOD","new":"FAIR"}]}],"first_cycle":"2026-08-06","last_cycle":"2026-08-06"}

@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"VA36","entries":[{"cycle":"2025-05-15","from_cycle":"2025-04-17","id":"477feb491cde","priority":"fyi","category":"airport","kind":"changed","summary":"mag hemis: (none) -> W","source":"APT_BASE","fields":[{"field":"MAG_HEMIS","old":"","new":"W"}]}],"first_cycle":"2025-05-15","last_cycle":"2025-05-15"}

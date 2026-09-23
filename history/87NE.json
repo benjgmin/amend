@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"87NE","entries":[{"cycle":"2026-04-16","from_cycle":"2026-03-19","id":"7986a0dec1cc","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Knox Landing, runway 17/35 2000x24 ft conc","source":"APT_BASE"}],"first_cycle":"2026-04-16","last_cycle":"2026-04-16"}

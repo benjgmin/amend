@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"FL68","entries":[{"cycle":"2025-07-10","from_cycle":"2025-06-12","id":"c7f10e45ccaf","priority":"fyi","category":"airport","kind":"changed","summary":"airport phone number changed to 352-351-4684","source":"APT_CON","fields":[{"field":"PHONE_NO","old":"(352) 438-5940","new":"352-351-4684"}]}],"first_cycle":"2025-07-10","last_cycle":"2025-07-10"}

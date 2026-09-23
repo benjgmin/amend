@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"1CL4","entries":[{"cycle":"2025-06-12","from_cycle":"2025-05-15","id":"726955ceec25","priority":"fyi","category":"airport","kind":"changed","summary":"airport phone number changed to 714-920-8511","source":"APT_CON","fields":[{"field":"PHONE_NO","old":"714-456-7345","new":"714-920-8511"}]}],"first_cycle":"2025-06-12","last_cycle":"2025-06-12"}

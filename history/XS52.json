@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"XS52","entries":[{"cycle":"2025-07-10","from_cycle":"2025-06-12","id":"0dd2579e1662","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Lewis, runway H1 2640x300 ft turf","source":"APT_BASE"}],"first_cycle":"2025-07-10","last_cycle":"2025-07-10"}

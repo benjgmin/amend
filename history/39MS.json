@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"39MS","entries":[{"cycle":"2026-07-09","from_cycle":"2026-06-11","id":"8b83228d690d","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Benton Farms, runway 05/23 2300x50 ft turf","source":"APT_BASE"}],"first_cycle":"2026-07-09","last_cycle":"2026-07-09"}

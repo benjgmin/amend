@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"IN39","entries":[{"cycle":"2026-09-03","from_cycle":"2026-08-06","id":"1e7558a43973","priority":"fyi","category":"runway","kind":"changed","summary":"runway 18/36: pavement now in good condition","source":"APT_RWY","fields":[{"field":"COND","old":"FAIR","new":"GOOD"}]}],"first_cycle":"2026-09-03","last_cycle":"2026-09-03"}

@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"NY0","entries":[{"cycle":"2025-02-20","from_cycle":"2025-01-23","id":"03f76877ba5a","priority":"fyi","category":"airport","kind":"changed","summary":"airport phone number changed to 518-928-6545","source":"APT_CON","fields":[{"field":"PHONE_NO","old":"518-882-6392","new":"518-928-6545"}]}],"first_cycle":"2025-02-20","last_cycle":"2025-02-20"}

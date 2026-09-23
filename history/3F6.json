@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"3F6","entries":[{"cycle":"2025-10-02","from_cycle":"2025-09-04","id":"268cfe9936f9","priority":"fyi","category":"airport","kind":"changed","summary":"airport phone number changed to 806-492-3613","source":"APT_CON","fields":[{"field":"PHONE_NO","old":"(806) 492-3613","new":"806-492-3613"}]}],"first_cycle":"2025-10-02","last_cycle":"2025-10-02"}

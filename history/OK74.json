@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"OK74","entries":[{"cycle":"2025-10-30","from_cycle":"2025-10-02","id":"984a22833799","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Flying H, runway 18/36 2200x45 ft turf","source":"APT_BASE"}],"first_cycle":"2025-10-30","last_cycle":"2025-10-30"}

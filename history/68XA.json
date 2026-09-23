@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"68XA","entries":[{"cycle":"2026-03-19","from_cycle":"2026-02-19","id":"ee750d6e3569","priority":"fyi","category":"airport","kind":"changed","summary":"county name: ANDERSON -> BASTROP","source":"APT_BASE","fields":[{"field":"COUNTY_NAME","old":"ANDERSON","new":"BASTROP"}]}],"first_cycle":"2026-03-19","last_cycle":"2026-03-19"}

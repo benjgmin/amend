@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"AR47","entries":[{"cycle":"2025-10-30","from_cycle":"2025-10-02","id":"fb4c73c46b4d","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Warner Brown Hospital, runway H1 31x31 ft conc","source":"APT_BASE"}],"first_cycle":"2025-10-30","last_cycle":"2025-10-30"}

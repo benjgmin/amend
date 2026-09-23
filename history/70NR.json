@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"70NR","entries":[{"cycle":"2026-07-09","from_cycle":"2026-06-11","id":"95344473e43b","priority":"fyi","category":"airport","kind":"changed","summary":"airport phone number changed to 910-352-7323","source":"APT_CON","fields":[{"field":"PHONE_NO","old":"910-594-1927","new":"910-352-7323"}]}],"first_cycle":"2026-07-09","last_cycle":"2026-07-09"}

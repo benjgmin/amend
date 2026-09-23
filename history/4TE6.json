@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"4TE6","entries":[{"cycle":"2026-03-19","from_cycle":"2026-02-19","id":"2ffeeaa1dc8f","priority":"fyi","category":"airport","kind":"changed","summary":"county name: ANDERSON -> BOSQUE","source":"APT_BASE","fields":[{"field":"COUNTY_NAME","old":"ANDERSON","new":"BOSQUE"}]}],"first_cycle":"2026-03-19","last_cycle":"2026-03-19"}

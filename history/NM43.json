@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"NM43","entries":[{"cycle":"2025-10-02","from_cycle":"2025-09-04","id":"64df762547ca","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Southwell H Q, runway H1 75x75 ft grvl; runway 05/23 5000x50 ft dirt","source":"APT_BASE"}],"first_cycle":"2025-10-02","last_cycle":"2025-10-02"}

@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"38AK","entries":[{"cycle":"2026-04-16","from_cycle":"2026-03-19","id":"3528ab3fcc46","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Mels, runway 18/36 1500x80 ft turf; runway 09W/27W 1500x400 ft water, CTAF 122.8","source":"APT_BASE"}],"first_cycle":"2026-04-16","last_cycle":"2026-04-16"}

@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"3N8","entries":[{"cycle":"2024-10-31","from_cycle":"2024-10-03","id":"f236c2362b7e","priority":"fyi","category":"airport","kind":"changed","summary":"other services: AGRI -> (none)","source":"APT_BASE","fields":[{"field":"OTHER_SERVICES","old":"AGRI","new":""}]}],"first_cycle":"2024-10-31","last_cycle":"2024-10-31"}

@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"AZ13","entries":[{"cycle":"2026-05-14","from_cycle":"2026-04-16","id":"deef1fa24357","priority":"fyi","category":"airport","kind":"changed","summary":"mag hemis: E -> (none)","source":"APT_BASE","fields":[{"field":"MAG_HEMIS","old":"E","new":""}]}],"first_cycle":"2026-05-14","last_cycle":"2026-05-14"}

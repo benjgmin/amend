@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"4OH7","entries":[{"cycle":"2026-06-11","from_cycle":"2026-05-14","id":"140d6e72c45a","priority":"fyi","category":"airport","kind":"changed","summary":"dist city to airport: 2 -> 3","source":"APT_BASE","fields":[{"field":"DIST_CITY_TO_AIRPORT","old":"2","new":"3"}]}],"first_cycle":"2026-06-11","last_cycle":"2026-06-11"}

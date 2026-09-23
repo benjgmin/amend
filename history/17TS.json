@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"17TS","entries":[{"cycle":"2025-06-12","from_cycle":"2025-05-15","id":"c86be83a0724","priority":"fyi","category":"airport","kind":"changed","summary":"airport phone number changed to 432-837-3447","source":"APT_CON","fields":[{"field":"PHONE_NO","old":"915-837-9668","new":"432-837-3447"}]}],"first_cycle":"2025-06-12","last_cycle":"2025-06-12"}

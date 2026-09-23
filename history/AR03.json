@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"AR03","entries":[{"cycle":"2026-05-14","from_cycle":"2026-04-16","id":"063ba435139f","priority":"fyi","category":"airport","kind":"changed","summary":"wind indcr flag: (none) -> Y","source":"APT_BASE","fields":[{"field":"WIND_INDCR_FLAG","old":"","new":"Y"}]}],"first_cycle":"2026-05-14","last_cycle":"2026-05-14"}

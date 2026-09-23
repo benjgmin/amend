@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"ND89","entries":[{"cycle":"2025-09-04","from_cycle":"2025-08-07","id":"7bcb69f739ec","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Mutschler Fld, runway N/S 2000x75 ft turf","source":"APT_BASE"}],"first_cycle":"2025-09-04","last_cycle":"2025-09-04"}

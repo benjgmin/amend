@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"O22","entries":[{"cycle":"2024-12-26","from_cycle":"2024-11-28","id":"8fdf10b3008c","priority":"fyi","category":"airport","kind":"changed","summary":"name changed: Kim Macfarlane -> Tonya Scheftner","source":"APT_CON","fields":[{"field":"NAME","old":"KIM MACFARLANE","new":"TONYA SCHEFTNER"}]}],"first_cycle":"2024-12-26","last_cycle":"2024-12-26"}

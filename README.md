@@ -43,21 +43,39 @@ When the next cycle is already posted (the FAA publishes about three weeks early
 
 ## Run it locally
 
-```bash
-# one-time: store your Anthropic API key in .env (only needed for --llm)
-python nasr_diff.py --set-key
+Python 3.11+, standard library only.
 
-# a few airports
-python nasr_diff.py 03_Sep_2026_CSV.zip 01_Oct_2026_CSV.zip VRB DAB ISM --llm
+```bash
+python -m cyclewatch set-key              # one time: Anthropic key for --llm, saved to .env
+
+# a few airports (FAA ids; KDAB works too)
+python -m cyclewatch diff 03_Sep_2026_CSV.zip 01_Oct_2026_CSV.zip VRB DAB ISM --llm
 
 # every airport, with approach plate changes
-python nasr_diff.py 03_Sep_2026_CSV.zip 01_Oct_2026_CSV.zip --all-airports --dtpp d-tpp_Metafile.xml
+python -m cyclewatch diff 03_Sep_2026_CSV.zip 01_Oct_2026_CSV.zip --all-airports --dtpp d-tpp_Metafile.xml
 
-# the full automated pipeline (downloads everything itself)
-python run_cycle.py
+python -m cyclewatch history    # build/extend history/ back to Aug 2024 (downloads everything)
+python -m cyclewatch latest     # build site/ (what the GitHub Action runs)
+
+python -m unittest discover -s tests -t .
 ```
 
-NASR CSV zips come from the [FAA 28-Day NASR Subscription](https://www.faa.gov/air_traffic/flight_info/aeronav/aero_data/NASR_Subscription/). No dependencies beyond the Python standard library.
+NASR CSV zips come from the [FAA 28-Day NASR Subscription](https://www.faa.gov/air_traffic/flight_info/aeronav/aero_data/NASR_Subscription/).
+
+## Layout
+
+| file | what it does |
+|---|---|
+| `cyclewatch/rules.py` | what counts as noise, how important each change is. tuning happens here |
+| `cyclewatch/nasr.py` | reading FAA NASR zips |
+| `cyclewatch/diff.py` | diffing two cycles into raw changes |
+| `cyclewatch/collapse.py` | turning raw rows into events (renumbered runways, new airports, procedures) |
+| `cyclewatch/english.py` | plain-English summaries |
+| `cyclewatch/remarks.py` | translating FAA remarks with Claude |
+| `cyclewatch/dtpp.py` | approach plate / chart changes |
+| `cyclewatch/pipeline.py` | the whole diff in one call, public JSON shape |
+| `cyclewatch/history.py`, `latest.py` | history timeline and the published site |
+| `SCHEMA.md` | the JSON format apps rely on |
 
 ## Roadmap
 

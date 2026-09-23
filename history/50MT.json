@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"50MT","entries":[{"cycle":"2025-11-27","from_cycle":"2025-10-30","id":"12d9a703647a","priority":"fyi","category":"airport","kind":"changed","summary":"airport phone number changed to 406-698-1366","source":"APT_CON","fields":[{"field":"PHONE_NO","old":"(406) 628-2409","new":"406-698-1366"}]}],"first_cycle":"2025-11-27","last_cycle":"2025-11-27"}

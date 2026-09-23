@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"LL01","entries":[{"cycle":"2024-12-26","from_cycle":"2024-11-28","id":"e0ea7adee39d","priority":"fyi","category":"airport","kind":"changed","summary":"name changed: Michael Gorham -> Doug Kinney","source":"APT_CON","fields":[{"field":"NAME","old":"MICHAEL GORHAM","new":"DOUG KINNEY"}]}],"first_cycle":"2024-12-26","last_cycle":"2024-12-26"}

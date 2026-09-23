@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"GE72","entries":[{"cycle":"2026-02-19","from_cycle":"2026-01-22","id":"7f3353765972","priority":"fyi","category":"airport","kind":"changed","summary":"wind indcr flag: (none) -> Y","source":"APT_BASE","fields":[{"field":"WIND_INDCR_FLAG","old":"","new":"Y"}]}],"first_cycle":"2026-02-19","last_cycle":"2026-02-19"}

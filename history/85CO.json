@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"85CO","entries":[{"cycle":"2025-04-17","from_cycle":"2025-03-20","id":"d4c1f47f1005","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Anderson, runway H1 30x30 ft turf","source":"APT_BASE"}],"first_cycle":"2025-04-17","last_cycle":"2025-04-17"}

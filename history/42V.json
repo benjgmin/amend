@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"42V","entries":[{"cycle":"2025-04-17","from_cycle":"2025-03-20","id":"7c7776070f80","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Jones, runway 15/33 3500x25 ft conc, CTAF 122.9","source":"APT_BASE"}],"first_cycle":"2025-04-17","last_cycle":"2025-04-17"}

@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"5WA6","entries":[{"cycle":"2026-05-14","from_cycle":"2026-04-16","id":"c0b7fd75fd88","priority":"fyi","category":"airport","kind":"changed","summary":"airport phone number changed to 360-507-5340","source":"APT_CON","fields":[{"field":"PHONE_NO","old":"360-262-3197","new":"360-507-5340"}]}],"first_cycle":"2026-05-14","last_cycle":"2026-05-14"}

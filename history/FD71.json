@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"FD71","entries":[{"cycle":"2026-07-09","from_cycle":"2026-06-11","id":"7448ec8bb798","priority":"fyi","category":"airport","kind":"changed","summary":"airport phone number changed to 386-292-5099","source":"APT_CON","fields":[{"field":"PHONE_NO","old":"(386) 935-2042","new":"386-292-5099"}]}],"first_cycle":"2026-07-09","last_cycle":"2026-07-09"}

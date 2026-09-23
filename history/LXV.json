@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"LXV","entries":[{"cycle":"2025-04-17","from_cycle":"2025-03-20","id":"f12883f0cc47","priority":"action","category":"weather","kind":"changed","summary":"AWOS/ASOS phone number changed to 719-838-4630","source":"AWOS","fields":[{"field":"PHONE_NO","old":"719-486-8441","new":"719-838-4630"}]}],"first_cycle":"2025-04-17","last_cycle":"2025-04-17"}

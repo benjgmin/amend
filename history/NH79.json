@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"NH79","entries":[{"cycle":"2025-11-27","from_cycle":"2025-10-30","id":"05bde8e13785","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Falcon Station, runway H1 50x50 ft turf","source":"APT_BASE"}],"first_cycle":"2025-11-27","last_cycle":"2025-11-27"}

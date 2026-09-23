@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"62TA","entries":[{"cycle":"2026-09-03","from_cycle":"2026-08-06","id":"afa32c7e773e","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Hawken Air One, runway 02/20 1550x50 ft dirt","source":"APT_BASE"}],"first_cycle":"2026-09-03","last_cycle":"2026-09-03"}

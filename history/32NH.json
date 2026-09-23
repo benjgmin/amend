@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"32NH","entries":[{"cycle":"2026-02-19","from_cycle":"2026-01-22","id":"7a5fdcf133af","priority":"fyi","category":"airport","kind":"changed","summary":"airport phone number changed to 603-764-9488","source":"APT_CON","fields":[{"field":"PHONE_NO","old":"603-764-5711","new":"603-764-9488"}]}],"first_cycle":"2026-02-19","last_cycle":"2026-02-19"}

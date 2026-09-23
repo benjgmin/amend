@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"NH58","entries":[{"cycle":"2025-11-27","from_cycle":"2025-10-30","id":"265db630fd8d","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: D W, runway H1 20x20 ft turf","source":"APT_BASE"}],"first_cycle":"2025-11-27","last_cycle":"2025-11-27"}

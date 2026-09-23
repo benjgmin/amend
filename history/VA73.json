@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"VA73","entries":[{"cycle":"2026-02-19","from_cycle":"2026-01-22","id":"3cfe63b6ca98","priority":"fyi","category":"airport","kind":"changed","summary":"airport phone number changed to 804-536-9400","source":"APT_CON","fields":[{"field":"PHONE_NO","old":"(804) 536-4040","new":"804-536-9400"}]}],"first_cycle":"2026-02-19","last_cycle":"2026-02-19"}

@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"SN58","entries":[{"cycle":"2026-09-03","from_cycle":"2026-08-06","id":"aaea0bdba483","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Foster Fld, runway 17/35 2440x50 ft turf","source":"APT_BASE"}],"first_cycle":"2026-09-03","last_cycle":"2026-09-03"}

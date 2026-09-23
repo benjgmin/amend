@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"A27","entries":[{"cycle":"2024-10-03","from_cycle":"2024-09-05","id":"fc6ecf8d35a0","priority":"fyi","category":"airport","kind":"changed","summary":"wind indcr flag: N -> Y","source":"APT_BASE","fields":[{"field":"WIND_INDCR_FLAG","old":"N","new":"Y"}]}],"first_cycle":"2024-10-03","last_cycle":"2024-10-03"}

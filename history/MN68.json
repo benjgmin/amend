@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"MN68","entries":[{"cycle":"2026-09-03","from_cycle":"2026-08-06","id":"72e915d21ee6","priority":"fyi","category":"runway","kind":"changed","summary":"runway 10/28: surface type code: GRVL -> GRASS","source":"APT_RWY","fields":[{"field":"SURFACE_TYPE_CODE","old":"GRVL","new":"GRASS"}]}],"first_cycle":"2026-09-03","last_cycle":"2026-09-03"}

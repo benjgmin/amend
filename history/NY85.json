@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"NY85","entries":[{"cycle":"2025-04-17","from_cycle":"2025-03-20","id":"d04e97669e69","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: United States Military Academy, runway H1 103x45 ft asph","source":"APT_BASE"}],"first_cycle":"2025-04-17","last_cycle":"2025-04-17"}

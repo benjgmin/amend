@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"WN17","entries":[{"cycle":"2024-09-05","from_cycle":"2024-08-08","id":"1e7d215dda28","priority":"fyi","category":"airport","kind":"changed","summary":"airport phone number changed to 509-423-5810","source":"APT_CON","fields":[{"field":"PHONE_NO","old":"206-402-2842","new":"509-423-5810"}]}],"first_cycle":"2024-09-05","last_cycle":"2024-09-05"}

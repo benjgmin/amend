@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"13S","entries":[{"cycle":"2025-10-30","from_cycle":"2025-10-02","id":"0f21855190bd","priority":"fyi","category":"airport","kind":"changed","summary":"inspector code: S -> C","source":"APT_BASE","fields":[{"field":"INSPECTOR_CODE","old":"S","new":"C"}]}],"first_cycle":"2025-10-30","last_cycle":"2025-10-30"}

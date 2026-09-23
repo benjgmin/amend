@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"LL42","entries":[{"cycle":"2025-09-04","from_cycle":"2025-08-07","id":"b2dfd0499a6d","priority":"fyi","category":"airport","kind":"changed","summary":"name changed: Scott Drendel -> Michael Duvall","source":"APT_CON","fields":[{"field":"NAME","old":"SCOTT DRENDEL","new":"MICHAEL DUVALL"}]}],"first_cycle":"2025-09-04","last_cycle":"2025-09-04"}

@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"4MA0","entries":[{"cycle":"2025-11-27","from_cycle":"2025-10-30","id":"77fd104c74a7","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Burke, runway H1 100x100 ft turf","source":"APT_BASE"}],"first_cycle":"2025-11-27","last_cycle":"2025-11-27"}

@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"AAT","entries":[{"cycle":"2025-04-17","from_cycle":"2025-03-20","id":"d1350d6cc6e2","priority":"action","category":"weather","kind":"changed","summary":"AWOS/ASOS phone number changed to 530-708-6221","source":"AWOS","fields":[{"field":"PHONE_NO","old":"530-233-7171","new":"530-708-6221"}]}],"first_cycle":"2025-04-17","last_cycle":"2025-04-17"}

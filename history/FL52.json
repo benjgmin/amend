@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"FL52","entries":[{"cycle":"2026-05-14","from_cycle":"2026-04-16","id":"12b6a5625dd7","priority":"fyi","category":"airport","kind":"changed","summary":"airport phone number changed to 850-545-0919","source":"APT_CON","fields":[{"field":"PHONE_NO","old":"(850) 454-0919","new":"850-545-0919"}]}],"first_cycle":"2026-05-14","last_cycle":"2026-05-14"}

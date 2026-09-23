@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"NH45","entries":[{"cycle":"2025-11-27","from_cycle":"2025-10-30","id":"e46411b1fd75","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Foss, runway H1 120x60 ft conc","source":"APT_BASE"}],"first_cycle":"2025-11-27","last_cycle":"2025-11-27"}

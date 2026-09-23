@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"8KT8","entries":[{"cycle":"2024-12-26","from_cycle":"2024-11-28","id":"4f378e42189d","priority":"fyi","category":"airport","kind":"changed","summary":"airport phone number changed to 502-706-1858","source":"APT_CON","fields":[{"field":"PHONE_NO","old":"5024617530","new":"502-706-1858"}]}],"first_cycle":"2024-12-26","last_cycle":"2024-12-26"}
