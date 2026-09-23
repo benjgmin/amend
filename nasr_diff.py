@@ -546,19 +546,39 @@ def collapse(records):
         removed_rwys = [r for r in rs if src(r) == "APT_RWY" and r["kind"] == "removed"]
         added_rwys = [r for r in rs if src(r) == "APT_RWY" and r["kind"] == "added"]
         renumbered = []
+        def rwy_num(rid):
+            m = re.match(r"(\d{1,2})", rid or "")
+            return int(m.group(1)) if m else None
+
+        def close_numbers(a, b):
+            # runway numbers one apart (mag variation drift), 36 wraps to 01
+            if a is None or b is None or a == b:
+                return False
+            d = abs(a - b)
+            return min(d, 36 - d) == 1
+
         for old in removed_rwys:
             for new in added_rwys:
                 o, n = old["row"], new["row"]
-                if (o.get("RWY_LEN") and o.get("RWY_LEN") == n.get("RWY_LEN")
-                        and o.get("RWY_WIDTH") == n.get("RWY_WIDTH")):
+                same_size = (o.get("RWY_LEN") and o.get("RWY_LEN") == n.get("RWY_LEN")
+                             and o.get("RWY_WIDTH") == n.get("RWY_WIDTH"))
+                if same_size or close_numbers(rwy_num(o.get("RWY_ID")), rwy_num(n.get("RWY_ID"))):
                     renumbered.append((old, new))
                     added_rwys.remove(new)
                     break
         drop = set()
         for old, new in renumbered:
             o_id, n_id = old["row"].get("RWY_ID", "?"), new["row"].get("RWY_ID", "?")
+            o, n = old["row"], new["row"]
+            extra = []
+            if (o.get("RWY_LEN"), o.get("RWY_WIDTH")) != (n.get("RWY_LEN"), n.get("RWY_WIDTH")):
+                extra.append(f"now {n.get('RWY_LEN', '?')}x{n.get('RWY_WIDTH', '?')} ft, "
+                             f"was {o.get('RWY_LEN', '?')}x{o.get('RWY_WIDTH', '?')}")
+            if o.get("SURFACE_TYPE_CODE") != n.get("SURFACE_TYPE_CODE"):
+                extra.append(f"surface now {n.get('SURFACE_TYPE_CODE', '?').lower()}")
+            tail = f" ({'; '.join(extra)})" if extra else ""
             out.append({"airport": apt, "source": "APT_RWY.csv", "kind": "changed", "priority": "action",
-                        "summary_override": f"runway {o_id} renumbered to {n_id}",
+                        "summary_override": f"runway {o_id} renumbered to {n_id}{tail}",
                         "fields": [{"field": "RWY_ID", "old": o_id, "new": n_id}]})
             drop |= {id(old), id(new)}
             old_ids = set(o_id.split("/")) | {o_id}
