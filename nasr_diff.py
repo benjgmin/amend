@@ -446,6 +446,8 @@ def field_phrases(fields, source, ctx=None):
 
 
 def summarize(rec, remarks):
+    if rec.get("summary_override"):
+        return rec["summary_override"]
     b = base(rec["source"])
     kind = rec["kind"]
     row = rec.get("row", {})
@@ -511,6 +513,75 @@ def summarize(rec, remarks):
     return f"{kind} ({b.lower()}): {shown}"
 
 # ---------------------------------------------------------------- output
+
+def collapse(records):
+    """turn piles of raw added/removed rows into the events a pilot would describe."""
+    by_apt = defaultdict(list)
+    for r in records:
+        by_apt[r["airport"]].append(r)
+    out = []
+    for apt, rs in by_apt.items():
+        src = lambda r: base(r["source"])
+
+        # 1. brand new / removed airport: one line instead of every field
+        for kind, word in (("added", "new airport added to FAA database"),
+                           ("removed", "airport removed from FAA database")):
+            base_row = next((r for r in rs if src(r) == "APT_BASE" and r["kind"] == kind), None)
+            if not base_row:
+                continue
+            name = base_row["row"].get("ARPT_NAME", "").title()
+            rwys = [r["row"] for r in rs if src(r) == "APT_RWY" and r["kind"] == kind]
+            rwy_txt = "; ".join(
+                f"runway {w.get('RWY_ID', '?')} {w.get('RWY_LEN', '?')}x{w.get('RWY_WIDTH', '?')} ft "
+                f"{w.get('SURFACE_TYPE_CODE', '').lower()}".strip() for w in rwys)
+            ctaf = next((r["row"].get("FREQ") for r in rs if src(r) == "FRQ" and r["kind"] == kind
+                         and "CTAF" in r["row"].get("FREQ_USE", "").upper()), None)
+            bits = [b for b in (name, rwy_txt, f"CTAF {ctaf}" if ctaf else "") if b]
+            out.append({"airport": apt, "source": "APT_BASE.csv", "kind": kind,
+                        "priority": "action" if kind == "removed" else "fyi",
+                        "summary_override": f"{word}: " + ", ".join(bits), "row": {}})
+            rs = [r for r in rs if r["kind"] != kind]
+
+        # 2. runway renumbered: removed + added runway with same length and width
+        removed_rwys = [r for r in rs if src(r) == "APT_RWY" and r["kind"] == "removed"]
+        added_rwys = [r for r in rs if src(r) == "APT_RWY" and r["kind"] == "added"]
+        renumbered = []
+        for old in removed_rwys:
+            for new in added_rwys:
+                o, n = old["row"], new["row"]
+                if (o.get("RWY_LEN") and o.get("RWY_LEN") == n.get("RWY_LEN")
+                        and o.get("RWY_WIDTH") == n.get("RWY_WIDTH")):
+                    renumbered.append((old, new))
+                    added_rwys.remove(new)
+                    break
+        drop = set()
+        for old, new in renumbered:
+            o_id, n_id = old["row"].get("RWY_ID", "?"), new["row"].get("RWY_ID", "?")
+            out.append({"airport": apt, "source": "APT_RWY.csv", "kind": "changed", "priority": "action",
+                        "summary_override": f"runway {o_id} renumbered to {n_id}",
+                        "fields": [{"field": "RWY_ID", "old": o_id, "new": n_id}]})
+            drop |= {id(old), id(new)}
+            old_ids = set(o_id.split("/")) | {o_id}
+            new_ids = set(n_id.split("/")) | {n_id}
+            for r in rs:  # the runway-end rows for those ids are covered by the one line
+                if src(r) == "APT_RWY_END" and r["kind"] in ("added", "removed"):
+                    rid = r["row"].get("RWY_ID", "")
+                    if rid in old_ids | new_ids:
+                        drop.add(id(r))
+
+        # 3. same remark text "removed" and "added" (FAA just renumbered the remark)
+        texts = defaultdict(list)
+        for r in rs:
+            if src(r) in ("APT_RMK", "ATC_RMK") and r["kind"] in ("added", "removed"):
+                texts[r["row"].get("REMARK", "")].append(r)
+        for t, group in texts.items():
+            kinds = {r["kind"] for r in group}
+            if t and kinds == {"added", "removed"}:
+                drop |= {id(r) for r in group}
+
+        out.extend(r for r in rs if id(r) not in drop)
+    return out
+
 
 def merge_freq_uses(records):
     """several 'freq X use renamed/dropped' records for one frequency -> one record."""
@@ -621,7 +692,7 @@ def main():
             remark_texts += [f["new"] for f in r.get("fields", []) if f["field"] == "REMARK"]
     remarks = translate_remarks(remark_texts, "--llm" in flags)
 
-    records = merge_freq_uses(records)
+    records = merge_freq_uses(collapse(records))
 
     # attach summaries, drop duplicate summaries per airport (same change in several files)
     by_apt = defaultdict(list)
