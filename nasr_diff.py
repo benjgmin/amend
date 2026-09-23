@@ -16,6 +16,8 @@ ids      FAA 3-letter ids (VRB, not KVRB). K-prefixed 4-letter ids get stripped.
 --routes list every preferred route / procedure change instead of one summary line
 --all-airports  diff EVERY airport (no ids needed). writes out/ json + prints a summary.
                add --print to also dump every airport to the terminal.
+--dtpp FILE    also report approach/departure/STAR/diagram chart changes from the FAA
+               d-TPP metafile (d-TPP_Metafile.xml for the NEW cycle)
 --llm    translate FAA remarks to plain english with Claude
          (key comes from .env or ANTHROPIC_API_KEY; results cached in remark_cache.json)
 
@@ -612,6 +614,62 @@ def collapse(records):
     return out
 
 
+# ---------------------------------------------------------------- d-TPP (approach plates etc.)
+
+DTPP_KINDS = {
+    "IAP": "approach", "DP": "departure", "ODP": "obstacle departure", "STAR": "arrival (STAR)",
+    "APD": "airport diagram", "HOT": "hot spot page", "MIN": "minimums page",
+    "LAH": "LAHSO page", "DAU": "diverse vector area page", "CVFP": "charted visual procedure",
+}
+DTPP_ACTIONS = {"A": "added", "C": "changed", "D": "removed"}
+
+
+def load_dtpp(path, ids):
+    """read the FAA d-TPP metafile; return {airport: [record, ...]} for added/changed/deleted charts.
+    each record's useraction already compares against the previous edition, so one file is enough."""
+    import xml.etree.ElementTree as ET
+    out = defaultdict(list)
+    cycle = ""
+    seen = set()
+    apt = None
+    for event, el in ET.iterparse(path, events=("start", "end")):
+        tag = el.tag.lower()
+        if event == "start" and tag == "digital_tpp":
+            cycle = el.get("cycle", "")
+        elif event == "start" and tag == "airport_name":
+            apt = (el.get("apt_ident") or "").upper()
+        elif event == "end" and tag == "record":
+            get = lambda k: (el.findtext(k) or "").strip()
+            act = get("useraction").upper()
+            if apt in ids and act in DTPP_ACTIONS:
+                code, name = get("chart_code").upper(), get("chart_name")
+                key = (apt, code, name.replace(", CONT.", "").replace(" CONT.", ""), act)
+                if key not in seen:  # continuation pages list the same chart twice
+                    seen.add(key)
+                    what = DTPP_KINDS.get(code, code.lower() or "chart")
+                    verb = DTPP_ACTIONS[act]
+                    amdt = get("amdtnum")
+                    if code in ("IAP", "DP", "ODP", "STAR", "CVFP"):
+                        s = f"{what} {name} {verb}"
+                        if act == "C" and amdt:
+                            label = "original" if amdt.upper() in ("0", "ORIG") else f"amdt {amdt}"
+                            s = f"{what} {name} amended ({label})"
+                        pri = "ifr"
+                    else:
+                        s = f"{what} {verb}" if code in ("APD",) else f"{what} ({name}) {verb}"
+                        pri = "fyi" if code in ("APD", "HOT") else "ifr"
+                    pdf = get("pdf_name")
+                    rec = {"source": "d-TPP", "kind": verb, "priority": pri, "summary": s,
+                           "chart_code": code, "chart_name": name, "amdt": amdt}
+                    if cycle and pdf and act != "D" and "DELETED" not in pdf.upper():
+                        rec["pdf"] = f"https://aeronav.faa.gov/d-tpp/{cycle}/{pdf}"
+                    out[apt].append(rec)
+            el.clear()
+        elif event == "end" and tag == "airport_name":
+            el.clear()
+    return out
+
+
 def merge_freq_uses(records):
     """several 'freq X use renamed/dropped' records for one frequency -> one record."""
     groups, rest = defaultdict(list), []
@@ -642,6 +700,7 @@ def write_json(by_apt, out_dir, old_zip, new_zip):
                        "from_cycle": os.path.basename(old_zip),
                        "to_cycle": os.path.basename(new_zip),
                        "action_count": sum(r["priority"] == "action" for r in recs),
+                       "ifr_count": sum(r["priority"] == "ifr" for r in recs),
                        "changes": recs}, f, indent=2)
     with open(os.path.join(out_dir, "index.json"), "w") as f:
         json.dump(sorted(by_apt), f)
@@ -691,7 +750,9 @@ def main():
         set_key()
         return
     load_env()
-    args = [a for a in sys.argv[1:] if not a.startswith("--")]
+    raw = sys.argv[1:]
+    args = [a for i, a in enumerate(raw) if not a.startswith("--")
+            and not (i > 0 and raw[i - 1] == "--dtpp")]
     flags = {a for a in sys.argv[1:] if a.startswith("--")}
     all_mode = "--all-airports" in flags
     if len(args) < 2 or (len(args) < 3 and not all_mode):
@@ -742,6 +803,15 @@ def main():
             uniq.append({k: v for k, v in r.items() if k != "airport"})
         by_apt[apt] = uniq
 
+    dtpp_path = next((sys.argv[i + 1] for i, a in enumerate(sys.argv)
+                      if a == "--dtpp" and i + 1 < len(sys.argv)), None)
+    if dtpp_path:
+        print(f"loading d-TPP {dtpp_path} ...")
+        dtpp = load_dtpp(dtpp_path, ids)
+        for apt, recs in dtpp.items():
+            by_apt[apt].extend(recs)
+        print(f"  {sum(len(v) for v in dtpp.values())} chart changes at {len(dtpp)} airports")
+
     if "--json" in flags or all_mode:
         write_json(by_apt, "out", old_zip, new_zip)
 
@@ -753,6 +823,7 @@ def main():
         print("most action items:")
         for apt, rs in ranked[:15]:
             print(f"  {apt:5} {sum(r['priority'] == 'action' for r in rs):3} action, "
+                  f"{sum(r['priority'] == 'ifr' for r in rs):3} ifr, "
                   f"{sum(r['priority'] == 'fyi' for r in rs):3} fyi")
         print("\nsee out/<AIRPORT>.json, or rerun with --print to dump everything")
         return
@@ -760,10 +831,10 @@ def main():
     for apt in sorted(set(by_apt) | set(hidden)):
         recs = by_apt.get(apt, [])
         print(f"\n==================== {apt} ====================")
-        for pri, icon in (("action", "!!"), ("fyi", "--")):
+        for pri, icon in (("action", "!!"), ("ifr", ">>"), ("fyi", "--")):
             group = [r for r in recs if r["priority"] == pri]
             if group:
-                print(f"\n{pri.upper()}")
+                print(f"\n{'IFR PROCEDURES' if pri == 'ifr' else pri.upper()}")
             if pri == "fyi" and "--routes" not in flags:
                 routes = [r for r in group if base(r["source"]).startswith("PFR")]
                 procs = [r for r in group if base(r["source"]).startswith(("STAR", "DP"))]
