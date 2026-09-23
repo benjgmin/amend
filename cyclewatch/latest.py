@@ -5,6 +5,7 @@ import os
 import shutil
 
 from . import SCHEMA_VERSION
+from .airports import directory
 from .cycles import CYCLE, cycle_on_or_before, get_cycle, get_dtpp, zip_path
 from .output import dump, write_diff
 from .pipeline import run
@@ -21,6 +22,7 @@ INDEX_HTML = """<!doctype html><meta charset="utf-8"><title>Cyclewatch</title>
 <li>One airport: <code>latest/&lt;ID&gt;.json</code> (FAA id, e.g. <code>VRB</code>)</li>
 <li>History since Aug 2024: <code>history/&lt;ID&gt;.json</code>, <a href="history/index.json">history/index.json</a></li>
 <li>Run info: <a href="latest/meta.json">latest/meta.json</a></li>
+<li>Airport directory (names, search): <a href="airports.json">airports.json</a></li>
 </ul>
 <p>Format: see SCHEMA.md in the repo. <b>Not for navigation.</b> Always check official FAA publications and NOTAMs.</p>
 </body>"""
@@ -49,6 +51,9 @@ def build(llm=True):
           "upcoming": upcoming, "includes_charts": bool(dtpp), "changed_airports": n,
           "generated": dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds")},
          os.path.join(out, "meta.json"))
+    apts = directory(zip_path(new))
+    dump({"schema_version": SCHEMA_VERSION, "cycle": new.isoformat(), "airports": apts},
+         os.path.join(SITE, "airports.json"))
     if os.path.isdir(HISTORY):
         shutil.copytree(HISTORY, os.path.join(SITE, "history"),
                         ignore=shutil.ignore_patterns("cycles.json"))

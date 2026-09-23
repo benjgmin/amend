@@ -3,12 +3,13 @@ import xml.etree.ElementTree as ET
 from collections import defaultdict
 
 DTPP_KINDS = {
-    "IAP": "approach", "DP": "departure", "ODP": "obstacle departure", "STAR": "arrival (STAR)",
+    "IAP": "approach", "DP": "departure", "ODP": "obstacle departure",
+    "STAR": "arrival", "STR": "arrival",   # the real metafile uses STR
     "APD": "airport diagram", "HOT": "hot spot page", "MIN": "minimums page",
     "LAH": "LAHSO page", "DAU": "diverse vector area page", "CVFP": "charted visual procedure",
 }
 DTPP_ACTIONS = {"A": "added", "C": "changed", "D": "removed"}
-PROCEDURE_CODES = ("IAP", "DP", "ODP", "STAR", "CVFP")
+PROCEDURE_CODES = ("IAP", "DP", "ODP", "STAR", "STR", "CVFP")
 
 
 def load_dtpp(path, ids):

@@ -130,6 +130,32 @@ class TestCharts(Case):
         self.assertEqual(ch[0]["chart"]["pdf"], "https://aeronav.faa.gov/d-tpp/2610/00237IL7L.PDF")
         self.assertNotIn("pdf", ch[1]["chart"])
 
+    def test_str_is_an_arrival(self):
+        """the real metafile codes STARs as STR."""
+        xml = os.path.join(tempfile.mkdtemp(), "meta.xml")
+        with open(xml, "w") as f:
+            f.write('<digital_tpp cycle="2609"><airport_name apt_ident="BOS"><record>'
+                    '<chart_code>STR</chart_code><chart_name>WOONS TWO</chart_name>'
+                    '<useraction>C</useraction><pdf_name>X.PDF</pdf_name><amdtnum>2</amdtnum>'
+                    '</record></airport_name></digital_tpp>')
+        ch = self.diff({"APT_BASE.csv": ["ARPT_ID", "BOS"]}, {"APT_BASE.csv": ["ARPT_ID", "BOS"]},
+                       {"BOS"}, xml)["BOS"]
+        self.assertEqual((ch[0]["priority"], ch[0]["summary"]), ("ifr", "arrival WOONS TWO amended (amdt 2)"))
+
+
+class TestDirectory(unittest.TestCase):
+    def test_airports_json(self):
+        from cyclewatch.airports import directory
+        p = os.path.join(tempfile.mkdtemp(), "a.zip")
+        make_zip(p, {"APT_BASE.csv": ["ARPT_ID,ICAO_ID,ARPT_NAME,CITY,STATE_CODE,SITE_TYPE_CODE,LAT_DECIMAL,LONG_DECIMAL",
+                                      "DAB,KDAB,DAYTONA BEACH INTL,DAYTONA BEACH,FL,A,29.17991667,-81.05805556",
+                                      "7FL6,,SPRUCE CREEK,DAYTONA BEACH,FL,A,,"]})
+        d = directory(p)
+        self.assertEqual(d[1], {"id": "DAB", "icao": "KDAB", "name": "Daytona Beach Intl",
+                                "city": "Daytona Beach", "state": "FL", "type": "airport",
+                                "lat": 29.1799, "lon": -81.0581})
+        self.assertNotIn("icao", d[0])
+
 
 class TestSchema(Case):
     def test_shape(self):
