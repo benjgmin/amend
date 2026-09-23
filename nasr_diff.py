@@ -66,6 +66,7 @@ def is_noise_col(c):
         return True
     c = c.upper()
     return (c.startswith(("LAT_", "LONG_", "MAG_VARN")) or
+            c.endswith(("SRC_DATE", "SOURCE_DATE")) or
             c in {"LEGACY_ELEMENT_NUMBER", "REF_COL_SEQ_NO", "SEQ", "ALT_CODE", "ELEV", "DME_SSV"})
 
 HIDDEN_FILES = ("PFR_SEG", "PFR_BASE", "LID")
@@ -566,6 +567,10 @@ def collapse(records):
                     renumbered.append((old, new))
                     added_rwys.remove(new)
                     break
+        # exactly one runway gone and one new one left over -> it was replaced/realigned
+        left_removed = [r for r in removed_rwys if all(r is not o for o, _ in renumbered)]
+        if len(left_removed) == 1 and len(added_rwys) == 1:
+            renumbered.append((left_removed[0], added_rwys.pop()))
         drop = set()
         for old, new in renumbered:
             o_id, n_id = old["row"].get("RWY_ID", "?"), new["row"].get("RWY_ID", "?")
@@ -578,7 +583,11 @@ def collapse(records):
                 extra.append(f"surface now {n.get('SURFACE_TYPE_CODE', '?').lower()}")
             tail = f" ({'; '.join(extra)})" if extra else ""
             out.append({"airport": apt, "source": "APT_RWY.csv", "kind": "changed", "priority": "action",
-                        "summary_override": f"runway {o_id} renumbered to {n_id}{tail}",
+                        "summary_override": (
+                            f"runway {o_id} renumbered to {n_id}{tail}"
+                            if close_numbers(rwy_num(o_id), rwy_num(n_id)) or
+                            (o.get("RWY_LEN") == n.get("RWY_LEN") and o.get("RWY_WIDTH") == n.get("RWY_WIDTH"))
+                            else f"runway {o_id} replaced by runway {n_id}{tail}"),
                         "fields": [{"field": "RWY_ID", "old": o_id, "new": n_id}]})
             drop |= {id(old), id(new)}
             old_ids = set(o_id.split("/")) | {o_id}
