@@ -2,9 +2,11 @@ import Foundation
 
 enum APIError: LocalizedError {
     case badStatus(Int)
+    case missing(String)
     var errorDescription: String? {
         switch self {
         case .badStatus(let code): "Server returned \(code)"
+        case .missing(let id): "Amend's data for \(id) is missing or still updating. Try again in a few minutes."
         }
     }
 }

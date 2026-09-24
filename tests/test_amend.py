@@ -188,5 +188,53 @@ class TestSchema(Case):
         self.assertEqual(cycle_label("data/2026-10-01_CSV.zip"), "2026-10-01")
 
 
+class TestRemarks(unittest.TestCase):
+    def test_dropped_number_is_rejected(self):
+        """real Claude output: the 12500 LB limit silently disappeared."""
+        from amend.remarks import faithful
+        raw = "CLSD 2300-0600 & TO ACFT ABV 12500 LB."
+        self.assertFalse(faithful(raw, "Closed from 2300 to 0600."))
+        self.assertTrue(faithful(raw, "Closed 2300-0600 and to aircraft above 12,500 lb."))
+
+    def test_translations_are_matched_by_id_and_checked(self):
+        from amend import remarks
+        d = tempfile.mkdtemp()
+        old_cache, old_call = remarks.CACHE_FILE, remarks._call_claude
+        old_key = os.environ.get("ANTHROPIC_API_KEY")
+        remarks.CACHE_FILE = os.path.join(d, "cache.json")
+        # answers out of order, one of them unfaithful
+        remarks._call_claude = lambda key, prompt: {"1": "Runway 18 closed.", "0": "PPR."}
+        os.environ["ANTHROPIC_API_KEY"] = "sk-test"
+        try:
+            out = remarks.translate_remarks(["PPR 24 HR.", "RWY 18 CLSD."], True)
+        finally:
+            remarks.CACHE_FILE, remarks._call_claude = old_cache, old_call
+            if old_key is None:
+                os.environ.pop("ANTHROPIC_API_KEY")
+            else:
+                os.environ["ANTHROPIC_API_KEY"] = old_key
+        self.assertEqual(out["RWY 18 CLSD."], "Runway 18 closed.")
+        self.assertEqual(out["PPR 24 HR."], "PPR 24 HR.")   # lost the 24: FAA text kept
+
+
+class TestDownload(unittest.TestCase):
+    def test_error_page_is_not_kept(self):
+        from amend.cycles import download
+        d = tempfile.mkdtemp()
+        page = os.path.join(d, "page.html")
+        with open(page, "w") as f:
+            f.write("<!DOCTYPE html><html>maintenance</html>")
+        good = os.path.join(d, "good.zip")
+        make_zip(good, {"APT_BASE.csv": ["ARPT_ID", "DAB"]})
+        dest = os.path.join(d, "data", "2026-10-01_CSV.zip")
+        self.assertFalse(download("file://" + page, dest))
+        self.assertFalse(os.path.exists(dest))
+        self.assertTrue(download("file://" + good, dest))
+        with open(dest, "wb") as f:   # corrupt file already in the cache gets replaced
+            f.write(b"junk")
+        self.assertTrue(download("file://" + good, dest))
+        self.assertTrue(zipfile.is_zipfile(dest))
+
+
 if __name__ == "__main__":
     unittest.main()

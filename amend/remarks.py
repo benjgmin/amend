@@ -1,6 +1,7 @@
 """Translating FAA remark contractions to plain English with Claude, plus API key handling."""
 import json
 import os
+import re
 import urllib.request
 
 LLM_MODEL = "claude-haiku-4-5-20251001"
@@ -27,39 +28,61 @@ PROMPT = (
     "- Do not add or remove information. Keep every regulatory reference "
     "(Part 121, Part 135, Part 380, FAR, etc.) exactly as written.\n"
     "Glossary: " + GLOSSARY + "\n"
-    "Return ONLY a JSON array of strings, same order and same length as the input.\n\n")
+    "The input is a JSON object of id -> remark. Return ONLY a JSON object with the same "
+    "ids, each mapped to its translation.\n\n")
+
+
+def _numbers(s):
+    return set(re.findall(r"\d+", s.replace(",", "")))
+
+
+def faithful(raw, plain):
+    """false if the translation lost or changed a number (a time, weight, runway, frequency,
+    phone number...). a dropped '12500 LB' limit is exactly the mistake we can't ship."""
+    return isinstance(plain, str) and bool(plain.strip()) and _numbers(raw) <= _numbers(plain)
 
 
 def translate_remarks(texts, use_llm):
-    """map raw FAA remark -> plain English. cached on disk; falls back to raw text."""
+    """map raw FAA remark -> plain English. cached on disk; falls back to raw text.
+    translations that fail faithful() are never returned, even from an old cache."""
     cache = {}
     if os.path.exists(CACHE_FILE):
-        with open(CACHE_FILE) as f:
+        with open(CACHE_FILE, encoding="utf-8") as f:
             cache = json.load(f)
     todo = sorted({t for t in texts if t and t not in cache})
     key = os.environ.get("ANTHROPIC_API_KEY")
-    if not (use_llm and todo):
-        return cache
-    if not key:
+    if use_llm and todo and not key:
         print("  warning: --llm set but ANTHROPIC_API_KEY missing, using raw remarks")
-        return cache
-    if len(todo) > BATCH:
-        print(f"  translating {len(todo)} remarks with Claude ...")
-    for i in range(0, len(todo), BATCH):
-        batch = todo[i:i + BATCH]
-        if len(todo) > 300 and i % 300 == 0:
-            print(f"    {i}/{len(todo)}")
-        try:
-            out = _call_claude(key, PROMPT + json.dumps(batch, indent=1))
-            if len(out) == len(batch):
-                cache.update(dict(zip(batch, out)))
-            else:
-                print("  warning: llm returned wrong number of remarks, skipping batch")
-        except Exception as e:
-            print(f"  warning: llm call failed ({e}), using raw remarks")
-    with open(CACHE_FILE, "w") as f:
-        json.dump(cache, f, indent=1)
-    return cache
+    if use_llm and todo and key:
+        if len(todo) > BATCH:
+            print(f"  translating {len(todo)} remarks with Claude ...")
+        rejected = 0
+        for i in range(0, len(todo), BATCH):
+            batch = todo[i:i + BATCH]
+            if len(todo) > 300 and i % 300 == 0:
+                print(f"    {i}/{len(todo)}")
+            try:
+                out = _call_claude(key, PROMPT + json.dumps(
+                    {str(j): t for j, t in enumerate(batch)}, indent=1))
+            except Exception as e:
+                print(f"  warning: llm call failed ({e}), using raw remarks")
+                continue
+            if not isinstance(out, dict):
+                print("  warning: llm didn't return an object, skipping batch")
+                continue
+            for j, raw in enumerate(batch):
+                plain = out.get(str(j))
+                if plain is None:
+                    continue  # not answered: try again next run
+                if not faithful(raw, plain):
+                    rejected += 1
+                    plain = raw  # cache the rejection so we don't pay for it again
+                cache[raw] = plain
+        if rejected:
+            print(f"  {rejected} translation(s) changed a number, kept the FAA text instead")
+        with open(CACHE_FILE, "w", encoding="utf-8") as f:
+            json.dump(cache, f, indent=1)
+    return {raw: plain for raw, plain in cache.items() if faithful(raw, plain)}
 
 
 def _call_claude(key, prompt):

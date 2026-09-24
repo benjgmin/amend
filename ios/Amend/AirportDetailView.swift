@@ -123,7 +123,17 @@ private struct LatestView: View {
 
     private func load() async {
         do {
-            data = try await API.latest(id)
+            let changes = try await API.latest(id)
+            if changes == nil {
+                // a 404 means "no changes" only if the index agrees. otherwise the site is
+                // mid-deploy or broken, and showing NOTHING CHANGED would be a false all-clear
+                var index = store.index
+                if index == nil { index = try await API.latestIndex() }
+                guard let index, index.airports[id] == nil else {
+                    throw APIError.missing(id)
+                }
+            }
+            data = changes
             error = nil
         } catch {
             self.error = error.localizedDescription
