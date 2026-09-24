@@ -161,7 +161,7 @@ enum Cycle {
         guard let d = date(cycle) else { return cycle }
         var cal = Calendar(identifier: .gregorian)
         cal.timeZone = utc
-        return cal.date(byAdding: .day, value: days, to: d).map(string) ?? cycle
+        return cal.date(byAdding: .day, value: days, to: d).map { string($0) } ?? cycle
     }
 
     /// days from today until the cycle takes effect (negative = already effective)
