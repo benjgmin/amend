@@ -11,3 +11,8 @@ __pycache__/
 *.xml
 data/
 site/
+xcuserdata/
+*.xcuserstate
+DerivedData/
+build/
+.DS_Store
