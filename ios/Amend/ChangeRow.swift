@@ -3,6 +3,7 @@ import SwiftUI
 struct ChangeRow: View {
     let change: Change
     @State private var expanded = false
+    @State private var plate: Plate?
 
     private var hasMore: Bool {
         change.original != nil || !(change.details ?? []).isEmpty
@@ -37,11 +38,14 @@ struct ChangeRow: View {
                     }
                     Spacer()
                     if let pdf = change.chart?.pdf, let url = URL(string: pdf) {
-                        Link(destination: url) {
+                        Button {
+                            plate = Plate(url: url, title: change.chart?.name ?? "Chart")
+                        } label: {
                             Text("VIEW PLATE ›")
                                 .font(EFB.mono(11, .bold))
                                 .foregroundStyle(EFB.cyan)
                         }
+                        .buttonStyle(.plain)
                     }
                     if hasMore {
                         Button { withAnimation(.snappy) { expanded.toggle() } } label: {
@@ -81,6 +85,7 @@ struct ChangeRow: View {
         .background(EFB.panel)
         .clipShape(RoundedRectangle(cornerRadius: 6))
         .overlay(RoundedRectangle(cornerRadius: 6).stroke(EFB.line, lineWidth: 1))
+        .fullScreenCover(item: $plate) { PlateView(plate: $0) }
     }
 
     /// capitalize the first letter; the backend writes lowercase summaries

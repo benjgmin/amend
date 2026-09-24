@@ -33,9 +33,9 @@ struct GuideView: View {
                     Text("The FAA publishes airport and airspace data every 28 days (NASR) and instrument charts on the same schedule (d-TPP). Each cycle has an effective date.")
                         .guideBody()
                     tierRow(color: EFB.cyan, label: "UPCOMING",
-                            text: "The next cycle is already published but not in effect yet. T-8D means it takes effect in 8 days. Great time to check your airports.")
-                    tierRow(color: EFB.green, label: "CURRENT",
-                            text: "Showing what changed in the cycle that's in effect now.")
+                            text: "The next cycle is already published but not in effect yet, so you can see changes before they happen. Great time to check your airports.")
+                    tierRow(color: EFB.green, label: "IN EFFECT",
+                            text: "The newest cycle is active. Shows what changed compared to the one before it.")
                     Text("History goes back to Aug 2024 for airport data. Chart history starts in fall 2026 because the FAA doesn't keep old chart indexes online.")
                         .guideBody()
                 }
@@ -79,14 +79,14 @@ struct GuideView: View {
             Text("e.g. " + example)
                 .font(EFB.mono(11))
                 .foregroundStyle(level.color.opacity(0.8))
-                .padding(.leading, 74)
+                .padding(.leading, 102)
         }
     }
 
     private func tierRow(color: Color, label: String, text: String) -> some View {
         HStack(alignment: .top, spacing: 10) {
             Annunciator(text: label, color: color)
-                .frame(width: 64, alignment: .leading)
+                .frame(width: 92, alignment: .leading)
             Text(text).guideBody()
         }
     }

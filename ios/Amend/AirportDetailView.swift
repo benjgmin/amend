@@ -59,12 +59,18 @@ struct AirportDetailView: View {
         .padding(.top, 8)
     }
 
+    /// "UPCOMING" while the newest cycle isn't in effect yet, "LATEST" once it is
+    private func label(for t: Tab) -> String {
+        guard t == .latest, let meta = store.meta else { return t.rawValue }
+        return Cycle.isInEffect(meta.toCycle) ? "LATEST" : "UPCOMING"
+    }
+
     private var tabBar: some View {
         HStack(spacing: 0) {
             ForEach(Tab.allCases, id: \.self) { t in
                 Button { tab = t } label: {
                     VStack(spacing: 6) {
-                        Text(t.rawValue)
+                        Text(label(for: t))
                             .font(EFB.mono(12, .bold))
                             .tracking(1.5)
                             .foregroundStyle(tab == t ? EFB.cyan : EFB.dim)
@@ -96,10 +102,8 @@ private struct LatestView: View {
     var body: some View {
         List {
             if let data {
-                Text("\(Cycle.efb(data.fromCycle))  →  \(Cycle.efb(data.toCycle))")
-                    .font(EFB.mono(11))
-                    .foregroundStyle(EFB.dim)
-                    .efbRow(top: 12, bottom: 4)
+                EffectiveNote(fromCycle: data.fromCycle, toCycle: data.toCycle)
+                    .efbRow(top: 12, bottom: 6)
                 ChangeSections(changes: data.changes)
             }
         }
@@ -123,17 +127,7 @@ private struct LatestView: View {
 
     private func load() async {
         do {
-            let changes = try await API.latest(id)
-            if changes == nil {
-                // a 404 means "no changes" only if the index agrees. otherwise the site is
-                // mid-deploy or broken, and showing NOTHING CHANGED would be a false all-clear
-                var index = store.index
-                if index == nil { index = try await API.latestIndex() }
-                guard let index, index.airports[id] == nil else {
-                    throw APIError.missing(id)
-                }
-            }
-            data = changes
+            data = try await API.latest(id)
             error = nil
         } catch {
             self.error = error.localizedDescription
@@ -248,6 +242,36 @@ struct ChangeSections: View {
                 .listSectionSeparator(.hidden)
             }
         }
+    }
+}
+
+/// makes it impossible to mistake upcoming changes for what's in effect today
+private struct EffectiveNote: View {
+    let fromCycle: String
+    let toCycle: String
+
+    private var days: Int { Cycle.daysUntil(toCycle) ?? 0 }
+    private var upcoming: Bool { !Cycle.isInEffect(toCycle) }
+    private var when: String {
+        switch days {
+        case ...0: "today at 0901Z"
+        case 1: "tomorrow at 0901Z"
+        default: "in \(days) days"
+        }
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Annunciator(text: upcoming ? "NOT IN EFFECT YET" : "IN EFFECT",
+                        color: upcoming ? EFB.cyan : EFB.green)
+            Text(upcoming
+                 ? "These changes take effect \(Cycle.efb(toCycle)) 0901Z (\(when)). Until then, the current value applies: it's the one before the →."
+                 : "In effect since \(Cycle.efb(toCycle)) 0901Z. Compared to the previous cycle (\(Cycle.efb(fromCycle))), the value after the → is what applies now.")
+                .font(.footnote)
+                .foregroundStyle(EFB.text.opacity(0.8))
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .efbPanel()
     }
 }
 

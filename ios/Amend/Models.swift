@@ -164,6 +164,17 @@ enum Cycle {
         return cal.date(byAdding: .day, value: days, to: d).map { string($0) } ?? cycle
     }
 
+    /// FAA cycles change over at 0901Z on the effective date (what the charts print:
+    /// "0901Z 03 SEP 2026 to 0901Z 01 OCT 2026")
+    static func effectiveInstant(_ cycle: String) -> Date? {
+        date(cycle).map { $0.addingTimeInterval(9 * 3600 + 60) }
+    }
+
+    static func isInEffect(_ cycle: String) -> Bool {
+        guard let t = effectiveInstant(cycle) else { return true }
+        return Date.now >= t
+    }
+
     /// days from today until the cycle takes effect (negative = already effective)
     static func daysUntil(_ cycle: String) -> Int? {
         guard let d = date(cycle) else { return nil }

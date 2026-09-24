@@ -31,6 +31,7 @@ PAIR_KEYS = {
     "AWOS": ("ASOS_AWOS_ID",),
     "APT_ATT": ("ARPT_ID",),
     "APT_BASE": ("ARPT_ID",),
+    "APT_CON": ("TITLE",),
 }
 
 # whole files that are noise or duplicate other files. skipped at load time.
@@ -61,7 +62,7 @@ ACTION_TEXT_WORDS = ("CLSD", "CLOSED", "TWR", "PPR", "NOT AVBL", "UNAVBL", "CTAF
 CONTEXT_COLS = ("Orig", "Dest", "Route String", "FREQ", "FREQ_USE", "NAV_ID", "NAV_TYPE",
                 "RWY_ID", "RWY_END_ID", "ELEMENT", "SERVICED_FACILITY", "REMARK",
                 "STAR_COMPUTER_CODE", "DP_COMPUTER_CODE", "NAME", "OBSTN_HGT", "DIST_FROM_THR",
-                "CNTRLN_OFFSET", "CNTRLN_DIR_CODE", "OBSTN_CLNC_SLOPE", "OBSTN_TYPE")
+                "CNTRLN_OFFSET", "CNTRLN_DIR_CODE", "OBSTN_CLNC_SLOPE", "OBSTN_TYPE", "TITLE")
 
 NAV_NAMES = {"VOT": "VOR test signal (VOT)", "VORTAC": "VORTAC", "VOR/DME": "VOR/DME",
              "DME": "DME", "NDB": "NDB", "VOR": "VOR", "TACAN": "TACAN"}

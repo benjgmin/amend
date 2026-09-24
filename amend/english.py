@@ -92,10 +92,24 @@ def field_phrases(fields, source, ctx=None):
         if k in handled:
             continue
         if k in NAME_COLS:
-            phrases.append(f"name changed: {f['old'].title()} -> {f['new'].title()}")
+            phrases.append(f"{name_label(k, source, ctx)} changed: {f['old'].title()} -> {f['new'].title()}")
         else:
             phrases.append(f"{label(k)}: {f['old'] or '(none)'} -> {f['new'] or '(none)'}")
     return phrases
+
+
+def name_label(col, source, ctx):
+    """what a NAME column actually is, e.g. 'airport manager' instead of just 'name'."""
+    b = base(source)
+    if b == "APT_CON":
+        return f"airport {ctx.get('TITLE', 'contact').lower()}"
+    if col == "ARPT_NAME":
+        return "airport name"
+    if b.startswith("NAV"):
+        return "navaid name"
+    if col == "SERVICED_FAC_NAME":
+        return "served facility name"
+    return "facility name"
 
 
 def summarize(rec, remarks):
@@ -131,6 +145,13 @@ def summarize(rec, remarks):
     if b.startswith(("STAR", "DP")):
         what = "arrival (STAR)" if b.startswith("STAR") else "departure (DP)"
         return f"{what} {procedure_name(rec)} {'updated' if kind == 'changed' else kind}"
+
+    if b == "APT_CON" and kind != "changed":
+        who = row.get("NAME", "").title() or "someone"
+        title = row.get("TITLE", "contact").lower()
+        phone = f" ({row['PHONE_NO']})" if row.get("PHONE_NO") else ""
+        return (f"new airport {title} listed: {who}{phone}" if kind == "added"
+                else f"airport {title} no longer listed: {who}")
 
     if b == "NAV_BASE" and kind != "changed":
         t = NAV_NAMES.get(row.get("NAV_TYPE", ""), row.get("NAV_TYPE", "navaid"))

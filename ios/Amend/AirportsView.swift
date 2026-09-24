@@ -108,12 +108,12 @@ private struct CycleStrip: View {
     var onInfo: () -> Void = {}
 
     private var days: Int? { Cycle.daysUntil(meta.toCycle) }
-    /// the site says "upcoming" until its next daily run; trust the calendar
-    private var upcoming: Bool { meta.upcoming && (days ?? 0) > 0 }
+    /// the site says "upcoming" until its next daily run; trust the clock (changeover is 0901Z)
+    private var upcoming: Bool { meta.upcoming && !Cycle.isInEffect(meta.toCycle) }
 
     private var countdown: String {
         switch days ?? 0 {
-        case ...0: "TODAY"
+        case ...0: "TODAY 0901Z"
         case 1: "TOMORROW"
         case let d: "IN \(d) DAYS"
         }
@@ -135,17 +135,20 @@ private struct CycleStrip: View {
             }
 
             if upcoming {
-                label("Next cycle takes effect")
+                label("Next cycle takes effect 0901Z")
                 HStack(alignment: .firstTextBaseline, spacing: 10) {
                     Text(Cycle.efb(meta.toCycle)).font(EFB.mono(26, .bold)).foregroundStyle(EFB.text)
                     Text(countdown).font(EFB.mono(13, .bold)).foregroundStyle(EFB.cyan)
                 }
                 detail("\(meta.changedAirports) airports change on this date")
+                Text("CHANGES SHOWN BELOW ARE NOT IN EFFECT YET")
+                    .font(EFB.mono(11, .semibold))
+                    .foregroundStyle(EFB.cyan)
                 Rectangle().fill(EFB.line).frame(height: 1).padding(.vertical, 2)
-                detail("In effect now: \(Cycle.efbShort(meta.fromCycle)) – \(Cycle.efb(Cycle.shift(meta.toCycle, days: -1)))")
+                detail("In effect now: \(Cycle.efbShort(meta.fromCycle)) – \(Cycle.efb(meta.toCycle)) 0901Z")
             } else {
-                label("Current cycle in effect")
-                Text("\(Cycle.efbShort(meta.toCycle)) – \(Cycle.efb(Cycle.shift(meta.toCycle, days: 27)))")
+                label("Current cycle in effect (0901Z to 0901Z)")
+                Text("\(Cycle.efbShort(meta.toCycle)) – \(Cycle.efb(Cycle.shift(meta.toCycle, days: 28)))")
                     .font(EFB.mono(22, .bold))
                     .foregroundStyle(EFB.text)
                 detail("\(meta.changedAirports) airports changed since \(Cycle.efb(meta.fromCycle))")

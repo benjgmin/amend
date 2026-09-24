@@ -1,4 +1,3 @@
-
 import SwiftUI
 
 /// Cockpit / EFB look. Colors follow avionics convention:
@@ -46,6 +45,8 @@ struct Annunciator: View {
     var body: some View {
         Text(text)
             .font(EFB.mono(11, .bold))
+            .lineLimit(1)
+            .fixedSize()                 // annunciators never wrap onto two lines
             .foregroundStyle(color)
             .padding(.horizontal, 6)
             .padding(.vertical, 3)
