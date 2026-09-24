@@ -2,7 +2,7 @@ name: update FAA changes
 
 on:
   schedule:
-    - cron: "0 12 * * *"      # every day 12:00 UTC; cheap when nothing changed
+    - cron: "17 12 * * *"     # every day 12:17 UTC; off the hour, when GitHub drops scheduled runs
   workflow_dispatch:           # "Run workflow" button in the Actions tab
 
 permissions:
