@@ -62,7 +62,7 @@ ACTION_TEXT_WORDS = ("CLSD", "CLOSED", "TWR", "PPR", "NOT AVBL", "UNAVBL", "CTAF
 CONTEXT_COLS = ("Orig", "Dest", "Route String", "FREQ", "FREQ_USE", "NAV_ID", "NAV_TYPE",
                 "RWY_ID", "RWY_END_ID", "ELEMENT", "SERVICED_FACILITY", "REMARK",
                 "STAR_COMPUTER_CODE", "DP_COMPUTER_CODE", "NAME", "OBSTN_HGT", "DIST_FROM_THR",
-                "CNTRLN_OFFSET", "CNTRLN_DIR_CODE", "OBSTN_CLNC_SLOPE", "OBSTN_TYPE", "TITLE")
+                "CNTRLN_OFFSET", "CNTRLN_DIR_CODE", "OBSTN_CLNC_SLOPE", "OBSTN_TYPE", "TITLE", "_NEAR_NM")
 
 NAV_NAMES = {"VOT": "VOR test signal (VOT)", "VORTAC": "VORTAC", "VOR/DME": "VOR/DME",
              "DME": "DME", "NDB": "NDB", "VOR": "VOR", "TACAN": "TACAN"}
@@ -92,5 +92,7 @@ def is_noise_col(c):
         return True
     c = c.upper()
     return (c.startswith(("LAT_", "LONG_", "MAG_VARN")) or
+            "_LAT_" in c or "_LONG_" in c or          # e.g. TACAN_DME_LAT_DECIMAL
+            c.endswith("_CHART_FLAG") or
             c.endswith(("SRC_DATE", "SOURCE_DATE")) or
             c in {"LEGACY_ELEMENT_NUMBER", "REF_COL_SEQ_NO", "SEQ", "ALT_CODE", "ELEV", "DME_SSV"})

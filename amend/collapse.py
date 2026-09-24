@@ -3,6 +3,7 @@ import re
 from collections import defaultdict
 
 from .english import procedure_name, summarize
+from .procedures import describe, split_code
 from .rules import REMARK_FILES, base
 
 
@@ -85,20 +86,33 @@ def _runway_changes(apt, rs):
     return out, drop
 
 
-def _procedures(apt, procs):
+def _procedures(apt, procs, route_tables=None):
     names = [(procedure_name(r), r["kind"]) for r in procs]
     new_names = sorted({n for n, k in names if k != "removed"})
     gone = sorted({n for n, k in names if k == "removed"} - set(new_names))
     stem = lambda n: re.sub(r"\d+$", "", n)
     # TTHOR2 -> TTHOR3 is a new version, not a removal
     was = {stem(g): g for g in gone}
+    # a row the diff paired as "changed" (TTHOR2 -> TTHOR3 in place) is a version bump too
+    for r in procs:
+        for f in r.get("fields", []):
+            if f["field"].endswith("COMPUTER_CODE") and f["old"] and f["new"]:
+                o, n = split_code(f["old"])[0], split_code(f["new"])[0]
+                if o != n and stem(o) == stem(n):
+                    was[stem(n)] = o
     labels = [f"{n} (was {was[stem(n)]})" if stem(n) in was else n for n in new_names]
     gone = [g for g in gone if stem(g) not in {stem(n) for n in new_names}]
     s = f"arrival/departure procedures new or updated: {', '.join(labels) or 'none'}"
     if gone:
         s += f"; removed: {', '.join(gone)}"
-    return {"airport": apt, "source": "STAR/DP", "kind": "changed", "priority": "ifr",
-            "summary_override": s, "procedures": {"updated": new_names, "removed": gone}}
+    rec = {"airport": apt, "source": "STAR/DP", "kind": "changed", "priority": "ifr",
+           "summary_override": s, "procedures": {"updated": new_names, "removed": gone}}
+    if route_tables:  # waypoint-level detail, one line per procedure
+        old_routes, new_routes = route_tables
+        prev = lambda n: was.get(stem(n)) or (n if n in old_routes else None)
+        rec["details"] = [describe(n, prev(n), old_routes, new_routes) for n in new_names]
+        rec["details"] += [f"{g}: removed" for g in gone]
+    return rec
 
 
 def _routes(apt, routes):
@@ -111,7 +125,7 @@ def _routes(apt, routes):
             "details": sorted({summarize(r, {}) for r in routes})}
 
 
-def collapse(records):
+def collapse(records, route_tables=None):
     by_apt = defaultdict(list)
     for r in records:
         by_apt[r["airport"]].append(r)
@@ -145,7 +159,7 @@ def collapse(records):
         routes = [r for r in rest if src(r).startswith("PFR")]
         rest = [r for r in rest if r not in procs and r not in routes]
         if procs:
-            rest.append(_procedures(apt, procs))
+            rest.append(_procedures(apt, procs, route_tables))
         if routes:
             rest.append(_routes(apt, routes))
         out.extend(rest)

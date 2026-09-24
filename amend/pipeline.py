@@ -10,7 +10,8 @@ from .collapse import collapse, merge_freq_uses
 from .diff import diff
 from .dtpp import load_dtpp
 from .english import summarize
-from .nasr import airport_ids, load
+from .nasr import NearIndex, airport_ids, load
+from .procedures import airports_by_procedure, load_routes
 from .remarks import translate_remarks
 from .rules import REMARK_FILES, base
 
@@ -74,9 +75,11 @@ def run(old_zip, new_zip, ids=None, dtpp_path=None, llm=False, log=print):
     from_cycle, to_cycle = cycle_label(old_zip), cycle_label(new_zip)
 
     log(f"loading {old_zip} ...")
-    old = load(old_zip, ids, strict=all_mode)
+    near = NearIndex.from_zip(new_zip) if all_mode else None
+    proc_airports = airports_by_procedure(old_zip, new_zip)
+    old = load(old_zip, ids, strict=all_mode, near=near, proc_airports=proc_airports)
     log(f"loading {new_zip} ...")
-    new = load(new_zip, ids, strict=all_mode)
+    new = load(new_zip, ids, strict=all_mode, near=near, proc_airports=proc_airports)
     log(f"  loaded in {time.time() - t0:.0f}s, diffing ...")
 
     records = diff(old, new)
@@ -86,7 +89,8 @@ def run(old_zip, new_zip, ids=None, dtpp_path=None, llm=False, log=print):
             texts.append(r.get("row", {}).get("REMARK", ""))
             texts += [f["new"] for f in r.get("fields", []) if f["field"] == "REMARK"]
     remarks = translate_remarks(texts, llm)
-    records = merge_freq_uses(collapse(records))
+    routes = (load_routes(old_zip), load_routes(new_zip))
+    records = merge_freq_uses(collapse(records, routes))
 
     # summarize; drop phrases already said at that airport (tower hours live in 3 files)
     by_apt, hidden = defaultdict(list), defaultdict(int)

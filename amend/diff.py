@@ -105,7 +105,8 @@ def diff(old, new):
                 removed.remove(r)
                 added.remove(best)
                 cols = sorted(c for c in set(r) | set(best)
-                              if r.get(c, "") != best.get(c, "") and not is_noise_col(c))
+                              if r.get(c, "") != best.get(c, "") and not is_noise_col(c)
+                              and not c.startswith("_"))
                 vals = [r.get(c, "") for c in cols] + [best.get(c, "") for c in cols]
                 pri = priority(fname, "changed", cols, vals)
                 if cols == ["REMARK"] and just_reworded(r["REMARK"], best["REMARK"]):
@@ -129,7 +130,8 @@ def diff(old, new):
                             "fields": [{"field": "FREQ_USE", "old": r.get("FREQ_USE", ""), "new": ""}],
                             "context": {"FREQ": r.get("FREQ", "")}})
                         continue
-                    pri = priority(fname, kind, list(r.keys()), list(r.values()))
+                    pri = priority(fname, kind, [k for k in r if not k.startswith("_")],
+                                   list(r.values()))
                     # same freq with a new label, procedure listings, FSS outlets: not alerts
                     if base(fname) == "FRQ" and (
                             (kind == "added" and r.get("FREQ") in existed)

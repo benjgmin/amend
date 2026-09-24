@@ -75,7 +75,9 @@ def field_phrases(fields, source, ctx=None):
         phrases.append(f"now a {NAV_NAMES.get(f['new'], f['new'])} "
                        f"(was a {NAV_NAMES.get(f['old'], f['old'])})")
     if "TACAN_DME_STATUS" in by:
-        phrases.append(f"status: {by['TACAN_DME_STATUS']['new'].lower() or 'none listed'}")
+        f = by["TACAN_DME_STATUS"]
+        phrases.append(f"TACAN/DME status: {f['new'].lower() or 'none listed'}"
+                       f" (was {f['old'].lower() or 'none listed'})")
     if "FREQ" in by:
         f = by["FREQ"]
         phrases.append(f"frequency changed: {f['old']} -> {f['new']}")
@@ -157,7 +159,8 @@ def summarize(rec, remarks):
         t = NAV_NAMES.get(row.get("NAV_TYPE", ""), row.get("NAV_TYPE", "navaid"))
         freq = f" ({row['FREQ']})" if row.get("FREQ") else ""
         verb = "decommissioned/removed" if kind == "removed" else "added"
-        return f"{row.get('NAV_ID', '')} {t}{freq} {verb}"
+        away = f" ({row['_NEAR_NM']} NM from the field)" if row.get("_NEAR_NM") else ""
+        return f"{row.get('NAV_ID', '')} {t}{freq}{away} {verb}"
 
     if b == "FRQ" and kind != "changed":
         use = row.get("FREQ_USE", "")
@@ -177,21 +180,23 @@ def summarize(rec, remarks):
             where = f"runway {ctx['RWY_ID']}: "
         elif ctx.get("NAV_ID"):
             nm = f" ({ctx['NAME'].title()})" if ctx.get("NAME") else ""
-            where = f"{ctx['NAV_ID']}{nm} navaid: "
+            away = f", {ctx['_NEAR_NM']} NM from the field" if ctx.get("_NEAR_NM") else ""
+            where = f"{ctx['NAV_ID']}{nm} navaid{away}: "
         phrases = field_phrases(rec["fields"], rec["source"], ctx)
         return [where + "; ".join(phrases)] if where else phrases
 
-    shown = ", ".join(f"{label(k)}={v}" for k, v in list(row.items())[:6])
+    shown = ", ".join(f"{label(k)}={v}" for k, v in list(row.items())[:6] if not k.startswith("_"))
     return f"{kind} ({b.lower()}): {shown}"
 
 
 def procedure_name(rec):
-    """'JOKRS4' from a STAR/DP record."""
+    """'JOKRS4' from a STAR/DP record (STAR codes are FIX.NAME, DP codes are NAME.FIX)."""
+    from .procedures import split_code
     for src in (rec.get("row", {}), rec.get("context", {})):
         for k, v in src.items():
             if k.endswith("COMPUTER_CODE") and v:
-                return v.split(".")[-1]
+                return split_code(v)[0]
     for f in rec.get("fields", []):
         if f["field"].endswith("COMPUTER_CODE") and f["new"]:
-            return f["new"].split(".")[-1]
+            return split_code(f["new"])[0]
     return "procedure"

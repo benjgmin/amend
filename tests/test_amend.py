@@ -137,6 +137,80 @@ class TestRunways(Case):
                              "runway 18/36 2300x30 ft turf, CTAF 122.9"])
 
 
+class TestProcedures(Case):
+    def test_waypoint_detail(self):
+        """TTHOR2 -> TTHOR3: which waypoints and transitions changed."""
+        apt = ["ARPT_ID,STAR_COMPUTER_CODE"]
+        rte = ["STAR_COMPUTER_CODE,ROUTE_PORTION_TYPE,ROUTE_NAME,POINT_SEQ,POINT"]
+        old = {"APT_BASE.csv": ["ARPT_ID", "DAB"],
+               "STAR_APT.csv": apt + ["DAB,LPERD.TTHOR2"],
+               "STAR_RTE.csv": rte + ["LPERD.TTHOR2,BODY,LPERD-TTHOR,10,LPERD",
+                                      "LPERD.TTHOR2,BODY,LPERD-TTHOR,20,LAANA",
+                                      "COL.TTHOR2,TRANSITION,COL-LPERD,10,COL"]}
+        new = {"APT_BASE.csv": ["ARPT_ID", "DAB"],
+               "STAR_APT.csv": apt + ["DAB,LPERD.TTHOR3"],
+               "STAR_RTE.csv": rte + ["LPERD.TTHOR3,BODY,LPERD-TTHOR,10,LPERD",
+                                      "LPERD.TTHOR3,BODY,LPERD-TTHOR,20,WOXXO",
+                                      "NECCK.TTHOR3,TRANSITION,NECCK-LPERD,10,NECCK"]}
+        ch = self.diff(old, new)["DAB"][0]
+        self.assertEqual(ch["summary"], "arrival/departure procedures new or updated: TTHOR3 (was TTHOR2)")
+        self.assertEqual(ch["details"], ["TTHOR3 (was TTHOR2): waypoints added NECCK, WOXXO; waypoints removed COL, LAANA; "
+                                         "transitions added NECCK; transitions removed COL"])
+
+    def test_same_name_amended_in_all_airports_mode(self):
+        """route points changed without a version bump: attributed via STAR_APT, compared by name."""
+        apt = ["ARPT_ID,STAR_COMPUTER_CODE"]
+        rte = ["STAR_COMPUTER_CODE,ROUTE_PORTION_TYPE,ROUTE_NAME,POINT_SEQ,POINT"]
+        base_files = {"APT_BASE.csv": ["ARPT_ID", "ISM"], "STAR_APT.csv": apt + ["ISM,SNFLD.SNFLD3"]}
+        old = {**base_files, "STAR_RTE.csv": rte + ["SNFLD.SNFLD3,BODY,SNFLD-SECOY,10,SNFLD",
+                                                    "SNFLD.SNFLD3,BODY,SNFLD-SECOY,20,SECOY"]}
+        new = {**base_files, "STAR_RTE.csv": rte + ["SNFLD.SNFLD3,BODY,SNFLD-SECOY,10,SNFLD",
+                                                    "SNFLD.SNFLD3,BODY,SNFLD-SECOY,20,PDLLA"]}
+        ch = self.diff(old, new)["ISM"][0]
+        self.assertEqual(ch["details"], ["SNFLD3: waypoints added PDLLA; waypoints removed SECOY"])
+
+    def test_transition_computer_code(self):
+        """real NASR columns: the transition's name comes from TRANSITION_COMPUTER_CODE."""
+        import tempfile, os
+        from amend.procedures import load_routes
+        p = os.path.join(tempfile.mkdtemp(), "r.zip")
+        make_zip(p, {"STAR_RTE.csv": [
+            "STAR_COMPUTER_CODE,ROUTE_PORTION_TYPE,ROUTE_NAME,TRANSITION_COMPUTER_CODE,POINT_SEQ,POINT",
+            "SNFLD.SNFLD3,BODY,SNFLD-SECOY,,10,SNFLD",
+            "SNFLD.SNFLD3,TRANSITION,CRG-SNFLD,CRG.SNFLD3,10,CRG"]})
+        self.assertEqual(load_routes(p)["SNFLD3"]["transitions"], {"CRG"})
+
+    def test_dp_code_order(self):
+        from amend.procedures import split_code
+        self.assertEqual(split_code("CONLE5.CONLE"), ("CONLE5", "CONLE"))
+        self.assertEqual(split_code("SNFLD.SNFLD3"), ("SNFLD3", "SNFLD"))
+
+
+class TestNavaidsNearby(Case):
+    def test_navaid_matched_to_nearby_airport(self):
+        """all-airports mode: TRV (Treasure) is ~4 NM from VRB and has no airport column."""
+        apt = ["ARPT_ID,ICAO_ID,FACILITY_USE_CODE,SITE_TYPE_CODE,LAT_DECIMAL,LONG_DECIMAL",
+               "VRB,KVRB,PU,A,27.6556,-80.4179",
+               "X99,,PR,A,27.66,-80.45",          # private: ignored
+               "FAR,KFAR,PU,A,46.92,-96.81"]       # far away: ignored
+        nav = "NAV_ID,NAV_TYPE,NAME,LAT_DECIMAL,LONG_DECIMAL"
+        ch = self.diff({"APT_BASE.csv": apt, "NAV_BASE.csv": [nav, "TRV,VORTAC,TREASURE,27.6784,-80.4897"]},
+                       {"APT_BASE.csv": apt, "NAV_BASE.csv": [nav, "TRV,DME,TREASURE,27.6784,-80.4897"]})
+        self.assertEqual(list(ch), ["VRB"])
+        self.assertEqual(ch["VRB"][0]["summary"],
+                         "TRV (Treasure) navaid, 4 NM from the field: now a DME (was a VORTAC)")
+
+    def test_tacan_coordinates_are_noise(self):
+        apt = ["ARPT_ID,ICAO_ID,FACILITY_USE_CODE,SITE_TYPE_CODE,LAT_DECIMAL,LONG_DECIMAL",
+               "DTO,KDTO,PU,A,33.2006,-97.1981"]
+        nav = "NAV_ID,NAV_TYPE,NAME,LAT_DECIMAL,LONG_DECIMAL,TACAN_DME_STATUS,TACAN_DME_LAT_DECIMAL"
+        ch = self.diff({"APT_BASE.csv": apt, "NAV_BASE.csv": [nav, "DQD,VORTAC,DENTON,33.2156,-97.1989,,"]},
+                       {"APT_BASE.csv": apt, "NAV_BASE.csv": [nav, "DQD,VORTAC,DENTON,33.2156,-97.1989,"
+                                                                  "OPERATIONAL IFR,33.21555555"]})
+        self.assertEqual(ch["DTO"][0]["summary"], "DQD (Denton) navaid, 1 NM from the field: "
+                                                  "TACAN/DME status: operational ifr (was none listed)")
+
+
 class TestCharts(Case):
     def test_dtpp(self):
         xml = os.path.join(tempfile.mkdtemp(), "meta.xml")
