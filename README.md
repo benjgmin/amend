@@ -31,16 +31,19 @@ SwiftUI, iOS 17+, styled like an EFB.
 
 - **Your airports** with a home field pinned on top, each showing annunciator-style counts: `ACT` (changes how you fly it), `IFR` (approaches, STARs, departures, routes), `FYI`, or `NO CHG`
 - **Search** by FAA id, ICAO, name or city across ~20,000 airports
-- **This cycle** and **History** (back to Aug 2024) for every airport, with the original FAA text behind every translated remark and a direct link to each new approach plate
+- **Upcoming** and **History** (back to Aug 2024) for every airport, clearly marked as not in effect yet until the 0901Z changeover, with the original FAA text behind every translated remark
+- **Approach plates in the app:** amended charts open right inside Amend, with zoom and a share button to save them or open them in another EFB
 - **Notifications** once per cycle when your airports are affected: any change at your home field, action items elsewhere
 - **Guide and onboarding** that explain the tiers, remarks and cycles
 
 ## How it works
 
-A GitHub Action runs daily. It downloads the FAA NASR 28-day subscription and d-TPP chart metadata, diffs every US airport (about 15 seconds), and publishes static JSON to GitHub Pages. The app reads that JSON; there is no server.
+A GitHub Action runs daily. It downloads the FAA NASR 28-day subscription and d-TPP chart metadata, diffs every US airport (about 15 seconds, with 26 regression tests guarding the rules), and publishes static JSON to GitHub Pages. The app reads that JSON; there is no server.
 
-- **Airports and airspace:** tower and Class D hours, frequencies, navaids, runways (including renumbering from magnetic drift and declared distances), attendance hours, phone numbers, new and closed airports, remarks
+- **Airports and airspace:** tower and Class D hours, frequencies, runways (renumbering from magnetic drift, replacements, declared distances), attendance hours, contacts, new and closed airports, remarks
+- **Navaids:** decommissioned or changed VORs, VORTACs and DMEs, matched to the public airports within 10 NM ("TRV (Treasure) navaid, 4 NM from the field: now a DME")
 - **Charts:** added, amended and removed approaches, departures, STARs and airport diagrams, with links to the new PDF plates
+- **Arrivals and departures down to the waypoint:** when a STAR or DP is amended, Amend compares the old and new routes and says what moved ("MINEE6 (was MINEE5): waypoints removed FUPGE, LBV, RINSE; transitions removed LBV")
 - **Plain-English remarks:** FAA contractions ("RSCD NOT MNT 2300-0600 M-F") are translated with Claude using a fixed glossary. Unknown abbreviations are left as-is rather than guessed, and the original FAA text is always kept
 - **Noise filtering:** survey dates, pavement codes, coordinate rounding, duplicate files and reworded remarks are hidden or demoted, and one real-world event (a renumbered runway, a new airport, a new STAR version) becomes one line instead of dozens of raw rows
 
@@ -56,6 +59,7 @@ Data is public at `https://benjgmin.github.io/amend/`, documented in [SCHEMA.md]
 | `amend/collapse.py`, `english.py` | turning raw rows into events and plain-English summaries |
 | `amend/remarks.py` | translating remarks with Claude |
 | `amend/dtpp.py` | approach plate / chart changes |
+| `amend/procedures.py` | waypoint-level STAR / DP comparisons |
 | `amend/pipeline.py` | the whole diff in one call, public JSON shape |
 | `amend/history.py`, `latest.py`, `airports.py` | history timeline, the published site, airport directory |
 | `tests/` | regression tests built from real cases found in FAA data |
@@ -85,8 +89,8 @@ NASR data comes from the [FAA 28-Day NASR Subscription](https://www.faa.gov/air_
 
 - TestFlight
 - Home screen widget for your home airport
-- Waypoint-level detail for STAR/DP changes
-- Match navaids to nearby airports in all-airports mode
+- Night mode for plates
+- "New since you last looked" markers
 
 ## Disclaimer
 
