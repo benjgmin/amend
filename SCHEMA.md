@@ -53,6 +53,17 @@ Only exists if the airport changed. **A 404 means no changes**, not an error.
 | `procedures` | object | no | `{"updated": [...], "removed": [...]}` STAR/DP names |
 | `chart` | object | no | `{"code", "name", "amdt", "pdf"?}`. `pdf` links the new plate; absent for removed charts |
 
+## `airports.json`
+Every airport in the current FAA cycle, for names and search (~20k entries, sorted by id).
+Fields other than `id`, `name` are omitted when the FAA has no value.
+
+```json
+{"schema_version": 1, "cycle": "2026-10-01",
+ "airports": [{"id": "DAB", "icao": "KDAB", "name": "Daytona Beach Intl", "city": "Daytona Beach",
+               "state": "FL", "type": "airport", "lat": 29.1799, "lon": -81.0581}]}
+```
+`type`: `airport`, `heliport`, `seaplane base`, `gliderport`, `ultralight`, `balloonport`.
+
 ## `history/<ID>.json`
 Every change at an airport since Aug 2024, newest first.
 
