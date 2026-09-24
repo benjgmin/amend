@@ -4,6 +4,7 @@ import re
 from collections import defaultdict
 
 from .rules import (ACTION_COL_WORDS, ACTION_PREFIXES, ACTION_TEXT_WORDS, CONTEXT_COLS,
+                    DECLARED_ACTION_FT, DECLARED_ACTION_PCT, DECLARED_DISTANCES,
                     FYI_ONLY_COLS, HIDDEN_FILES, HIDDEN_ONLY_COLS, ID_COLS, NAME_COLS,
                     PAIR_KEYS, base, is_noise_col)
 
@@ -54,6 +55,20 @@ def priority(fname, kind, cols, values):
     return "fyi"
 
 
+def declared_distance_cut(old_row, new_row, cols):
+    """true if a declared distance (TORA/TODA/ASDA/LDA) got meaningfully shorter."""
+    for c in cols:
+        if c not in DECLARED_DISTANCES:
+            continue
+        try:
+            o, n = float(old_row.get(c) or 0), float(new_row.get(c) or 0)
+        except ValueError:
+            continue
+        if o > 0 and n < o and (o - n >= DECLARED_ACTION_FT or (o - n) / o >= DECLARED_ACTION_PCT):
+            return True
+    return False
+
+
 def just_reworded(old, new):
     """same numbers/ids and mostly the same words -> the FAA just reworded it."""
     nums = lambda s: set(re.findall(r"[A-Z]*\d+[A-Z0-9/]*", s.upper()))
@@ -95,6 +110,8 @@ def diff(old, new):
                 pri = priority(fname, "changed", cols, vals)
                 if cols == ["REMARK"] and just_reworded(r["REMARK"], best["REMARK"]):
                     pri = "fyi"
+                if cols and all(c in DECLARED_DISTANCES for c in cols):
+                    pri = "action" if declared_distance_cut(r, best, cols) else "fyi"
                 records.append({
                     "airport": apt, "source": fname, "kind": "changed", "priority": pri,
                     "fields": [{"field": c, "old": r.get(c, ""), "new": best.get(c, "")} for c in cols],

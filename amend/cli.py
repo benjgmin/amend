@@ -1,11 +1,11 @@
 """
 command line:
 
-  python -m cyclewatch diff OLD.zip NEW.zip VRB DAB [--dtpp FILE] [--llm] [--json] [--out DIR] [--raw]
-  python -m cyclewatch diff OLD.zip NEW.zip --all-airports [--dtpp FILE] [--llm] [--out DIR] [--print]
-  python -m cyclewatch latest [--no-llm]      build site/ (what the GitHub Action runs)
-  python -m cyclewatch history [--llm] [--keep]   add new cycles to history/
-  python -m cyclewatch set-key                store your Anthropic API key in .env
+  python -m amend diff OLD.zip NEW.zip VRB DAB [--dtpp FILE] [--llm] [--json] [--out DIR] [--raw]
+  python -m amend diff OLD.zip NEW.zip --all-airports [--dtpp FILE] [--llm] [--out DIR] [--print]
+  python -m amend latest [--no-llm]      build site/ (what the GitHub Action runs)
+  python -m amend history [--llm] [--keep]   add new cycles to history/
+  python -m amend set-key                store your Anthropic API key in .env
 """
 import argparse
 import sys
@@ -65,7 +65,7 @@ def cmd_diff(a):
 
 def main(argv=None):
     load_env()
-    p = argparse.ArgumentParser(prog="cyclewatch", description="what changed at your airports "
+    p = argparse.ArgumentParser(prog="amend", description="what changed at your airports "
                                 "between FAA cycles")
     sub = p.add_subparsers(dest="cmd", required=True)
 

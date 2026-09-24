@@ -1,6 +1,6 @@
-# Cyclewatch JSON format (schema_version 1)
+# Amend JSON format (schema_version 1)
 
-Everything is served from `https://benjgmin.github.io/cyclewatch/`. All airport ids are FAA
+Everything is served from `https://benjgmin.github.io/amend/`. All airport ids are FAA
 ids (`VRB`, not `KVRB`). All cycle dates are ISO dates (`2026-10-01`) of the FAA effective
 date. Files are minified UTF-8 JSON.
 

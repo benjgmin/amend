@@ -68,6 +68,17 @@ NAV_NAMES = {"VOT": "VOR test signal (VOT)", "VORTAC": "VORTAC", "VOR/DME": "VOR
 
 REMARK_FILES = ("APT_RMK", "ATC_RMK")
 
+# declared distances (APT_RWY_END): column -> (plain English, standard abbreviation)
+DECLARED_DISTANCES = {
+    "TKOF_RUN_AVBL": ("takeoff run available", "TORA"),
+    "TKOF_DIST_AVBL": ("takeoff distance available", "TODA"),
+    "ACLT_STOP_DIST_AVBL": ("accelerate-stop distance available", "ASDA"),
+    "LNDG_DIST_AVBL": ("landing distance available", "LDA"),
+}
+# a declared distance shrinking by this much changes performance planning -> action
+DECLARED_ACTION_FT = 500
+DECLARED_ACTION_PCT = 0.10
+
 
 def base(fname):
     """'APT_RMK.csv' -> 'APT_RMK'"""

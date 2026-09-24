@@ -13,9 +13,9 @@ from .pipeline import run
 SITE = "site"
 HISTORY = "history"
 
-INDEX_HTML = """<!doctype html><meta charset="utf-8"><title>Cyclewatch</title>
+INDEX_HTML = """<!doctype html><meta charset="utf-8"><title>Amend</title>
 <body style="font-family:system-ui;max-width:40em;margin:3em auto;padding:0 1em;line-height:1.5">
-<h1>Cyclewatch</h1>
+<h1>Amend</h1>
 <p>{label} changes: FAA cycle {old} &rarr; {new}.</p>
 <ul>
 <li>Changed airports: <a href="latest/index.json">latest/index.json</a></li>

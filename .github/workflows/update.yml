@@ -45,11 +45,11 @@ jobs:
       - name: append new cycles to history
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-        run: python -m cyclewatch history --llm
+        run: python -m amend history --llm
 
       - name: commit history
         run: |
-          git config user.name "cyclewatch-bot"
+          git config user.name "amend-bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add history
           git diff --cached --quiet || (git commit -m "history: new cycle" && git push)
@@ -57,7 +57,7 @@ jobs:
       - name: build site (latest + history)
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-        run: python -m cyclewatch latest
+        run: python -m amend latest
 
       - name: trim old FAA files from cache
         run: ls -t data/*_CSV.zip 2>/dev/null | tail -n +4 | xargs -r rm -f

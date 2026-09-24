@@ -8,7 +8,7 @@ import tempfile
 import unittest
 import zipfile
 
-from cyclewatch.pipeline import cycle_label, run
+from amend.pipeline import cycle_label, run
 
 
 def make_zip(path, files):
@@ -103,6 +103,22 @@ class TestRunways(Case):
         ch = self.diff(self.rwy(["CMY,18W/36W,5370,2300,WATER"]), self.rwy(["CMY,16W/34W,11936,2000,WATER"]))
         self.assertIn("replaced by runway 16W/34W", ch["CMY"][0]["summary"])
 
+    def test_declared_distances(self):
+        """VRB rwy 22: small ASDA/LDA wobble is fyi, in plain English."""
+        hdr = "ARPT_ID,RWY_ID,RWY_END_ID,ACLT_STOP_DIST_AVBL,LNDG_DIST_AVBL"
+        ch = self.diff({"APT_RWY_END.csv": [hdr, "VRB,04/22,22,4974,4974"]},
+                       {"APT_RWY_END.csv": [hdr, "VRB,04/22,22,4945,4945"]}, {"VRB"})["VRB"]
+        self.assertEqual((ch[0]["priority"], ch[0]["summary"]),
+                         ("fyi", "runway 22: declared distances changed: accelerate-stop distance "
+                                 "available (ASDA) 4,974 ft -> 4,945 ft; landing distance available "
+                                 "(LDA) 4,974 ft -> 4,945 ft"))
+
+    def test_declared_distance_big_cut_is_action(self):
+        hdr = "ARPT_ID,RWY_ID,RWY_END_ID,LNDG_DIST_AVBL"
+        ch = self.diff({"APT_RWY_END.csv": [hdr, "VRB,12R/30L,30L,7314"]},
+                       {"APT_RWY_END.csv": [hdr, "VRB,12R/30L,30L,6200"]}, {"VRB"})["VRB"]
+        self.assertEqual(ch[0]["priority"], "action")
+
     def test_new_airport_is_one_line(self):
         old = {"APT_BASE.csv": ["ARPT_ID,ARPT_NAME"]}
         new = {"APT_BASE.csv": ["ARPT_ID,ARPT_NAME", "02TT,LUNACITY RANCH AIRFIELD"],
@@ -145,7 +161,7 @@ class TestCharts(Case):
 
 class TestDirectory(unittest.TestCase):
     def test_airports_json(self):
-        from cyclewatch.airports import directory
+        from amend.airports import directory
         p = os.path.join(tempfile.mkdtemp(), "a.zip")
         make_zip(p, {"APT_BASE.csv": ["ARPT_ID,ICAO_ID,ARPT_NAME,CITY,STATE_CODE,SITE_TYPE_CODE,LAT_DECIMAL,LONG_DECIMAL",
                                       "DAB,KDAB,DAYTONA BEACH INTL,DAYTONA BEACH,FL,A,29.17991667,-81.05805556",

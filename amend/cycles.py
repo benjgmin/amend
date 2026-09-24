@@ -47,7 +47,7 @@ def download(url, path):
     os.makedirs(os.path.dirname(path) or ".", exist_ok=True)
     print(f"downloading {url}")
     try:
-        req = urllib.request.Request(url, headers={"User-Agent": "cyclewatch"})
+        req = urllib.request.Request(url, headers={"User-Agent": "amend"})
         with urllib.request.urlopen(req, timeout=300) as r, open(path + ".part", "wb") as f:
             shutil.copyfileobj(r, f)
         os.replace(path + ".part", path)

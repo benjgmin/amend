@@ -1,7 +1,7 @@
 """Turning raw change records into plain-English summaries."""
 import re
 
-from .rules import NAME_COLS, NAV_NAMES, REMARK_FILES, base
+from .rules import DECLARED_DISTANCES, NAME_COLS, NAV_NAMES, REMARK_FILES, base
 
 
 def label(field):
@@ -56,6 +56,16 @@ def field_phrases(fields, source, ctx=None):
             bits.append(f"{ctx['CNTRLN_OFFSET']} ft {side} centerline")
         slope = f", clearance slope {ctx['OBSTN_CLNC_SLOPE']}:1" if ctx.get("OBSTN_CLNC_SLOPE") else ""
         phrases.append(f"controlling obstacle changed (now {', '.join(bits)}{slope})")
+    declared = [c for c in DECLARED_DISTANCES if c in by]
+    if declared:
+        def ft(v):
+            try:
+                return f"{int(float(v)):,} ft"
+            except ValueError:
+                return v or "none"
+        parts = [f"{DECLARED_DISTANCES[c][0]} ({DECLARED_DISTANCES[c][1]}) "
+                 f"{ft(by[c]['old'])} -> {ft(by[c]['new'])}" for c in declared]
+        phrases.append("declared distances changed: " + "; ".join(parts))
     if "RWY_MARKING_COND" in by:
         phrases.append(f"markings now in {by['RWY_MARKING_COND']['new'].lower()} condition")
     if "COND" in by:
@@ -75,7 +85,7 @@ def field_phrases(fields, source, ctx=None):
 
     handled = {"TWR_HRS", "TOWER_HRS", "AIRSPACE_HRS", "APCH_P_PROVIDER", "DEP_P_PROVIDER",
                "PHONE_NO", "NAV_TYPE", "FREQ", "FACILITY", "FAC_NAME", "LNDG_FEE_FLAG", "FREQ_USE",
-               "RWY_MARKING_COND", "COND", "TACAN_DME_STATUS"} | obst
+               "RWY_MARKING_COND", "COND", "TACAN_DME_STATUS"} | obst | set(DECLARED_DISTANCES)
     if base(source) == "APT_ATT":
         handled.add("HOUR")
     for k, f in by.items():
