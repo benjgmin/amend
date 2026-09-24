@@ -28,13 +28,6 @@ jobs:
       - name: tests
         run: python -m unittest discover -s tests -t .
 
-      # translated remarks, so each remark is only paid for once
-      - uses: actions/cache@v4
-        with:
-          path: remark_cache.json
-          key: remark-cache-${{ github.run_id }}
-          restore-keys: remark-cache-
-
       # FAA downloads
       - uses: actions/cache@v4
         with:
@@ -47,17 +40,20 @@ jobs:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: python -m amend history --llm
 
-      - name: commit history
-        run: |
-          git config user.name "amend-bot"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add history
-          git diff --cached --quiet || (git commit -m "history: new cycle" && git push)
-
       - name: build site (latest + history)
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: python -m amend latest
+
+      # remark_cache.json is committed, not kept in the Actions cache: translations are paid for
+      # once, never lost to cache eviction, and change ids (which hash the summary) stay stable
+      - name: commit history and remark translations
+        run: |
+          git config user.name "amend-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add history remark_cache.json
+          git diff --cached --quiet || (git commit -m "data: new history / remark translations" \
+            && git pull --rebase origin "${{ github.ref_name }}" && git push)
 
       - name: trim old FAA files from cache
         run: ls -t data/*_CSV.zip 2>/dev/null | tail -n +4 | xargs -r rm -f
