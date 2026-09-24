@@ -4,7 +4,7 @@
 <dict>
 	<key>BGTaskSchedulerPermittedIdentifiers</key>
 	<array>
-		<string>com.amend.refresh</string>
+		<string>com.benjgmin.amend.refresh</string>
 	</array>
 	<key>UIBackgroundModes</key>
 	<array>
