@@ -15,7 +15,15 @@ GLOSSARY = ("ACFT=aircraft, ACR=air carrier, AER=approach end of runway, AP=airp
             "MNT/MNTD=monitored, MRKGS=markings, NA=not authorized, OPS=operations, "
             "PAX=passengers, PPR=prior permission required, RSCD=runway surface condition, "
             "RWY=runway, SKED=scheduled, TWY=taxiway, UNSKED=unscheduled, WKEND=weekend, "
-            "WX=weather, M-F=Monday through Friday")
+            "WX=weather, M-F=Monday through Friday, SS-SR=sunset to sunrise, "
+            "SR-SS=sunrise to sunset, ACTVT=activate, INCR=increase, INTST=intensity, "
+            "CONSLY=continuously, OPR/OPRS=operate(s), HIRL=high intensity runway lights, "
+            "MIRL=medium intensity runway lights, REIL=runway end identifier lights, "
+            "PAPI=precision approach path indicator. A lighting remark ending in '- CTAF' or "
+            "'- <frequency>' means click the mic on that frequency, not call anyone")
+
+# must survive translation. a model that drops or invents these makes the remark wrong
+MUST_KEEP = {"SS-SR": "sunset", "SR-SS": "sunrise"}
 
 PROMPT = (
     "Translate each FAA airport/ATC remark below into ONE short plain-English "
@@ -53,7 +61,7 @@ def translate_remarks(texts, use_llm):
         try:
             out = _call_claude(key, PROMPT + json.dumps(batch, indent=1))
             if len(out) == len(batch):
-                cache.update(dict(zip(batch, out)))
+                cache.update({t: o for t, o in zip(batch, out) if faithful(t, o)})
             else:
                 print("  warning: llm returned wrong number of remarks, skipping batch")
         except Exception as e:
@@ -61,6 +69,13 @@ def translate_remarks(texts, use_llm):
     with open(CACHE_FILE, "w") as f:
         json.dump(cache, f, indent=1)
     return cache
+
+
+def faithful(raw, plain):
+    """false if the translation lost a time window like SS-SR (it once came back as
+    'steady-state to steady-red'). the raw text is shown instead and retried next run."""
+    up, low = raw.upper(), plain.lower()
+    return all(word in low for code, word in MUST_KEEP.items() if code in up)
 
 
 def _call_claude(key, prompt):

@@ -126,6 +126,17 @@ def _routes(apt, routes):
             "details": sorted({summarize(r, {}) for r in routes})}
 
 
+def is_frq_remark(r):
+    """an FRQ row where only the REMARK column changed: a remark, not a frequency change."""
+    f = r.get("fields", [])
+    return (base(r["source"]) == "FRQ" and r["kind"] == "changed"
+            and [x["field"] for x in f] == ["REMARK"])
+
+
+def _norm(t):
+    return " ".join((t or "").upper().split())
+
+
 def collapse(records, route_tables=None):
     by_apt = defaultdict(list)
     for r in records:
@@ -152,6 +163,14 @@ def collapse(records, route_tables=None):
         for t, group in texts.items():
             if t and {r["kind"] for r in group} == {"added", "removed"}:
                 drop |= {id(r) for r in group}
+
+        # 3b. the CTAF row in FRQ carries the same lighting remark as APT_RMK: say it once
+        said = {r["row"].get("REMARK") for r in rs if src(r) in REMARK_FILES and r.get("row")}
+        said |= {f["new"] for r in rs if src(r) in REMARK_FILES
+                 for f in r.get("fields", []) if f["field"] == "REMARK"}
+        for r in rs:
+            if is_frq_remark(r) and _norm(r["fields"][0]["new"]) in {_norm(t) for t in said if t}:
+                drop.add(id(r))
 
         rest = [r for r in rs if id(r) not in drop]
 

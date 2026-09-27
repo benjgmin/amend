@@ -121,6 +121,44 @@ class TestRules(Case):
         self.assertEqual((c["priority"], c["summary"]),
                          ("fyi", "flight service (FSS) 122.2 via the Bradford outlet: discontinued"))
 
+    def test_lighting_remark_in_frq_said_once_as_a_remark(self):
+        """RPD 01 OCT 2026: the CTAF row in FRQ carries the same lighting remark as APT_RMK.
+        it showed twice, once tagged frequency, and both as action for lights being added."""
+        old_rmk = ("HIRL RY 01/19 PRESET ON LOW INTST SS-SR; TO INCR INTST & ACTVT REIL RY 19, "
+                   "PAPI RYS 01 & 19 & MALSR RY 01 - CTAF.")
+        new_rmk = ("HIRL RWY 01/19 PRESET ON LOW INTST SS-SR; TO INCR INTST & ACTVT MALSR RWY 01; "
+                   "REIL RWY 19, 13, & 31; PAPI RWY 01, 19, 13, & 31; HIRL RWY 01/19; "
+                   "MIRL RWY 13/31 - CTAF.")
+        frq = "FACILITY,SERVICED_FACILITY,FREQ,FREQ_USE,REMARK"
+        rmk = "ARPT_ID,LEGACY_ELEMENT_NUMBER,REMARK"
+        old = {"FRQ.csv": [frq, f'RPD,RPD,122.7,CTAF,"{old_rmk}"'],
+               "APT_RMK.csv": [rmk, f'RPD,A81,"{old_rmk}"']}
+        new = {"FRQ.csv": [frq, f'RPD,RPD,122.7,CTAF,"{new_rmk}"'],
+               "APT_RMK.csv": [rmk, f'RPD,A81,"{new_rmk}"']}
+        ch = self.diff(old, new, {"RPD"})["RPD"]
+        self.assertEqual([(c["category"], c["priority"], c["source"]) for c in ch],
+                         [("remark", "fyi", "APT_RMK")])
+        self.assertEqual(ch[0]["summary"], "revised remark: " + new_rmk)
+
+        # only in FRQ: still a remark, not a frequency
+        ch = self.diff({"FRQ.csv": old["FRQ.csv"]}, {"FRQ.csv": new["FRQ.csv"]}, {"RPD"})["RPD"]
+        self.assertEqual([(c["category"], c["priority"]) for c in ch], [("remark", "fyi")])
+        self.assertEqual(ch[0]["summary"], "revised remark for CTAF 122.7: " + new_rmk)
+        self.assertEqual(ch[0]["original"], new_rmk)
+
+    def test_lighting_remark_losing_a_light_is_action(self):
+        rmk = "ARPT_ID,LEGACY_ELEMENT_NUMBER,REMARK"
+        old = {"APT_RMK.csv": [rmk, "RPD,A81,ACTVT MALSR RWY 01; REIL RWY 19; HIRL RWY 01/19 - CTAF."]}
+        new = {"APT_RMK.csv": [rmk, "RPD,A81,ACTVT MALSR RWY 01; HIRL RWY 01/19 - CTAF."]}
+        self.assertEqual(self.diff(old, new, {"RPD"})["RPD"][0]["priority"], "action")
+        new = {"APT_RMK.csv": [rmk, "RPD,A81,ACTVT MALSR RWY 01; REIL RWY 19; HIRL RWY 01/19 - 122.8."]}
+        self.assertEqual(self.diff(old, new, {"RPD"})["RPD"][0]["priority"], "action")
+
+    def test_translation_that_loses_sunset_is_rejected(self):
+        raw = "HIRL RWY 01/19 PRESET ON LOW INTST SS-SR - CTAF."
+        self.assertFalse(remarks.faithful(raw, "preset on low intensity steady-state to steady-red"))
+        self.assertTrue(remarks.faithful(raw, "preset on low intensity from sunset to sunrise"))
+
 
 class TestRunways(Case):
     def rwy(self, rows):
