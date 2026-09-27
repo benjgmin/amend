@@ -17,7 +17,7 @@ import re
 import statistics
 from collections import Counter
 
-from .cycles import ANCHOR, CYCLE, cycle_on_or_before, dtpp_id
+from .cycles import ANCHOR, CYCLE, cycle_on_or_before, dtpp_id, in_effect
 from .remarks import problems
 from .rules import REMARK_FILES
 
@@ -155,7 +155,7 @@ def check_cycles(from_cycle, to_cycle, today=None, gap_ok=False):
     gap = (new - old).days
     if gap <= 0 or gap % 28 or (gap != 28 and not gap_ok):
         errors.append(f"{old} -> {new} is {gap} days, not one 28-day cycle")
-    latest_allowed = cycle_on_or_before(today or dt.date.today()) + CYCLE
+    latest_allowed = (cycle_on_or_before(today) if today else in_effect()) + CYCLE
     if new > latest_allowed:
         errors.append(f"{new} is more than one cycle ahead (FAA posts ~3 weeks early, no more)")
     return errors

@@ -12,6 +12,7 @@ import UserNotifications
 struct AmendApp: App {
     @State private var store = AirportStore()
     @Environment(\.scenePhase) private var scenePhase
+    @AppStorage(SettingsKey.appearance) private var appearance: Appearance = .system
     private let notificationDelegate = NotificationDelegate()
 
     init() {
@@ -22,6 +23,7 @@ struct AmendApp: App {
         WindowGroup {
             AirportsView()
                 .environment(store)
+                .preferredColorScheme(appearance.colorScheme)
                 .tint(EFB.cyan)
         }
         .onChange(of: scenePhase) { _, phase in

@@ -10,6 +10,7 @@ struct SettingsView: View {
     @AppStorage(SettingsKey.notifyMode) private var notifyMode: NotifyMode = .action
     @AppStorage(SettingsKey.historyRange) private var historyRange: HistoryRange = .all
     @AppStorage(SettingsKey.historyShowFYI) private var historyShowFYI = false
+    @AppStorage(SettingsKey.appearance) private var appearance: Appearance = .system
 
     @AppStorage(SettingsKey.onboarded) private var onboarded = true
     @State private var permissionDenied = false
@@ -23,6 +24,7 @@ struct SettingsView: View {
         NavigationStack {
             Form {
                 guideSection
+                appearanceSection
                 homeSection
                 notificationSection
                 historySection
@@ -69,6 +71,18 @@ struct SettingsView: View {
             .listRowBackground(EFB.panel)
         } header: {
             EFBHeader(text: "Guide")
+        }
+    }
+
+    private var appearanceSection: some View {
+        Section {
+            Picker("Appearance", selection: $appearance) {
+                ForEach(Appearance.allCases) { Text($0.title).tag($0) }
+            }
+            .pickerStyle(.segmented)
+            .listRowBackground(EFB.panel)
+        } header: {
+            EFBHeader(text: "Appearance")
         }
     }
 
@@ -138,8 +152,8 @@ struct SettingsView: View {
         Section {
             if let meta = store.meta {
                 row("Cycle", "\(Cycle.efb(meta.fromCycle)) → \(Cycle.efb(meta.toCycle))")
-                row("Status", meta.upcoming ? "UPCOMING" : "CURRENT")
-                row("Charts", meta.includesCharts ? "INCLUDED" : "NOT AVAILABLE")
+                row("Status", meta.upcoming ? "Upcoming" : "Current")
+                row("Charts", meta.includesCharts ? "Included" : "Not available")
                 row("Updated", updated(meta.generated))
             }
             row("Airports in directory", "\(store.airports.count)")
@@ -164,8 +178,8 @@ struct SettingsView: View {
         } header: {
             EFBHeader(text: "About")
         } footer: {
-            Text("NOT FOR NAVIGATION. Amend is an awareness and study tool. Always use official FAA publications, NOTAMs and a proper preflight briefing.")
-                .font(EFB.mono(10)).foregroundStyle(EFB.faint)
+            Text("Not for navigation. Amend is an awareness and study tool. Always use official FAA publications, NOTAMs and a proper preflight briefing.")
+                .font(.footnote).foregroundStyle(EFB.faint)
         }
     }
 
@@ -175,7 +189,7 @@ struct SettingsView: View {
         HStack {
             Text(title).foregroundStyle(EFB.text)
             Spacer()
-            Text(value).font(EFB.mono(13)).foregroundStyle(EFB.dim)
+            Text(value).foregroundStyle(EFB.dim)
         }
         .listRowBackground(EFB.panel)
     }

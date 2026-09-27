@@ -1,4 +1,5 @@
 import Foundation
+import SwiftUI
 
 /// UserDefaults keys, shared by @AppStorage in views and by background code.
 enum SettingsKey {
@@ -10,6 +11,27 @@ enum SettingsKey {
     static let historyRange = "historyRange"        // HistoryRange raw value
     static let historyShowFYI = "historyShowFYI"
     static let onboarded = "hasOnboarded"
+    static let appearance = "appearance"            // Appearance raw value
+}
+
+enum Appearance: String, CaseIterable, Identifiable {
+    case system, light, dark
+    var id: String { rawValue }
+    var title: String {
+        switch self {
+        case .system: "System"
+        case .light: "Light"
+        case .dark: "Dark"
+        }
+    }
+    /// nil follows the phone's setting
+    var colorScheme: ColorScheme? {
+        switch self {
+        case .system: nil
+        case .light: .light
+        case .dark: .dark
+        }
+    }
 }
 
 enum NotifyMode: String, CaseIterable, Identifiable {

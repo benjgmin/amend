@@ -2,7 +2,11 @@ name: update FAA changes
 
 on:
   schedule:
-    - cron: "17 12 * * *"     # every day 12:17 UTC; off the hour, when GitHub drops scheduled runs
+    # every 3 hours, off the hour (GitHub drops and delays runs on the hour). each run starts
+    # with a seconds-long check and only rebuilds when the FAA posted something new, a merge
+    # isn't live yet, or the last build is 20h old. one run can be late or dropped; eight a day
+    # means new FAA data shows up within hours instead of the next day
+    - cron: "17 */3 * * *"
   workflow_dispatch:           # "Run workflow" button in the Actions tab
   push:                        # any merge that can change the site goes live right away.
     branches: [ master ]       # the bot's own data commits use GITHUB_TOKEN, which never
@@ -22,7 +26,31 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      build: ${{ steps.check.outputs.build }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # merges and the Run workflow button always build; scheduled runs build only when needed
+      - id: check
+        run: |
+          if [ "${{ github.event_name }}" = "schedule" ]; then
+            python -m amend check
+          else
+            echo "build: ${{ github.event_name }}"
+            echo "build=true" >> "$GITHUB_OUTPUT"
+          fi
+
   build:
+    needs: check
+    if: needs.check.outputs.build == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -38,11 +66,12 @@ jobs:
       - name: tests
         run: python -m unittest discover -s tests -t .
 
-      # FAA downloads
-      - uses: actions/cache@v4
+      # FAA downloads. restore the newest cache; save a new one only when data/ changed (below),
+      # instead of 340MB per run. only files that passed cycles.check_file ever land in data/
+      - uses: actions/cache/restore@v4
         with:
           path: data
-          key: faa-data-${{ github.run_id }}
+          key: faa-data-restore
           restore-keys: faa-data-
 
       - name: append new cycles to history
@@ -58,6 +87,11 @@ jobs:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: python -m amend latest
 
+      # any step failing stops here: nothing is deployed, and the last good site stays live
+      # until a later run succeeds (the commit step below still records history and the audit)
+      - name: check the site before it goes live
+        run: python -m amend verify site
+
       # remark_cache.json is committed, not kept in the Actions cache: translations are paid for
       # once, never lost to cache eviction, and change ids (which hash the summary) stay stable.
       # also commits the audit packet the daily review reads (audit/<cycle>.json), and runs when
@@ -70,13 +104,28 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add history remark_cache.json
           if [ -d audit ]; then git add audit; fi
-          git diff --cached --quiet || (git commit -m "data: new history / remark translations" \
-            && git pull --rebase origin "${{ github.ref_name }}" && git push)
+          git diff --cached --quiet && exit 0
+          git commit -m "data: new history / remark translations"
+          for i in 1 2 3; do     # a merge landing mid-run makes the first push bounce
+            git pull --rebase origin "${{ github.ref_name }}" && git push && exit 0
+            git rebase --abort 2>/dev/null || true
+            sleep $((i * 10))
+          done
+          echo "couldn't push history; not deploying so the site never gets ahead of the repo"
+          exit 1
 
       - name: trim old FAA files from cache
         run: |
           ls -t data/*_CSV.zip 2>/dev/null | tail -n +4 | xargs -r rm -f
           ls -t data/*_airspace.zip 2>/dev/null | tail -n +4 | xargs -r rm -f
+          ls -t data/dtpp_*.xml 2>/dev/null | tail -n +4 | xargs -r rm -f
+          rm -f data/*.part
+
+      - uses: actions/cache/save@v4
+        if: hashFiles('data/**') != ''
+        with:
+          path: data
+          key: faa-data-${{ hashFiles('data/**') }}
 
       - uses: actions/upload-pages-artifact@v3
         with:
@@ -85,6 +134,7 @@ jobs:
   deploy:
     needs: build
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}

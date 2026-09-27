@@ -7,7 +7,8 @@ import shutil
 from . import SCHEMA_VERSION
 from . import audit, watchlists, web
 from .airports import directory
-from .cycles import CYCLE, cycle_on_or_before, get_airspace_pair, get_cycle, get_dtpp, zip_path
+from .cycles import CYCLE, get_airspace_pair, get_cycle, get_dtpp, in_effect, zip_path
+from .freshness import fingerprint
 from .output import dump, write_diff
 from .pipeline import run
 
@@ -15,11 +16,12 @@ SITE = "site"
 HISTORY = "history"
 
 def build(llm=True):
-    today = dt.date.today()
-    current = cycle_on_or_before(today)
+    current = in_effect()   # 0901Z changeover, not the runner's midnight
     nxt, prev = current + CYCLE, current - CYCLE
 
-    # upcoming if the FAA already posted next cycle (~3 weeks early), else this cycle
+    # upcoming if the FAA already posted next cycle (~3 weeks early), else this cycle.
+    # False only means a real "not posted"; a failed download raises, so a flaky FAA server
+    # stops the run (last good site stays up) instead of quietly dropping the preview
     if get_cycle(nxt):
         old, new, upcoming = current, nxt, True
     else:
@@ -55,5 +57,9 @@ def build(llm=True):
     meta = {"from_cycle": old.isoformat(), "to_cycle": new.isoformat(), "upcoming": upcoming,
             "changed_airports": n}
     pages = web.build(SITE, meta, apts, result["airports"], HISTORY, watchlists=lists)
+    # what this build was made from, so the scheduled check can tell when a merge isn't live yet
+    dump({"inputs": fingerprint(), "commit": os.environ.get("GITHUB_SHA", ""),
+          "generated": dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds")},
+         os.path.join(SITE, "build.json"))
     print(f"site built: {old} -> {new} ({'upcoming' if upcoming else 'current'}), "
           f"{n} changed airports, {pages} airport pages, {len(lists)} named watchlists")
