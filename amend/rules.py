@@ -38,7 +38,10 @@ PAIR_KEYS = {
 #   PFR_SEG/PFR_BASE: routes already readable in PFR_RMT_FMT   LID: duplicate id list
 #   FIX: fix definitions, not airport changes   CDR: airline coded departure routes
 #   COM: duplicates the RCO/outlet info already in FRQ
-HIDDEN_FILES = ("PFR_SEG", "PFR_BASE", "LID", "FIX", "CDR", "COM")
+#   HPF: holding patterns, MTR: military training route points. neither is about an airport:
+#   they only matched one because a navaid id equals an airport id (the MTH NDB hold -> MTH,
+#   IR-320 point S -> INW) and every new/removed point showed up as act.
+HIDDEN_FILES = ("PFR_SEG", "PFR_BASE", "LID", "FIX", "CDR", "COM", "HPF", "MTR")
 
 # changes that only touch these columns are hidden (stats, survey bookkeeping, pavement data)
 HIDDEN_ONLY_COLS = {"AIR_TAXI_OPS", "ANNUAL_OPS_DATE", "BASED_GLIDERS", "BASED_HEL",
@@ -50,13 +53,31 @@ HIDDEN_ONLY_COLS = {"AIR_TAXI_OPS", "ANNUAL_OPS_DATE", "BASED_GLIDERS", "BASED_H
                     "GROSS_WT_SW", "GROSS_WT_DW", "GROSS_WT_DTW", "GROSS_WT_DDTW"}
 NAME_COLS = {"FACILITY_NAME", "FAC_NAME", "SERVICED_FAC_NAME", "NAME", "ARPT_NAME"}
 FYI_ONLY_COLS = {"SECTORIZATION", "OBSTN_HGT", "OBSTN_CLNC_SLOPE", "CNTRLN_OFFSET", "CNTRLN_DIR_CODE",
-                 "DIST_FROM_THR", "FREQ_USE", "RWY_MARKING_COND", "COND"}
+                 "DIST_FROM_THR", "FREQ_USE", "RWY_MARKING_COND", "COND",
+                 # FRQ echoes of a navaid/AWOS change already reported by its own file
+                 "SERVICED_SITE_TYPE", "SERVICED_CITY", "SERVICED_STATE",
+                 # AWOS-3 -> AWOS-3PT, ATIS -> D-ATIS, beacon schedule: nice to know, not how you fly
+                 "ASOS_AWOS_TYPE", "DESCRIPTION", "BCN_LGT_SKED", "BCN_LENS_COLOR"}
 
 ACTION_PREFIXES = ("ATC", "CLS_ARSP", "FRQ", "ILS", "APT_ATT", "AWOS")
 ACTION_COL_WORDS = {"NAV", "PROVIDER", "HRS", "HOURS", "FREQ", "CLASS", "AIRSPACE", "CLOSED",
                     "STATUS", "LGT", "LIGHT", "LIGHTS", "LEN", "WIDTH", "TPA", "ATTEND"}
-ACTION_TEXT_WORDS = ("CLSD", "CLOSED", "TWR", "PPR", "NOT AVBL", "UNAVBL", "CTAF", "TPA",
+ACTION_TEXT_WORDS = ("CLSD", "CLOSED", "TWR", "PPR", "NOT AVBL", "UNAVBL", "UNUSBL", "CTAF", "TPA",
                      "PROHIBITED", "RSTD", "NOISE", "TRANSPONDER")
+
+# a whole row appearing or disappearing in these files is act even though no column name or
+# value says so: a runway, a decommissioned navaid, approach radar. other files' rows carry
+# column names like NAV_ID or RADAR_HRS on every row, so column words only rank "changed" rows.
+ROW_ACTION = {"APT_RWY": ("added", "removed"), "NAV_BASE": ("removed",), "RDR": ("added", "removed")}
+
+# navaid/ILS remarks (unusable sectors, monitoring) matter to IFR flying: ifr, not act
+IFR_REMARK_FILES = ("NAV_RMK", "ILS_RMK")
+
+# numeric columns where a small change is survey rounding. (drop below, fyi below)
+#   5801 -> 5800 ft runway, 1525.7 -> 1525.6 ft elevation, 40.01 -> 40 deg localizer bearing
+SMALL_CHANGE = {"RWY_LEN": (10, 50), "RWY_WIDTH": (1, 10), "APCH_BEAR": (1, 1),
+                "RWY_END_ELEV": (1, 1), "TDZ_ELEV": (1, 1), "ARPT_ELEV": (1, 1),
+                "DISPLACED_THR_ELEV": (1, 1), "THR_CROSSING_HGT": (1, 1)}
 
 # columns kept on a changed record so the summary can describe it ("runway 15: ...")
 CONTEXT_COLS = ("Orig", "Dest", "Route String", "FREQ", "FREQ_USE", "NAV_ID", "NAV_TYPE",
@@ -93,8 +114,28 @@ def is_noise_col(c):
     if c in HIDDEN_ONLY_COLS:
         return True
     c = c.upper()
-    return (c.startswith(("LAT_", "LONG_", "MAG_VARN")) or
+    return (c.startswith(("LAT_", "LONG_", "MAG_VAR", "MAG_HEMIS")) or
             "_LAT_" in c or "_LONG_" in c or          # e.g. TACAN_DME_LAT_DECIMAL
             c.endswith("_CHART_FLAG") or
-            c.endswith(("SRC_DATE", "SOURCE_DATE")) or
-            c in {"LEGACY_ELEMENT_NUMBER", "REF_COL_SEQ_NO", "SEQ", "ALT_CODE", "ELEV", "DME_SSV"})
+            # who surveyed it and when: RWY_LEN_SOURCE OWNER -> 3RD PARTY SURVEY, RWY_END_PSN_DATE,
+            # COMPONENT_STATUS_DATE, SURVEY_METHOD_CODE
+            c.endswith(("_DATE", "_SOURCE", "_SRC", "_METHOD_CODE")) or
+            c in {"LEGACY_ELEMENT_NUMBER", "REF_COL_SEQ_NO", "SEQ", "ALT_CODE", "ELEV", "DME_SSV",
+                  "SITE_ELEVATION", "INSPECTOR_CODE", "NASP_CODE"})
+
+
+def is_fyi_col(c):
+    """columns that are worth showing but never change how you fly."""
+    return c in NAME_COLS or c in FYI_ONLY_COLS or c.endswith("PHONE_NO")
+
+
+def small_change(c, old, new):
+    """'drop' (survey rounding), 'fyi' (small but real) or None for a numeric column change."""
+    if c not in SMALL_CHANGE:
+        return None
+    try:
+        d = abs(float(old) - float(new))
+    except (TypeError, ValueError):
+        return None
+    drop, fyi = SMALL_CHANGE[c]
+    return "drop" if d < drop else "fyi" if d < fyi else None

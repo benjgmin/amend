@@ -5,8 +5,8 @@ from collections import defaultdict
 
 from .rules import (ACTION_COL_WORDS, ACTION_PREFIXES, ACTION_TEXT_WORDS, CONTEXT_COLS,
                     DECLARED_ACTION_FT, DECLARED_ACTION_PCT, DECLARED_DISTANCES,
-                    FYI_ONLY_COLS, HIDDEN_FILES, HIDDEN_ONLY_COLS, ID_COLS, NAME_COLS,
-                    PAIR_KEYS, base, is_noise_col)
+                    HIDDEN_FILES, HIDDEN_ONLY_COLS, ID_COLS, IFR_REMARK_FILES, PAIR_KEYS,
+                    ROW_ACTION, base, is_fyi_col, is_noise_col, small_change)
 
 
 def similarity(a, b):
@@ -27,8 +27,9 @@ def keyed(fname, a):
     return bool(keys) and all(k in a for k in keys)
 
 
-def priority(fname, kind, cols, values):
-    """'action', 'fyi' or 'hidden' for a change touching these columns / values."""
+def priority(fname, kind, cols, values, soft=()):
+    """'action', 'fyi' or 'hidden' for a change touching these columns / values.
+    soft: columns whose change was too small to matter (see rules.SMALL_CHANGE)."""
     b = base(fname)
     cols = [c for c in cols if c not in ID_COLS]
     if b.startswith(HIDDEN_FILES):
@@ -39,12 +40,15 @@ def priority(fname, kind, cols, values):
         return "hidden"
     if any("PCR VALUE" in v.upper() for v in values):
         return "hidden"
-    if cols and all(c in NAME_COLS or c in FYI_ONLY_COLS or c in HIDDEN_ONLY_COLS for c in cols):
+    if cols and all(is_fyi_col(c) or c in HIDDEN_ONLY_COLS or c in soft for c in cols):
         return "fyi"
     if b.startswith(ACTION_PREFIXES):
         return "action"
-    for c in cols:
-        if set(c.upper().split("_")) & ACTION_COL_WORDS:
+    if kind in ROW_ACTION.get(b, ()):
+        return "action"
+    # column words only mean something on an edit: every added row has a NAV_ID or LGT column
+    for c in cols if kind == "changed" else ():
+        if not is_fyi_col(c) and c not in soft and set(c.upper().split("_")) & ACTION_COL_WORDS:
             return "action"
     # routes and procedures are never action (long strings full of fix names)
     if b.startswith(("PFR", "STAR", "DP")):
@@ -60,8 +64,10 @@ def declared_distance_cut(old_row, new_row, cols):
     for c in cols:
         if c not in DECLARED_DISTANCES:
             continue
+        if not new_row.get(c):   # the FAA stopped listing it; that's not a shorter runway
+            continue
         try:
-            o, n = float(old_row.get(c) or 0), float(new_row.get(c) or 0)
+            o, n = float(old_row.get(c) or 0), float(new_row.get(c))
         except ValueError:
             continue
         if o > 0 and n < o and (o - n >= DECLARED_ACTION_FT or (o - n) / o >= DECLARED_ACTION_PCT):
@@ -69,12 +75,24 @@ def declared_distance_cut(old_row, new_row, cols):
     return False
 
 
+def _canon(s):
+    """FAA spelling variants that mean the same thing: RY/RYS/RWYS -> RWY, THLD -> THR,
+    '.2' -> '0.2', runway '9' -> '09', runs of spaces."""
+    t = s.upper()
+    t = re.sub(r"\bRYS?\b|\bRWYS\b", "RWY", t)
+    t = re.sub(r"\bTHLD\b", "THR", t)
+    t = re.sub(r"(?<![\d.])\.(\d)", r"0.\1", t)
+    t = re.sub(r"\b(RWY )(\d)\b", r"\g<1>0\2", t)
+    return " ".join(t.split())
+
+
 def just_reworded(old, new):
     """same numbers/ids and mostly the same words -> the FAA just reworded it."""
-    nums = lambda s: set(re.findall(r"[A-Z]*\d+[A-Z0-9/]*", s.upper()))
+    old, new = _canon(old), _canon(new)
+    nums = lambda s: set(re.findall(r"[A-Z]*\d+[A-Z0-9/]*", s))
     if nums(old) != nums(new):
         return False
-    return difflib.SequenceMatcher(None, old.upper(), new.upper()).ratio() >= 0.6
+    return difflib.SequenceMatcher(None, old, new).ratio() >= 0.6
 
 
 # pilot-controlled lighting: "HIRL RWY 01/19 PRESET LOW SS-SR; TO INCR INTST & ACTVT REIL RWY 19 - CTAF."
@@ -84,19 +102,32 @@ LIGHTS = {"HIRL", "MIRL", "LIRL", "REIL", "PAPI", "VASI", "VASIS", "PVASI", "APA
 RWY = re.compile(r"\d{1,2}[LRC]?(/\d{1,2}[LRC]?)?")
 
 
+ALWAYS_ON = re.compile(r"\bCONSLY\b|\bCONTINUOUSLY\b|\bCONT\b|\bOPER DRNG\b")
+
+
+def _ends(tok):
+    """'07/25' -> {'07', '25'}; '9' -> {'09'}. so '07 & 25' and '07/25' are the same lights."""
+    return {e.zfill(2) if e[:1].isdigit() and not e[1:2].isdigit() else e for e in tok.split("/")}
+
+
 def _pcl(text):
-    """(set of (light, runway), set of keying frequencies) for a pilot-controlled lighting
-    remark, or None if the text isn't one."""
-    t = re.sub(r"\bRYS?\b|\bRWYS\b", "RWY", text.upper())
+    """(set of (light, runway end), set of keying frequencies) for a pilot-controlled lighting
+    remark, or None if the text isn't one. lights the remark says are always on
+    ('PAPI RWY 18 & 36 OPR CONSLY') aren't pilot controlled, so they don't count."""
+    t = _canon(text)
     freqs = set(re.findall(r"-\s*(CTAF|1\d\d\.\d+)", t))
     if not freqs or not re.search(r"\bACTVT\b|\bINCR\b", t):
         return None
-    pairs, light = set(), None
-    for tok in re.findall(r"[A-Z0-9/.\-]+", t):
-        if tok in LIGHTS:
-            light = tok
-        elif light and RWY.fullmatch(tok):
-            pairs.add((light, tok))
+    pairs = set()
+    for clause in re.split(r"\.\s+|;", t):
+        if ALWAYS_ON.search(clause):
+            continue
+        light = None
+        for tok in re.findall(r"[A-Z0-9/.\-]+", clause):
+            if tok in LIGHTS or (tok.endswith("S") and tok[:-1] in LIGHTS):   # REILS, PAPIS
+                light = tok if tok in LIGHTS else tok[:-1]
+            elif light and RWY.fullmatch(tok):
+                pairs |= {(light, e) for e in _ends(tok)}
     return (pairs, freqs) if pairs else None
 
 
@@ -142,13 +173,17 @@ def diff(old, new):
                 added.remove(best)
                 cols = sorted(c for c in set(r) | set(best)
                               if r.get(c, "") != best.get(c, "") and not is_noise_col(c)
-                              and not c.startswith("_"))
+                              and not c.startswith("_")
+                              and small_change(c, r.get(c), best.get(c)) != "drop")
+                soft = {c for c in cols if small_change(c, r.get(c), best.get(c)) == "fyi"}
                 vals = [r.get(c, "") for c in cols] + [best.get(c, "") for c in cols]
-                pri = priority(fname, "changed", cols, vals)
+                pri = priority(fname, "changed", cols, vals, soft)
                 if cols == ["REMARK"] and just_reworded(r["REMARK"], best["REMARK"]):
                     pri = "fyi"
                 if cols == ["REMARK"]:
                     pri = pcl_priority(r["REMARK"], best["REMARK"]) or pri
+                if base(fname) in IFR_REMARK_FILES and pri == "action":
+                    pri = "ifr"
                 if cols and all(c in DECLARED_DISTANCES for c in cols):
                     pri = "action" if declared_distance_cut(r, best, cols) else "fyi"
                 records.append({
@@ -175,6 +210,8 @@ def diff(old, new):
                             (kind == "added" and r.get("FREQ") in existed)
                             or re.search(r"\b(STAR|SID|DP|RCO)\b", r.get("FREQ_USE", "").upper())):
                         pri = "fyi"
+                    if base(fname) in IFR_REMARK_FILES and pri == "action":
+                        pri = "ifr"
                     records.append({
                         "airport": apt, "source": fname, "kind": kind, "priority": pri,
                         "row": {k: v for k, v in r.items()

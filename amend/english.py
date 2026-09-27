@@ -203,6 +203,25 @@ def summarize(rec, remarks):
             return f"frequency {row.get('FREQ', '?')} ({use}): discontinued"
         return f"new frequency {row.get('FREQ', '?')} ({use})"
 
+    if b == "PJA_BASE" and kind != "changed":
+        name = row.get("DROP_ZONE_NAME", "").title()
+        ref = ""
+        if row.get("NAV_ID") and row.get("RADIAL") and row.get("DISTANCE"):
+            try:
+                ref = f" ({row['NAV_ID']} {float(row['RADIAL']):03.0f}° {float(row['DISTANCE']):.0f} NM)"
+            except ValueError:
+                pass
+        top = f", up to {row['MAX_ALTITUDE']} ft {row.get('MAX_ALTITUDE_TYPE_CODE', '')}".rstrip() \
+            if row.get("MAX_ALTITUDE") else ""
+        what = " ".join(x for x in ("parachute jump area", row.get("PJA_ID", ""), name) if x)
+        return f"{'new ' if kind == 'added' else ''}{what}{ref}{top}{': removed' if kind == 'removed' else ''}"
+
+    if b == "NAV_CKPT" and kind != "changed":
+        where = row.get("CHK_DESC", "").rstrip(". ").lower()
+        brg = f" {row['BRG']}°" if row.get("BRG") else ""
+        what = f"{row.get('NAV_ID', '')} VOR checkpoint{brg}{': ' + where if where else ''}"
+        return f"new {what}" if kind == "added" else f"{what}: removed"
+
     if kind == "changed":
         where = ""
         if ctx.get("RWY_END_ID"):

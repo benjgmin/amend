@@ -212,6 +212,109 @@ class TestRules(Case):
             os.remove(remarks.CACHE_FILE)
 
 
+class TestAccuracyAudit(Case):
+    """01 OCT 2026 audit: real cases where amend ranked bookkeeping as act, said a thing twice,
+    or labeled it wrong."""
+
+    def one(self, old, new, apt):
+        return self.diff(old, new, {apt}).get(apt, [])
+
+    def test_survey_rounding_is_not_a_change(self):
+        """YNG: glide slope 'site elevation: 1108.5 -> 1108.6' was act. F87: 'rwy len source:
+        OWNER -> 3RD PARTY SURVEY' was act. FRM: 5503 -> 5505 ft runway was act."""
+        gs = "ARPT_ID,RWY_END_ID,ILS_LOC_ID,SYSTEM_TYPE_CODE,SITE_ELEVATION"
+        self.assertEqual(self.one({"ILS_GS.csv": [gs, "YNG,14,YNG,LS,1108.5"]},
+                                  {"ILS_GS.csv": [gs, "YNG,14,YNG,LS,1108.6"]}, "YNG"), [])
+        rwy = "ARPT_ID,RWY_ID,RWY_LEN,RWY_WIDTH,RWY_LEN_SOURCE"
+        self.assertEqual(self.one({"APT_RWY.csv": [rwy, "F87,16/34,3000,60,OWNER"]},
+                                  {"APT_RWY.csv": [rwy, "F87,16/34,3000,60,3RD PARTY SURVEY"]}, "F87"), [])
+        self.assertEqual(self.one({"APT_RWY.csv": [rwy, "FRM,13/31,5503,100,"]},
+                                  {"APT_RWY.csv": [rwy, "FRM,13/31,5505,100,"]}, "FRM"), [])
+
+    def test_runway_length(self):
+        """F41 3999 -> 4012 ft is a remeasure (fyi); 4998 -> 4370 ft is act."""
+        rwy = "ARPT_ID,RWY_ID,RWY_LEN,RWY_WIDTH"
+        c = self.one({"APT_RWY.csv": [rwy, "F41,17/35,3999,75"]}, {"APT_RWY.csv": [rwy, "F41,17/35,4012,75"]}, "F41")
+        self.assertEqual([x["priority"] for x in c], ["fyi"])
+        c = self.one({"APT_RWY.csv": [rwy, "F41,17/35,4998,75"]}, {"APT_RWY.csv": [rwy, "F41,17/35,4370,75"]}, "F41")
+        self.assertEqual([x["priority"] for x in c], ["action"])
+
+    def test_awos_phone_and_type_are_fyi(self):
+        """OFK: 'AWOS/ASOS phone number' and AUM 'AWOS-3 -> AWOS-3PT' were act."""
+        aw = "ASOS_AWOS_ID,ASOS_AWOS_TYPE,PHONE_NO"
+        c = self.one({"AWOS.csv": [aw, "OFK,ASOS,402-644-4480"]}, {"AWOS.csv": [aw, "OFK,ASOS,402-302-2024"]}, "OFK")
+        self.assertEqual([x["priority"] for x in c], ["fyi"])
+        frq = "FACILITY,SERVICED_FACILITY,FREQ,FREQ_USE,SERVICED_SITE_TYPE"
+        c = self.one({"FRQ.csv": [frq, "AUM,AUM,118.375,AUM AWOS-3,AWOS-3"]},
+                     {"FRQ.csv": [frq, "AUM,AUM,118.375,AUM AWOS-3PT,AWOS-3PT"]}, "AUM")
+        self.assertEqual([x["priority"] for x in c], ["fyi"])
+
+    def test_holding_patterns_are_not_airport_changes(self):
+        """MTH: the Marathon NDB hold showed up at Marathon airport as act, only because the
+        navaid id matches the airport id. same for military training route points."""
+        hp = "HP_NAME,HP_NO,NAV_ID,NAV_TYPE,HOLD_DIRECTION"
+        self.assertEqual(self.one({"HPF_BASE.csv": [hp, "MARATHON NDB*FL,1,MTH,NDB,W"]},
+                                  {"HPF_BASE.csv": [hp]}, "MTH"), [])
+
+    def test_new_row_is_not_act_because_of_a_column_name(self):
+        """ACV: a removed VOR checkpoint was act because the file has a NAV_ID column."""
+        ck = "NAV_ID,NAV_TYPE,BRG,AIR_GND_CODE,CHK_DESC"
+        c = self.one({"NAV_CKPT.csv": [ck, "ACV,VOR/DME,148,G,.8 NM AT APCH END RWY 32 RUNUP AREA."]},
+                     {"NAV_CKPT.csv": [ck]}, "ACV")
+        self.assertEqual([(x["priority"], x["summary"]) for x in c],
+                         [("fyi", "ACV VOR checkpoint 148°: .8 nm at apch end rwy 32 runup area: removed")])
+        # a runway disappearing is still act, even though nothing in the row says so
+        rwy = "ARPT_ID,RWY_ID,RWY_LEN,RWY_WIDTH"
+        c = self.one({"APT_RWY.csv": [rwy, "ACV,14/32,4499,150", "ACV,02/20,6000,150"]},
+                     {"APT_RWY.csv": [rwy, "ACV,02/20,6000,150"]}, "ACV")
+        self.assertEqual([x["priority"] for x in c], ["action"])
+
+    def test_new_runway_ends_not_repeated(self):
+        rwy, end = "ARPT_ID,RWY_ID,RWY_LEN,RWY_WIDTH", "ARPT_ID,RWY_ID,RWY_END_ID,RWY_MARKING_TYPE_CODE"
+        old = {"APT_RWY.csv": [rwy, "34IN,18/36,2500,60"], "APT_RWY_END.csv": [end, "34IN,18/36,18,NONE"]}
+        new = {"APT_RWY.csv": [rwy, "34IN,18/36,2500,60", "34IN,03/21,2000,60"],
+               "APT_RWY_END.csv": [end, "34IN,18/36,18,NONE", "34IN,03/21,03,NONE", "34IN,03/21,21,NONE"]}
+        c = self.one(old, new, "34IN")
+        self.assertEqual([x["source"] for x in c], ["APT_RWY"])
+
+    def test_always_on_lights_are_not_pilot_controlled(self):
+        """JWY: dropping 'PAPI RWY 18 & 36 OPR CONSLY.' from a CTAF lighting remark was act,
+        as if the PAPI stopped coming on. OKH: '07 & 25' -> '07/25' was act too."""
+        rmk = "ARPT_ID,LEGACY_ELEMENT_NUMBER,REMARK"
+        pri = lambda o, n: [x["priority"] for x in self.one(
+            {"APT_RMK.csv": [rmk, f'X,A1,"{o}"']}, {"APT_RMK.csv": [rmk, f'X,A1,"{n}"']}, "X")]
+        self.assertEqual(pri("ACTVT REIL RWY 18; MIRL RWY 18/36 - CTAF. PAPI RWY 18 & 36 OPR CONSLY.",
+                             "ACTVT REIL RWY 18; MIRL RWY 18/36 - CTAF."), ["fyi"])
+        self.assertEqual(pri("ACTVT NSTD LIRL RWY 07 & 25 - CTAF.", "ACTVT NSTD LIRL RWY 07/25 - CTAF."),
+                         ["fyi"])
+        # MAZ: 'REILS RWY 09' dropped out; the plural hid it
+        self.assertEqual(pri("RWY 09/27 MIRLS SS-SR. ACTVT PAPI RWYS 09 & 27; REILS RWY 09 - CTAF.",
+                             "ACTVT RWY 09/27 MIRLS & PAPI RWY 27 - CTAF.  PAPI RWY 9 OPER CONTIUNOUS."),
+                         ["action"])
+
+    def test_same_remark_on_two_frequencies_said_once(self):
+        """E01: the same 'APCH/DEP SVC PRVDD BY' remark on two FRQ rows showed twice."""
+        frq = "FACILITY,SERVICED_FACILITY,FREQ,FREQ_USE,REMARK"
+        o, n = "APCH/DEP SVC PRVDD BY ZFW ON FREQS 133.1/298.95", "APCH/DEP SVC PRVDD BY FORT WORTH ARTCC ON FREQS 133.1/298.95"
+        c = self.one({"FRQ.csv": [frq, f"ZFW,E01,133.1,APCH/P,{o}", f"ZFW,E01,298.95,APCH/P,{o}"]},
+                     {"FRQ.csv": [frq, f"ZFW,E01,133.1,APCH/P,{n}", f"ZFW,E01,298.95,APCH/P,{n}"]}, "E01")
+        self.assertEqual(len(c), 1)
+
+    def test_navaid_unusable_sectors_are_ifr_remarks(self):
+        """DIK: VOR unusable sectors changing was fyi, and ILS/navaid remarks were labeled navaid."""
+        hdr = "NAV_ID,NAV_TYPE,REMARK"
+        c = self.one({"NAV_RMK.csv": [hdr, "DIK,VOR/DME,VOR UNUSBL 005-015 BYD 40 NM."]},
+                     {"NAV_RMK.csv": [hdr, "DIK,VOR/DME,VOR UNUSBL 010-020 BYD 52 NM."]}, "DIK")
+        self.assertEqual([(x["priority"], x["category"]) for x in c], [("ifr", "remark")])
+
+    def test_declared_distances_no_longer_listed_is_fyi(self):
+        """RVS: ASDA/LDA 2641 ft -> blank read as a runway cut to zero."""
+        end = "ARPT_ID,RWY_ID,RWY_END_ID,ACLT_STOP_DIST_AVBL,LNDG_DIST_AVBL,RWY_END_ELEV"
+        c = self.one({"APT_RWY_END.csv": [end, "RVS,01L/19R,01L,2641,2641,614.6"]},
+                     {"APT_RWY_END.csv": [end, "RVS,01L/19R,01L,,,614.8"]}, "RVS")
+        self.assertEqual([x["priority"] for x in c], ["fyi"])
+
+
 class TestRunways(Case):
     def rwy(self, rows):
         return {"APT_BASE.csv": ["ARPT_ID,ARPT_NAME", "CMY,X"],

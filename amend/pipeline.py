@@ -22,12 +22,13 @@ CATEGORY = [  # (source prefix, category) - first match wins
     ("CLS_ARSP", "airspace"), ("ATC", "tower"), ("FRQ", "frequency"), ("NAV", "navaid"),
     ("ILS", "navaid"), ("APT_RWY", "runway"), ("APT_RMK", "remark"), ("STAR/DP", "procedure"),
     ("PFR", "route"), ("D-TPP", "chart"), ("AWOS", "weather"), ("APT", "airport"),
+    ("PJA", "airspace"),
 ]
 
 
 def category(source):
     s = source.upper()
-    if s.startswith("ATC_RMK"):
+    if base(s) in REMARK_FILES:   # an ILS or tower remark is still a remark, not a navaid/tower
         return "remark"
     return next((c for prefix, c in CATEGORY if s.startswith(prefix)), "other")
 
