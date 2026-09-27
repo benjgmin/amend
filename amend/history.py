@@ -4,14 +4,13 @@ Per-airport change timeline across every FAA cycle since Aug 2024.
 Each cycle is diffed against the one before it and appended to history/<ID>.json (newest
 first). history/cycles.json tracks what's done, so re-running only adds new cycles.
 """
-import datetime as dt
 import glob
 import json
 import os
 
 from . import SCHEMA_VERSION
-from .cycles import (CYCLE, FIRST_ARCHIVED, airspace_path, cycle_on_or_before, dtpp_path,
-                     get_airspace_pair, get_cycle, get_dtpp, zip_path)
+from .cycles import (CYCLE, FIRST_ARCHIVED, airspace_path, dtpp_path, get_airspace_pair, get_cycle,
+                     get_dtpp, in_effect, zip_path)
 from .output import dump
 from .pipeline import run
 
@@ -59,7 +58,7 @@ def write_index(state):
 def update(llm=False, keep=False):
     os.makedirs(HIST, exist_ok=True)
     state = _load(STATE, {"cycles": [], "skipped": []})
-    current = cycle_on_or_before(dt.date.today())
+    current = in_effect()
     cycles, d = [], FIRST_ARCHIVED
     while d <= current:
         cycles.append(d)
@@ -79,7 +78,7 @@ def update(llm=False, keep=False):
             break
 
     for new in todo:
-        if not get_cycle(new):
+        if not get_cycle(new):   # a failed download raises instead: only a real 404 is a gap
             print(f"  {new}: not in FAA archive, skipping (next cycle diffs across the gap)")
             state["skipped"] = sorted(set(state["skipped"]) | {new.isoformat()})
             continue

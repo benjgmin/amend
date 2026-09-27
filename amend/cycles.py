@@ -1,9 +1,12 @@
 """FAA 28-day cycle math, download URLs, and downloading."""
 import datetime as dt
+import io
 import os
 import shutil
+import time
 import urllib.error
 import urllib.request
+import xml.etree.ElementTree as ET
 import zipfile
 
 ANCHOR = dt.date(2026, 9, 3)       # a known NASR / d-TPP effective date
@@ -50,6 +53,28 @@ def airspace_path(d):
     return os.path.join(DATA, f"{d.isoformat()}_airspace.zip")
 
 
+EFFECTIVE = dt.timedelta(hours=9, minutes=1)   # cycles change over at 0901Z
+MISSING = (403, 404, 410)   # the FAA hasn't posted it (or no longer keeps it)
+TRIES = 3                   # attempts per file before a run gives up
+TIMEOUT = 60                # seconds of silence before a download counts as stalled
+WAIT = 10                   # seconds before the first retry; doubles each time
+# a CSV zip without these can't be diffed: every row in the missing file would read as removed
+CSV_REQUIRED = ("APT_BASE.csv", "APT_RWY.csv", "APT_RWY_END.csv", "APT_RMK.csv", "FRQ.csv",
+                "NAV_BASE.csv", "ATC_BASE.csv")
+
+
+class FetchError(Exception):
+    """a download that failed for a reason other than the FAA not having the file (timeouts,
+    5xx, truncated or corrupt files). the run must stop: guessing "not posted" here would
+    publish the wrong cycle or a diff with holes in it."""
+
+
+def in_effect(now=None):
+    """the cycle pilots are flying on right now (UTC, 0901Z changeover)."""
+    now = now or dt.datetime.now(dt.timezone.utc)
+    return cycle_on_or_before((now - EFFECTIVE).date())
+
+
 def looks_valid(path, name=None):
     """a real zip / XML, not an error page served with a 200. a bad file would otherwise
     sit in the Actions cache and break every run after it."""
@@ -62,34 +87,116 @@ def looks_valid(path, name=None):
     return head.startswith(b"<") and not head.startswith((b"<!doctype html", b"<html"))
 
 
-def download(url, path):
-    """download url to path unless it's already there. True if we have the file."""
+def _is_html(path):
+    with open(path, "rb") as f:
+        head = f.read(512).lstrip(b"\xef\xbb\xbf \t\r\n").lower()
+    return head.startswith((b"<!doctype html", b"<html"))
+
+
+def _zip_names(zf):
+    """every file name in a zip, recursing into nested zips, after checking every CRC.
+    raises on a corrupt member."""
+    bad = zf.testzip()
+    if bad:
+        raise ValueError(f"corrupt member {bad}")
+    names = []
+    for n in zf.namelist():
+        names.append(n.split("/")[-1])
+        if n.lower().endswith(".zip"):
+            with zipfile.ZipFile(io.BytesIO(zf.read(n))) as inner:
+                names += _zip_names(inner)
+    return names
+
+
+def check_file(path, name=None, required=()):
+    """full check of a fresh download, before it's allowed into data/ (and the Actions cache).
+    raises ValueError saying what's wrong."""
+    name = (name or path).lower()
+    if name.endswith(".zip"):
+        if not zipfile.is_zipfile(path):
+            raise ValueError("not a zip (truncated?)")
+        with zipfile.ZipFile(path) as zf:
+            names = {n.upper() for n in _zip_names(zf)}
+        missing = [r for r in required if r.upper() not in names]
+        if missing:
+            raise ValueError(f"missing {', '.join(missing)}")
+    else:
+        root = None
+        for event, el in ET.iterparse(path, events=("start", "end")):   # ParseError if truncated
+            if root is None:
+                root = el.tag
+            if event == "end":
+                el.clear()
+        if root is None:
+            raise ValueError("empty XML")
+
+
+def _open(url, timeout):
+    req = urllib.request.Request(url, headers={"User-Agent": "amend"})
+    return urllib.request.urlopen(req, timeout=timeout)
+
+
+def download(url, path, required=()):
+    """download url to path unless it's already there.
+    True: we have it. False: the FAA hasn't posted it (404/403/410, or an HTML page instead
+    of the file). raises FetchError when it can't tell, after TRIES attempts."""
     if looks_valid(path):
         return True
     if os.path.exists(path):
         print(f"  {path} is corrupt, downloading again")
         os.remove(path)
     os.makedirs(os.path.dirname(path) or ".", exist_ok=True)
-    print(f"downloading {url}")
+    part, last = path + ".part", None
+    for attempt in range(1, TRIES + 1):
+        print(f"downloading {url}" + (f" (try {attempt}/{TRIES})" if attempt > 1 else ""))
+        try:
+            with _open(url, TIMEOUT) as r, open(part, "wb") as f:
+                shutil.copyfileobj(r, f)
+                want = r.headers.get("Content-Length")
+            got = os.path.getsize(part)
+            if want and want.isdigit() and int(want) != got:
+                raise ValueError(f"got {got} of {want} bytes")
+            if _is_html(part):
+                print("  not available (got a web page instead of the file)")
+                os.remove(part)
+                return False
+            check_file(part, path, required)
+            os.replace(part, path)
+            return True
+        except urllib.error.HTTPError as e:
+            if e.code in MISSING:
+                print(f"  not available ({e.code})")
+                if os.path.exists(part):
+                    os.remove(part)
+                return False
+            last = f"HTTP {e.code}"
+        except Exception as e:   # timeouts, resets, truncated or corrupt files
+            last = f"{type(e).__name__}: {e}"
+        print(f"  failed: {last}")
+        if os.path.exists(part):
+            os.remove(part)
+        if attempt < TRIES:
+            time.sleep(WAIT * 2 ** (attempt - 1))
+    raise FetchError(f"{url}: {last}")
+
+
+def probe(url):
+    """is url posted? True / False, or None if we couldn't tell. reads a few bytes, not the file."""
+    req = urllib.request.Request(url, headers={"User-Agent": "amend", "Range": "bytes=0-15"})
     try:
-        req = urllib.request.Request(url, headers={"User-Agent": "amend"})
-        with urllib.request.urlopen(req, timeout=300) as r, open(path + ".part", "wb") as f:
-            shutil.copyfileobj(r, f)
-        if not looks_valid(path + ".part", path):
-            raise ValueError("not a valid zip/xml (error page?)")
-        os.replace(path + ".part", path)
-        return True
+        with urllib.request.urlopen(req, timeout=30) as r:
+            head = r.read(16).lstrip(b"\xef\xbb\xbf \t\r\n")
     except urllib.error.HTTPError as e:
-        print(f"  not available ({e.code})")
-    except Exception as e:
-        print(f"  failed: {e}")
-    if os.path.exists(path + ".part"):
-        os.remove(path + ".part")
-    return False
+        return False if e.code in MISSING else None
+    except Exception:
+        return None
+    if url.lower().endswith(".zip"):
+        return head.startswith(b"PK")
+    return head.startswith(b"<") and not head.lower().startswith((b"<!doctype", b"<html"))
 
 
 def get_cycle(d):
-    return download(csv_url(d), zip_path(d))
+    return download(csv_url(d), zip_path(d), CSV_REQUIRED)
 
 
 def get_dtpp(d):
