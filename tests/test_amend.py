@@ -710,12 +710,138 @@ class TestAirspaceShapes(unittest.TestCase):
         c = self.run_shapes([self.d("2500")], [self.d("2500"), e2])["X21"]
         self.assertEqual([x["summary"] for x in c], ["now under Melbourne class E surface: SFC-class A"])
 
+    def test_e3_and_e4_extensions_changed_together_listed_once(self):
+        """two class E extensions of one airport, moved together, read the same: one line, one id."""
+        def ext(kind, ring):
+            return ({"NAME": f"VERO BEACH CLASS {kind}", "LOCAL_TYPE": f"CLASS_{kind}", "IDENT": "VRB",
+                     "LOWER_VAL": "700", "LOWER_CODE": "SFC", "UPPER_VAL": "2500", "UPPER_CODE": "MSL"}, ring)
+        a, b = box(27.72, -80.418, 0.03), box(27.76, -80.418, 0.03)
+        c = self.run_shapes([self.d("2500"), ext("E3", a), ext("E4", a)],
+                            [self.d("2500"), ext("E3", b), ext("E4", b)], {"VRB"})["VRB"]
+        self.assertEqual(len({x["summary"] for x in c}), len(c))
+        self.assertEqual(len({x["id"] for x in c}), len(c))
+
     def test_no_shapefile_is_skipped(self):
         d = tempfile.mkdtemp()
         o, n, e = (os.path.join(d, x) for x in ("2026-09-03_CSV.zip", "2026-10-01_CSV.zip", "empty.zip"))
         for p in (o, n, e):
             make_zip(p, {"APT_BASE.csv": self.APT})
         self.assertEqual(run(o, n, {"VRB"}, log=lambda *_: None, airspace=(e, e))["airports"], {})
+
+
+class TestReleaseAudit(Case):
+    """amend/audit.py: checks that stop a bad cycle from reaching pilots."""
+    TODAY = __import__("datetime").date(2026, 9, 27)
+
+    def ch(self, summary, apt="VRB", priority="action", **kw):
+        from amend.pipeline import change_id
+        return {"id": change_id(apt, "2026-10-01", summary), "priority": priority, "category": "remark",
+                "kind": "changed", "summary": summary, "source": kw.pop("source", "APT_RMK"), **kw}
+
+    def check(self, airports):
+        from amend.audit import check_changes
+        return check_changes(airports, "2026-10-01")
+
+    def test_real_cycle_output_passes(self):
+        old = {"FRQ.csv": ["FACILITY,SERVICED_FACILITY,FREQ,FREQ_USE", "VRB,VRB,126.3,LCL/P"],
+               "APT_RMK.csv": ["ARPT_ID,REMARK", "VRB,ACTVT MIRL RWY 04/22 - CTAF."]}
+        new = {"FRQ.csv": ["FACILITY,SERVICED_FACILITY,FREQ,FREQ_USE", "VRB,VRB,126.3,LCL/P",
+                           "VRB,VRB,122.9,CTAF"],
+               "APT_RMK.csv": ["ARPT_ID,REMARK", "VRB,ACTVT MIRL RWY 04/22 - 126.3."]}
+        self.assertEqual(self.check(self.diff(old, new, {"VRB"})), ([], []))
+
+    def test_cycle_dates(self):
+        from amend.audit import check_cycles
+        self.assertEqual(check_cycles("2026-09-03", "2026-10-01", self.TODAY), [])
+        self.assertIn("not an FAA cycle date", check_cycles("2026-09-03", "2026-10-02", self.TODAY)[0])
+        self.assertTrue(check_cycles("2026-08-06", "2026-10-01", self.TODAY))       # skipped a cycle
+        self.assertEqual(check_cycles("2026-08-06", "2026-10-01", self.TODAY, gap_ok=True), [])
+        self.assertIn("more than one cycle ahead", check_cycles("2026-10-01", "2026-10-29", self.TODAY)[0])
+
+    def test_duplicates(self):
+        c = self.ch("remark removed: RWY 04 CLSD.")
+        errs, _ = self.check({"VRB": [c, dict(c)]})
+        self.assertEqual(len(errs), 2)      # same id and same text
+
+    def test_code_bug_in_summary(self):
+        errs, _ = self.check({"VRB": [self.ch("frequency None (CTAF) added", source="FRQ")]})
+        self.assertIn("code bug", errs[0])
+
+    def test_faa_none_value_is_not_a_code_bug(self):
+        """a name column the FAA sets to NONE prints as 'None' through .title(); that's data."""
+        c = self.ch("airport manager: Smith -> None", priority="fyi", source="APT_CON",
+                    fields=[{"field": "NAME", "old": "SMITH", "new": "NONE"}])
+        self.assertEqual(self.check({"VRB": [c]}), ([], []))
+
+    def test_mistranslation_in_output(self):
+        """3T3, Oct 2024: SS-SR dropped and 'contact CTAF' on pilot-controlled lighting."""
+        raw = "MIRL RWY 08/26 PRESET TO LOW SS-SR; TO INCR INTST AND ACTVT REIL RWY 26; MIRL RWY 08/26  - CTAF."
+        bad = self.ch("revised remark: Runway 08/26 medium intensity runway lights preset to low; contact "
+                      "CTAF to increase intensity and activate REIL on runway 26.", original=raw)
+        errs, _ = self.check({"3T3": [bad]})
+        self.assertTrue(any("SS-SR" in e for e in errs) and any("click the mic" in e for e in errs))
+        self.assertEqual(self.check({"3T3": [self.ch("revised remark: " + raw, original=raw)]}), ([], []))
+
+    def test_changed_number_in_translation(self):
+        raw = "RWY 04 CLSD 2200-0600."
+        errs, _ = self.check({"VRB": [self.ch("new remark: Runway 04 closed 10pm to 8am.", original=raw)]})
+        self.assertTrue(any("lost number 2200" in e for e in errs))
+
+    def test_chart_from_wrong_cycle(self):
+        c = self.ch("approach ILS RWY 11R amended (amdt 2)", priority="ifr", source="D-TPP",
+                    chart={"pdf": "https://aeronav.faa.gov/d-tpp/2609/00110IL11R.PDF"})
+        self.assertIn("wrong cycle", self.check({"DAB": [c]})[0][0])
+        c["chart"]["pdf"] = "https://aeronav.faa.gov/d-tpp/2610/00110IL11R.PDF"
+        self.assertEqual(self.check({"DAB": [c]}), ([], []))
+
+    def test_impossible_values_warn(self):
+        def fields(name, new):
+            return self.ch(f"{name}: x -> {new}", source="APT_RWY", fields=[{"field": name, "old": "x", "new": new}])
+        _, warn = self.check({"VRB": [fields("RWY_ID", "16/37"), fields("RWY_ID", "12/14"),
+                                      fields("RWY_LEN", "0"), fields("G_S_ANGLE", "30"),
+                                      self.ch("new frequency 95.5 (CTAF)", source="FRQ")]})
+        self.assertEqual(len(warn), 5)
+        _, warn = self.check({"VRB": [fields("RWY_ID", "08W/26W"), fields("RWY_ID", "NE/SW"),
+                                      fields("RWY_ID", "H1"), fields("RWY_ID", "16/35"),
+                                      fields("G_S_ANGLE", "3.5"),
+                                      self.ch("frequency 34.5 (ARMY OPS) added", source="FRQ"),
+                                      self.ch("frequency 142.6 (ATIS) added", source="FRQ"),
+                                      self.ch("frequency 243.0 (EMERG) added", source="FRQ")]})
+        self.assertEqual(warn, [])
+
+    def test_fyi_values_are_not_checked(self):
+        c = self.ch("x", priority="fyi", source="APT_RWY", fields=[{"field": "RWY_LEN", "old": "1", "new": "0"}])
+        self.assertEqual(self.check({"VRB": [c]}), ([], []))
+
+    def test_action_count_against_past_cycles(self):
+        from amend.audit import check_counts
+        apts = {f"A{i}": [self.ch("x", apt=f"A{i}")] for i in range(400)}
+        self.assertEqual(check_counts(apts, [400, 450, 380]), ([], []))
+        self.assertEqual(len(check_counts(apts, [130, 140, 150])[1]), 1)      # ~3x: warn
+        self.assertEqual(len(check_counts(apts, [60, 70, 75])[0]), 1)         # ~6x: stop
+        self.assertIn("only 5 airports", check_counts(dict(list(apts.items())[:5]), [])[0][0])
+
+    def test_packet_has_watched_and_busiest_action_and_ifr_only(self):
+        from amend.audit import packet
+        result = {"from_cycle": "2026-09-03", "to_cycle": "2026-10-01",
+                  "airports": {"X21": [self.ch("a", apt="X21")], "ZZZ": [self.ch("b", apt="ZZZ")],
+                               "ATL": [self.ch("c", apt="ATL", priority="fyi")]}}
+        p = packet(result, {"errors": [], "warnings": ["w"]}, {"t": {"airports": ["X21"]}})
+        self.assertEqual(list(p["airports"]), ["X21"])
+        self.assertEqual(p["warnings"], ["w"])
+        self.assertEqual(p, packet(result, {"errors": [], "warnings": ["w"]}, {"t": {"airports": ["X21"]}}))
+
+    def test_history_has_no_mistranslations(self):
+        """history is shown forever; a translation the checks reject must not be in it."""
+        import glob
+        from amend.audit import translation_problems
+        bad = []
+        for path in glob.glob(os.path.join(os.path.dirname(__file__), "..", "history", "*.json")):
+            with open(path, encoding="utf-8") as f:
+                h = json.load(f)
+            bad += [f"{h.get('airport')} {e['cycle']}: {e['summary']}" for e in h.get("entries", [])
+                    if translation_problems(e)]
+        self.assertEqual(bad, [])
 
 
 if __name__ == "__main__":

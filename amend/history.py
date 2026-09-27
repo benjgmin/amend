@@ -10,6 +10,7 @@ import json
 import os
 
 from . import SCHEMA_VERSION
+from .audit import audit, report_to_actions
 from .cycles import (CYCLE, FIRST_ARCHIVED, airspace_path, cycle_on_or_before, dtpp_path,
                      get_airspace_pair, get_cycle, get_dtpp, zip_path)
 from .output import dump
@@ -89,6 +90,10 @@ def update(llm=False, keep=False):
         print(f"\n=== {prev} -> {new} ===")
         result = run(zip_path(prev), zip_path(new), None, get_dtpp(new), llm, log=lambda *_: None,
                      airspace=get_airspace_pair(prev, new))
+        report = audit(result, HIST, gap_ok=True)
+        report_to_actions(report, f"{prev} -> {new}")
+        if report["errors"]:     # history is kept forever, so nothing unchecked goes in
+            raise SystemExit(f"audit failed for {prev} -> {new}, not adding it to history")
         print(f"  {append(result)} changes at {len(result['airports'])} airports")
         state["cycles"] = sorted(set(state["cycles"]) | {new.isoformat()})
         with open(STATE, "w") as f:
