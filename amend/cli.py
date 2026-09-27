@@ -92,7 +92,7 @@ def main(argv=None):
 
     wl = sub.add_parser("watchlist", help="create or list named watchlists (watchlists/*.json)")
     wl.add_argument("action", choices=["create", "list"])
-    wl.add_argument("slug", nargs="?", help="link name, e.g. erausvfr -> /amend/watch/erausvfr/")
+    wl.add_argument("slug", nargs="?", help="link name, e.g. erausvfr -> amend.watch/erausvfr")
     wl.add_argument("airports", nargs="*")
     wl.add_argument("--name", help='display name, e.g. "ERAU SVFR"')
     wl.add_argument("--description", default="")
@@ -118,4 +118,4 @@ def main(argv=None):
             sys.exit('usage: python -m amend watchlist create <slug> --name "Name" AIRPORT ...')
         w = watchlists.save(a.slug, a.name, a.airports, a.description)
         print(f"saved watchlists/{a.slug}.json ({len(w['airports'])} airports). push it, and it'll be live at\n"
-              f"  https://benjgmin.github.io/amend/watch/{a.slug}/")
+              f"  https://amend.watch/{a.slug}")

@@ -96,7 +96,7 @@ struct AirportsView: View {
         }
     }
 
-    /// the website shows the same list at /amend/?w=DAB,VRB,...
+    /// the website shows the same list at amend.watch/watch/?w=DAB,VRB,...
     private var watchlistURL: URL? {
         guard !store.saved.isEmpty else { return nil }
         return URL(string: "\(API.base.absoluteString)watch/?w=\(store.saved.joined(separator: ","))")

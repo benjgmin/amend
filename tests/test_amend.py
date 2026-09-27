@@ -9,7 +9,18 @@ import tempfile
 import unittest
 import zipfile
 
+from amend import remarks
 from amend.pipeline import cycle_label, run
+
+
+def setUpModule():
+    # the repo's remark_cache.json grows every cycle; tests must not depend on what's in it
+    global _real_cache
+    _real_cache, remarks.CACHE_FILE = remarks.CACHE_FILE, os.path.join(tempfile.mkdtemp(), "cache.json")
+
+
+def tearDownModule():
+    remarks.CACHE_FILE = _real_cache
 
 
 def make_zip(path, files):
@@ -306,7 +317,7 @@ class TestWeb(unittest.TestCase):
         self.assertEqual(n, 1)
         page = open(os.path.join(site, "VRB", "index.html")).read()
         self.assertIn('<meta property="og:title" content="VRB: ACT 1 · IFR 1 on 01 OCT · Vero Beach Rgnl">', page)
-        self.assertIn('content="https://benjgmin.github.io/amend/VRB/card.png"', page)
+        self.assertIn('content="https://amend.watch/VRB/card.png"', page)
         self.assertTrue(os.path.exists(os.path.join(site, "VRB", "card.png")))
         self.assertIn('content="ACT 1 · IFR 1 · Tower hours: 0800-2200 → 0600-2200 local"', page)
         self.assertIn("NOT IN EFFECT YET", page)
@@ -328,6 +339,7 @@ class TestWatchlists(unittest.TestCase):
         from amend.watchlists import validate
         self.assertEqual(validate("erausvfr", {"name": "ERAU SVFR", "airports": ["DAB", "KOMN"]}), [])
         self.assertTrue(validate("ERAU SVFR!", {"name": "x", "airports": ["DAB"]}))     # bad link name
+        self.assertTrue(validate("about", {"name": "x", "airports": ["DAB"]}))          # reserved
         self.assertTrue(validate("erausvfr", {"name": "", "airports": ["DAB"]}))        # no name
         self.assertTrue(validate("erausvfr", {"name": "x", "airports": ["not an id"]}))
 
@@ -344,7 +356,9 @@ class TestWatchlists(unittest.TestCase):
         meta = {"from_cycle": "2026-09-03", "to_cycle": "2026-10-01", "upcoming": True, "changed_airports": 1}
         web.build(site, meta, [{"id": "VRB", "name": "Vero Beach Rgnl"}], latest, None,
                   now=dt.datetime(2026, 9, 24, tzinfo=dt.timezone.utc), watchlists=lists)
-        html_ = open(os.path.join(site, "watch", "erausvfr", "index.html")).read()
+        html_ = open(os.path.join(site, "erausvfr", "index.html")).read()
+        self.assertIn('url=../../erausvfr/', open(os.path.join(site, "watch", "erausvfr", "index.html")).read())
+        self.assertTrue(os.path.exists(os.path.join(site, "about", "index.html")))
         self.assertIn('content="ERAU SVFR: 1 of 2 airports change on 01 OCT · ACT 1"', html_)
         self.assertIn("0800-2200 → 0600-2200", html_)
         self.assertIn("No changes in this cycle.", html_)        # DAB
