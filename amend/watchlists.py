@@ -31,7 +31,7 @@ def validate(slug, data):
     errs = []
     if not SLUG.match(slug):
         errs.append(f"'{slug}': link names are 3-40 lowercase letters, digits or dashes")
-    if slug in ("latest", "history", "assets", "watch", "list", "about"):
+    if slug in ("latest", "history", "assets", "watch", "list", "about", "guide"):
         errs.append(f"'{slug}': that name is used by the site itself, pick another")
     if not str(data.get("name", "")).strip():
         errs.append(f"'{slug}': needs a name")
