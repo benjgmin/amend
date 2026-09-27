@@ -1,4 +1,4 @@
-"""Procedural soundtrack for the Amend promo: 128 BPM, 8 bars (exactly 15 s).
+"""Procedural soundtrack for the Amend promo: 128 BPM, 16 bars (exactly 30 s).
 
 B minor, tuned so B5 is exactly 1020 Hz, the tone VORs and NDBs key their
 morse idents on, so the "AMEND" ident at the end sits in key with the track.
@@ -18,7 +18,7 @@ import scipy.signal as ss
 SR = 48000
 BPM = 128
 BEAT = 60 / BPM
-DUR = 15.0
+DUR = 30.0
 N = int(round(DUR * SR))
 rng = np.random.default_rng(7)
 
@@ -311,7 +311,6 @@ CH = {
     'A': [note(m) for m in (57, 61, 64, 67, 71)],  # A C# E G B   (A9)
 }
 ROOT = {'Bm': note(35), 'G': note(31), 'D': note(38), 'A': note(33)}
-PROG = {1: 'Bm', 2: 'G', 3: 'D', 4: 'A', 5: 'Bm', 6: 'G', 7: 'Bm'}
 SCALE = [note(m) for m in (71, 74, 76, 78, 81, 83, 86, 88, 90, 93, 95)]  # B minor pentatonic
 
 
@@ -349,7 +348,8 @@ def glide(f0, f1, dur, d=0.2):
 
 
 # ---- picture timings mirrored from src/scenes (beats from each scene start)
-TICK_AT = [0.15 + k * 0.118 for k in range(28)]  # cycle.js
+SCENE = {'cycle': 0, 'noise': 8, 'brand': 16, 'remarks': 22, 'ranked': 32, 'history': 40, 'map': 48, 'end': 56}
+TICK_AT = [0.3 + k * 0.233 for k in range(28)]  # cycle.js
 
 
 def in_out_cubic(t):
@@ -366,25 +366,29 @@ def seg(u, a, b):
 
 def signal_row_on(row):
     """noise.js: beat at which the scan line passes a pinned signal row"""
-    u = 2.3
-    while u < 3.3:
-        sc = 3600 * out_cubic(seg(u, 0, 2.3)) + 90 * u
+    u = 4.2
+    while u < 6.0:
+        sc = 3600 * out_cubic(seg(u, 0, 4.1)) + 45 * u
         off = sc - np.floor(sc / 31) * 31
         y0 = row * 31 - off + 12
-        scan = -40 + (1080 + 80) * in_out_cubic(seg(u, 2.3, 3.15))
+        scan = -40 + (1080 + 80) * in_out_cubic(seg(u, 4.2, 5.8))
         if y0 < scan:
             return u
         u += 0.002
-    return 3.2
+    return 5.9
 
 
 SIGNAL = [(11, 'act'), (14, 'act'), (17, 'act'), (20, 'act'), (23, 'ifr'), (26, 'fyi')]
-MORSE_UNIT, MORSE_T0 = 0.045, 0.12  # end.js
+REMARK_T0 = [1.6, 2.05, 2.45, 2.85, 3.25, 3.65]  # remarks.js
+LEGEND_T0 = [0.25, 1.65, 3.05, 4.45]  # ranked.js
+TOWER_T0 = [1.8, 3.8]  # history.js
+CYCLE_AT = [1.3 + c * 0.19 for c in range(27)]  # map.js
+MORSE_UNIT, MORSE_T0 = 0.075, 0.5  # end.js (seconds)
 MORSE = ['.-', '--', '.', '-.', '-..']
 
 
-def B(bar, beat=0.0):
-    return bt(bar * 4 + beat)
+def S(scene, beat=0.0):
+    return bt(SCENE[scene] + beat)
 
 
 # ================================================================= SCORE
@@ -396,126 +400,135 @@ def K(t, g=1.0, **kw):
     kicks.append((t, g))
 
 
-# ---- bar 0: the cycle dial ----------------------------------------------------
-music.add(pad(CH['Bm'], bt(4), 220, 1400, a=1.0), 0, 0.5)
-for k, u in enumerate(TICK_AT):
-    fx.add(tick(1500 + k * 45, 0.04, 0.006), B(0, u), 0.22 + 0.2 * k / 27, pan=np.sin(k * 0.9) * 0.4)
-    if k % 7 == 0:
-        fx.add(blip(note(83 + [0, 3, 7, 10][k // 7]), 0.12, 0.04), B(0, u), 0.12)
-fx.add(chime([note(83), note(90)], 1.2), B(0, 3.34), 0.35)  # cycle complete
-verb.add(chime([note(83), note(90)], 1.2), B(0, 3.34), 0.35)
-fx.add(riser(bt(1.9), 250, 7000), B(0, 2.1), 0.28)
-fx.add(rev_cymbal(bt(0.6)), B(0, 3.4), 0.5)
+def chord_of(beat):
+    return ['Bm', 'G', 'D', 'A'][int(beat // 4) % 4]
 
-# ---- groove (bars 1-6) --------------------------------------------------------
-for bar in range(1, 7):
-    beats = (0, 2) if bar == 2 else (0, 1, 2, 3)  # the wordmark bar breathes: half-time
-    for b in beats:
-        K(B(bar, b))
-    for b in ((2,) if bar == 2 else (1, 3)):
-        drums.add(clap(), B(bar, b), 0.42)
-        verb.add(clap(), B(bar, b), 0.12)
-    for s16 in range(16):
-        acc = [0.5, 0.2, 0.8, 0.25][s16 % 4]
-        drums.add(hat(), B(bar, s16 * 0.25), acc * (0.6 if bar == 2 else 0.85), pan=0.25)
-    if bar != 2:
-        for b in range(4):
-            drums.add(hat(True), B(bar, b + 0.5), 0.32, pan=-0.2)
-    ch = PROG[bar]
-    r = ROOT[ch]
-    for b in range(4):
+
+GROOVE = [(8, 16), (22, 56)]  # the wordmark gets a breakdown in between
+grooving = lambda b: any(a <= b < z for a, z in GROOVE)
+
+# ---- drums, bass, pads, arp over the whole 16 bars ----------------------------
+for beat in range(64):
+    ch = chord_of(beat)
+    if grooving(beat):
+        K(bt(beat))
+        if beat % 4 in (1, 3):
+            drums.add(clap(), bt(beat), 0.4)
+            verb.add(clap(), bt(beat), 0.12)
+        for s16 in range(4):
+            acc = [0.5, 0.2, 0.8, 0.25][s16]
+            drums.add(hat(), bt(beat + s16 * 0.25), acc * 0.85, pan=0.25)
+        drums.add(hat(True), bt(beat + 0.5), 0.3, pan=-0.2)
+        r = ROOT[ch]
         for off, mult, g in ((0.5, 1, 1.0), (0.75, 2, 0.6)):
-            bass.add(bass_note(r * mult * 2, bt(0.22), g), B(bar, b + off), 0.85)
-    music.add(pad(CH[ch], bt(4), 500, 1300, a=0.3, seed=bar), B(bar), 0.32)
-    # plucked 16th arpeggio for motion (not under the wordmark reveal)
-    if bar >= 3:
+            bass.add(bass_note(r * mult * 2, bt(0.22), g), bt(beat + off), 0.85)
+    elif 4 <= beat < 8 or 16 <= beat < 22:  # quiet 8ths in the intro's 2nd bar + breakdown
+        for e in (0, 0.5):
+            drums.add(hat(), bt(beat + e), 0.35 if e else 0.2, pan=0.25)
+    if beat % 4 == 0 and beat < 56:
+        music.add(pad(CH[ch], bt(4), 450 if grooving(beat) else 300, 1300, a=0.4, seed=beat), bt(beat), 0.3)
+    if 32 <= beat < 56:  # plucked 16th arp from the ranked shot on
         notes = sorted(CH[ch])
-        for s16 in range(16):
-            f = notes[[0, 2, 4, 3, 1, 3, 2, 4][s16 % 8]] * 2
-            music.add(pluck(f, 0.25, 0.07, 0.6), B(bar, s16 * 0.25), 0.07 + 0.03 * (s16 % 4 == 0))
+        for s16 in range(4):
+            k = (beat * 4 + s16) % 8
+            f = notes[[0, 2, 4, 3, 1, 3, 2, 4][k]] * 2
+            music.add(pluck(f, 0.25, 0.07, 0.6), bt(beat + s16 * 0.25), 0.07 + 0.03 * (s16 == 0))
 
-# ---- bar 1: the flood + the filter --------------------------------------------
-drums.add(sub_boom(1.6, 58, 30), B(1), 0.55)
-fx.add(whoosh(bt(0.9), 9000, 700, 0.9, 0.08, 1.4), B(1), 0.7)  # data rush
-fx.add(crash(1.6), B(1), 0.35)
+# ---- cycle dial (beats 0-8) ----------------------------------------------------
+for k, u in enumerate(TICK_AT):
+    fx.add(tick(1500 + k * 45, 0.04, 0.006), S('cycle', u), 0.22 + 0.2 * k / 27, pan=np.sin(k * 0.9) * 0.4)
+    if k % 7 == 0:
+        fx.add(blip(note(83 + [0, 3, 7, 10][k // 7]), 0.12, 0.04), S('cycle', u), 0.12)
+fx.add(chime([note(83), note(90)], 1.4), S('cycle', TICK_AT[-1]), 0.35)  # cycle complete
+verb.add(chime([note(83), note(90)], 1.4), S('cycle', TICK_AT[-1]), 0.35)
+fx.add(riser(bt(3.6), 200, 7000), S('cycle', 4.4), 0.28)
+fx.add(rev_cymbal(bt(0.9)), S('cycle', 7.1), 0.5)
+
+# ---- the flood + the filter (beats 8-16) ----------------------------------------
+drums.add(sub_boom(1.8, 58, 30), S('noise'), 0.55)
+fx.add(whoosh(bt(1.2), 9000, 700, 0.9, 0.08, 1.4), S('noise'), 0.7)  # data rush
+fx.add(crash(2.0), S('noise'), 0.35)
 rr = np.random.default_rng(3)
-for k in range(46):  # machine chatter under the wall of rows
-    u = float(rr.uniform(0.05, 2.1))
+for k in range(70):  # machine chatter under the wall of rows
+    u = float(rr.uniform(0.05, 3.6))
     f = float(rr.choice([1200, 1600, 2000, 2400, 3200]))
-    fx.add(blip(f, 0.05, 0.012, square=True), B(1, u), 0.05 * (1 - u / 2.6), pan=float(rr.uniform(-0.8, 0.8)))
-fx.add(whoosh(bt(0.9), 5000, 300, 1.5, 0.6, 1.0), B(1, 2.3), 0.5)  # the scan pass
+    fx.add(blip(f, 0.05, 0.012, square=True), S('noise', u), 0.05 * (1 - u / 4.4), pan=float(rr.uniform(-0.8, 0.8)))
+fx.add(whoosh(bt(1.7), 5000, 300, 1.5, 0.6, 1.0), S('noise', 4.2), 0.45)  # the scan pass
 for row, kind in SIGNAL:
     u = signal_row_on(row)
     if kind == 'act':
-        c = chime([note(83), note(78)], 0.5, 0.6)
+        c = chime([note(83), note(78)], 0.6, 0.6)
     elif kind == 'ifr':
-        c = chime([note(86)], 0.5, 0.5)
+        c = chime([note(86)], 0.6, 0.5)
     else:
         c = blip(note(71), 0.2, 0.05)
-    fx.add(c, B(1, u), 0.3, pan=-0.3 if row % 2 else 0.3)
-fx.add(rev_cymbal(bt(0.62)), B(1, 3.36), 0.55)
-fx.add(whoosh(bt(0.6), 300, 3000, 1.2, 0.85, 1.0), B(1, 3.35), 0.4)  # rows collapse
+    fx.add(c, S('noise', u), 0.3, pan=-0.3 if row % 2 else 0.3)
+fx.add(rev_cymbal(bt(0.9)), S('noise', 7.1), 0.55)
+fx.add(whoosh(bt(0.9), 300, 3000, 1.2, 0.85, 1.0), S('noise', 7.0), 0.4)  # rows collapse
 
-# ---- bar 2: the wordmark ------------------------------------------------------
-drums.add(sub_boom(2.0, 62, 31), B(2), 0.6)
+# ---- the wordmark: breakdown (beats 16-22) ---------------------------------------
+drums.add(sub_boom(2.4, 62, 31), S('brand'), 0.6)
 for i, m in enumerate([71, 74, 78, 81, 83]):  # letters spring up
-    fx.add(marimba(note(m), 0.45), B(2, 0.03 + i * 0.07 + 0.12), 0.35, pan=-0.5 + i * 0.25)
-    verb.add(marimba(note(m), 0.45), B(2, 0.03 + i * 0.07 + 0.12), 0.18)
-fx.add(chime([note(95)], 1.4, 0.8), B(2, 0.62), 0.45)  # the dot lands
-verb.add(chime([note(95)], 1.4, 0.8), B(2, 0.62), 0.4)
-fx.add(bloop(700, 240, 0.2, 0.6), B(2, 0.62), 0.35)
-music.add(pad(CH['G'], bt(3), 900, 2600, a=0.8, seed=21), B(2, 1.0), 0.35)
+    fx.add(marimba(note(m), 0.45), S('brand', 0.03 + i * 0.07 + 0.12), 0.35, pan=-0.5 + i * 0.25)
+    verb.add(marimba(note(m), 0.45), S('brand', 0.03 + i * 0.07 + 0.12), 0.18)
+fx.add(chime([note(95)], 1.6, 0.8), S('brand', 0.62), 0.45)  # the dot lands
+verb.add(chime([note(95)], 1.6, 0.8), S('brand', 0.62), 0.4)
+fx.add(bloop(700, 240, 0.2, 0.6), S('brand', 0.62), 0.35)
+music.add(pad(CH['G'], bt(5.5), 700, 2600, a=1.2, seed=21), S('brand', 0.5), 0.4)
+for s16 in range(8):  # build back into the groove
+    drums.add(clap(0.15), S('brand', 4.0 + s16 * 0.25), 0.08 + 0.3 * s16 / 7)
+fx.add(riser(bt(2.0), 300, 9000), S('brand', 4.0), 0.3)
 
-# ---- bar 3: remarks decode ----------------------------------------------------
-for k in range(15):  # FAA text typing in
-    fx.add(tick(3600, 0.03, 0.004), B(3, k * 0.05), 0.14, pan=-0.4 + k * 0.05)
-for u, m in zip([0.8, 1.02, 1.18, 1.3, 1.48, 1.6], [78, 81, 83, 86, 88, 90]):
-    fx.add(glide(note(m) * 0.94, note(m), 0.14, 0.07), B(3, u + 0.12), 0.16)
-fx.add(whoosh(bt(0.6), 600, 3000, 1.4, 0.6, 1.0), B(3, 2.3), 0.35)  # folds into the card
-fx.add(tick(900, 0.05, 0.02), B(3, 2.8), 0.35)
+# ---- remarks decode (beats 22-32) -----------------------------------------------
+drums.add(sub_boom(1.2, 58, 32), S('remarks'), 0.35)
+for k in range(20):  # FAA text typing in
+    fx.add(tick(3600, 0.03, 0.004), S('remarks', k * 0.06), 0.14, pan=-0.4 + k * 0.04)
+for u, m in zip(REMARK_T0, [78, 81, 83, 86, 88, 90]):
+    fx.add(glide(note(m) * 0.94, note(m), 0.16, 0.08), S('remarks', u + 0.15), 0.18)
+fx.add(whoosh(bt(0.8), 600, 3000, 1.4, 0.6, 1.0), S('remarks', 5.9), 0.35)  # folds into the card
+fx.add(tick(900, 0.05, 0.02), S('remarks', 6.5), 0.35)
 
-# ---- bar 4: the annunciators --------------------------------------------------
-fx.add(whoosh(bt(0.7), 250, 2500, 1.1, 0.7, 1.0), B(4), 0.3)  # phone rises
-fx.add(chime([note(83), note(78)], 0.9, 1.0), B(4, 0.08), 0.5)  # ACT: two-tone caution
-fx.add(chime([note(90)], 0.8, 0.7), B(4, 0.95), 0.35)  # IFR: advisory
-fx.add(blip(note(71), 0.15, 0.04), B(4, 1.8), 0.3)  # FYI
-fx.add(glide(note(78), note(83), 0.25, 0.15), B(4, 2.6), 0.3)  # NO CHG: all good
-for u in (0.08, 0.95, 1.8, 2.6):
-    fx.add(tick(2400, 0.03, 0.004), B(4, u), 0.25)
+# ---- the annunciators (beats 32-40) ---------------------------------------------
+fx.add(whoosh(bt(0.9), 250, 2500, 1.1, 0.7, 1.0), S('ranked'), 0.3)  # phone rises
+fx.add(chime([note(83), note(78)], 1.0, 1.0), S('ranked', LEGEND_T0[0]), 0.5)  # ACT: two-tone caution
+fx.add(chime([note(90)], 0.9, 0.7), S('ranked', LEGEND_T0[1]), 0.35)  # IFR: advisory
+fx.add(blip(note(71), 0.15, 0.04), S('ranked', LEGEND_T0[2]), 0.3)  # FYI
+fx.add(glide(note(78), note(83), 0.3, 0.18), S('ranked', LEGEND_T0[3]), 0.3)  # NO CHG: all good
+for u in LEGEND_T0:
+    fx.add(tick(2400, 0.03, 0.004), S('ranked', u), 0.25)
 
-# ---- bar 5: VRB tower hours ---------------------------------------------------
-fx.add(whoosh(bt(0.5), 300, 2200, 1.3, 0.8, 1.0), B(5), 0.3)  # dial draws
-for u, m0, m1 in ((1.0, 74, 78), (1.8, 78, 83)):  # arc extends: that's the change
-    fx.add(glide(note(m0), note(m1), bt(0.4), 0.25), B(5, u), 0.32)
-    fx.add(chime([note(83), note(78)], 0.6, 0.7), B(5, u + 0.4), 0.25)
-fx.add(pluck(note(59), 1.2, 0.5, 0.4), B(5, 2.35), 0.3)  # the punchline
-fx.add(rev_cymbal(bt(0.4)), B(5, 3.6), 0.45)
+# ---- VRB tower hours (beats 40-48) ----------------------------------------------
+fx.add(whoosh(bt(0.9), 300, 2200, 1.3, 0.8, 1.0), S('history'), 0.3)  # dial draws
+for u, m0, m1 in ((TOWER_T0[0], 74, 78), (TOWER_T0[1], 78, 83)):  # arc extends: that's the change
+    fx.add(glide(note(m0), note(m1), bt(0.5), 0.3), S('history', u), 0.32)
+    fx.add(chime([note(83), note(78)], 0.7, 0.7), S('history', u + 0.5), 0.25)
+fx.add(rev_cymbal(bt(0.7)), S('history', 7.3), 0.45)
 
-# ---- bar 6: every airport, every cycle ----------------------------------------
-fx.add(whoosh(bt(0.9), 4000, 250, 1.0, 0.25, 1.2), B(6), 0.55)  # pull out of VRB
-for c in range(27):
+# ---- every airport, every cycle (beats 48-56) -----------------------------------
+fx.add(whoosh(bt(1.4), 4000, 250, 1.0, 0.25, 1.2), S('map'), 0.55)  # pull out of VRB
+for c, u in enumerate(CYCLE_AT):
     f = SCALE[c % len(SCALE)] * (2 if c >= len(SCALE) * 2 else 1)
-    fx.add(blip(f, 0.07, 0.02), B(6, 0.72 + c * 0.093), 0.1 + 0.08 * c / 26, pan=-0.6 + 1.2 * c / 26)
-fx.add(chime([note(83), note(86), note(90)], 1.0, 0.6), B(6, 3.25), 0.35)  # airports total
-fx.add(riser(bt(0.9), 400, 8000, tone=False), B(6, 3.1), 0.3)
+    fx.add(blip(f, 0.08, 0.025), S('map', u), 0.1 + 0.08 * c / 26, pan=-0.6 + 1.2 * c / 26)
+fx.add(chime([note(83), note(86), note(90)], 1.2, 0.6), S('map', 6.4), 0.35)  # airports total
+fx.add(riser(bt(1.2), 400, 8000, tone=False), S('map', 6.8), 0.3)
 
-# ---- bar 7: end card + ident --------------------------------------------------
-K(B(7), 1.0, f0=150, ad=0.5)
-drums.add(sub_boom(2.6, 62, 30), B(7), 0.7)
-music.add(crash(2.2), B(7), 0.5)
-big = stab(CH['Bm'], 2.4, (5000, 700), 0.8, seed=31)
-music.add(big, B(7), 0.55)
-verb.add(big, B(7), 0.6)
-music.add(pad(CH['Bm'], bt(3.8), 1400, 500, a=0.05, seed=32), B(7), 0.45)
-fx.add(whoosh(bt(0.8), 250, 2400, 1.1, 0.7, 1.0), B(7), 0.3)  # phone rises
+# ---- end card + ident (beats 56-64) ---------------------------------------------
+K(S('end'), 1.0, f0=150, ad=0.5)
+drums.add(sub_boom(3.2, 62, 30), S('end'), 0.7)
+music.add(crash(3.0), S('end'), 0.5)
+big = stab(CH['Bm'], 3.6, (5000, 700), 1.2, seed=31)
+music.add(big, S('end'), 0.55)
+verb.add(big, S('end'), 0.6)
+music.add(pad(CH['Bm'], bt(8), 1400, 500, a=0.05, seed=32), S('end'), 0.45)
+fx.add(whoosh(bt(0.9), 250, 2400, 1.1, 0.7, 1.0), S('end'), 0.3)  # phone rises
 for i, m in enumerate([71, 74, 78, 81, 83]):
-    fx.add(marimba(note(m), 0.4), B(7, 0.08 + i * 0.06 + 0.1), 0.22)
-fx.add(chime([note(95)], 1.2, 0.8), B(7, 0.6), 0.3)
+    fx.add(marimba(note(m), 0.4), S('end', 0.08 + i * 0.06 + 0.1), 0.22)
+fx.add(chime([note(95)], 1.4, 0.8), S('end', 0.6), 0.3)
 t = 0
 for code in MORSE:  # "AMEND" keyed like a navaid ident, in sync with the dots on screen
     for sym in code:
         n_ = 1 if sym == '.' else 3
-        fx.add(ident(n_ * MORSE_UNIT), B(7) + MORSE_T0 + t * MORSE_UNIT, 0.22)
+        fx.add(ident(n_ * MORSE_UNIT), S('end') + MORSE_T0 + t * MORSE_UNIT, 0.22)
         t += n_ + 1
     t += 2
 
@@ -548,7 +561,7 @@ mix = np.vstack([hp(mix[0], 28), hp(mix[1], 28)])
 drive = 1.2
 mix = np.tanh(mix * drive / max(1e-9, np.percentile(np.abs(mix), 99.97))) / np.tanh(drive)
 mix *= 0.84 / np.abs(mix).max()
-mix = fade(mix, 0.002, 0.25)
+mix = fade(mix, 0.002, 0.6)
 
 out = sys.argv[1] if len(sys.argv) > 1 else 'soundtrack.wav'
 pcm = (np.clip(mix.T, -1, 1) * 32767).astype('<i2')

@@ -1,6 +1,6 @@
 // 03 HISTORY — the story from the README, straight from history/VRB.json:
 // Vero Beach tower hours on a 24-hour dial, extended twice (EFF 23 JAN 2025,
-// EFF 10 JUL 2025) while the course material still said 2100.
+// EFF 10 JUL 2025), each change landing as a row on the airport's timeline.
 import { W, H, C, BEAT, MONO, SANS } from '../config.js';
 import { seg, outExpo, inOutCubic, inCubic, clamp01 } from '../lib/ease.js';
 import { TAU } from '../lib/math.js';
@@ -10,14 +10,14 @@ const CX = 560, CY = 560, R = 262;
 const ang = (h) => -Math.PI / 2 + (h / 24) * TAU;
 
 function closeHour(u) {
-  const a = inOutCubic(seg(u, 1.0, 1.4));
-  const b = inOutCubic(seg(u, 1.8, 2.2));
+  const a = inOutCubic(seg(u, 1.8, 2.3));
+  const b = inOutCubic(seg(u, 3.8, 4.3));
   return 21 + 2 * a + 2 * b;
 }
 const fmt = (h) => String(Math.floor(((h % 24) + 24) % 24)).padStart(2, '0') + String(Math.round((h % 1) * 60)).padStart(2, '0');
 
 function dial(ctx, u) {
-  const draw = outExpo(seg(u, 0, 0.5));
+  const draw = outExpo(seg(u, 0, 0.9));
   ctx.lineCap = 'butt';
   // hour ticks
   for (let h = 0; h < 24; h++) {
@@ -52,7 +52,7 @@ function dial(ctx, u) {
   ctx.stroke();
   // class D (tower open) arc
   const end = closeHour(u);
-  const open = outExpo(seg(u, 0.15, 0.7));
+  const open = outExpo(seg(u, 0.3, 1.2));
   const e0 = 7 + (21 - 7) * open;
   ctx.save();
   ctx.strokeStyle = C.green;
@@ -60,13 +60,13 @@ function dial(ctx, u) {
   ctx.shadowBlur = 20;
   ctx.lineWidth = 26;
   ctx.beginPath();
-  ctx.arc(CX, CY, R, ang(7), ang(u < 1 ? e0 : 21));
+  ctx.arc(CX, CY, R, ang(7), ang(u < 1.8 ? e0 : 21));
   ctx.stroke();
   // each extension flashes amber: that's the change
-  for (const [h0, h1, t0] of [[21, 23, 1.0], [23, 25, 1.8]]) {
-    const p = seg(u, t0, t0 + 0.4);
+  for (const [h0, h1, t0] of [[21, 23, 1.8], [23, 25, 3.8]]) {
+    const p = seg(u, t0, t0 + 0.5);
     if (p <= 0) continue;
-    const hot = Math.exp(-(u - t0 - 0.4) * 2.2);
+    const hot = Math.exp(-(u - t0 - 0.5) * 1.6);
     const hh = h0 + (h1 - h0) * inOutCubic(p);
     ctx.strokeStyle = p < 1 || hot > 0.05 ? mix(C.amber, C.green, 1 - Math.min(1, hot)) : C.green;
     ctx.shadowColor = hexA(C.amber, 0.8 * Math.min(1, hot));
@@ -91,7 +91,7 @@ function dial(ctx, u) {
     ctx.restore();
   }
   // centre readout
-  const cp = outExpo(seg(u, 0.2, 0.6));
+  const cp = outExpo(seg(u, 0.3, 0.9));
   ctx.globalAlpha = cp;
   ctx.textAlign = 'center';
   ctx.font = `600 20px ${MONO}`;
@@ -118,14 +118,14 @@ function mix(a, b, t) {
 }
 
 export default {
-  samples: (lt) => (lt / BEAT > 3.5 ? 12 : 6),
+  samples: (lt) => (lt / BEAT > 7.2 ? 12 : 6),
   vignette: 0.3,
   render(ctx, lt) {
     const u = lt / BEAT;
     ctx.fillStyle = C.bg;
     ctx.fillRect(0, 0, W, H);
     // match cut out: the dial collapses toward VRB's spot on the next scene's map
-    const out = inCubic(seg(u, 3.6, 4.0));
+    const out = inCubic(seg(u, 7.3, 8.0));
     ctx.save();
     ctx.translate(CX, CY);
     ctx.scale(1 - 0.97 * out, 1 - 0.97 * out);
@@ -133,22 +133,22 @@ export default {
     dial(ctx, u);
     ctx.restore();
     // airport header + timeline, like the app's History tab
-    const fade = 1 - seg(u, 3.62, 3.85);
+    const fade = 1 - seg(u, 7.2, 7.6);
     ctx.save();
-    ctx.globalAlpha = fade * outExpo(seg(u, 0.1, 0.5));
+    ctx.globalAlpha = fade * outExpo(seg(u, 0.3, 0.8));
     ctx.font = `800 64px ${SANS}`;
     ctx.fillStyle = C.text;
-    ctx.fillText('VRB', 1000, 250);
+    ctx.fillText('VRB', 1000, 290);
     ctx.font = `500 30px ${SANS}`;
     ctx.fillStyle = C.dim;
-    ctx.fillText('Vero Beach Rgnl · Vero Beach, FL', 1000, 296);
+    ctx.fillText('Vero Beach Rgnl · Vero Beach, FL', 1000, 336);
     ctx.restore();
     const entries = [
-      ['EFF 23 JAN 2025', 'Tower hours changed: 0700-2100 -> 0700-2300 local', 1.0, 360],
-      ['EFF 10 JUL 2025', 'Tower hours changed: 0700-2300 -> 0700-0100 local', 1.8, 590],
+      ['EFF 23 JAN 2025', 'Tower hours changed: 0700-2100 -> 0700-2300 local', 1.8, 400],
+      ['EFF 10 JUL 2025', 'Tower hours changed: 0700-2300 -> 0700-0100 local', 3.8, 640],
     ];
     for (const [date, text, t0, y] of entries) {
-      const p = outExpo(seg(u, t0 - 0.05, t0 + 0.35));
+      const p = outExpo(seg(u, t0 - 0.05, t0 + 0.5));
       if (p <= 0) continue;
       ctx.save();
       ctx.globalAlpha = p * fade;
@@ -164,21 +164,7 @@ export default {
       ctx.fillStyle = 'rgba(255,255,255,0.1)';
       ctx.fillRect(1030 + 330, y + 1, 400, 1);
       ctx.letterSpacing = '0px';
-      changeRow(ctx, 1000, y + 36, 760, { color: C.amber, icon: 'tower', summary: text, category: 'tower' }, 2.0);
-      ctx.restore();
-    }
-    // the punchline
-    const pl = outExpo(seg(u, 2.35, 2.7)) * (1 - seg(u, 3.72, 3.9));
-    if (pl > 0) {
-      ctx.save();
-      ctx.globalAlpha = pl;
-      ctx.font = `600 46px ${SANS}`;
-      ctx.letterSpacing = '-0.5px';
-      const a = 'The course said 2100. ', b = 'It was two changes behind.';
-      ctx.fillStyle = C.text;
-      ctx.fillText(a, 1000, 900 + (1 - pl) * 16);
-      ctx.fillStyle = C.amber;
-      ctx.fillText(b, 1000, 958 + (1 - pl) * 16);
+      changeRow(ctx, 1000, y + 36, 780, { color: C.amber, icon: 'tower', summary: text, category: 'tower' }, 2.15);
       ctx.restore();
     }
   },

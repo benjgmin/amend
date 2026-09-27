@@ -1,23 +1,25 @@
-# Amend — 15-second promo
+# Amend — 30-second promo
 
-`amend-promo.mp4` is a 15-second promo for the app: 1080p at 60 fps with a 48 kHz
-AAC soundtrack, about 6 MB. It runs 8 bars at 128 BPM, one idea per bar. The
-picture and the sound are generated from code and from this repo's real data.
+`amend-promo.mp4` is a 30-second promo for the app: 1080p at 60 fps with a 48 kHz
+AAC soundtrack, about 8 MB. It runs 16 bars at 128 BPM (exactly 30.0 s). Each shot
+holds long enough to read without pausing, and the text-heavy ones get the most
+time. The picture and the sound are generated from code and from this repo's
+real data.
 
 ![stills](stills.jpg)
 
 ## What's on screen
 
-| TC | Shot | Built from |
+| Starts | Shot | Built from |
 |---|---|---|
-| 00:00 | **Every 28 days**: a 28-tick cycle dial, one tick per day of the NASR cycle | |
-| 01:52 | **The noise**: a wall of raw NASR rows (coordinates, survey dates, pavement codes, i.e. the columns `amend/rules.py` hides). A scan line filters them and only real changes stay lit | VRB tower hours, HOB 03/21→04/22, LOR NDB decommissioned, VRB airspace + IFR routes, all from `history/` |
-| 03:45 | **amend.**: the wordmark rises and the cyan dot lands | outlines traced from the app icon |
-| 05:37 | **Plain-English remarks**: `RSCD NOT MNT 2300-0600 M-F 1530-0600 WKEND AND HOL.` decodes phrase by phrase, then folds into the app's change row with the FAA text expanded | `history/VRB.json`, EFF 15 MAY 2025 |
-| 07:30 | **Ranked**: ACT / IFR / FYI / NO CHG light up like annunciators, next to the CLT detail screen | copy from `WelcomeView`, `docs/screenshots/detail.png` |
-| 09:22 | **History**: VRB's tower hours on a 24-hour dial, 2100 → 2300 → 0100. "The course said 2100. It was two changes behind." | `history/VRB.json`, the story in the main README |
-| 11:15 | **Every US airport, every cycle**: match cut from VRB's dot out to ~20k airports. All 27 cycles play back, each airport flashing in its priority colour while the counters run | `history/` masks per cycle, OurAirports coordinates |
-| 13:07 | **End card**: the home screen, the wordmark, and "AMEND" keyed in morse like a navaid ident | `docs/screenshots/home.png` |
+| 0.0 s | **Every 28 days**: a 28-tick cycle dial, one tick per day of the NASR cycle | |
+| 3.8 s | **The noise**: a wall of raw NASR rows (coordinates, survey dates, pavement codes, i.e. the columns `amend/rules.py` hides). A scan line filters them and only real changes stay lit | VRB tower hours, HOB 03/21→04/22, LOR NDB decommissioned, VRB airspace + IFR routes, all from `history/` |
+| 7.5 s | **amend.**: the wordmark rises and the cyan dot lands | outlines traced from the app icon |
+| 10.3 s | **Plain-English remarks**: `RSCD NOT MNT 2300-0600 M-F 1530-0600 WKEND AND HOL.` decodes phrase by phrase, then folds into the app's change row with the FAA text expanded | `history/VRB.json`, EFF 15 MAY 2025 |
+| 15.0 s | **Ranked**: ACT / IFR / FYI / NO CHG light up like annunciators, next to the CLT detail screen | copy from `WelcomeView`, `docs/screenshots/detail.png` |
+| 18.8 s | **History**: VRB's tower hours on a 24-hour dial, 2100 → 2300 → 0100, each change landing on the airport's timeline | `history/VRB.json`, the story in the main README |
+| 22.5 s | **Every US airport, every cycle**: match cut from VRB's dot out to ~20k airports. All 27 cycles play back, each airport flashing in its priority colour while the counters run | `history/` masks per cycle, OurAirports coordinates |
+| 26.3 s | **End card**: the home screen, the wordmark, and "AMEND" keyed in morse like a navaid ident | `docs/screenshots/home.png` |
 
 Colours are the app's EFB palette from `ios/Amend/Theme.swift`. Inter and Geist
 Mono stand in for SF Pro and SF Mono.
@@ -33,7 +35,7 @@ Requires Node 22, Python 3 with numpy, scipy, pillow and contourpy, ffmpeg with
 libx264, and a Playwright Chromium build.
 
 ```sh
-./build.sh                                   # picture + sound -> amend-promo.mp4 (~3 min)
+./build.sh                                   # picture + sound -> amend-promo.mp4 (~6 min)
 node render.mjs sheet --from 0 --to 113      # contact sheet of a range
 node render.mjs frames --f 300,760           # full-res stills
 ```

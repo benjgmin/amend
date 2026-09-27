@@ -1,21 +1,21 @@
 // Impacts: camera shake + chromatic aberration in picture (kept gentle for a
 // product film). The soundtrack is scored to the same beat grid.
-import { BEAT, BAR } from './config.js';
+import { BEAT } from './config.js';
 
-const b = (bar, beat = 0) => bar * BAR + beat * BEAT;
+const b = (beat) => beat * BEAT;
 
 export const IMPACTS = [
-  { t: b(1), amp: 0.75 }, // new cycle: the flood
-  { t: b(2), amp: 0.45 }, // wordmark
-  { t: b(2, 0.62), amp: 0.2 }, // the dot lands
-  { t: b(3), amp: 0.25 },
-  { t: b(4), amp: 0.25 },
-  { t: b(4, 0.1), amp: 0.2 }, // ACT lights
-  { t: b(5), amp: 0.25 },
-  { t: b(5, 1), amp: 0.15 },
-  { t: b(5, 2), amp: 0.15 },
-  { t: b(6), amp: 0.4 },
-  { t: b(7), amp: 0.55 },
+  { t: b(8), amp: 0.75 }, // new cycle: the flood
+  { t: b(16), amp: 0.45 }, // wordmark
+  { t: b(16.62), amp: 0.2 }, // the dot lands
+  { t: b(22), amp: 0.3 }, // groove back in: remarks
+  { t: b(32), amp: 0.25 },
+  { t: b(32.25), amp: 0.2 }, // ACT lights
+  { t: b(40), amp: 0.25 },
+  { t: b(41.8), amp: 0.15 }, // tower hours change #1
+  { t: b(43.8), amp: 0.15 }, // tower hours change #2
+  { t: b(48), amp: 0.4 },
+  { t: b(56), amp: 0.55 },
 ];
 
 export function shakeAt(t) {

@@ -1,4 +1,4 @@
-// Timing + design tokens. 8 bars at 128 BPM is exactly 15.000 s.
+// Timing + design tokens. 16 bars at 128 BPM is exactly 30.000 s.
 // Colours are the app's own EFB palette (ios/Amend/Theme.swift).
 export const W = 1920;
 export const H = 1080;
@@ -6,8 +6,8 @@ export const FPS = 60;
 export const BPM = 128;
 export const BEAT = 60 / BPM; // 0.46875 s
 export const BAR = BEAT * 4; // 1.875 s
-export const DURATION = BAR * 8; // 15 s
-export const FRAMES = Math.round(DURATION * FPS); // 900
+export const DURATION = BAR * 16; // 30 s
+export const FRAMES = Math.round(DURATION * FPS); // 1800
 
 export const C = {
   bg: '#090C10', // EFB.bg      (0.035, 0.047, 0.063)
@@ -36,13 +36,15 @@ export const RGB = {
 export const MONO = '"Geist Mono"'; // stands in for SF Mono
 export const SANS = '"Inter"'; // stands in for SF Pro
 
-export const SCENES = [
-  { id: 'cycle', label: '', start: 0 * BAR, end: 1 * BAR },
-  { id: 'noise', label: '', start: 1 * BAR, end: 2 * BAR },
-  { id: 'brand', label: '', start: 2 * BAR, end: 3 * BAR },
-  { id: 'remarks', label: 'PLAIN-ENGLISH REMARKS', start: 3 * BAR, end: 4 * BAR },
-  { id: 'ranked', label: 'RANKED BY HOW YOU FLY', start: 4 * BAR, end: 5 * BAR },
-  { id: 'history', label: 'HISTORY BACK TO AUG 2024', start: 5 * BAR, end: 6 * BAR },
-  { id: 'map', label: 'EVERY US AIRPORT, EVERY CYCLE', start: 6 * BAR, end: 7 * BAR },
-  { id: 'end', label: '', start: 7 * BAR, end: 8 * BAR },
+// scene boundaries in beats: the text-heavy shots get the most time
+const SPAN = [
+  ['cycle', '', 0, 8],
+  ['noise', '', 8, 16],
+  ['brand', '', 16, 22],
+  ['remarks', 'PLAIN-ENGLISH REMARKS', 22, 32],
+  ['ranked', 'RANKED BY HOW YOU FLY', 32, 40],
+  ['history', 'HISTORY BACK TO AUG 2024', 40, 48],
+  ['map', 'EVERY US AIRPORT, EVERY CYCLE', 48, 56],
+  ['end', '', 56, 64],
 ];
+export const SCENES = SPAN.map(([id, label, a, b]) => ({ id, label, start: a * BEAT, end: b * BEAT, beat0: a }));

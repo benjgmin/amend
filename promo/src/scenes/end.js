@@ -7,8 +7,8 @@ import { phone, hexA } from '../lib/ui.js';
 import { drawWordmark } from '../lib/wordmark.js';
 import { IMG } from '../data.js';
 
-// morse: unit 45 ms, starts 0.12 s into the bar (mirrored in audio/synth.py)
-export const MORSE_UNIT = 0.045, MORSE_T0 = 0.12;
+// morse: unit 75 ms, starts 0.5 s into the shot (mirrored in audio/synth.py)
+export const MORSE_UNIT = 0.075, MORSE_T0 = 0.5;
 const LETTERS = [
   ['A', '.-'],
   ['M', '--'],
@@ -70,14 +70,14 @@ export default {
       drawWordmark(ctx, X, 428, 118, { color: 'rgba(0,0,0,0)', per: () => ({ alpha: 0 }), dot: { dy, sx, sy } });
     }
     // tagline
-    const tp = outExpo(seg(u, 0.55, 1.0));
+    const tp = outExpo(seg(u, 0.7, 1.2));
     ctx.globalAlpha = tp;
     ctx.font = `500 42px ${SANS}`;
     ctx.letterSpacing = '-0.4px';
     ctx.fillStyle = C.text;
     ctx.fillText('Know what changed at your', X + 4, 530 + (1 - tp) * 16);
     ctx.fillText('airports every FAA cycle.', X + 4, 584 + (1 - tp) * 16);
-    const ip = outExpo(seg(u, 0.95, 1.35));
+    const ip = outExpo(seg(u, 1.3, 1.8));
     ctx.globalAlpha = ip;
     ctx.font = `600 20px ${MONO}`;
     ctx.letterSpacing = '4px';
@@ -118,7 +118,7 @@ export default {
       ctx.restore();
     }
     // disclaimer, as in the app footer
-    const dsp = outExpo(seg(u, 1.4, 1.8));
+    const dsp = outExpo(seg(u, 2.4, 3.0));
     ctx.globalAlpha = dsp;
     ctx.font = `500 14px ${MONO}`;
     ctx.letterSpacing = '2px';
@@ -126,5 +126,13 @@ export default {
     ctx.fillText('NOT FOR NAVIGATION. ALWAYS CHECK OFFICIAL FAA PUBLICATIONS AND NOTAMS.', X + 6, 1000);
     ctx.globalAlpha = 1;
     ctx.letterSpacing = '0px';
+    // soft fade to black on the last half-beat
+    const fo = seg(u, 7.5, 8.0);
+    if (fo > 0) {
+      ctx.fillStyle = C.bg;
+      ctx.globalAlpha = fo * fo;
+      ctx.fillRect(0, 0, W, H);
+      ctx.globalAlpha = 1;
+    }
   },
 };

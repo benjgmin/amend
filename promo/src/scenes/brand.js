@@ -17,7 +17,7 @@ export default {
     const total = (wm.dot.cx + wm.dot.r) * xh;
     const x0 = 960 - total / 2;
     const base = 560;
-    const exit = inOutCubic(seg(u, 3.35, 3.95));
+    const exit = inOutCubic(seg(u, 5.35, 5.95));
     // the line the rows collapsed into
     const ln = 1 - outExpo(seg(u, 0.0, 0.35));
     if (ln > 0) {
@@ -28,7 +28,7 @@ export default {
     }
     ctx.save();
     ctx.translate(960, 540);
-    const z = lerp(1, 0.9, exit) * (1 + 0.035 * inOutCubic(seg(u, 0.5, 3.4)));
+    const z = lerp(1, 0.9, exit) * (1 + 0.045 * inOutCubic(seg(u, 0.5, 5.4)));
     ctx.scale(z, z);
     ctx.translate(-960, -540 - exit * 60);
     ctx.globalAlpha = 1 - exit;

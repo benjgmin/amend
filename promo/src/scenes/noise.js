@@ -61,7 +61,7 @@ function init() {
 
 // scroll offset in px: a burst on the downbeat, settling by the filter pass
 function scrollAt(u) {
-  return 3600 * outCubic(seg(u, 0, 2.3)) + 90 * u;
+  return 3600 * outCubic(seg(u, 0, 4.1)) + 45 * u;
 }
 
 function band(ctx, y, h, a) {
@@ -76,7 +76,7 @@ function band(ctx, y, h, a) {
 
 export default {
   init,
-  samples: (lt) => (lt / BEAT < 0.9 ? 12 : 8),
+  samples: (lt) => (lt / BEAT < 1.5 ? 12 : 8),
   vignette: 0.35,
   render(ctx, lt) {
     const u = lt / BEAT;
@@ -85,9 +85,9 @@ export default {
     const sc = scrollAt(u);
     const base = Math.floor(sc / LH);
     const off = sc - base * LH;
-    const scanY = lerp(-40, H + 40, inOutCubic(seg(u, 2.3, 3.15)));
-    const collapse = inOutQuart(seg(u, 3.3, 3.95));
-    const appear = outExpo(seg(u, 0, 0.25));
+    const scanY = lerp(-40, H + 40, inOutCubic(seg(u, 4.2, 5.8)));
+    const collapse = inOutQuart(seg(u, 7.0, 7.9));
+    const appear = outExpo(seg(u, 0, 0.35));
     ctx.font = `500 18px ${MONO}`;
     ctx.letterSpacing = '0.5px';
     ctx.textBaseline = 'middle';
@@ -97,7 +97,7 @@ export default {
       const idx = (base + i + 4000) % ROWS.length;
       const passed = y < scanY;
       for (let c = 0; c < 2; c++) {
-        if (SIGNAL.some((s) => s.row === i && s.col === c) && u > 2.25) continue;
+        if (SIGNAL.some((s) => s.row === i && s.col === c) && u > 4.15) continue;
         let a = passed ? 0.07 : 0.36 + 0.26 * (((idx * 7 + c * 13) % 10) / 10);
         a *= appear * (1 - collapse);
         if (a < 0.01) continue;
@@ -106,14 +106,14 @@ export default {
       }
     }
     // signal rows: pinned once the wall settles, lit when the scan passes
-    if (u > 2.25) {
+    if (u > 4.15) {
       for (const s of SIGNAL) {
         const y0 = s.row * LH - off + 12;
         const on = y0 < scanY;
         const tgtY = 540 + (SIGNAL.indexOf(s) - 2.5) * 44;
-        const y = lerp(y0, lerp(tgtY, 540, inCubic(seg(u, 3.62, 3.95))), inOutCubic(seg(u, 3.3, 3.8)));
-        const x = lerp(COLS[s.col], 560, inOutCubic(seg(u, 3.3, 3.8)));
-        const sy = 1 - inCubic(seg(u, 3.72, 3.97));
+        const y = lerp(y0, lerp(tgtY, 540, inCubic(seg(u, 7.5, 7.9))), inOutCubic(seg(u, 7.0, 7.6)));
+        const x = lerp(COLS[s.col], 560, inOutCubic(seg(u, 7.0, 7.6)));
+        const sy = 1 - inCubic(seg(u, 7.6, 7.95));
         const big = 1 + 0.22 * outExpo(clamp01((scanY - y0) / 160)) * (on ? 1 : 0);
         ctx.save();
         ctx.translate(x, y);
@@ -134,7 +134,7 @@ export default {
       }
     }
     // scan line
-    if (u > 2.3 && u < 3.2) {
+    if (u > 4.2 && u < 5.9) {
       ctx.save();
       ctx.fillStyle = C.cyan;
       ctx.shadowColor = C.cyan;
@@ -149,8 +149,8 @@ export default {
     }
     ctx.textBaseline = 'alphabetic';
     // headline copy on a soft backing band
-    const h1 = outExpo(seg(u, 0.08, 0.45)) * (1 - seg(u, 1.85, 2.0));
-    const h2 = outExpo(seg(u, 2.0, 2.35)) * (1 - seg(u, 3.2, 3.4));
+    const h1 = outExpo(seg(u, 0.15, 0.6)) * (1 - seg(u, 3.4, 3.6));
+    const h2 = outExpo(seg(u, 3.7, 4.1)) * (1 - seg(u, 6.8, 7.1));
     if (h1 > 0) band(ctx, 470, 190, 0.9 * h1);
     if (h2 > 0) band(ctx, 205, 150, 0.92 * h2);
     ctx.textAlign = 'center';

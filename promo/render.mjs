@@ -15,7 +15,7 @@ import { chromium } from 'playwright-core';
 const ROOT = path.dirname(fileURLToPath(import.meta.url));
 // served from the repo root so the page can use the app's own screenshots (docs/)
 const SERVE = path.dirname(ROOT);
-const W = 1920, H = 1080, FPS = 60, TOTAL = 900;
+const W = 1920, H = 1080, FPS = 60, TOTAL = 1800;
 
 const argv = process.argv.slice(2);
 const mode = argv[0] || 'video';

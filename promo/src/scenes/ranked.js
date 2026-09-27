@@ -6,10 +6,10 @@ import { annunciator, phone, wrap } from '../lib/ui.js';
 import { IMG } from '../data.js';
 
 const ROWS = [
-  ['ACT', C.amber, 'Changes how you fly it: tower hours, frequencies, runways, navaids', 0.08],
-  ['IFR', C.cyan, 'Approaches, STARs, departures and IFR routes', 0.95],
-  ['FYI', C.dim, 'Worth knowing: phone numbers, fees, obstacles, reworded remarks', 1.8],
-  ['NO CHG', C.green, 'Nothing changed there this cycle', 2.6],
+  ['ACT', C.amber, 'Changes how you fly it: tower hours, frequencies, runways, navaids', 0.25],
+  ['IFR', C.cyan, 'Approaches, STARs, departures and IFR routes', 1.65],
+  ['FYI', C.dim, 'Worth knowing: phone numbers, fees, obstacles, reworded remarks', 3.05],
+  ['NO CHG', C.green, 'Nothing changed there this cycle', 4.45],
 ];
 
 export default {
@@ -19,7 +19,7 @@ export default {
     const u = lt / BEAT;
     ctx.fillStyle = C.bg;
     ctx.fillRect(0, 0, W, H);
-    const exit = inOutCubic(seg(u, 3.62, 4.0));
+    const exit = inOutCubic(seg(u, 7.5, 8.0));
     // phone with the real detail screen
     const rise = spring(lt, 1.6, 0.55);
     const py = lerp(1500, 560, Math.min(1.02, rise)) + exit * 700;
@@ -38,15 +38,15 @@ export default {
       const y = 300 + i * 158;
       const p = seg(u, t0, t0 + 0.4);
       if (p <= 0) return;
-      const lit = Math.exp(-(u - t0) * 3.2) * 0.9 + 0.22;
+      const lit = Math.exp(-(u - t0) * 2.2) * 0.9 + 0.22;
       const flick = u - t0 < 0.06 ? (Math.floor((u - t0) * 120) % 2 ? 0.3 : 1) : 1;
       ctx.globalAlpha = (1 - exit) * flick;
       annunciator(ctx, label, 180, y, col, 2.6, lit);
       ctx.globalAlpha = (1 - exit) * outExpo(p);
-      ctx.font = `400 34px ${SANS}`;
+      ctx.font = `400 36px ${SANS}`;
       ctx.letterSpacing = '-0.2px';
       ctx.fillStyle = C.text;
-      wrap(ctx, text, 560).forEach((l, k) => ctx.fillText(l, 430 + (1 - outExpo(p)) * 40, y + 34 + k * 44));
+      wrap(ctx, text, 590).forEach((l, k) => ctx.fillText(l, 430 + (1 - outExpo(p)) * 40, y + 34 + k * 46));
     });
     ctx.restore();
     ctx.letterSpacing = '0px';

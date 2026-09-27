@@ -6,7 +6,7 @@ import { seg, outExpo, outBack, inOutCubic, clamp01, lerp } from '../lib/ease.js
 import { TAU } from '../lib/math.js';
 import { hexA } from '../lib/ui.js';
 
-export const TICK_AT = Array.from({ length: 28 }, (_, k) => 0.15 + k * 0.118);
+export const TICK_AT = Array.from({ length: 28 }, (_, k) => 0.3 + k * 0.233);
 
 function dial(ctx, u, cx, cy, s) {
   const R0 = 236 * s, R1 = 284 * s;
@@ -15,14 +15,14 @@ function dial(ctx, u, cx, cy, s) {
   ctx.lineCap = 'round';
   ctx.strokeStyle = 'rgba(255,255,255,0.1)';
   ctx.lineWidth = 1.5 * s;
-  const rp = outExpo(seg(u, 0, 0.5));
+  const rp = outExpo(seg(u, 0, 0.9));
   ctx.beginPath();
   ctx.arc(cx, cy, 306 * s, -Math.PI / 2, -Math.PI / 2 + TAU * rp);
   ctx.stroke();
   ctx.beginPath();
   ctx.arc(cx, cy, 214 * s, -Math.PI / 2, -Math.PI / 2 - TAU * rp, true);
   ctx.stroke();
-  const prog = lit === 0 ? 0 : (lit - 1 + clamp01((u - TICK_AT[lit - 1]) / 0.118)) / 28;
+  const prog = lit === 0 ? 0 : (lit - 1 + clamp01((u - TICK_AT[lit - 1]) / 0.233)) / 28;
   if (lit > 0) {
     ctx.save();
     ctx.strokeStyle = C.cyan;
@@ -37,10 +37,10 @@ function dial(ctx, u, cx, cy, s) {
   // day ticks
   for (let k = 0; k < 28; k++) {
     const a = -Math.PI / 2 + ((k + 0.5) / 28) * TAU;
-    const appear = outBack(seg(u, k * 0.012, k * 0.012 + 0.3), 2);
+    const appear = outBack(seg(u, k * 0.02, k * 0.02 + 0.45), 2);
     if (appear <= 0) continue;
     const on = u >= TICK_AT[k];
-    const flare = on ? Math.exp(-(u - TICK_AT[k]) * 9) : 0;
+    const flare = on ? Math.exp(-(u - TICK_AT[k]) * 6) : 0;
     const r0 = R0 + (1 - appear) * 30 * s, r1 = r0 + (R1 - R0) * appear;
     ctx.save();
     ctx.strokeStyle = on ? (flare > 0.5 ? '#CFF4FF' : C.cyan) : '#1E252F';
@@ -56,7 +56,7 @@ function dial(ctx, u, cx, cy, s) {
     ctx.restore();
   }
   // counter
-  const cp = outExpo(seg(u, 0.1, 0.5));
+  const cp = outExpo(seg(u, 0.2, 0.8));
   ctx.globalAlpha = cp;
   ctx.textAlign = 'center';
   ctx.font = `500 ${20 * s}px ${MONO}`;
@@ -88,14 +88,14 @@ function riseWord(ctx, text, x, y, size, color, p) {
 }
 
 export default {
-  samples: (lt) => (lt / BEAT > 3.3 ? 12 : 8),
+  samples: (lt) => (lt / BEAT > 6.6 ? 12 : 8),
   hud: false,
   render(ctx, lt) {
     const u = lt / BEAT;
     ctx.fillStyle = C.bg;
     ctx.fillRect(0, 0, W, H);
-    const slide = inOutCubic(seg(u, 0.95, 1.5));
-    const out = seg(u, 3.55, 4.0);
+    const slide = inOutCubic(seg(u, 1.5, 2.2));
+    const out = seg(u, 7.3, 8.0);
     const zs = 1 - 0.05 * Math.sin(Math.PI * Math.min(1, out * 1.6));
     ctx.save();
     ctx.translate(960, 540);
@@ -105,21 +105,21 @@ export default {
     // headline
     ctx.font = `800 150px ${SANS}`;
     ctx.letterSpacing = '-3px';
-    riseWord(ctx, 'EVERY', 1000, 470, 150, C.text, seg(u, 1.05, 1.5));
-    riseWord(ctx, '28 DAYS', 1000, 625, 150, C.text, seg(u, 1.3, 1.75));
-    if (u > 1.3) {
+    riseWord(ctx, 'EVERY', 1000, 470, 150, C.text, seg(u, 1.7, 2.2));
+    riseWord(ctx, '28 DAYS', 1000, 625, 150, C.text, seg(u, 2.0, 2.5));
+    if (u > 2.0) {
       // repaint "28" in cyan on top
       ctx.save();
       ctx.beginPath();
       ctx.rect(980, 470, 1400, 200);
       ctx.clip();
       ctx.fillStyle = C.cyan;
-      const p = outExpo(seg(u, 1.3, 1.75));
+      const p = outExpo(seg(u, 2.0, 2.5));
       ctx.fillText('28', 1000, 625 + (1 - p) * 172);
       ctx.restore();
     }
     ctx.letterSpacing = '0px';
-    const sp = outExpo(seg(u, 2.1, 2.7));
+    const sp = outExpo(seg(u, 3.0, 3.6));
     if (sp > 0) {
       ctx.globalAlpha = sp;
       ctx.font = `400 32px ${SANS}`;
@@ -130,7 +130,7 @@ export default {
     }
     ctx.restore();
     // cycle rollover flash
-    const fl = seg(u, 3.34, 3.6);
+    const fl = seg(u, 6.59, 6.9);
     if (fl > 0 && fl < 1) {
       ctx.fillStyle = hexA(C.cyan, 0.12 * (1 - fl));
       ctx.fillRect(0, 0, W, H);

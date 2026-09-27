@@ -9,7 +9,7 @@ import { hexA } from '../lib/ui.js';
 import { DATA } from '../data.js';
 
 let PX, PY, N, BOX;
-const CYCLE_AT = (c) => 0.72 + c * 0.093; // 27 cycles, ~2.4 beats
+const CYCLE_AT = (c) => 1.3 + c * 0.19; // 27 cycles over ~5 beats
 const MON = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
 const fmtDate = (iso) => {
   const [y, m, d] = iso.split('-');
@@ -33,7 +33,7 @@ function init() {
 export const vrbScreen = () => [PX[DATA.map.vrb], PY[DATA.map.vrb]];
 
 function camera(u) {
-  const e = inOutCubic(seg(u, 0, 0.85));
+  const e = inOutCubic(seg(u, 0, 1.4));
   const s = Math.exp(lerp(Math.log(6.5), 0, e));
   const [vx, vy] = vrbScreen();
   return { s, px: lerp(560, vx, e), py: lerp(560, vy, e), vx, vy };
@@ -42,10 +42,10 @@ function camera(u) {
 function counters(ctx, u) {
   const st = DATA.stats;
   const cycles = DATA.map.cycles;
-  const c = Math.max(-1, Math.min(26, Math.floor((u - 0.72) / 0.093)));
+  const c = Math.max(-1, Math.min(26, Math.floor((u - 1.3) / 0.19)));
   const cum = (arr) => arr.slice(0, c + 1).reduce((a, b) => a + b, 0);
   const x = 1560;
-  const p = outExpo(seg(u, 0.5, 0.9));
+  const p = outExpo(seg(u, 0.9, 1.4));
   if (p <= 0) return;
   ctx.save();
   ctx.globalAlpha = p;
@@ -63,7 +63,7 @@ function counters(ctx, u) {
   row('EFFECTIVE', c >= 0 ? fmtDate(cycles[c]) : '—', 370, C.cyan, 30);
   row('CHANGES', cum(st.per_cycle.changes).toLocaleString('en-US'), 470);
   row('ACTION ITEMS', cum(st.per_cycle.action).toLocaleString('en-US'), 590, C.amber);
-  const ap = outExpo(seg(u, 3.25, 3.6));
+  const ap = outExpo(seg(u, 6.4, 6.9));
   if (ap > 0) {
     ctx.globalAlpha = p * ap;
     row('AIRPORTS', st.airports.toLocaleString('en-US'), 710, C.green);
@@ -73,7 +73,7 @@ function counters(ctx, u) {
 
 export default {
   init,
-  samples: (lt) => (lt / BEAT < 0.9 ? 12 : 5),
+  samples: (lt) => (lt / BEAT < 1.5 ? 12 : 5),
   vignette: 0.3,
   render(ctx, lt) {
     const u = lt / BEAT;
@@ -81,12 +81,12 @@ export default {
     ctx.fillRect(0, 0, W, H);
     const m = DATA.map;
     const cam = camera(u);
-    const exit = inOutCubic(seg(u, 3.62, 4.0));
-    const reveal = outExpo(seg(u, 0.0, 0.5));
+    const exit = inOutCubic(seg(u, 7.5, 8.0));
+    const reveal = outExpo(seg(u, 0.0, 0.7));
     const ds = 2.3 * Math.pow(cam.s, 0.45);
-    const cNow = (u - 0.72) / 0.093;
+    const cNow = (u - 1.3) / 0.19;
     // base dots
-    const zoomBoost = 1 + 0.9 * (1 - inOutCubic(seg(u, 0, 0.85)));
+    const zoomBoost = 1 + 0.9 * (1 - inOutCubic(seg(u, 0, 1.4)));
     ctx.fillStyle = `rgba(120,140,160,${Math.min(0.75, 0.32 * reveal * zoomBoost * (1 - exit)).toFixed(3)})`;
     ctx.beginPath();
     const tx = (i) => cam.px + (PX[i] - cam.vx) * cam.s;
@@ -115,7 +115,7 @@ export default {
         if (best < 0) continue;
         const age = u - CYCLE_AT(best);
         if (age < 0) continue;
-        const f = Math.exp(-age * 5.5);
+        const f = Math.exp(-age * 3.5);
         if (f < 0.04) continue;
         const k = m.act[i] & (1 << best) ? 0 : m.ifr[i] & (1 << best) ? 1 : 2;
         buckets[k].push(i, f);
@@ -136,7 +136,7 @@ export default {
       ctx.restore();
     }
     // VRB: where we came from
-    const vp = 1 - seg(u, 0.6, 1.1);
+    const vp = 1 - seg(u, 1.0, 1.7);
     if (vp > 0) {
       const x = tx(m.vrb), y = ty(m.vrb);
       ctx.save();

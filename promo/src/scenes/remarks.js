@@ -10,12 +10,12 @@ import { changeRow, hexA } from '../lib/ui.js';
 const FAA = 'RSCD NOT MNT 2300-0600 M-F 1530-0600 WKEND AND HOL.';
 // [faa token, english, line, t0 (beats), abbreviation?]
 const SEGS = [
-  ['RSCD', 'Runway surface condition', 0, 0.8, true],
-  ['NOT MNT', 'not monitored', 0, 1.02, true],
-  ['2300-0600', '2300–0600', 0, 1.18, false],
-  ['M-F', 'Monday through Friday', 1, 1.3, true],
-  ['1530-0600', 'and 1530–0600', 1, 1.48, false],
-  ['WKEND AND HOL.', 'weekends and holidays.', 1, 1.6, true],
+  ['RSCD', 'Runway surface condition', 0, 1.6, true],
+  ['NOT MNT', 'not monitored', 0, 2.05, true],
+  ['2300-0600', '2300–0600', 0, 2.45, false],
+  ['M-F', 'Monday through Friday', 1, 2.85, true],
+  ['1530-0600', 'and 1530–0600', 1, 3.25, false],
+  ['WKEND AND HOL.', 'weekends and holidays.', 1, 3.65, true],
 ];
 const SCR = 'abcdefghijklmnopqrstuvwxyz';
 
@@ -30,14 +30,14 @@ function scramble(text, p, seed) {
 }
 
 export default {
-  samples: (lt) => (lt / BEAT > 2.25 ? 10 : 6),
+  samples: (lt) => (lt / BEAT > 5.8 ? 10 : 6),
   vignette: 0.3,
   render(ctx, lt) {
     const u = lt / BEAT;
     ctx.fillStyle = C.bg;
     ctx.fillRect(0, 0, W, H);
-    const fold = inOutCubic(seg(u, 2.3, 2.8));
-    const exit = inOutCubic(seg(u, 3.7, 4.0));
+    const fold = inOutCubic(seg(u, 5.9, 6.5));
+    const exit = inOutCubic(seg(u, 9.55, 10.0));
 
     // ---- big decode layout
     if (fold < 1) {
@@ -57,14 +57,14 @@ export default {
       ctx.fillStyle = C.faint;
       ctx.fillText('FAA TEXT', fx, fy - 72);
       ctx.fillStyle = C.cyan;
-      const lp = outExpo(seg(u, 0.75, 1.1));
+      const lp = outExpo(seg(u, 1.4, 1.8));
       ctx.globalAlpha = (1 - fold) * lp;
       ctx.fillText('PLAIN ENGLISH', fx, fy + 152);
       ctx.globalAlpha = 1 - fold;
       // typed FAA text
       ctx.font = `600 44px ${MONO}`;
       ctx.letterSpacing = '1px';
-      const n = Math.floor(clamp01(u / 0.75) * FAA.length);
+      const n = Math.floor(clamp01(u / 1.2) * FAA.length);
       ctx.fillStyle = C.amber;
       ctx.shadowColor = hexA(C.amber, 0.6);
       ctx.shadowBlur = 16;
@@ -95,9 +95,9 @@ export default {
         const sx = fx + ctx.measureText(FAA.slice(0, i0)).width;
         const sw = ctx.measureText(sg[0]).width;
         const t0 = sg[3];
-        const ul = outExpo(seg(u, t0, t0 + 0.18));
-        const cn = outCubic(seg(u, t0 + 0.05, t0 + 0.3));
-        const tp = seg(u, t0 + 0.12, t0 + 0.5);
+        const ul = outExpo(seg(u, t0, t0 + 0.25));
+        const cn = outCubic(seg(u, t0 + 0.05, t0 + 0.4));
+        const tp = seg(u, t0 + 0.15, t0 + 0.65);
         const P = pos.get(sg);
         const col = sg[4] ? C.cyan : C.dim;
         if (ul > 0) {
