@@ -99,7 +99,7 @@ struct AirportsView: View {
     /// the website shows the same list at /amend/?w=DAB,VRB,...
     private var watchlistURL: URL? {
         guard !store.saved.isEmpty else { return nil }
-        return URL(string: "\(API.base.absoluteString)?w=\(store.saved.joined(separator: ","))")
+        return URL(string: "\(API.base.absoluteString)watch/?w=\(store.saved.joined(separator: ","))")
     }
 
     /// same swipe action everywhere: it takes the airport off your list, it doesn't delete any data
