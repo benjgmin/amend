@@ -368,6 +368,34 @@ class TestWeb(unittest.TestCase):
         self.assertRegex(page, r'assets/style\.css\?v=[0-9a-f]{10}"')  # cache-busted stylesheet
         self.assertIn('data-f="ifr"', page)                         # filter tabs
         self.assertIn('id="c-2025-07-10"', page)                    # history cycles can be linked
+        self.assertIn('data-look="VRB"', page)                      # "New" labels since the last visit
+        self.assertIn('<div class="it p-action" data-id="a">', page)
+        self.assertIn('data-id="x" data-c="2025-07-10"', page)       # history items carry their cycle
+        self.assertIn('data-until="2026-10-01T09:01:00Z"', page)     # countdown to the changeover
+        self.assertIn('id="wbtn" data-apt="VRB"', page)             # add to watchlist from the airport page
+        self.assertIn('NASR_Subscription/2026-10-01" target="_blank"', page)   # every change links its FAA source
+        self.assertIn('title="Official FAA plate (d-TPP)">View plate', page)
+        self.assertIn('NASR_Subscription/2025-07-10"', page)          # history links its own cycle
+        self.assertIn('FAA cycle 01 Oct 2026 (upcoming) · updated <time datetime="2026-09-24T00:00:00Z" '
+                      'data-ago="2026-09-24T00:00:00Z">24 Sep 0000Z</time>', page)
+        self.assertIn('data-built="2026-09-24T00:00:00Z"', page)      # the page says when it's stale
+        self.assertIn('id="stale" hidden', page)
+
+    def test_countdown_and_calendar(self):
+        import datetime as dt
+        from amend import web
+        meta = {"from_cycle": "2026-09-03", "to_cycle": "2026-10-01", "upcoming": True}
+        before, after = (dt.datetime(2026, 9, 24, tzinfo=dt.timezone.utc), dt.datetime(2026, 10, 2, tzinfo=dt.timezone.utc))
+        self.assertEqual(web.next_changeover(meta, before), (dt.datetime(2026, 10, 1, 9, 1, tzinfo=dt.timezone.utc), True))
+        self.assertEqual(web.next_changeover(meta, after), (dt.datetime(2026, 10, 29, 9, 1, tzinfo=dt.timezone.utc), False))
+        site, _ = self.build()
+        ics = open(os.path.join(site, "cycles.ics"), newline="").read()
+        self.assertIn("DTSTART:20261001T090100Z\r\n", ics)
+        self.assertIn("DTSTART:20260903T090100Z", ics)               # the one in effect, too
+        self.assertEqual(ics.count("BEGIN:VEVENT"), 15)
+        index = open(os.path.join(site, "index.html")).read()
+        self.assertIn('id="next"', index)                           # coming up at your airports
+        self.assertIn('"when": "2026-10-01T09:01:00Z"', index)
 
     def test_guide_and_welcome(self):
         site, _ = self.build()
