@@ -112,7 +112,10 @@ def card(path, big, name, loc, chip_list, line, footer):
     d.text((P + d.textlength("AMEND", font=brand), P), ".", font=brand, fill=COLORS["ifr"])
     small = _font("mono", 26)
     d.text((W - P - d.textlength(footer, font=small), P + 6), footer, font=small, fill=COLORS["dim"])
-    d.text((P, P + 80), big, font=_font("mono", 132), fill=COLORS["text"])
+    size = 132
+    while size > 48 and d.textlength(big, font=_font("mono", size)) > W - 2 * P:
+        size -= 8
+    d.text((P, P + 80 + (132 - size) // 2), big, font=_font("mono", size), fill=COLORS["text"])
     y = P + 250
     if name:
         d.text((P, y), _fit(d, name, _font("sans", 48), W - 2 * P), font=_font("sans", 48), fill=COLORS["text"])
@@ -339,7 +342,39 @@ def watch_page(meta, directory, now):
                 f"{SITE_URL}watch/", body, "../assets/style.css", image=f"{SITE_URL}assets/card.png")
 
 
-def build(site, meta, directory, latest, history_dir, now=None):
+def named_watch_page(slug, wl, meta, info, latest, now, has_card):
+    """static page for a named watchlist at watch/<slug>/: every airport's changes, expanded."""
+    upcoming, _ = status(meta, now)
+    apts = sorted(wl["airports"], key=lambda a: (-counts(latest.get(a, []))["action"], -len(latest.get(a, [])), a))
+    total = {p: sum(counts(latest.get(a, []))[p] for a in apts) for p, _, _ in PRIORITY}
+    changed = sum(1 for a in apts if latest.get(a))
+    blocks = []
+    for a in apts:
+        i, ch = info.get(a, {}), latest.get(a, [])
+        icao = f'<span class="icao">{e(i["icao"])}</span>' if i.get("icao") and i.get("icao") != a else ""
+        head = (f'<div class="panel"><div class="row"><h1 style="font-size:24px">{e(a)}{icao}</h1>{chips(counts(ch))}</div>'
+                f'<div class="name" style="font-size:15px">{e(i.get("name", "Unknown airport"))}</div></div>')
+        link = f'<p class="foot"><a href="../../{e(a)}/">Full page and history ›</a></p>'
+        body = grouped(ch) if ch else '<div class="note">No changes in this cycle.</div>'
+        blocks.append(f'<details class="apt"{" open" if ch else ""}><summary>{head}</summary>{body}{link}</details>')
+    parts = [f"{lbl} {total[p]}" for p, lbl, _ in PRIORITY if total[p]]
+    when = f"{'on' if upcoming else 'since'} {efb(meta['to_cycle'])[:6]}"
+    desc = (f"{changed} of {len(apts)} airports change {when}" + (f" · {' · '.join(parts)}" if parts else "")
+            if changed else f"No changes at these {len(apts)} airports {when}.")
+    body = f"""<div class="top"><a class="brand" href="../../">AMEND.</a><span class="hdr">Watchlist · EFF {efb(meta['to_cycle'])}</span></div>
+<div class="panel"><div class="row"><span class="big">{e(wl['name'])}</span>{chips(total)}</div>
+{f'<div class="note">{e(wl["description"])}</div>' if wl["description"] else ''}
+<div class="loc">{len(apts)} airports · {changed} with changes this cycle</div></div>
+<div class="panel"><span class="ann {'ifr' if upcoming else 'ok'}">{'NOT IN EFFECT YET' if upcoming else 'IN EFFECT'}</span>
+<div class="note">{e(landing_note(meta, now, upcoming))}</div></div>
+<div class="btns"><a class="btn" href="../../?w={','.join(apts)}">ADD TO MY WATCHLIST</a></div>
+{''.join(blocks)}"""
+    image = f"{SITE_URL}watch/{slug}/card.png" if has_card else f"{SITE_URL}assets/card.png"
+    return page(f"{wl['name']} · Amend watchlist", desc, f"{SITE_URL}watch/{slug}/", body, "../../assets/style.css",
+                f"{wl['name']}: {desc}", image)
+
+
+def build(site, meta, directory, latest, history_dir, now=None, watchlists=None):
     """write site/assets/style.css, site/<ID>/index.html for every airport with data, site/index.html."""
     now = now or dt.datetime.now(dt.timezone.utc)
     os.makedirs(os.path.join(site, "assets"), exist_ok=True)
@@ -379,4 +414,15 @@ def build(site, meta, directory, latest, history_dir, now=None):
     os.makedirs(os.path.join(site, "watch"), exist_ok=True)
     with open(os.path.join(site, "watch", "index.html"), "w", encoding="utf-8") as f:
         f.write(watch_page(meta, directory, now))
+    for slug, wl in (watchlists or {}).items():
+        folder = os.path.join(site, "watch", slug)
+        os.makedirs(folder, exist_ok=True)
+        tot = {p: sum(counts(latest.get(a, []))[p] for a in wl["airports"]) for p, _, _ in PRIORITY}
+        changed = sum(1 for a in wl["airports"] if latest.get(a))
+        has_card = card(os.path.join(folder, "card.png"), wl["name"], "", "",
+                        [(f"{lbl} {tot[p]}", p) for p, lbl, _ in PRIORITY if tot[p]] or [("NO CHG", "ok")],
+                        f"{len(wl['airports'])} airports · {changed} with changes this cycle",
+                        f"EFF {efb(meta['to_cycle'])}")
+        with open(os.path.join(folder, "index.html"), "w", encoding="utf-8") as f:
+            f.write(named_watch_page(slug, wl, meta, info, latest, now, has_card))
     return len(ids)

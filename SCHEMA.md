@@ -8,8 +8,10 @@ If a field is added, `schema_version` stays the same. If a field is renamed or r
 
 ## Web pages (not part of the JSON contract)
 `index.html` (search), `<ID>/index.html` (one page per airport with changes or history) and
-`assets/style.css`. Page folders are always 2–4 uppercase letters/digits, so they never collide
-with the JSON paths below.
+`assets/style.css`, `watch/` (a watchlist from `?w=` or the browser) and `watch/<slug>/` (named
+watchlists from `watchlists/<slug>.json` in the repo; slugs are 3–40 lowercase letters, digits or
+dashes). Airport folders are always 2–4 uppercase letters/digits, so they never collide with the
+JSON paths below.
 
 ## `latest/meta.json`
 Which cycles `latest/` compares.

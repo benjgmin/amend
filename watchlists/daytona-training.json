@@ -1,0 +1,14 @@
+{
+  "name": "Daytona Training Area",
+  "description": "Airports around Daytona Beach",
+  "airports": [
+    "DAB",
+    "OMN",
+    "DED",
+    "EVB",
+    "SFB",
+    "ORL",
+    "ISM",
+    "VRB"
+  ]
+}

@@ -5,7 +5,7 @@ import os
 import shutil
 
 from . import SCHEMA_VERSION
-from . import web
+from . import watchlists, web
 from .airports import directory
 from .cycles import CYCLE, cycle_on_or_before, get_cycle, get_dtpp, zip_path
 from .output import dump, write_diff
@@ -45,6 +45,7 @@ def build(llm=True):
                         ignore=shutil.ignore_patterns("cycles.json"))
     meta = {"from_cycle": old.isoformat(), "to_cycle": new.isoformat(), "upcoming": upcoming,
             "changed_airports": n}
-    pages = web.build(SITE, meta, apts, result["airports"], HISTORY)
+    lists = watchlists.load_all()
+    pages = web.build(SITE, meta, apts, result["airports"], HISTORY, watchlists=lists)
     print(f"site built: {old} -> {new} ({'upcoming' if upcoming else 'current'}), "
-          f"{n} changed airports, {pages} airport pages")
+          f"{n} changed airports, {pages} airport pages, {len(lists)} named watchlists")

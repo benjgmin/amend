@@ -90,6 +90,13 @@ def main(argv=None):
 
     sub.add_parser("set-key", help="save your Anthropic API key to .env")
 
+    wl = sub.add_parser("watchlist", help="create or list named watchlists (watchlists/*.json)")
+    wl.add_argument("action", choices=["create", "list"])
+    wl.add_argument("slug", nargs="?", help="link name, e.g. erausvfr -> /amend/watch/erausvfr/")
+    wl.add_argument("airports", nargs="*")
+    wl.add_argument("--name", help='display name, e.g. "ERAU SVFR"')
+    wl.add_argument("--description", default="")
+
     a = p.parse_args(argv)
     if a.cmd == "diff":
         cmd_diff(a)
@@ -101,3 +108,14 @@ def main(argv=None):
         update(llm=a.llm, keep=a.keep)
     elif a.cmd == "set-key":
         set_key()
+    elif a.cmd == "watchlist":
+        from . import watchlists
+        if a.action == "list":
+            for slug, w in watchlists.load_all().items():
+                print(f"{slug:20} {w['name']:30} {len(w['airports'])} airports")
+            return
+        if not a.slug or not a.airports or not a.name:
+            sys.exit('usage: python -m amend watchlist create <slug> --name "Name" AIRPORT ...')
+        w = watchlists.save(a.slug, a.name, a.airports, a.description)
+        print(f"saved watchlists/{a.slug}.json ({len(w['airports'])} airports). push it, and it'll be live at\n"
+              f"  https://benjgmin.github.io/amend/watch/{a.slug}/")

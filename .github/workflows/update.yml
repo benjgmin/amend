@@ -4,6 +4,9 @@ on:
   schedule:
     - cron: "17 12 * * *"     # every day 12:17 UTC; off the hour, when GitHub drops scheduled runs
   workflow_dispatch:           # "Run workflow" button in the Actions tab
+  push:
+    branches: [ master ]
+    paths: [ "watchlists/**" ]
 
 permissions:
   contents: write              # to commit new history

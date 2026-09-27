@@ -302,6 +302,33 @@ class TestWeb(unittest.TestCase):
         self.assertIn("amend.watch", open(os.path.join(site, "index.html")).read())   # watchlist storage key
 
 
+class TestWatchlists(unittest.TestCase):
+    def test_validation(self):
+        from amend.watchlists import validate
+        self.assertEqual(validate("erausvfr", {"name": "ERAU SVFR", "airports": ["DAB", "KOMN"]}), [])
+        self.assertTrue(validate("ERAU SVFR!", {"name": "x", "airports": ["DAB"]}))     # bad link name
+        self.assertTrue(validate("erausvfr", {"name": "", "airports": ["DAB"]}))        # no name
+        self.assertTrue(validate("erausvfr", {"name": "x", "airports": ["not an id"]}))
+
+    def test_named_page(self):
+        import datetime as dt
+        from amend import web, watchlists
+        d = tempfile.mkdtemp()
+        watchlists.save("erausvfr", "ERAU SVFR", ["DAB", "KVRB"], "Training area", directory=d)
+        lists = watchlists.load_all(d)
+        self.assertEqual(lists["erausvfr"]["airports"], ["DAB", "VRB"])
+        site = tempfile.mkdtemp()
+        latest = {"VRB": [{"id": "a", "priority": "action", "category": "tower", "kind": "changed",
+                           "summary": "tower hours: 0800-2200 -> 0600-2200 local", "source": "ATC_BASE"}]}
+        meta = {"from_cycle": "2026-09-03", "to_cycle": "2026-10-01", "upcoming": True, "changed_airports": 1}
+        web.build(site, meta, [{"id": "VRB", "name": "Vero Beach Rgnl"}], latest, None,
+                  now=dt.datetime(2026, 9, 24, tzinfo=dt.timezone.utc), watchlists=lists)
+        html_ = open(os.path.join(site, "watch", "erausvfr", "index.html")).read()
+        self.assertIn('content="ERAU SVFR: 1 of 2 airports change on 01 OCT · ACT 1"', html_)
+        self.assertIn("0800-2200 → 0600-2200", html_)
+        self.assertIn("No changes in this cycle.", html_)        # DAB
+
+
 class TestSchema(Case):
     def test_shape(self):
         old = {"ATC_BASE.csv": ["FACILITY_ID,TWR_HRS", "VRB,0700-2100"]}
