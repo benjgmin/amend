@@ -365,6 +365,7 @@ class TestWeb(unittest.TestCase):
         self.assertIn('href="../guide/">What do these mean?', page)   # legend for the labels
         self.assertIn('<span class="ann act" title="Changes how you fly it', page)
         self.assertIn('<nav class="sb"', page)                      # desktop sidebar
+        self.assertRegex(page, r'assets/style\.css\?v=[0-9a-f]{10}"')  # cache-busted stylesheet
         self.assertIn('data-f="ifr"', page)                         # filter tabs
         self.assertIn('id="c-2025-07-10"', page)                    # history cycles can be linked
 
@@ -417,7 +418,7 @@ class TestWatchlists(unittest.TestCase):
         self.assertIn('url=../../list/clubsvfr/', open(os.path.join(site, "watch", "clubsvfr", "index.html")).read())
         self.assertIn('url=../list/clubsvfr/', open(os.path.join(site, "clubsvfr", "index.html")).read())
         self.assertIn('content="https://amend.watch/list/clubsvfr/card.png"', html_)
-        self.assertIn('href="../../assets/style.css"', html_)
+        self.assertIn('href="../../assets/style.css?v=', html_)
         self.assertIn('href="../?w=', html_)                             # add to my list
         self.assertTrue(os.path.exists(os.path.join(site, "about", "index.html")))
         self.assertIn('content="Club SVFR: 1 of 2 airports change on 01 OCT · ACT 1"', html_)

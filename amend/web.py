@@ -6,6 +6,7 @@ and every page has Open Graph tags so a link in iMessage or a group chat shows a
 Never writes to the JSON paths in SCHEMA.md (latest/, history/, airports.json).
 """
 import datetime as dt
+import hashlib
 import html
 from urllib.parse import quote
 import json
@@ -188,6 +189,9 @@ a.sbi:hover{background:var(--p2);text-decoration:none}.sbi.on{background:var(--p
 }
 """
 
+# changes whenever the CSS does, so a browser holding the old style.css (Pages caches it for 10 minutes)
+# never pairs it with new HTML
+CSS_VERSION = hashlib.sha1(CSS.encode()).hexdigest()[:10]
 
 FONT_PATHS = {  # first one that exists wins (GitHub's Ubuntu runners have DejaVu; Macs have Menlo)
     "mono": ["/usr/share/fonts/truetype/dejavu/DejaVuSansMono-Bold.ttf", "/System/Library/Fonts/Menlo.ttc"],
@@ -422,7 +426,7 @@ def page(title, description, url, body, root, og_title=None, image=None, active=
 <meta name="theme-color" content="#F6F7F9" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0D1015" media="(prefers-color-scheme: dark)">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="{FONTS}"><link rel="stylesheet" href="{root}assets/style.css">
+<link rel="stylesheet" href="{FONTS}"><link rel="stylesheet" href="{root}assets/style.css?v={CSS_VERSION}">
 </head><body data-root="{root}"><div class="app">{sidebar(root, active, meta, now, on)}
 <main class="main{' two' if two else ''}">{body}
 <p class="foot full">Not for navigation. Always use official FAA publications, NOTAMs and a proper preflight briefing.
