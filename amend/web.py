@@ -62,6 +62,72 @@ input::placeholder{color:var(--faint)}
 """
 
 
+FONT_PATHS = {  # first one that exists wins (GitHub's Ubuntu runners have DejaVu; Macs have Menlo)
+    "mono": ["/usr/share/fonts/truetype/dejavu/DejaVuSansMono-Bold.ttf", "/System/Library/Fonts/Menlo.ttc"],
+    "sans": ["/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", "/System/Library/Fonts/Helvetica.ttc"],
+    "reg": ["/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", "/System/Library/Fonts/Helvetica.ttc"],
+}
+COLORS = {"bg": (9, 12, 16), "panel": (19, 24, 31), "text": (240, 240, 240), "dim": (143, 143, 143),
+          "faint": (92, 92, 92), "action": (255, 181, 0), "ifr": (61, 214, 255), "fyi": (143, 143, 143),
+          "ok": (77, 224, 115)}
+
+
+def _font(kind, size):
+    from PIL import ImageFont
+    for p in FONT_PATHS[kind]:
+        if os.path.exists(p):
+            return ImageFont.truetype(p, size)
+    return ImageFont.load_default(size=size)
+
+
+def _fit(draw, text, font, width):
+    """cut text with an ellipsis so it fits in width pixels."""
+    if draw.textlength(text, font=font) <= width:
+        return text
+    while text and draw.textlength(text + "…", font=font) > width:
+        text = text[:-1]
+    return text.rstrip() + "…"
+
+
+def card(path, big, name, loc, chip_list, line, footer):
+    """1200x630 link-preview image in the app's EFB style. returns False if Pillow is missing."""
+    try:
+        from PIL import Image, ImageDraw
+    except ImportError:
+        return False
+    W, H, P = 1200, 630, 64
+    img = Image.new("RGB", (W, H), COLORS["bg"])
+    d = ImageDraw.Draw(img)
+    d.rounded_rectangle([P - 24, P - 24, W - P + 24, H - P + 24], radius=18, fill=COLORS["panel"],
+                        outline=(40, 46, 55), width=2)
+    brand = _font("mono", 34)
+    d.text((P, P), "AMEND", font=brand, fill=COLORS["text"])
+    d.text((P + d.textlength("AMEND", font=brand), P), ".", font=brand, fill=COLORS["ifr"])
+    small = _font("mono", 26)
+    d.text((W - P - d.textlength(footer, font=small), P + 6), footer, font=small, fill=COLORS["dim"])
+    d.text((P, P + 80), big, font=_font("mono", 132), fill=COLORS["text"])
+    y = P + 250
+    if name:
+        d.text((P, y), _fit(d, name, _font("sans", 48), W - 2 * P), font=_font("sans", 48), fill=COLORS["text"])
+        y += 62
+    if loc:
+        d.text((P, y), loc.upper(), font=small, fill=COLORS["dim"])
+        y += 50
+    x, cf = P, _font("mono", 34)
+    for text, key in chip_list:
+        tw = d.textlength(text, font=cf)
+        col = COLORS[key]
+        d.rounded_rectangle([x, y, x + tw + 28, y + 52], radius=6, outline=col, width=3,
+                            fill=tuple(int(c * 0.15 + COLORS["panel"][i] * 0.85) for i, c in enumerate(col)))
+        d.text((x + 14, y + 7), text, font=cf, fill=col)
+        x += tw + 44
+    if line:
+        d.text((P, y + 78), _fit(d, line, _font("reg", 32), W - 2 * P), font=_font("reg", 32),
+               fill=COLORS["dim"])
+    img.save(path, optimize=True)
+    return True
+
+
 def e(s):
     return html.escape(str(s or ""), quote=True)
 
@@ -119,14 +185,17 @@ def grouped(changes):
     return "".join(out)
 
 
-def page(title, description, url, body, css_href):
+def page(title, description, url, body, css_href, og_title=None, image=None):
+    img = (f'<meta property="og:image" content="{e(image)}"><meta property="og:image:width" content="1200">'
+           f'<meta property="og:image:height" content="630"><meta name="twitter:card" content="summary_large_image">'
+           if image else '<meta name="twitter:card" content="summary">')
     return f"""<!doctype html><html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{e(title)}</title>
 <meta name="description" content="{e(description)}">
 <meta property="og:type" content="website"><meta property="og:site_name" content="Amend">
-<meta property="og:title" content="{e(title)}"><meta property="og:description" content="{e(description)}">
-<meta property="og:url" content="{e(url)}"><meta name="twitter:card" content="summary">
+<meta property="og:title" content="{e(og_title or title)}"><meta property="og:description" content="{e(description)}">
+<meta property="og:url" content="{e(url)}">{img}
 <meta name="theme-color" content="#090C10"><link rel="stylesheet" href="{css_href}">
 </head><body>{body}
 <p class="foot">Not for navigation. Always use official FAA publications, NOTAMs and a proper preflight briefing.
@@ -146,7 +215,7 @@ def status(meta, now):
                    f"({efb(meta['from_cycle'])}).")
 
 
-def airport_page(apt, info, latest, hist, meta, now):
+def airport_page(apt, info, latest, hist, meta, now, has_card=False):
     name = info.get("name", "")
     loc = ", ".join(x for x in (info.get("city"), info.get("state")) if x)
     changes = latest or []
@@ -162,6 +231,11 @@ def airport_page(apt, info, latest, hist, meta, now):
     else:
         desc = f"No {'upcoming ' if upcoming else ''}changes at {apt} in the {efb(meta['to_cycle'])} cycle."
     title = f"{apt} · {name}" if name else apt
+    when = f"{'on' if upcoming else 'since'} {efb(meta['to_cycle'])[:6]}"
+    og_title = (f"{apt}: {' · '.join(parts)} {when}" if changes
+                else f"{apt}: no changes {'on' if upcoming else 'in the'} {efb(meta['to_cycle'])[:6]} cycle")
+    if name:
+        og_title += f" · {name}"
 
     body = [f'<div class="top"><a class="brand" href="../">AMEND.</a><span class="hdr">{label} · EFF {efb(meta["to_cycle"])}</span></div>',
             '<div class="panel"><div class="row"><h1>', e(apt),
@@ -190,7 +264,8 @@ def airport_page(apt, info, latest, hist, meta, now):
                         + "".join(change_html(x) for x in g) + "</details>")
     body.append(f'<p class="foot">Data: <a href="../latest/{e(apt)}.json">latest</a> · '
                 f'<a href="../history/{e(apt)}.json">history</a> · built {now:%d %b %Y %H%MZ}</p>')
-    return page(title, desc, f"{SITE_URL}{apt}/", "".join(body), "../assets/style.css")
+    image = f"{SITE_URL}{apt}/card.png" if has_card else f"{SITE_URL}assets/card.png"
+    return page(title, desc, f"{SITE_URL}{apt}/", "".join(body), "../assets/style.css", og_title, image)
 
 
 def landing_note(meta, now, upcoming):
@@ -242,7 +317,8 @@ q.addEventListener("input",()=>{{
             :`<a><span class="rid">${{esc(id)}}</span><span class="rname">${{esc(n)}}<br><span class="rsub">${{esc(sub).toUpperCase()}}</span></span><span class="ann ok">NO CHG</span></a>`}}).join("")||'<div class="note">No airport found.</div>'}});
 </script>"""
     return page("Amend · what changed at your airport", "See what changed at any US airport each FAA cycle, "
-                "in plain English, before it takes effect.", SITE_URL, body, "assets/style.css")
+                "in plain English, before it takes effect.", SITE_URL, body, "assets/style.css",
+                image=f"{SITE_URL}assets/card.png")
 
 
 def build(site, meta, directory, latest, history_dir, now=None):
@@ -252,6 +328,10 @@ def build(site, meta, directory, latest, history_dir, now=None):
     with open(os.path.join(site, "assets", "style.css"), "w") as f:
         f.write(CSS)
     info = {a["id"]: a for a in directory}
+    card(os.path.join(site, "assets", "card.png"), "amend.", "What changed at your airport, every FAA cycle",
+         "", [("ACT", "action"), ("IFR", "ifr"), ("FYI", "fyi"), ("NO CHG", "ok")],
+         "Tower hours, frequencies, runways, navaids and approach plates, in plain English.",
+         f"EFF {efb(meta['to_cycle'])}")
     hist_ids = set()
     if history_dir and os.path.isdir(history_dir):
         hist_ids = {n[:-5] for n in os.listdir(history_dir)
@@ -264,8 +344,18 @@ def build(site, meta, directory, latest, history_dir, now=None):
             with open(os.path.join(history_dir, f"{apt}.json"), encoding="utf-8") as f:
                 hist = json.load(f)
         os.makedirs(os.path.join(site, apt), exist_ok=True)
+        has_card = False
+        if apt in latest:  # ~700 airports: a card with this cycle's counts and top change
+            a, ch = info.get(apt, {}), latest[apt]
+            c = counts(ch)
+            chip_list = [(f"{lbl} {c[p]}", p) for p, lbl, _ in PRIORITY if c[p]]
+            top = next((x["summary"] for x in ch if x["priority"] == "action"), ch[0]["summary"])
+            has_card = card(os.path.join(site, apt, "card.png"), apt, a.get("name", ""),
+                            ", ".join(x for x in (a.get("city"), a.get("state")) if x), chip_list,
+                            (top[:1].upper() + top[1:]).replace(" -> ", " → "),
+                            f"EFF {efb(meta['to_cycle'])}")
         with open(os.path.join(site, apt, "index.html"), "w", encoding="utf-8") as f:
-            f.write(airport_page(apt, info.get(apt, {}), latest.get(apt), hist, meta, now))
+            f.write(airport_page(apt, info.get(apt, {}), latest.get(apt), hist, meta, now, has_card))
     with open(os.path.join(site, "index.html"), "w", encoding="utf-8") as f:
         f.write(index_page(meta, directory, latest, ids, now))
     return len(ids)
