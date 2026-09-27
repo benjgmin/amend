@@ -7,7 +7,7 @@ import time
 from collections import defaultdict
 
 from . import airspace as arsp
-from .collapse import collapse, merge_freq_uses
+from .collapse import collapse, is_frq_remark, merge_freq_uses
 from .diff import diff
 from .dtpp import load_dtpp
 from .english import summarize
@@ -54,7 +54,7 @@ def to_change(rec, airport, to_cycle):
     out = {
         "id": change_id(airport, to_cycle, rec["summary"]),
         "priority": rec["priority"],
-        "category": category(rec["source"]),
+        "category": "remark" if is_frq_remark(rec) else category(rec["source"]),
         "kind": rec["kind"],
         "summary": rec["summary"],
         "source": base(rec["source"]),
@@ -90,6 +90,8 @@ def run(old_zip, new_zip, ids=None, dtpp_path=None, llm=False, log=print, airspa
         if base(r["source"]) in REMARK_FILES:
             texts.append(r.get("row", {}).get("REMARK", ""))
             texts += [f["new"] for f in r.get("fields", []) if f["field"] == "REMARK"]
+        elif is_frq_remark(r):
+            texts.append(r["fields"][0]["new"])
     remarks = translate_remarks(texts, llm)
     routes = (load_routes(old_zip), load_routes(new_zip))
     records = merge_freq_uses(collapse(records, routes))

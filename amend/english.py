@@ -156,6 +156,12 @@ def summarize(rec, remarks):
         rec["original"] = text
         return f"{'new ' + what if kind == 'added' else 'removed ' + what}: {remarks.get(text, text)}"
 
+    if b == "FRQ" and kind == "changed" and [f["field"] for f in rec["fields"]] == ["REMARK"]:
+        new = rec["fields"][0]["new"]
+        rec["original"] = new
+        what = " ".join(x for x in (ctx.get("FREQ_USE", ""), ctx.get("FREQ", "")) if x)
+        return f"revised remark{' for ' + what if what else ''}: {remarks.get(new, new) or '(none)'}"
+
     if b == "PFR_RMT_FMT":
         o, d = (row or ctx).get("Orig", "?"), (row or ctx).get("Dest", "?")
         route = (row or ctx).get("Route String", "")

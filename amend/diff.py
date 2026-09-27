@@ -77,6 +77,42 @@ def just_reworded(old, new):
     return difflib.SequenceMatcher(None, old.upper(), new.upper()).ratio() >= 0.6
 
 
+# pilot-controlled lighting: "HIRL RWY 01/19 PRESET LOW SS-SR; TO INCR INTST & ACTVT REIL RWY 19 - CTAF."
+LIGHTS = {"HIRL", "MIRL", "LIRL", "REIL", "PAPI", "VASI", "VASIS", "PVASI", "APAP", "MALS", "MALSR",
+          "MALSF", "SALS", "SSALS", "SSALR", "SSALF", "ALSF-1", "ALSF-2", "ODALS", "RLLS", "RAIL",
+          "TDZL", "RCLS", "TDZ/CL", "LDIN"}
+RWY = re.compile(r"\d{1,2}[LRC]?(/\d{1,2}[LRC]?)?")
+
+
+def _pcl(text):
+    """(set of (light, runway), set of keying frequencies) for a pilot-controlled lighting
+    remark, or None if the text isn't one."""
+    t = re.sub(r"\bRYS?\b|\bRWYS\b", "RWY", text.upper())
+    freqs = set(re.findall(r"-\s*(CTAF|1\d\d\.\d+)", t))
+    if not freqs or not re.search(r"\bACTVT\b|\bINCR\b", t):
+        return None
+    pairs, light = set(), None
+    for tok in re.findall(r"[A-Z0-9/.\-]+", t):
+        if tok in LIGHTS:
+            light = tok
+        elif light and RWY.fullmatch(tok):
+            pairs.add((light, tok))
+    return (pairs, freqs) if pairs else None
+
+
+def pcl_priority(old, new):
+    """a lighting remark only matters if you now key a different frequency or a light no longer
+    comes on. more lights on the same frequency is fyi. None: not a lighting remark, or it
+    says something else that needs the normal rules (closed, PPR...)."""
+    o, n = _pcl(old), _pcl(new)
+    if not (o and n):
+        return None
+    words = [w for w in ACTION_TEXT_WORDS if w != "CTAF"]
+    if any(re.search(rf"\b{re.escape(w)}\b", v.upper()) for v in (old, new) for w in words):
+        return None
+    return "action" if o[1] != n[1] or not o[0] <= n[0] else "fyi"
+
+
 def diff(old, new):
     """old/new: output of nasr.load(). returns a list of raw change records."""
     records = []
@@ -111,6 +147,8 @@ def diff(old, new):
                 pri = priority(fname, "changed", cols, vals)
                 if cols == ["REMARK"] and just_reworded(r["REMARK"], best["REMARK"]):
                     pri = "fyi"
+                if cols == ["REMARK"]:
+                    pri = pcl_priority(r["REMARK"], best["REMARK"]) or pri
                 if cols and all(c in DECLARED_DISTANCES for c in cols):
                     pri = "action" if declared_distance_cut(r, best, cols) else "fyi"
                 records.append({
