@@ -324,6 +324,18 @@ class TestWeb(unittest.TestCase):
         self.assertIn("0800-2200 → 0600-2200", page)
         self.assertIn("VIEW PLATE", page)
         self.assertIn("EFF 10 JUL 2025", page)          # history section
+        self.assertIn('href="../guide/">WHAT DO THESE MEAN?', page)   # legend for the labels
+        self.assertIn('<span class="ann act" title="Changes how you fly it', page)
+
+    def test_guide_and_welcome(self):
+        site, _ = self.build()
+        guide = open(os.path.join(site, "guide", "index.html")).read()
+        for text in ("Tower hours changed: 0700-2100 → 0700-0100 local", "UPCOMING", "FAA TEXT ▸", 'href="../?welcome"'):
+            self.assertIn(text, guide)
+        index = open(os.path.join(site, "index.html")).read()
+        self.assertIn('id="welcome" hidden', index)       # shown by script on a first visit only
+        self.assertIn("HOW TO READ IT", index)
+        self.assertIn('href="guide/"', index)
 
     def test_json_paths_untouched(self):
         site, _ = self.build()
@@ -342,6 +354,7 @@ class TestWatchlists(unittest.TestCase):
         self.assertEqual(validate("erausvfr", {"name": "ERAU SVFR", "airports": ["DAB", "KOMN"]}), [])
         self.assertTrue(validate("ERAU SVFR!", {"name": "x", "airports": ["DAB"]}))     # bad link name
         self.assertTrue(validate("about", {"name": "x", "airports": ["DAB"]}))          # reserved
+        self.assertTrue(validate("guide", {"name": "x", "airports": ["DAB"]}))
         self.assertTrue(validate("list", {"name": "x", "airports": ["DAB"]}))
         self.assertTrue(validate("erausvfr", {"name": "", "airports": ["DAB"]}))        # no name
         self.assertTrue(validate("erausvfr", {"name": "x", "airports": ["not an id"]}))
