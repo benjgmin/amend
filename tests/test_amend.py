@@ -157,7 +157,59 @@ class TestRules(Case):
     def test_translation_that_loses_sunset_is_rejected(self):
         raw = "HIRL RWY 01/19 PRESET ON LOW INTST SS-SR - CTAF."
         self.assertFalse(remarks.faithful(raw, "preset on low intensity steady-state to steady-red"))
-        self.assertTrue(remarks.faithful(raw, "preset on low intensity from sunset to sunrise"))
+        self.assertTrue(remarks.faithful(
+            raw, "HIRL runway 01/19 preset on low intensity from sunset to sunrise; click the mic on CTAF."))
+
+    def test_translation_audit_cases_are_rejected(self):
+        """real translations from remark_cache.json that were wrong (audit, 2026-09-27)."""
+        bad = [
+            ("TO AND LDG NA SS-SR.", "Takeoff and landing not authorized sunrise to sunset."),
+            ("30 FT PLINE CROSSES RWY CNTRLN 315 FT FM THR.",
+             "30 foot pipeline crosses runway centerline 315 feet from threshold."),
+            ("CTN: PAEW PARKED ON OR INVOF RWY.", "Caution: powered aircraft are parked on or near the runway."),
+            ("FOR CD CTC CHICAGO APCH AT 847-289-0926.",
+             "For crowd density information contact Chicago approach at 847-289-0926."),
+            ("LGTD WIND CONES LCTD 1000 FT FM AER 17 & 35, LEFT SIDE.",
+             "Lighted wind cones located 1000 feet from aerials 17 and 35, left side."),
+            ("2400 FT MKD WITH CONES 300 FT AVBL FOR OVRN",
+             "2400 feet marked with cones with 300 feet available for overnight parking."),
+            ("TPA LGT ACFT 800 FT, HVY ACFT 1500 FT.", "Touchdown zone light aircraft 800 feet, heavy aircraft 1500 feet."),
+            ("NRS & CNTRLN FADED.", "Runway markings and centerline are faded."),
+            ("ACTVT REIL RWYS 14 & 32; MIRL RWY 14/32 - CTAF.",
+             "Activate runway edge lights on runways 14 and 32 and medium intensity runway lights on runways 14/32."),
+            ("ACTVT MIRL RWY 15/33 - CTAF.", "Activate medium intensity runway lights on runways 15/33 - contact CTAF."),
+            # invented numbers: PCR has no runway in it, BT (back taxi) is not "90 degree"
+            ("PCR VALUE: 1557/F/A/X/T",
+             "Runway 15 pavement classification rating: 1557 feet, friction F, depth A, extent X, type T."),
+            ("BT AND 180 DEG TURN ON RWY WILL BE RQR.", "90 degree and 180 degree turn on runway will be required."),
+        ]
+        for raw, plain in bad:
+            self.assertFalse(remarks.faithful(raw, plain), plain)
+
+    def test_faithful_translations_pass(self):
+        good = [
+            ("198 FT TWR 1,200 FT 'SW' OF ARPT.", "198 foot tower 1200 feet southwest of airport."),
+            ("CAUTION: TREEO ARPT (4AL3), .25 NM SOUTH.", "Caution: TREEO airport (4AL3) is 0.25 nautical miles south."),
+            ("30 FT PLINE CROSSES RWY 09.", "30 foot power line crosses runway 09."),
+            ("ACTVT MIRL RWY 15/33 - CTAF.", "Click the mic on CTAF to turn on the medium intensity runway lights, runway 15/33."),
+            # leaving a contraction alone is allowed; guessing is what's rejected
+            ("RLLS.", "RLLS."),
+            ("APCH RATIO 20:1 TO DTHR.", "Approach ratio 20:1 to the DTHR."),
+            ("APCH RATIO 20:1 TO DTHR.", "Approach ratio 20:1 to the displaced threshold."),
+        ]
+        for raw, plain in good:
+            self.assertEqual(remarks.problems(raw, plain), [], plain)
+
+    def test_bad_cached_translation_falls_back_to_raw(self):
+        """old cache entries get re-checked on load, so a tighter check retires them."""
+        raw, ok = "30 FT PLINE CROSSES RWY 09.", "RWY 09 IS CLSD."
+        with open(remarks.CACHE_FILE, "w") as f:
+            json.dump({raw: "30 foot pipeline crosses runway 09.", ok: "Runway 09 is closed."}, f)
+        try:
+            self.assertEqual(remarks.translate_remarks([raw, ok], use_llm=False),
+                             {ok: "Runway 09 is closed."})
+        finally:
+            os.remove(remarks.CACHE_FILE)
 
 
 class TestRunways(Case):

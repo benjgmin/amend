@@ -1,29 +1,73 @@
 """Translating FAA remark contractions to plain English with Claude, plus API key handling."""
 import json
 import os
+import re
 import urllib.request
 
 LLM_MODEL = "claude-haiku-4-5-20251001"
 CACHE_FILE = "remark_cache.json"
 BATCH = 30
 
+# contraction -> (expansion for the prompt, patterns the translation must contain one of).
+# every entry here came back wrong at least once in the real cache, e.g. PLINE as
+# "pipeline", PAEW as "parachute jumping activity", CD as "crowd density", AER as
+# "aerodrome", SS-SR as "steady-state to steady-red". a translation that keeps the
+# contraction as written also passes: leaving it alone is allowed, guessing isn't.
+MUST_KEEP = {
+    "AER": ("approach end of runway", ["approach end"]),
+    "DER": ("departure end of runway", ["departure end"]),
+    "DTHR": ("displaced threshold", ["displaced"]),
+    "DSPLCD": ("displaced", ["displaced"]),
+    "OVRN": ("overrun", ["overrun"]),
+    "PLINE": ("power line", ["power line", "powerline", "power-line"]),
+    "PLINES": ("power lines", ["power line", "powerline", "power-line"]),
+    "NRS": ("numbers (runway numbers)", ["number"]),
+    "CD": ("clearance delivery", ["clearance"]),
+    "LIRL": ("low intensity runway lights", ["low intensity", "low-intensity"]),
+    "MALSR": ("medium intensity approach lighting system with runway alignment indicator lights",
+              ["approach light"]),
+    "MALSF": ("medium intensity approach lighting system with sequenced flashers", ["approach light"]),
+    "RLLS": ("runway lead-in light system", ["lead-in", "lead in"]),
+    "PAEW": ("personnel and equipment working", ["personnel and equipment"]),
+    "ARNG": ("Army National Guard", ["army national guard"]),
+    "OT": ("other times", ["other", "outside", "after hours"]),
+    "TPA": ("traffic pattern altitude", ["pattern altitude"]),
+    "OFFL": ("official", ["official"]),
+    "TXL": ("taxilane", ["taxilane", "taxi lane"]),
+    "SLP": ("slope", ["slope"]),
+    "PSBL": ("possible", ["possib"]),
+    "DALGT": ("daylight", ["daylight"]),
+    "PMT": ("permit", ["permit"]),
+    "RR": ("railroad", ["railroad", "railway"]),
+    "BT": ("back taxi", ["back"]),
+    "PN": ("prior notice", ["notice"]),
+    "INTMT": ("intermittent", ["intermittent"]),
+    "PCR": ("pavement classification rating", ["pavement classification"]),
+    "REIL": ("runway end identifier lights", ["end identif"]),
+    # order matters: SS-SR has come back as "sunrise to sunset", the opposite window
+    "SS-SR": ("sunset to sunrise", [r"sunset\b.{0,20}\bsunrise"]),
+    "SR-SS": ("sunrise to sunset", [r"sunrise\b.{0,20}\bsunset"]),
+}
+
 # contractions the model is allowed to expand. anything not here and not certain stays as-is.
-GLOSSARY = ("ACFT=aircraft, ACR=air carrier, AER=approach end of runway, AP=airport, "
+GLOSSARY = ("ACFT=aircraft, ACR=air carrier, AP=airport, "
             "APCH/APRCH=approach, ARPT=airport, ARR=arrival, "
             "AVBL=available, CK=check, CLSD=closed, CTC=contact, CTN=caution, DEP=departure, "
             "DTLS=details, HOL=holidays, INVOF=in vicinity of, LGTD=lighted, "
             "MNT/MNTD=monitored, MRKGS=markings, NA=not authorized, OPS=operations, "
             "PAX=passengers, PPR=prior permission required, RSCD=runway surface condition, "
             "RWY=runway, SKED=scheduled, TWY=taxiway, UNSKED=unscheduled, WKEND=weekend, "
-            "WX=weather, M-F=Monday through Friday, SS-SR=sunset to sunrise, "
-            "SR-SS=sunrise to sunset, ACTVT=activate, INCR=increase, INTST=intensity, "
+            "WX=weather, M-F=Monday through Friday, ACTVT=activate, INCR=increase, INTST=intensity, "
             "CONSLY=continuously, OPR/OPRS=operate(s), HIRL=high intensity runway lights, "
-            "MIRL=medium intensity runway lights, REIL=runway end identifier lights, "
-            "PAPI=precision approach path indicator. A lighting remark ending in '- CTAF' or "
-            "'- <frequency>' means click the mic on that frequency, not call anyone")
-
-# must survive translation. a model that drops or invents these makes the remark wrong
-MUST_KEEP = {"SS-SR": "sunset", "SR-SS": "sunrise"}
+            "MIRL=medium intensity runway lights, "
+            "PAPI=precision approach path indicator, VASI=visual approach slope indicator, "
+            "OTS=out of service, INT=intersection, ANG=Air National Guard, UNMON=unmonitored, "
+            "SBP=sport parachuting, "            "TGL=touch-and-go landings, NSTD=nonstandard, AMGR=airport manager, "
+            + ", ".join(f"{c}={e}" for c, (e, _) in MUST_KEEP.items()) + ". "
+            "PCR VALUE lines like '350/F/A/X/T' are a pavement strength code: keep the value and "
+            "letters exactly and do not explain them. A lighting remark ending in '- CTAF' or "
+            "'- <frequency>' is pilot-controlled lighting: say 'click the mic on CTAF' (or that "
+            "frequency), never 'contact CTAF', because nobody answers")
 
 PROMPT = (
     "Translate each FAA airport/ATC remark below into ONE short plain-English "
@@ -32,7 +76,8 @@ PROMPT = (
     "- Expand ONLY abbreviations listed in the glossary or ones you are certain of.\n"
     "- If you are not certain what an abbreviation or acronym means, leave it "
     "exactly as written. Never guess an expansion. A wrong expansion is dangerous.\n"
-    "- Keep all numbers, times, runway ids, frequencies and phone numbers exactly.\n"
+    "- Keep all numbers, times, runway ids, frequencies and phone numbers exactly. "
+    "Never add a number that is not in the remark.\n"
     "- Do not add or remove information. Keep every regulatory reference "
     "(Part 121, Part 135, Part 380, FAR, etc.) exactly as written.\n"
     "Glossary: " + GLOSSARY + "\n"
@@ -45,6 +90,8 @@ def translate_remarks(texts, use_llm):
     if os.path.exists(CACHE_FILE):
         with open(CACHE_FILE) as f:
             cache = json.load(f)
+    # re-check old entries too, so tightening faithful() retires translations made before it
+    cache = {t: o for t, o in cache.items() if faithful(t, o)}
     todo = sorted({t for t in texts if t and t not in cache})
     key = os.environ.get("ANTHROPIC_API_KEY")
     if not (use_llm and todo):
@@ -71,11 +118,43 @@ def translate_remarks(texts, use_llm):
     return cache
 
 
+# lighting you turn on from the cockpit: "ACTVT MIRL RWY 17/35 - CTAF." nobody answers on
+# that frequency, so a translation telling pilots to contact it is wrong
+PCL = re.compile(r"(ACTVT|INCR|INTST).*-\s*(CTAF|\d{3}\.\d+)")
+CALL_PCL = re.compile(r"\b(contact|call)\w*\s+(the\s+)?(ctaf|\d{3}\.\d)")
+
+
 def faithful(raw, plain):
-    """false if the translation lost a time window like SS-SR (it once came back as
-    'steady-state to steady-red'). the raw text is shown instead and retried next run."""
-    up, low = raw.upper(), plain.lower()
-    return all(word in low for code, word in MUST_KEEP.items() if code in up)
+    """false if the translation got a known contraction wrong or changed a number.
+    the raw text is shown instead and the remark is retried next run."""
+    return not problems(raw, plain)
+
+
+def problems(raw, plain):
+    """what's wrong with a translation, as short strings. empty means it's fine."""
+    if plain == raw:
+        return []
+    low = plain.lower()
+    out = [f"{code} not translated as {expansion!r}"
+           for code, (expansion, words) in MUST_KEEP.items()
+           if _word(code).search(raw.upper()) and not _word(code).search(plain)
+           and not any(re.search(w, low) for w in words)]
+    if PCL.search(raw) and CALL_PCL.search(low):
+        out.append("says to contact the frequency; pilot-controlled lighting means click the mic")
+    have, want = _numbers(plain), _numbers(raw)
+    out += [f"lost number {n}" for n in sorted(want - have)]
+    out += [f"added number {n}" for n in sorted(have - want)]
+    return out
+
+
+def _word(code):
+    return re.compile(r"(?<![A-Z0-9-])" + re.escape(code) + r"(?![A-Z0-9-])")
+
+
+def _numbers(text):
+    """the numbers in a remark, so '1,200' == '1200', '.25' == '0.25', '03' == '3'."""
+    text = re.sub(r"(?<=\d),(?=\d{3}(?!\d))", "", text)
+    return {n.lstrip("0") or "0" for n in re.findall(r"\d*\.\d+|\d+", text)}
 
 
 def _call_claude(key, prompt):
