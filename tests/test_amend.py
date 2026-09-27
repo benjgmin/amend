@@ -330,7 +330,9 @@ class TestWeb(unittest.TestCase):
         self.assertEqual(open(os.path.join(site, "latest", "VRB.json")).read(), "{}")
         self.assertTrue(os.path.exists(os.path.join(site, "index.html")))
         self.assertTrue(os.path.exists(os.path.join(site, "assets", "style.css")))
-        self.assertTrue(os.path.exists(os.path.join(site, "watch", "index.html")))
+        self.assertTrue(os.path.exists(os.path.join(site, "list", "index.html")))
+        old = open(os.path.join(site, "watch", "index.html")).read()           # old ?w= links keep their query
+        self.assertIn('location.replace("../list/"+location.search', old)
         self.assertIn("amend.watch", open(os.path.join(site, "index.html")).read())   # watchlist storage key
 
 
@@ -340,6 +342,7 @@ class TestWatchlists(unittest.TestCase):
         self.assertEqual(validate("erausvfr", {"name": "ERAU SVFR", "airports": ["DAB", "KOMN"]}), [])
         self.assertTrue(validate("ERAU SVFR!", {"name": "x", "airports": ["DAB"]}))     # bad link name
         self.assertTrue(validate("about", {"name": "x", "airports": ["DAB"]}))          # reserved
+        self.assertTrue(validate("list", {"name": "x", "airports": ["DAB"]}))
         self.assertTrue(validate("erausvfr", {"name": "", "airports": ["DAB"]}))        # no name
         self.assertTrue(validate("erausvfr", {"name": "x", "airports": ["not an id"]}))
 
@@ -356,8 +359,12 @@ class TestWatchlists(unittest.TestCase):
         meta = {"from_cycle": "2026-09-03", "to_cycle": "2026-10-01", "upcoming": True, "changed_airports": 1}
         web.build(site, meta, [{"id": "VRB", "name": "Vero Beach Rgnl"}], latest, None,
                   now=dt.datetime(2026, 9, 24, tzinfo=dt.timezone.utc), watchlists=lists)
-        html_ = open(os.path.join(site, "erausvfr", "index.html")).read()
-        self.assertIn('url=../../erausvfr/', open(os.path.join(site, "watch", "erausvfr", "index.html")).read())
+        html_ = open(os.path.join(site, "list", "erausvfr", "index.html")).read()
+        self.assertIn('url=../../list/erausvfr/', open(os.path.join(site, "watch", "erausvfr", "index.html")).read())
+        self.assertIn('url=../list/erausvfr/', open(os.path.join(site, "erausvfr", "index.html")).read())
+        self.assertIn('content="https://amend.watch/list/erausvfr/card.png"', html_)
+        self.assertIn('href="../../assets/style.css"', html_)
+        self.assertIn('href="../?w=', html_)                             # add to my list
         self.assertTrue(os.path.exists(os.path.join(site, "about", "index.html")))
         self.assertIn('content="ERAU SVFR: 1 of 2 airports change on 01 OCT · ACT 1"', html_)
         self.assertIn("0800-2200 → 0600-2200", html_)

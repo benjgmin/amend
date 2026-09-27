@@ -1,5 +1,5 @@
 """
-Named watchlists with their own link: amend.watch/<slug>
+Named watchlists with their own link: amend.watch/list/<slug>
 
 Each list is a JSON file in watchlists/ in this repo:
 
@@ -31,7 +31,7 @@ def validate(slug, data):
     errs = []
     if not SLUG.match(slug):
         errs.append(f"'{slug}': link names are 3-40 lowercase letters, digits or dashes")
-    if slug in ("latest", "history", "assets", "watch", "about"):
+    if slug in ("latest", "history", "assets", "watch", "list", "about"):
         errs.append(f"'{slug}': that name is used by the site itself, pick another")
     if not str(data.get("name", "")).strip():
         errs.append(f"'{slug}': needs a name")

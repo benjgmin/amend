@@ -13,7 +13,7 @@ import os
 import re
 
 SITE_URL = "https://amend.watch/"
-RESERVED = {"latest", "history", "assets", "watch", "about", "index.html", "airports.json"}  # never an airport page
+RESERVED = {"latest", "history", "assets", "watch", "list", "about", "index.html", "airports.json"}  # never an airport page
 PRIORITY = [("action", "ACT", "Action"), ("ifr", "IFR", "IFR procedures"), ("fyi", "FYI", "FYI")]
 
 CSS = """
@@ -142,7 +142,7 @@ def card(path, big, name, loc, chip_list, line, footer):
 
 
 COMMON_JS = 'const KEY="amend.watch";\nconst esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",\'"\':"&quot;"}[c]));\nconst loadW=()=>{try{return JSON.parse(localStorage.getItem(KEY)||"[]")}catch(e){return[]}};\nconst saveW=l=>{try{localStorage.setItem(KEY,JSON.stringify([...new Set(l)]))}catch(e){}};\nconst parseW=q=>[...new Set((q||"").toUpperCase().split(/[\\s,]+/).map(s=>s.replace(/^K(?=[A-Z]{3}$)/,"")).filter(s=>/^[A-Z0-9]{2,4}$/.test(s)))].slice(0,200);\nfunction chipsHtml(k){if(!k||!(k[0]||k[1]||k[2]))return \'<span class="chips"><span class="ann ok">NO CHG</span></span>\';\n  const t=[[k[0],"act","ACT"],[k[1],"ifr","IFR"],[k[2],"fyi","FYI"]].filter(x=>x[0]).map(x=>\'<span class="ann \'+x[1]+\'">\'+x[2]+\' \'+x[0]+\'</span>\');\n  return \'<span class="chips">\'+t.join("")+\'</span>\'}\n'
-LANDING_JS = 'if(new URLSearchParams(location.search).get("w")){location.replace("watch/"+location.search)}\nconst A=__ROWS__;const byId=new Map(A.map(a=>[a[0],a]));\nconst NKEY="amend.watch.name";\nconst q=document.getElementById("q"),r=document.getElementById("res");\nconst params=new URLSearchParams(location.search);\nconst loadName=()=>{try{return localStorage.getItem(NKEY)||""}catch(e){return""}};\nconst saveName=n=>{try{n?localStorage.setItem(NKEY,n):localStorage.removeItem(NKEY)}catch(e){}};\nfunction sub(a){return esc([a[1],[a[3],a[4]].filter(Boolean).join(", ")].filter(Boolean).join(" · ")).toUpperCase()}\nfunction airportRow(id,btn){const a=byId.get(id)||[id,"","","","",0,null];\n  const inner=\'<span class="rid">\'+esc(a[0])+\'</span><span class="rname">\'+esc(a[2]||"Unknown airport")+\'<br><span class="rsub">\'+sub(a)+\'</span></span>\'+chipsHtml(a[6]);\n  return \'<div class="wrow">\'+(a[5]?\'<a href="\'+esc(a[0])+\'/">\'+inner+\'</a>\':\'<a>\'+inner+\'</a>\')+btn+\'</div>\'}\nconst act=id=>((byId.get(id)||[])[6]||[0])[0];\nconst sameSet=(x,y)=>x.length===y.length&&x.every(v=>y.includes(v));\nfunction shareUrl(){const n=loadName();return new URL("watch/?w="+loadW().join(",")+(n?"&n="+encodeURIComponent(n):""),location.href).href}\nfunction clearShared(){history.replaceState(null,"",location.pathname);render()}\nfunction renderShared(){const s=document.getElementById("shared"),ids=parseW(params.get("w")),name=(params.get("n")||"").slice(0,60);\n  if(!ids.length||!location.search.includes("w=")){s.innerHTML="";return false}\n  if(sameSet(ids,loadW())){s.innerHTML="";return true}   // it\'s your own list: show it once, below\n  s.innerHTML=\'<div class="sec"><span class="hdr" style="color:var(--cyan)">Shared\'+(name?\': \'+esc(name):\' watchlist\')+\' · \'+ids.length+\'</span></div>\'+\n    [...ids].sort((x,y)=>act(y)-act(x)).map(id=>airportRow(id,"")).join("")+\n    \'<div class="btns"><a class="btn" href="watch/?w=\'+ids.join(",")+(name?"&n="+encodeURIComponent(name):"")+\'">VIEW ALL CHANGES</a>\'+\n    \'<button class="btn" id="saveShared" data-ids="\'+ids.join(",")+\'" data-name="\'+esc(name)+\'">ADD TO MY WATCHLIST</button>\'+\n    \'<button class="btn ghost" id="closeShared">CLOSE</button></div>\';return false}\nfunction renderWatch(isMine){const l=loadW(),w=document.getElementById("watch"),n=loadName();\n  if(!l.length){w.innerHTML=\'<div class="sec"><span class="hdr">Your watchlist</span></div><div class="note">Add airports with <b>+</b> in the search below. The list stays in this browser, and you can share it as a link.</div>\';return}\n  w.innerHTML=\'<div class="sec"><span class="hdr">\'+(n?esc(n):\'Your watchlist\')+\' · \'+l.length+(isMine?\' · this link\':\'\')+\'</span></div>\'+\n    [...l].sort((x,y)=>act(y)-act(x)).map(id=>airportRow(id,\'<button class="x" data-rm="\'+esc(id)+\'" title="Remove">×</button>\')).join("")+\n    \'<div class="btns"><a class="btn" href="watch/?w=\'+l.join(",")+(n?"&n="+encodeURIComponent(n):"")+\'">VIEW ALL CHANGES</a>\'+\n    \'<button class="btn" id="share">COPY SHARE LINK</button><button class="btn ghost" id="rename">\'+(n?\'RENAME\':\'NAME THIS LIST\')+\'</button></div>\'}\nfunction renderSearch(){const s=q.value.trim().toUpperCase();if(!s){r.innerHTML="";return}\n  const hit=[];for(const a of A){const[id,ic,n,c]=a;let k=-1;\n    if(id===s||ic===s)k=0;else if(id.startsWith(s)||ic.startsWith(s))k=1;\n    else if(s.length>2&&n.toUpperCase().startsWith(s))k=2;\n    else if(s.length>2&&(n.toUpperCase().includes(s)||c.toUpperCase().includes(s)))k=3;\n    if(k>=0)hit.push([k*10+(ic?0:2),a])}\n  hit.sort((x,y)=>x[0]-y[0]||x[1][0].length-y[1][0].length||(x[1][0]<y[1][0]?-1:1));\n  const w=new Set(loadW());\n  r.innerHTML=hit.slice(0,30).map(([_,a])=>airportRow(a[0],w.has(a[0])?\'<button class="x on" data-rm="\'+esc(a[0])+\'" title="Remove from watchlist">✓</button>\':\'<button class="x" data-add="\'+esc(a[0])+\'" title="Add to watchlist">+</button>\')).join("")||\'<div class="note">No airport found.</div>\'}\nfunction render(){renderWatch(false);renderSearch()}\ndocument.addEventListener("click",ev=>{const b=ev.target.closest("button");if(!b)return;\n  if(b.dataset.add){saveW([...loadW(),b.dataset.add])}\n  else if(b.dataset.rm){saveW(loadW().filter(x=>x!==b.dataset.rm))}\n  else if(b.id==="saveShared"){saveW([...loadW(),...b.dataset.ids.split(",")]);if(!loadName()&&b.dataset.name)saveName(b.dataset.name);clearShared();return}\n  else if(b.id==="closeShared"){clearShared();return}\n  else if(b.id==="rename"){const n=prompt("Name this watchlist (shows on shared links):",loadName());if(n===null)return;saveName(n.trim().slice(0,60))}\n  else if(b.id==="share"){const u=shareUrl();\n    (navigator.clipboard?navigator.clipboard.writeText(u):Promise.reject()).then(()=>b.textContent="COPIED",()=>prompt("Copy this link:",u));return}\n  render()});\nq.addEventListener("input",renderSearch);render();\n'
+LANDING_JS = 'if(new URLSearchParams(location.search).get("w")){location.replace("list/"+location.search)}\nconst A=__ROWS__;const byId=new Map(A.map(a=>[a[0],a]));\nconst NKEY="amend.watch.name";\nconst q=document.getElementById("q"),r=document.getElementById("res");\nconst params=new URLSearchParams(location.search);\nconst loadName=()=>{try{return localStorage.getItem(NKEY)||""}catch(e){return""}};\nconst saveName=n=>{try{n?localStorage.setItem(NKEY,n):localStorage.removeItem(NKEY)}catch(e){}};\nfunction sub(a){return esc([a[1],[a[3],a[4]].filter(Boolean).join(", ")].filter(Boolean).join(" · ")).toUpperCase()}\nfunction airportRow(id,btn){const a=byId.get(id)||[id,"","","","",0,null];\n  const inner=\'<span class="rid">\'+esc(a[0])+\'</span><span class="rname">\'+esc(a[2]||"Unknown airport")+\'<br><span class="rsub">\'+sub(a)+\'</span></span>\'+chipsHtml(a[6]);\n  return \'<div class="wrow">\'+(a[5]?\'<a href="\'+esc(a[0])+\'/">\'+inner+\'</a>\':\'<a>\'+inner+\'</a>\')+btn+\'</div>\'}\nconst act=id=>((byId.get(id)||[])[6]||[0])[0];\nconst sameSet=(x,y)=>x.length===y.length&&x.every(v=>y.includes(v));\nfunction shareUrl(){const n=loadName();return new URL("list/?w="+loadW().join(",")+(n?"&n="+encodeURIComponent(n):""),location.href).href}\nfunction clearShared(){history.replaceState(null,"",location.pathname);render()}\nfunction renderShared(){const s=document.getElementById("shared"),ids=parseW(params.get("w")),name=(params.get("n")||"").slice(0,60);\n  if(!ids.length||!location.search.includes("w=")){s.innerHTML="";return false}\n  if(sameSet(ids,loadW())){s.innerHTML="";return true}   // it\'s your own list: show it once, below\n  s.innerHTML=\'<div class="sec"><span class="hdr" style="color:var(--cyan)">Shared\'+(name?\': \'+esc(name):\' watchlist\')+\' · \'+ids.length+\'</span></div>\'+\n    [...ids].sort((x,y)=>act(y)-act(x)).map(id=>airportRow(id,"")).join("")+\n    \'<div class="btns"><a class="btn" href="list/?w=\'+ids.join(",")+(name?"&n="+encodeURIComponent(name):"")+\'">VIEW ALL CHANGES</a>\'+\n    \'<button class="btn" id="saveShared" data-ids="\'+ids.join(",")+\'" data-name="\'+esc(name)+\'">ADD TO MY WATCHLIST</button>\'+\n    \'<button class="btn ghost" id="closeShared">CLOSE</button></div>\';return false}\nfunction renderWatch(isMine){const l=loadW(),w=document.getElementById("watch"),n=loadName();\n  if(!l.length){w.innerHTML=\'<div class="sec"><span class="hdr">Your watchlist</span></div><div class="note">Tap <b>+</b> on airports in the search below to build your list. It’s saved in this browser; copy the link to send it to someone.</div>\';return}\n  w.innerHTML=\'<div class="sec"><span class="hdr">\'+(n?esc(n):\'Your watchlist\')+\' · \'+l.length+(isMine?\' · this link\':\'\')+\'</span></div>\'+\n    [...l].sort((x,y)=>act(y)-act(x)).map(id=>airportRow(id,\'<button class="x" data-rm="\'+esc(id)+\'" title="Remove">×</button>\')).join("")+\n    \'<div class="btns"><a class="btn" href="list/?w=\'+l.join(",")+(n?"&n="+encodeURIComponent(n):"")+\'">VIEW ALL CHANGES</a>\'+\n    \'<button class="btn" id="share">COPY SHARE LINK</button><button class="btn ghost" id="rename">\'+(n?\'RENAME\':\'NAME THIS LIST\')+\'</button></div>\'}\nfunction renderSearch(){const s=q.value.trim().toUpperCase();if(!s){r.innerHTML="";return}\n  const hit=[];for(const a of A){const[id,ic,n,c]=a;let k=-1;\n    if(id===s||ic===s)k=0;else if(id.startsWith(s)||ic.startsWith(s))k=1;\n    else if(s.length>2&&n.toUpperCase().startsWith(s))k=2;\n    else if(s.length>2&&(n.toUpperCase().includes(s)||c.toUpperCase().includes(s)))k=3;\n    if(k>=0)hit.push([k*10+(ic?0:2),a])}\n  hit.sort((x,y)=>x[0]-y[0]||x[1][0].length-y[1][0].length||(x[1][0]<y[1][0]?-1:1));\n  const w=new Set(loadW());\n  r.innerHTML=hit.slice(0,30).map(([_,a])=>airportRow(a[0],w.has(a[0])?\'<button class="x on" data-rm="\'+esc(a[0])+\'" title="Remove from watchlist">✓</button>\':\'<button class="x" data-add="\'+esc(a[0])+\'" title="Add to watchlist">+</button>\')).join("")||\'<div class="note">No airport found.</div>\'}\nfunction render(){renderWatch(false);renderSearch()}\ndocument.addEventListener("click",ev=>{const b=ev.target.closest("button");if(!b)return;\n  if(b.dataset.add){saveW([...loadW(),b.dataset.add])}\n  else if(b.dataset.rm){saveW(loadW().filter(x=>x!==b.dataset.rm))}\n  else if(b.id==="saveShared"){saveW([...loadW(),...b.dataset.ids.split(",")]);if(!loadName()&&b.dataset.name)saveName(b.dataset.name);clearShared();return}\n  else if(b.id==="closeShared"){clearShared();return}\n  else if(b.id==="rename"){const n=prompt("Name this watchlist (shows on shared links):",loadName());if(n===null)return;saveName(n.trim().slice(0,60))}\n  else if(b.id==="share"){const u=shareUrl();\n    (navigator.clipboard?navigator.clipboard.writeText(u):Promise.reject()).then(()=>b.textContent="COPIED",()=>prompt("Copy this link:",u));return}\n  render()});\nq.addEventListener("input",renderSearch);render();\n'
 WATCH_JS = 'const META=__META__,NAMES=__NAMES__,SEL=__PRI__;\nconst P=new URLSearchParams(location.search),shared=parseW(P.get("w"));\nconst ids=shared.length?shared:loadW();\nconst NKEY="amend.watch.name",myName=(()=>{try{return localStorage.getItem(NKEY)||""}catch(e){return""}})();\nconst listName=((shared.length?P.get("n"):myName)||"").slice(0,60);\nconst isMine=!shared.length||(shared.length===loadW().length&&shared.every(x=>loadW().includes(x)));\nconst out=document.getElementById("list");\nfunction changeHtml(c){const s=esc(c.summary.charAt(0).toUpperCase()+c.summary.slice(1)).replace(/ -&gt; /g," → ");\n  let meta=esc(c.category);const ch=c.chart||{};\n  if(ch.amdt)meta+=\' <span class="ann fyi">\'+(["0","ORIG"].includes(ch.amdt.toUpperCase())?"ORIG":"AMDT "+esc(ch.amdt))+\'</span>\';\n  if(ch.pdf)meta+=\' <a href="\'+esc(ch.pdf)+\'" target="_blank" rel="noopener">VIEW PLATE ›</a>\';\n  let more="";if(c.original)more=\'<details class="more"><summary>FAA TEXT ▸</summary><pre>\'+esc(c.original)+\'</pre></details>\';\n  else if(c.details&&c.details.length)more=\'<details class="more"><summary>DETAILS ▸</summary><pre class="d">\'+c.details.map(d=>esc(d).replace(/ -&gt; /g," → ")).join("\\n")+\'</pre></details>\';\n  return \'<div class="change p-\'+esc(c.priority)+\'"><div class="summary">\'+s+\'</div><div class="meta">\'+meta+\'</div>\'+more+\'</div>\'}\nasync function load(id){try{const r=await fetch("../latest/"+id+".json");return r.ok?await r.json():null}catch(e){return null}}\n(async()=>{\n  if(!ids.length){out.innerHTML=\'<div class="note">Your watchlist is empty. Add airports on the <a href="../">search page</a>.</div>\';return}\n  document.getElementById("count").textContent=ids.length+" airport"+(ids.length==1?"":"s");\n  document.getElementById("title").textContent=listName||(isMine?"Your watchlist":"Shared watchlist");\n  if(listName)document.title=listName+" · Amend watchlist";\n  const link=new URL("?w="+ids.join(",")+(listName?"&n="+encodeURIComponent(listName):""),location.href).href;\n  document.getElementById("actions").innerHTML=(isMine?\'\':\'<button class="btn" id="add">ADD TO MY WATCHLIST</button>\')+\n    \'<button class="btn" id="copy">COPY LINK</button><a class="btn ghost" href="../">SEARCH ALL AIRPORTS</a>\';\n  document.addEventListener("click",ev=>{const b=ev.target.closest("button");if(!b)return;\n    if(b.id==="add"){const l=[...new Set([...loadW(),...ids])];try{localStorage.setItem(KEY,JSON.stringify(l));\n      if(!myName&&listName)localStorage.setItem(NKEY,listName)}catch(e){}b.textContent="ADDED";b.disabled=true}\n    if(b.id==="copy"){(navigator.clipboard?navigator.clipboard.writeText(link):Promise.reject()).then(()=>b.textContent="COPIED",()=>prompt("Copy this link:",link))}});\n  const data=await Promise.all(ids.map(load));\n  const items=ids.map((id,i)=>({id,d:data[i]})).sort((a,b)=>((b.d&&b.d.counts.action)||0)-((a.d&&a.d.counts.action)||0));\n  out.innerHTML=items.map(({id,d})=>{const n=NAMES[id]||[];const k=d?[d.counts.action,d.counts.ifr,d.counts.fyi]:null;\n    const body=d?SEL.map(([p,t,col])=>{const g=d.changes.filter(c=>c.priority===p);return g.length?\'<div class="sec"><span class="hdr" style="color:\'+col+\'">\'+t+\' \'+g.length+\'</span></div>\'+g.map(changeHtml).join(""):""}).join("")\n             :\'<div class="note">No changes in this cycle.</div>\';\n    return \'<details class="apt" \'+(d?"open":"")+\'><summary><div class="panel"><div class="row"><h1 style="font-size:24px">\'+esc(id)+\'<span class="icao">\'+esc(n[0]||"")+\'</span></h1>\'+chipsHtml(k)+\'</div><div class="name" style="font-size:15px">\'+esc(n[1]||"")+\'</div></div></summary>\'+body+\'<p class="foot"><a href="../\'+esc(id)+\'/">Full page and history ›</a></p></details>\'}).join("");\n})();\n'
 
 
@@ -333,7 +333,7 @@ approach plates. Build a watchlist of your airports, or share one link for a who
 
 
 def watch_page(meta, directory, now):
-    """site/watch/: every change for a watchlist (from ?w= or this browser), fully expanded."""
+    """site/list/: every change for a watchlist (from ?w= or this browser), fully expanded."""
     upcoming, _ = status(meta, now)
     names = {a["id"]: [a.get("icao", "") if a.get("icao") != a["id"] else "", a.get("name", "")] for a in directory}
     pri = [["action", "Action", "var(--amber)"], ["ifr", "IFR procedures", "var(--cyan)"], ["fyi", "FYI", "var(--dim)"]]
@@ -345,11 +345,11 @@ def watch_page(meta, directory, now):
 <div class="btns" id="actions"></div>
 <div id="list"><div class="note">Loading…</div></div><script>{js}</script>"""
     return page("Amend · watchlist", "Everything that changed at a list of airports this FAA cycle.",
-                f"{SITE_URL}watch/", body, "../assets/style.css", image=f"{SITE_URL}assets/card.png")
+                f"{SITE_URL}list/", body, "../assets/style.css", image=f"{SITE_URL}assets/card.png")
 
 
 def named_watch_page(slug, wl, meta, info, latest, now, has_card):
-    """static page for a named watchlist at /<slug>/ (amend.watch/erausvfr): every change, expanded."""
+    """static page for a named watchlist at /list/<slug>/ (amend.watch/list/erausvfr): every change, expanded."""
     upcoming, _ = status(meta, now)
     apts = sorted(wl["airports"], key=lambda a: (-counts(latest.get(a, []))["action"], -len(latest.get(a, [])), a))
     total = {p: sum(counts(latest.get(a, []))[p] for a in apts) for p, _, _ in PRIORITY}
@@ -360,23 +360,23 @@ def named_watch_page(slug, wl, meta, info, latest, now, has_card):
         icao = f'<span class="icao">{e(i["icao"])}</span>' if i.get("icao") and i.get("icao") != a else ""
         head = (f'<div class="panel"><div class="row"><h1 style="font-size:24px">{e(a)}{icao}</h1>{chips(counts(ch))}</div>'
                 f'<div class="name" style="font-size:15px">{e(i.get("name", "Unknown airport"))}</div></div>')
-        link = f'<p class="foot"><a href="../{e(a)}/">Full page and history ›</a></p>'
+        link = f'<p class="foot"><a href="../../{e(a)}/">Full page and history ›</a></p>'
         body = grouped(ch) if ch else '<div class="note">No changes in this cycle.</div>'
         blocks.append(f'<details class="apt"{" open" if ch else ""}><summary>{head}</summary>{body}{link}</details>')
     parts = [f"{lbl} {total[p]}" for p, lbl, _ in PRIORITY if total[p]]
     when = f"{'on' if upcoming else 'since'} {efb(meta['to_cycle'])[:6]}"
     desc = (f"{changed} of {len(apts)} airports change {when}" + (f" · {' · '.join(parts)}" if parts else "")
             if changed else f"No changes at these {len(apts)} airports {when}.")
-    body = f"""<div class="top"><a class="brand" href="../">AMEND.</a><span class="hdr">Watchlist · EFF {efb(meta['to_cycle'])}</span></div>
+    body = f"""<div class="top"><a class="brand" href="../../">AMEND.</a><span class="hdr">Watchlist · EFF {efb(meta['to_cycle'])}</span></div>
 <div class="panel"><div class="row"><span class="big">{e(wl['name'])}</span>{chips(total)}</div>
 {f'<div class="note">{e(wl["description"])}</div>' if wl["description"] else ''}
 <div class="loc">{len(apts)} airports · {changed} with changes this cycle</div></div>
 <div class="panel"><span class="ann {'ifr' if upcoming else 'ok'}">{'NOT IN EFFECT YET' if upcoming else 'IN EFFECT'}</span>
 <div class="note">{e(landing_note(meta, now, upcoming))}</div></div>
-<div class="btns"><a class="btn" href="../watch/?w={','.join(apts)}&n={e(quote(wl['name']))}">ADD TO MY WATCHLIST</a><a class="btn ghost" href="../">SEARCH ALL AIRPORTS</a></div>
+<div class="btns"><a class="btn" href="../?w={','.join(apts)}&n={e(quote(wl['name']))}">ADD TO MY WATCHLIST</a><a class="btn ghost" href="../../">SEARCH ALL AIRPORTS</a></div>
 {''.join(blocks)}"""
-    image = f"{SITE_URL}{slug}/card.png" if has_card else f"{SITE_URL}assets/card.png"
-    return page(f"{wl['name']} · Amend watchlist", desc, f"{SITE_URL}{slug}", body, "../assets/style.css",
+    image = f"{SITE_URL}list/{slug}/card.png" if has_card else f"{SITE_URL}assets/card.png"
+    return page(f"{wl['name']} · Amend watchlist", desc, f"{SITE_URL}list/{slug}", body, "../../assets/style.css",
                 f"{wl['name']}: {desc}", image)
 
 
@@ -404,7 +404,7 @@ from one cycle to the next. So I built something that does.</p>
 {feat("ACT", "act", "Action items first", "Tower and Class D hours, frequencies, closed or renumbered runways, decommissioned navaids, new PPR rules: the changes that affect how you fly.")}
 {feat("IFR", "ifr", "Instrument procedures", "Amended, new and removed approaches, STARs and departures, down to which waypoints moved, with the new plate one tap away.")}
 {feat("FYI", "fyi", "Everything else, in plain English", "FAA remarks translated from contractions, with the original text always kept alongside.")}
-{feat("WATCH", "ifr", "Watchlists you can share", "Save your airports, name the list, and share one link for a whole training area, like amend.watch/daytona-training.")}
+{feat("WATCH", "ifr", "Watchlists you can share", "Save your airports, name the list, and share one link for a whole training area, like amend.watch/list/daytona-training.")}
 {feat("HISTORY", "fyi", "Two years of history", "Every change at every airport since August 2024, grouped by cycle.")}
 <div class="sec"><span class="hdr">iPhone app</span></div>
 <p>The app keeps your home airport and watchlists on your phone and notifies you when a new cycle affects them.
@@ -417,6 +417,17 @@ deterministic code. It's open source on <a href="https://github.com/benjgmin/ame
     return page("About Amend · what changed at your airport", "See what changed at any US airport each FAA cycle, "
                 "in plain English, before it takes effect.", f"{SITE_URL}about", body, "../assets/style.css",
                 image=f"{SITE_URL}assets/card.png")
+
+
+def redirect(folder, to, title, keep_query=False):
+    """tiny page at folder/index.html that forwards to the relative url `to`."""
+    os.makedirs(folder, exist_ok=True)
+    refresh = f'<meta http-equiv="refresh" content="0;url={to}">'
+    if keep_query:   # a meta refresh drops ?w=..., so only use it when scripts are off
+        refresh = (f'<script>location.replace({json.dumps(to)}+location.search+location.hash)</script>'
+                   f'<noscript>{refresh}</noscript>')
+    with open(os.path.join(folder, "index.html"), "w", encoding="utf-8") as f:
+        f.write(f'<!doctype html><meta charset="utf-8">{refresh}<a href="{to}">{e(title)}</a>')
 
 
 def build(site, meta, directory, latest, history_dir, now=None, watchlists=None, screenshots_dir="docs/screenshots"):
@@ -461,9 +472,11 @@ def build(site, meta, directory, latest, history_dir, now=None, watchlists=None,
             f.write(airport_page(apt, info.get(apt, {}), latest.get(apt), hist, meta, now, has_card))
     with open(os.path.join(site, "index.html"), "w", encoding="utf-8") as f:
         f.write(index_page(meta, directory, latest, ids, now))
-    os.makedirs(os.path.join(site, "watch"), exist_ok=True)
-    with open(os.path.join(site, "watch", "index.html"), "w", encoding="utf-8") as f:
+    os.makedirs(os.path.join(site, "list"), exist_ok=True)
+    with open(os.path.join(site, "list", "index.html"), "w", encoding="utf-8") as f:
         f.write(watch_page(meta, directory, now))
+    # early share links were /watch/?w=...; forward them with the query intact
+    redirect(os.path.join(site, "watch"), "../list/", "Watchlist", keep_query=True)
     shots = []
     about = os.path.join(site, "about")
     os.makedirs(os.path.join(about, "shots"), exist_ok=True)
@@ -476,13 +489,10 @@ def build(site, meta, directory, latest, history_dir, now=None, watchlists=None,
     with open(os.path.join(about, "index.html"), "w", encoding="utf-8") as f:
         f.write(about_page(meta, latest, shots, now))
     for slug, wl in (watchlists or {}).items():
-        # early links were /watch/<slug>/; keep them working with a tiny redirect page
-        old_dir = os.path.join(site, "watch", slug)
-        os.makedirs(old_dir, exist_ok=True)
-        with open(os.path.join(old_dir, "index.html"), "w", encoding="utf-8") as f:
-            f.write(f'<!doctype html><meta charset="utf-8"><meta http-equiv="refresh" content="0;url=../../{slug}/">'
-                    f'<link rel="canonical" href="{SITE_URL}{slug}"><a href="../../{slug}/">{e(wl["name"])}</a>')
-        folder = os.path.join(site, slug)
+        # early links were /watch/<slug>/ and then /<slug>/; keep both working
+        redirect(os.path.join(site, "watch", slug), f"../../list/{slug}/", wl["name"])
+        redirect(os.path.join(site, slug), f"../list/{slug}/", wl["name"])
+        folder = os.path.join(site, "list", slug)
         os.makedirs(folder, exist_ok=True)
         tot = {p: sum(counts(latest.get(a, []))[p] for a in wl["airports"]) for p, _, _ in PRIORITY}
         changed = sum(1 for a in wl["airports"] if latest.get(a))
