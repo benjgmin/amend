@@ -287,7 +287,7 @@ class TestWeb(unittest.TestCase):
         self.assertIn('<meta property="og:title" content="VRB: ACT 1 · IFR 1 on 01 OCT · Vero Beach Rgnl">', page)
         self.assertIn('content="https://benjgmin.github.io/amend/VRB/card.png"', page)
         self.assertTrue(os.path.exists(os.path.join(site, "VRB", "card.png")))
-        self.assertIn('content="ACT 1 · IFR 1 · tower hours: 0800-2200 -&gt; 0600-2200 local"', page)
+        self.assertIn('content="ACT 1 · IFR 1 · Tower hours: 0800-2200 → 0600-2200 local"', page)
         self.assertIn("NOT IN EFFECT YET", page)
         self.assertIn("0800-2200 → 0600-2200", page)
         self.assertIn("VIEW PLATE", page)

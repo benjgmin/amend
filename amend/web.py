@@ -242,13 +242,14 @@ def airport_page(apt, info, latest, hist, meta, now, has_card=False):
         (changes[0]["summary"] if changes else None)
     parts = [f"{lbl} {c[p]}" for p, lbl, _ in PRIORITY if c[p]]
     if changes:
-        desc = f"{' · '.join(parts)} · {top}"
+        desc = f"{' · '.join(parts)} · {top[:1].upper() + top[1:]}".replace(" -> ", " → ")
     else:
         desc = f"No {'upcoming ' if upcoming else ''}changes at {apt} in the {efb(meta['to_cycle'])} cycle."
     title = f"{apt} · {name}" if name else apt
     when = f"{'on' if upcoming else 'since'} {efb(meta['to_cycle'])[:6]}"
     og_title = (f"{apt}: {' · '.join(parts)} {when}" if changes
-                else f"{apt}: no changes {'on' if upcoming else 'in the'} {efb(meta['to_cycle'])[:6]} cycle")
+                else f"{apt}: no changes on {efb(meta['to_cycle'])[:6]}" if upcoming
+                else f"{apt}: no changes in the {efb(meta['to_cycle'])[:6]} cycle")
     if name:
         og_title += f" · {name}"
 
@@ -279,7 +280,8 @@ def airport_page(apt, info, latest, hist, meta, now, has_card=False):
                         + "".join(change_html(x) for x in g) + "</details>")
     body.append(f'<p class="foot">Data: <a href="../latest/{e(apt)}.json">latest</a> · '
                 f'<a href="../history/{e(apt)}.json">history</a> · built {now:%d %b %Y %H%MZ}</p>')
-    image = f"{SITE_URL}{apt}/card.png" if has_card else f"{SITE_URL}assets/card.png"
+    image = (f"{SITE_URL}{apt}/card.png" if has_card
+             else f"{SITE_URL}assets/nochange.png" if not changes else f"{SITE_URL}assets/card.png")
     return page(title, desc, f"{SITE_URL}{apt}/", "".join(body), "../assets/style.css", og_title, image)
 
 
@@ -381,10 +383,15 @@ def build(site, meta, directory, latest, history_dir, now=None, watchlists=None)
     with open(os.path.join(site, "assets", "style.css"), "w") as f:
         f.write(CSS)
     info = {a["id"]: a for a in directory}
-    card(os.path.join(site, "assets", "card.png"), "amend.", "What changed at your airport, every FAA cycle",
+    card(os.path.join(site, "assets", "card.png"), "amend.", "What changed at your airport",
          "", [("ACT", "action"), ("IFR", "ifr"), ("FYI", "fyi"), ("NO CHG", "ok")],
-         "Tower hours, frequencies, runways, navaids and approach plates, in plain English.",
-         f"EFF {efb(meta['to_cycle'])}")
+         "Every FAA cycle, in plain English.", f"EFF {efb(meta['to_cycle'])}")
+    # one shared card for the ~10k airports with nothing changing this cycle (the title names the airport)
+    upcoming_now, _ = status(meta, now)
+    card(os.path.join(site, "assets", "nochange.png"), "No changes", "Nothing new at this airport", "",
+         [("NO CHG", "ok")],
+         f"{'Nothing changes on' if upcoming_now else 'Nothing changed in the'} {efb(meta['to_cycle'])} "
+         f"{'' if upcoming_now else 'cycle'}".strip(), f"EFF {efb(meta['to_cycle'])}")
     hist_ids = set()
     if history_dir and os.path.isdir(history_dir):
         hist_ids = {n[:-5] for n in os.listdir(history_dir)
