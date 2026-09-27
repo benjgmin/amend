@@ -358,21 +358,24 @@ class TestWeb(unittest.TestCase):
         self.assertIn('content="https://amend.watch/VRB/card.png"', page)
         self.assertTrue(os.path.exists(os.path.join(site, "VRB", "card.png")))
         self.assertIn('content="ACT 1 · IFR 1 · Tower hours: 0800-2200 → 0600-2200 local"', page)
-        self.assertIn("NOT IN EFFECT YET", page)
+        self.assertIn("Not in effect yet", page)
         self.assertIn("0800-2200 → 0600-2200", page)
-        self.assertIn("VIEW PLATE", page)
-        self.assertIn("EFF 10 JUL 2025", page)          # history section
-        self.assertIn('href="../guide/">WHAT DO THESE MEAN?', page)   # legend for the labels
+        self.assertIn("View plate", page)
+        self.assertIn("Effective 10 Jul 2025", page)          # history section
+        self.assertIn('href="../guide/">What do these mean?', page)   # legend for the labels
         self.assertIn('<span class="ann act" title="Changes how you fly it', page)
+        self.assertIn('<nav class="sb"', page)                      # desktop sidebar
+        self.assertIn('data-f="ifr"', page)                         # filter tabs
+        self.assertIn('id="c-2025-07-10"', page)                    # history cycles can be linked
 
     def test_guide_and_welcome(self):
         site, _ = self.build()
         guide = open(os.path.join(site, "guide", "index.html")).read()
-        for text in ("Tower hours changed: 0700-2100 → 0700-0100 local", "UPCOMING", "FAA TEXT ▸", 'href="../?welcome"'):
+        for text in ("Tower hours changed: 0700-2100 → 0700-0100 local", "Upcoming", "FAA text", 'href="../?welcome"'):
             self.assertIn(text, guide)
         index = open(os.path.join(site, "index.html")).read()
         self.assertIn('id="welcome" hidden', index)       # shown by script on a first visit only
-        self.assertIn("HOW TO READ IT", index)
+        self.assertIn("How to read it", index)
         self.assertIn('href="guide/"', index)
 
     def test_json_paths_untouched(self):
