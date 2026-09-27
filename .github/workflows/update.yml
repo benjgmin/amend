@@ -4,9 +4,13 @@ on:
   schedule:
     - cron: "17 12 * * *"     # every day 12:17 UTC; off the hour, when GitHub drops scheduled runs
   workflow_dispatch:           # "Run workflow" button in the Actions tab
-  push:
-    branches: [ master ]
-    paths: [ "watchlists/**" ]
+  push:                        # any merge that can change the site goes live right away.
+    branches: [ master ]       # the bot's own data commits use GITHUB_TOKEN, which never
+    paths-ignore:              # triggers a workflow, so this can't loop
+      - "ios/**"
+      - "docs/**"
+      - "**.md"
+      - "LICENSE"
 
 permissions:
   contents: write              # to commit new history
