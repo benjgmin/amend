@@ -1,0 +1,17 @@
+{
+  "name": "amend-promo",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "./build.sh",
+    "render": "node render.mjs video",
+    "sheet": "node render.mjs sheet",
+    "audio": "python3 audio/synth.py build/soundtrack.wav",
+    "prep": "python3 prep/build_data.py"
+  },
+  "dependencies": {
+    "esbuild": "^0.28.2",
+    "playwright-core": "^1.56.1"
+  },
+  "description": "15-second promo for Amend, rendered frame-by-frame from code and the repo's real data"
+}
