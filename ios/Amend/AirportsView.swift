@@ -54,9 +54,8 @@ struct AirportsView: View {
             .toolbarBackground(EFB.bg, for: .navigationBar)
             .toolbar {
                 ToolbarItem(placement: .principal) {
-                    Text("AMEND")
-                        .font(EFB.mono(15, .bold))
-                        .tracking(3)
+                    Text("Amend")
+                        .font(.system(size: 17, weight: .semibold))
                         .foregroundStyle(EFB.text)
                 }
                 ToolbarItem(placement: .topBarLeading) {
@@ -146,7 +145,7 @@ private struct CycleStrip: View {
                 .buttonStyle(.borderless)
                 .accessibilityLabel("How Amend works")
                 Spacer()
-                Annunciator(text: upcoming ? "UPCOMING" : "IN EFFECT", color: upcoming ? EFB.cyan : EFB.green)
+                Annunciator(text: upcoming ? "Upcoming" : "In effect", color: upcoming ? EFB.cyan : EFB.green)
             }
 
             if upcoming {
@@ -173,11 +172,11 @@ private struct CycleStrip: View {
     }
 
     private func label(_ text: String) -> some View {
-        Text(text.uppercased()).font(EFB.mono(10, .semibold)).tracking(1).foregroundStyle(EFB.dim)
+        Text(text).font(.system(size: 12.5)).foregroundStyle(EFB.dim)
     }
 
     private func detail(_ text: String) -> some View {
-        Text(text.uppercased()).font(EFB.mono(11)).foregroundStyle(EFB.dim)
+        Text(text).font(.system(size: 13)).foregroundStyle(EFB.dim)
     }
 }
 

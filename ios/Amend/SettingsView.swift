@@ -35,7 +35,7 @@ struct SettingsView: View {
             .toolbarBackground(EFB.bg, for: .navigationBar)
             .toolbar {
                 ToolbarItem(placement: .principal) {
-                    Text("SETTINGS").font(EFB.mono(15, .bold)).tracking(2).foregroundStyle(EFB.text)
+                    Text("Settings").font(.system(size: 16, weight: .semibold)).foregroundStyle(EFB.text)
                 }
                 ToolbarItem(placement: .confirmationAction) { Button("Done") { dismiss() } }
             }
@@ -187,7 +187,7 @@ struct SettingsView: View {
 
     private func updated(_ iso: String) -> String {
         guard let d = ISO8601DateFormatter().date(from: iso) else { return iso }
-        return d.formatted(.relative(presentation: .named)).uppercased()
+        return d.formatted(.relative(presentation: .named))
     }
 
     private var appVersion: String {

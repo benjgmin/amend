@@ -4,7 +4,7 @@ struct AirportDetailView: View {
     let id: String
     @Environment(AirportStore.self) private var store
 
-    enum Tab: String, CaseIterable { case latest = "THIS CYCLE", history = "HISTORY" }
+    enum Tab: String, CaseIterable { case latest = "This cycle", history = "History" }
     @State private var tab: Tab = .latest
 
     var body: some View {
@@ -50,7 +50,7 @@ struct AirportDetailView: View {
             if let info {
                 Text(info.name).font(.headline).foregroundStyle(EFB.text)
                 if !info.location.isEmpty {
-                    Text(info.location.uppercased()).font(EFB.mono(11)).foregroundStyle(EFB.dim)
+                    Text(info.location).font(.subheadline).foregroundStyle(EFB.dim)
                 }
             }
         }
@@ -62,7 +62,7 @@ struct AirportDetailView: View {
     /// "UPCOMING" while the newest cycle isn't in effect yet, "LATEST" once it is
     private func label(for t: Tab) -> String {
         guard t == .latest, let meta = store.meta else { return t.rawValue }
-        return Cycle.isInEffect(meta.toCycle) ? "LATEST" : "UPCOMING"
+        return Cycle.isInEffect(meta.toCycle) ? "Latest" : "Upcoming"
     }
 
     private var tabBar: some View {
@@ -71,8 +71,7 @@ struct AirportDetailView: View {
                 Button { tab = t } label: {
                     VStack(spacing: 6) {
                         Text(label(for: t))
-                            .font(EFB.mono(12, .bold))
-                            .tracking(1.5)
+                            .font(.system(size: 14, weight: .semibold))
                             .foregroundStyle(tab == t ? EFB.cyan : EFB.dim)
                         Rectangle()
                             .fill(tab == t ? EFB.cyan : Color.clear)
@@ -228,7 +227,7 @@ private struct HistoryView: View {
             }
             Spacer()
             Button { showFYI.toggle() } label: {
-                Annunciator(text: showFYI ? "FYI ON" : "FYI OFF", color: showFYI ? EFB.text : EFB.faint)
+                Annunciator(text: showFYI ? "FYI on" : "FYI off", color: showFYI ? EFB.text : EFB.faint)
             }
             .buttonStyle(.plain)
             Button {
@@ -276,7 +275,7 @@ private struct CycleHeader: View {
                 .font(.system(size: 11, weight: .bold))
                 .foregroundStyle(EFB.cyan)
                 .rotationEffect(.degrees(collapsed ? 0 : 90))
-            EFBHeader(text: "EFF \(Cycle.efb(cycle))", color: EFB.text)
+            EFBHeader(text: "Effective \(Cycle.efb(cycle))", color: EFB.text)
             Rectangle().fill(EFB.line).frame(height: 1)
             if collapsed {
                 CountAnnunciators(counts: counts, showNoChange: false)
@@ -329,7 +328,7 @@ private struct EffectiveNote: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Annunciator(text: upcoming ? "NOT IN EFFECT YET" : "IN EFFECT",
+            Annunciator(text: upcoming ? "Not in effect yet" : "In effect",
                         color: upcoming ? EFB.cyan : EFB.green)
             Text(upcoming
                  ? "These changes take effect \(Cycle.efb(toCycle)) 0901Z (\(when)). Until then, the current value applies: it's the one before the →."

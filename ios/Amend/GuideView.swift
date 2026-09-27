@@ -18,23 +18,23 @@ struct GuideView: View {
                     tier(.fyi, "FYI",
                          "Worth knowing, rarely changes your flight: phone numbers, landing fees, obstacle and marking updates, name changes, reworded remarks.",
                          "Airport phone number changed")
-                    tierRow(color: EFB.green, label: "NO CHG",
+                    tierRow(color: EFB.green, label: "No change",
                             text: "Nothing at this airport changed between the two cycles.")
                 }
 
                 section("Remarks") {
                     Text("Remarks are the free-text notes in the FAA Chart Supplement (the old A/FD) for an airport: things like PPR requirements, runway restrictions, wildlife, noise abatement, when services aren't available.")
                         .guideBody()
-                    Text("The FAA writes them in contractions (RSCD NOT MNT 2300-0600 M-F). Amend translates them to plain English with AI using a fixed FAA glossary; unknown abbreviations are left as-is instead of guessed. Tap FAA TEXT ▸ on any remark to see the original, and trust the original if they ever disagree.")
+                    Text("The FAA writes them in contractions (RSCD NOT MNT 2300-0600 M-F). Amend translates them to plain English with AI using a fixed FAA glossary; unknown abbreviations are left as-is instead of guessed. Tap FAA text on any remark to see the original, and trust the original if they ever disagree.")
                         .guideBody()
                 }
 
                 section("Cycles") {
                     Text("The FAA publishes airport and airspace data every 28 days (NASR) and instrument charts on the same schedule (d-TPP). Each cycle has an effective date.")
                         .guideBody()
-                    tierRow(color: EFB.cyan, label: "UPCOMING",
+                    tierRow(color: EFB.cyan, label: "Upcoming",
                             text: "The next cycle is already published but not in effect yet, so you can see changes before they happen. Great time to check your airports.")
-                    tierRow(color: EFB.green, label: "IN EFFECT",
+                    tierRow(color: EFB.green, label: "In effect",
                             text: "The newest cycle is active. Shows what changed compared to the one before it.")
                     Text("History goes back to Aug 2024 for airport data. Chart history starts in fall 2026 because the FAA doesn't keep old chart indexes online.")
                         .guideBody()
@@ -45,8 +45,8 @@ struct GuideView: View {
                         .guideBody()
                 }
 
-                Text("NOT FOR NAVIGATION. Amend is an awareness and study tool. Always use official FAA publications, NOTAMs and a proper preflight briefing.")
-                    .font(EFB.mono(10))
+                Text("Not for navigation. Amend is an awareness and study tool. Always use official FAA publications, NOTAMs and a proper preflight briefing.")
+                    .font(.footnote)
                     .foregroundStyle(EFB.faint)
                     .padding(.top, 4)
             }
@@ -57,7 +57,7 @@ struct GuideView: View {
         .toolbarBackground(EFB.bg, for: .navigationBar)
         .toolbar {
             ToolbarItem(placement: .principal) {
-                Text("GUIDE").font(EFB.mono(15, .bold)).tracking(2).foregroundStyle(EFB.text)
+                Text("Guide").font(.system(size: 16, weight: .semibold)).foregroundStyle(EFB.text)
             }
             if showsDone {
                 ToolbarItem(placement: .confirmationAction) { Button("Done") { dismiss() } }
@@ -77,8 +77,8 @@ struct GuideView: View {
         VStack(alignment: .leading, spacing: 6) {
             tierRow(color: level.color, label: label, text: text)
             Text("e.g. " + example)
-                .font(EFB.mono(11))
-                .foregroundStyle(level.color.opacity(0.8))
+                .font(EFB.mono(11.5))
+                .foregroundStyle(level.color)
                 .padding(.leading, 102)
         }
     }

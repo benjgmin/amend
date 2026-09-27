@@ -38,8 +38,8 @@ struct PlateView: View {
             .toolbarBackground(.visible, for: .navigationBar)
             .toolbar {
                 ToolbarItem(placement: .principal) {
-                    Text(plate.title.uppercased())
-                        .font(EFB.mono(13, .bold))
+                    Text(plate.title)
+                        .font(.system(size: 15, weight: .semibold))
                         .foregroundStyle(EFB.text)
                         .lineLimit(1)
                 }
