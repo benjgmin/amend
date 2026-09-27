@@ -386,5 +386,99 @@ class TestSchema(Case):
         self.assertEqual(cycle_label("data/2026-10-01_CSV.zip"), "2026-10-01")
 
 
+def make_shapefile_zip(path, features):
+    """class airspace shapefile zip. features: [({field: value}, [ring of (lon, lat)])]"""
+    import struct
+    names = ["NAME", "LOCAL_TYPE", "IDENT", "LOWER_VAL", "LOWER_CODE", "UPPER_VAL", "UPPER_CODE"]
+    recs = b""
+    for i, (_, ring) in enumerate(features):
+        pts = b"".join(struct.pack("<2d", x, y) for x, y in ring)
+        xs, ys = [p[0] for p in ring], [p[1] for p in ring]
+        body = struct.pack("<i4d2ii", 5, min(xs), min(ys), max(xs), max(ys), 1, len(ring), 0) + pts
+        recs += struct.pack(">ii", i + 1, len(body) // 2) + body
+    shp = struct.pack(">i20xi", 9994, (100 + len(recs)) // 2) + struct.pack("<ii64x", 1000, 5) + recs
+    width = 40
+    dbf = struct.pack("<B3xIHH20x", 3, len(features), 32 + 32 * len(names) + 1, 1 + width * len(names))
+    for n in names:
+        dbf += n.encode().ljust(11, b"\0") + b"C" + b"\0" * 4 + bytes([width, 0]) + b"\0" * 14
+    dbf += b"\r"
+    for fields, _ in features:
+        dbf += b" " + b"".join(str(fields.get(n, "")).encode().ljust(width) for n in names)
+    with zipfile.ZipFile(path, "w") as z:
+        z.writestr("Shape_Files/Class_Airspace.shp", shp)
+        z.writestr("Shape_Files/Class_Airspace.dbf", dbf + b"\x1a")
+
+
+def box(lat, lon, r):
+    """square ring around a point, r degrees each way (clockwise, closed, like the FAA's)"""
+    return [(lon - r, lat - r), (lon - r, lat + r), (lon + r, lat + r), (lon + r, lat - r), (lon - r, lat - r)]
+
+
+class TestAirspaceShapes(unittest.TestCase):
+    APT = ["ARPT_ID,SITE_TYPE_CODE,FACILITY_USE_CODE,LAT_DECIMAL,LONG_DECIMAL",
+           "VRB,A,PU,27.655,-80.418", "MCO,A,PU,28.429,-81.309", "ORL,A,PU,28.545,-81.333",
+           "X21,A,PU,28.6,-80.0"]
+
+    def run_shapes(self, old, new, ids=None):
+        d = tempfile.mkdtemp()
+        paths = [os.path.join(d, n) for n in ("2026-09-03_CSV.zip", "2026-10-01_CSV.zip", "o.zip", "n.zip")]
+        for p in paths[:2]:
+            make_zip(p, {"APT_BASE.csv": self.APT})
+        make_shapefile_zip(paths[2], old)
+        make_shapefile_zip(paths[3], new)
+        return run(paths[0], paths[1], ids, log=lambda *_: None, airspace=paths[2:])["airports"]
+
+    def d(self, ceiling, ring=None):
+        return ({"NAME": "VERO BEACH CLASS D", "LOCAL_TYPE": "CLASS_D", "IDENT": "VRB", "LOWER_VAL": "0",
+                 "LOWER_CODE": "SFC", "UPPER_VAL": ceiling, "UPPER_CODE": "MSL"}, ring or box(27.655, -80.418, 0.07))
+
+    def b(self, lower, lat=28.429, lon=-81.309, r=0.05):
+        return ({"NAME": "ORLANDO CLASS B", "LOCAL_TYPE": "CLASS_B", "IDENT": "MCO", "LOWER_VAL": lower,
+                 "LOWER_CODE": "SFC" if lower == "0" else "MSL", "UPPER_VAL": "10000", "UPPER_CODE": "MSL"},
+                box(lat, lon, r))
+
+    def test_class_d_ceiling(self):
+        """a class D ceiling going up changes the VFR altitudes you can fly over the field."""
+        c = self.run_shapes([self.d("2500")], [self.d("3000")], {"VRB"})["VRB"]
+        self.assertEqual([(x["priority"], x["category"], x["summary"]) for x in c],
+                         [("action", "airspace", "class D over the field: SFC-2,500 ft MSL -> SFC-3,000 ft MSL")])
+
+    def test_class_b_shelf_over_satellite_airport(self):
+        """ORL sits under a 3,000 ft MCO class B shelf; the shelf drops to 2,500."""
+        core = self.b("0")
+        old = [core, self.b("3000", 28.545, -81.333, 0.04)]
+        new = [core, self.b("2500", 28.545, -81.333, 0.04)]
+        apts = self.run_shapes(old, new)
+        self.assertEqual([c["summary"] for c in apts["ORL"]],
+                         ["Orlando class B over the field: 3,000-10,000 ft MSL -> 2,500-10,000 ft MSL"])
+        self.assertEqual([c["summary"] for c in apts["MCO"]],
+                         ["class B airspace: new 2,500-10,000 ft MSL; removed 3,000-10,000 ft MSL"])
+        self.assertNotIn("VRB", apts)
+
+    def test_redigitized_boundary_is_noise(self):
+        """same square with an extra vertex mid-edge and a hair of rounding: not a change."""
+        ring = box(27.655, -80.418, 0.07)
+        redrawn = [ring[0], (ring[0][0], 27.655), ring[1], ring[2], (ring[3][0] + 1e-5, ring[3][1]), ring[4]]
+        self.assertEqual(self.run_shapes([self.d("2500")], [self.d("2500", redrawn)], {"VRB"}), {})
+
+    def test_boundary_moved_away_from_field(self):
+        """the class D got bigger but the field was inside both times: say the boundary moved."""
+        c = self.run_shapes([self.d("2500")], [self.d("2500", box(27.655, -80.418, 0.09))], {"VRB"})["VRB"]
+        self.assertEqual([x["summary"] for x in c], ["class D airspace: boundary moved (SFC-2,500 ft MSL)"])
+
+    def test_new_surface_area_over_other_airport(self):
+        e2 = ({"NAME": "MELBOURNE CLASS E2", "LOCAL_TYPE": "CLASS_E2", "IDENT": "MLB", "LOWER_VAL": "0",
+               "LOWER_CODE": "SFC", "UPPER_VAL": "-9998", "UPPER_CODE": "MSL"}, box(28.6, -80.0, 0.05))
+        c = self.run_shapes([self.d("2500")], [self.d("2500"), e2])["X21"]
+        self.assertEqual([x["summary"] for x in c], ["now under Melbourne class E surface: SFC-class A"])
+
+    def test_no_shapefile_is_skipped(self):
+        d = tempfile.mkdtemp()
+        o, n, e = (os.path.join(d, x) for x in ("2026-09-03_CSV.zip", "2026-10-01_CSV.zip", "empty.zip"))
+        for p in (o, n, e):
+            make_zip(p, {"APT_BASE.csv": self.APT})
+        self.assertEqual(run(o, n, {"VRB"}, log=lambda *_: None, airspace=(e, e))["airports"], {})
+
+
 if __name__ == "__main__":
     unittest.main()

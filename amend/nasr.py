@@ -103,6 +103,14 @@ class NearIndex:
                         hits.append((nm, apt))
         return [(apt, nm) for nm, apt in sorted(hits)[:MAX_NEAR]]
 
+    def in_box(self, s, w, n, e):
+        """[(airport, lat, lon), ...] inside a lat/lon box."""
+        return [(apt, lat, lon)
+                for gy in range(int(s // 0.5), int(n // 0.5) + 1)
+                for gx in range(int(w // 0.5), int(e // 0.5) + 1)
+                for apt, lat, lon in self.grid.get((gy, gx), [])
+                if s <= lat <= n and w <= lon <= e]
+
 
 def _nm(lat1, lon1, lat2, lon2):
     """great-circle distance in nautical miles."""

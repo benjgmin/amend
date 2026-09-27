@@ -7,7 +7,7 @@ import shutil
 from . import SCHEMA_VERSION
 from . import watchlists, web
 from .airports import directory
-from .cycles import CYCLE, cycle_on_or_before, get_cycle, get_dtpp, zip_path
+from .cycles import CYCLE, cycle_on_or_before, get_airspace_pair, get_cycle, get_dtpp, zip_path
 from .output import dump, write_diff
 from .pipeline import run
 
@@ -28,13 +28,16 @@ def build(llm=True):
         if not get_cycle(d):
             raise SystemExit(f"can't get NASR data for {d}, giving up")
     dtpp = get_dtpp(new)
+    airspace = get_airspace_pair(old, new)
 
     shutil.rmtree(SITE, ignore_errors=True)
     out = os.path.join(SITE, "latest")
-    result = run(zip_path(old), zip_path(new), None, dtpp, llm and bool(os.environ.get("ANTHROPIC_API_KEY")))
+    result = run(zip_path(old), zip_path(new), None, dtpp, llm and bool(os.environ.get("ANTHROPIC_API_KEY")),
+                 airspace=airspace)
     n = write_diff(result, out)
     dump({"schema_version": SCHEMA_VERSION, "from_cycle": old.isoformat(), "to_cycle": new.isoformat(),
-          "upcoming": upcoming, "includes_charts": bool(dtpp), "changed_airports": n,
+          "upcoming": upcoming, "includes_charts": bool(dtpp),
+          "includes_airspace": bool(airspace), "changed_airports": n,
           "generated": dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds")},
          os.path.join(out, "meta.json"))
     apts = directory(zip_path(new))

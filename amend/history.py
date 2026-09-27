@@ -10,8 +10,8 @@ import json
 import os
 
 from . import SCHEMA_VERSION
-from .cycles import (CYCLE, FIRST_ARCHIVED, cycle_on_or_before, dtpp_path, get_cycle,
-                     get_dtpp, zip_path)
+from .cycles import (CYCLE, FIRST_ARCHIVED, airspace_path, cycle_on_or_before, dtpp_path,
+                     get_airspace_pair, get_cycle, get_dtpp, zip_path)
 from .output import dump
 from .pipeline import run
 
@@ -87,13 +87,14 @@ def update(llm=False, keep=False):
             prev = new
             continue
         print(f"\n=== {prev} -> {new} ===")
-        result = run(zip_path(prev), zip_path(new), None, get_dtpp(new), llm, log=lambda *_: None)
+        result = run(zip_path(prev), zip_path(new), None, get_dtpp(new), llm, log=lambda *_: None,
+                     airspace=get_airspace_pair(prev, new))
         print(f"  {append(result)} changes at {len(result['airports'])} airports")
         state["cycles"] = sorted(set(state["cycles"]) | {new.isoformat()})
         with open(STATE, "w") as f:
             json.dump(state, f, indent=1)
         if not keep:  # only the newest zip is needed for the next step
-            for p in (zip_path(prev), dtpp_path(new)):
+            for p in (zip_path(prev), dtpp_path(new), airspace_path(prev)):
                 if os.path.exists(p):
                     os.remove(p)
         prev = new

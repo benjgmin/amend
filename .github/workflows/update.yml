@@ -62,7 +62,9 @@ jobs:
             && git pull --rebase origin "${{ github.ref_name }}" && git push)
 
       - name: trim old FAA files from cache
-        run: ls -t data/*_CSV.zip 2>/dev/null | tail -n +4 | xargs -r rm -f
+        run: |
+          ls -t data/*_CSV.zip 2>/dev/null | tail -n +4 | xargs -r rm -f
+          ls -t data/*_airspace.zip 2>/dev/null | tail -n +4 | xargs -r rm -f
 
       - uses: actions/upload-pages-artifact@v3
         with:

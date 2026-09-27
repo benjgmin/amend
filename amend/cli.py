@@ -1,8 +1,8 @@
 """
 command line:
 
-  python -m amend diff OLD.zip NEW.zip VRB DAB [--dtpp FILE] [--llm] [--json] [--out DIR] [--raw]
-  python -m amend diff OLD.zip NEW.zip --all-airports [--dtpp FILE] [--llm] [--out DIR] [--print]
+  python -m amend diff OLD.zip NEW.zip VRB DAB [--dtpp FILE] [--airspace OLD NEW] [--llm] [--json] [--out DIR] [--raw]
+  python -m amend diff OLD.zip NEW.zip --all-airports [--dtpp FILE] [--airspace OLD NEW] [--llm] [--out DIR] [--print]
   python -m amend latest [--no-llm]      build site/ (what the GitHub Action runs)
   python -m amend history [--llm] [--keep]   add new cycles to history/
   python -m amend set-key                store your Anthropic API key in .env
@@ -46,7 +46,7 @@ def cmd_diff(a):
     ids = None if a.all_airports else {_strip_k(x) for x in a.ids}
     if not a.all_airports and not ids:
         sys.exit("give some airport ids, or --all-airports")
-    result = run(a.old, a.new, ids, a.dtpp, a.llm)
+    result = run(a.old, a.new, ids, a.dtpp, a.llm, airspace=a.airspace)
     if a.json or a.all_airports:
         n = write_diff(result, a.out)
         print(f"wrote {n} airport file(s) to {a.out}/")
@@ -75,6 +75,8 @@ def main(argv=None):
     d.add_argument("ids", nargs="*", help="FAA airport ids (KDAB works too)")
     d.add_argument("--all-airports", action="store_true")
     d.add_argument("--dtpp", help="d-TPP metafile XML for the NEW cycle (chart changes)")
+    d.add_argument("--airspace", nargs=2, metavar=("OLD", "NEW"),
+                   help="class airspace shapefile zips for both cycles (floors, ceilings, boundaries)")
     d.add_argument("--llm", action="store_true", help="translate remarks with Claude")
     d.add_argument("--json", action="store_true", help="write JSON (always on with --all-airports)")
     d.add_argument("--out", default="out")
