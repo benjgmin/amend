@@ -21,7 +21,7 @@ struct AirportDetailView: View {
         .toolbarBackground(EFB.bg, for: .navigationBar)
         .toolbar {
             ToolbarItem(placement: .principal) {
-                Text(id).font(EFB.mono(15, .bold)).tracking(2).foregroundStyle(EFB.text)
+                Text(id).font(EFB.mono(16, .semibold)).foregroundStyle(EFB.text)
             }
             ToolbarItem(placement: .topBarTrailing) {
                 Button {
@@ -40,7 +40,7 @@ struct AirportDetailView: View {
             HStack(alignment: .firstTextBaseline, spacing: 10) {
                 Text(id).font(EFB.mono(30, .bold)).foregroundStyle(EFB.text)
                 if let icao = info?.icao, icao != id {
-                    Text(icao).font(EFB.mono(14)).foregroundStyle(EFB.faint)
+                    Text(icao).font(.system(size: 15)).foregroundStyle(EFB.faint)
                 }
                 Spacer()
                 if store.index != nil {
@@ -59,7 +59,7 @@ struct AirportDetailView: View {
         .padding(.top, 8)
     }
 
-    /// "UPCOMING" while the newest cycle isn't in effect yet, "LATEST" once it is
+    /// "Upcoming" while the newest cycle isn't in effect yet, "Latest" once it is
     private func label(for t: Tab) -> String {
         guard t == .latest, let meta = store.meta else { return t.rawValue }
         return Cycle.isInEffect(meta.toCycle) ? "Latest" : "Upcoming"
@@ -124,11 +124,11 @@ private struct LatestView: View {
 
     /// talk about the new cycle, not the date range (things did change on the older date)
     private var noChangesText: String {
-        guard let meta = store.meta else { return "NO CHANGES AT \(id) THIS CYCLE" }
+        guard let meta = store.meta else { return "No changes at \(id) this cycle" }
         let eff = Cycle.efb(meta.toCycle)
         return Cycle.isInEffect(meta.toCycle)
-            ? "NOTHING CHANGED AT \(id)\nIN THE \(eff) CYCLE"
-            : "NO UPCOMING CHANGES AT \(id)\nON \(eff) · CURRENT DATA STAYS THE SAME"
+            ? "Nothing changed at \(id)\nin the \(eff) cycle"
+            : "No upcoming changes at \(id)\non \(eff) · current data stays the same"
     }
 
     private func load() async {
@@ -217,11 +217,11 @@ private struct HistoryView: View {
             ForEach(HistoryRange.allCases) { s in
                 Button { since = s } label: {
                     Text(s.rawValue)
-                        .font(EFB.mono(12, .bold))
+                        .font(.system(size: 13, weight: .semibold))
                         .frame(minWidth: 36)
                         .padding(.vertical, 6)
                         .foregroundStyle(since == s ? EFB.bg : EFB.dim)
-                        .background(since == s ? EFB.cyan : EFB.panel, in: RoundedRectangle(cornerRadius: 5))
+                        .background(since == s ? EFB.text : EFB.panelHi, in: RoundedRectangle(cornerRadius: 8))
                 }
                 .buttonStyle(.plain)
             }
@@ -349,7 +349,7 @@ private struct NoChangesView: View {
         VStack(spacing: 10) {
             Image(systemName: "checkmark.circle").font(.system(size: 34)).foregroundStyle(color)
             Text(text)
-                .font(EFB.mono(12, .semibold))
+                .font(.system(size: 14, weight: .medium))
                 .multilineTextAlignment(.center)
                 .foregroundStyle(color)
         }

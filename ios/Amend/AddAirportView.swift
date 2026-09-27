@@ -13,8 +13,8 @@ struct AddAirportView: View {
             VStack(spacing: 0) {
                 HStack(spacing: 10) {
                     Image(systemName: "magnifyingglass").foregroundStyle(EFB.dim)
-                    TextField("", text: $query, prompt: Text("ID, ICAO, NAME OR CITY").foregroundStyle(EFB.faint))
-                        .font(EFB.mono(16, .semibold))
+                    TextField("", text: $query, prompt: Text("ID, ICAO, name or city").foregroundStyle(EFB.faint))
+                        .font(.system(size: 16))
                         .foregroundStyle(EFB.text)
                         .textInputAutocapitalization(.characters)
                         .autocorrectionDisabled()
@@ -22,7 +22,7 @@ struct AddAirportView: View {
                         .onSubmit(addTopResult)
                 }
                 .padding(12)
-                .background(EFB.panelHi, in: RoundedRectangle(cornerRadius: 8))
+                .background(EFB.panelHi, in: RoundedRectangle(cornerRadius: 12))
                 .overlay(RoundedRectangle(cornerRadius: 8).stroke(EFB.cyan.opacity(0.4), lineWidth: 1))
                 .padding()
 
@@ -34,8 +34,8 @@ struct AddAirportView: View {
                     // not in the directory (or directory not loaded yet): allow adding the raw id
                     if results.isEmpty, let id = AirportStore.normalize(query) {
                         Button { add(id) } label: {
-                            Text("ADD \(id)")
-                                .font(EFB.mono(14, .bold))
+                            Text("Add \(id)")
+                                .font(.system(size: 15, weight: .semibold))
                                 .foregroundStyle(EFB.cyan)
                                 .efbPanel()
                         }
@@ -89,10 +89,10 @@ private struct ResultRow: View {
                     .font(.subheadline.weight(.medium))
                     .foregroundStyle(EFB.text.opacity(0.9))
                     .lineLimit(1)
-                Text([apt.icao, apt.location.isEmpty ? nil : apt.location.uppercased(),
-                      apt.type == "airport" ? nil : apt.type?.uppercased()]
+                Text([apt.icao, apt.location.isEmpty ? nil : apt.location,
+                      apt.type == "airport" ? nil : apt.type?.capitalized]
                         .compactMap { $0 }.joined(separator: " · "))
-                    .font(EFB.mono(10))
+                    .font(.system(size: 12.5))
                     .foregroundStyle(EFB.dim)
                     .lineLimit(1)
             }
