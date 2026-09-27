@@ -298,6 +298,8 @@ class TestWeb(unittest.TestCase):
         self.assertEqual(open(os.path.join(site, "latest", "VRB.json")).read(), "{}")
         self.assertTrue(os.path.exists(os.path.join(site, "index.html")))
         self.assertTrue(os.path.exists(os.path.join(site, "assets", "style.css")))
+        self.assertTrue(os.path.exists(os.path.join(site, "watch", "index.html")))
+        self.assertIn("amend.watch", open(os.path.join(site, "index.html")).read())   # watchlist storage key
 
 
 class TestSchema(Case):

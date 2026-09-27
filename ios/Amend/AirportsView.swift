@@ -67,6 +67,15 @@ struct AirportsView: View {
                     Button { showingAdd = true } label: { Image(systemName: "plus") }
                         .accessibilityLabel("Add airport")
                 }
+                ToolbarItem(placement: .topBarTrailing) {
+                    if let url = watchlistURL {
+                        ShareLink(item: url, subject: Text("My airports on Amend"),
+                                  message: Text("What's changing at my airports this FAA cycle")) {
+                            Image(systemName: "square.and.arrow.up")
+                        }
+                        .accessibilityLabel("Share watchlist")
+                    }
+                }
             }
             .navigationDestination(for: String.self) { id in
                 AirportDetailView(id: id)
@@ -85,6 +94,12 @@ struct AirportsView: View {
                 Text(store.errorMessage ?? "")
             }
         }
+    }
+
+    /// the website shows the same list at /amend/?w=DAB,VRB,...
+    private var watchlistURL: URL? {
+        guard !store.saved.isEmpty else { return nil }
+        return URL(string: "\(API.base.absoluteString)?w=\(store.saved.joined(separator: ","))")
     }
 
     /// same swipe action everywhere: it takes the airport off your list, it doesn't delete any data
