@@ -13,7 +13,7 @@ Every 28 days the FAA publishes a new cycle of airport, airspace, frequency and 
 
 ## Why
 
-It started with a quiz question marked wrong. The course material said Vero Beach's tower closed at 2100, which would make the airspace Class E at a 2300 arrival. The current Chart Supplement says 0100. Amend's history shows exactly what happened:
+Vero Beach's tower hours changed twice in six months, and nothing tells you when that happens. Amend's history shows exactly what changed:
 
 ```
 VRB  Vero Beach Rgnl
@@ -22,8 +22,6 @@ VRB  Vero Beach Rgnl
  EFF 23 JAN 2025   !! tower hours: 0700-2100 -> 0700-2300 local
                    !! airspace: class d svc 0700-2100 -> class d svc 0700-2300
 ```
-
-The course was two changes behind.
 
 ## On the web
 

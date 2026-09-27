@@ -2,7 +2,6 @@
 //  AmendApp.swift
 //  Cyclewatch
 //
-//  Created by Benjamin Eccles on 9/23/26.
 //
 
 

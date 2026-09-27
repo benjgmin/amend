@@ -351,35 +351,35 @@ class TestWeb(unittest.TestCase):
 class TestWatchlists(unittest.TestCase):
     def test_validation(self):
         from amend.watchlists import validate
-        self.assertEqual(validate("erausvfr", {"name": "ERAU SVFR", "airports": ["DAB", "KOMN"]}), [])
-        self.assertTrue(validate("ERAU SVFR!", {"name": "x", "airports": ["DAB"]}))     # bad link name
+        self.assertEqual(validate("clubsvfr", {"name": "Club SVFR", "airports": ["DAB", "KOMN"]}), [])
+        self.assertTrue(validate("Club SVFR!", {"name": "x", "airports": ["DAB"]}))     # bad link name
         self.assertTrue(validate("about", {"name": "x", "airports": ["DAB"]}))          # reserved
         self.assertTrue(validate("guide", {"name": "x", "airports": ["DAB"]}))
         self.assertTrue(validate("list", {"name": "x", "airports": ["DAB"]}))
-        self.assertTrue(validate("erausvfr", {"name": "", "airports": ["DAB"]}))        # no name
-        self.assertTrue(validate("erausvfr", {"name": "x", "airports": ["not an id"]}))
+        self.assertTrue(validate("clubsvfr", {"name": "", "airports": ["DAB"]}))        # no name
+        self.assertTrue(validate("clubsvfr", {"name": "x", "airports": ["not an id"]}))
 
     def test_named_page(self):
         import datetime as dt
         from amend import web, watchlists
         d = tempfile.mkdtemp()
-        watchlists.save("erausvfr", "ERAU SVFR", ["DAB", "KVRB"], "Training area", directory=d)
+        watchlists.save("clubsvfr", "Club SVFR", ["DAB", "KVRB"], "Training area", directory=d)
         lists = watchlists.load_all(d)
-        self.assertEqual(lists["erausvfr"]["airports"], ["DAB", "VRB"])
+        self.assertEqual(lists["clubsvfr"]["airports"], ["DAB", "VRB"])
         site = tempfile.mkdtemp()
         latest = {"VRB": [{"id": "a", "priority": "action", "category": "tower", "kind": "changed",
                            "summary": "tower hours: 0800-2200 -> 0600-2200 local", "source": "ATC_BASE"}]}
         meta = {"from_cycle": "2026-09-03", "to_cycle": "2026-10-01", "upcoming": True, "changed_airports": 1}
         web.build(site, meta, [{"id": "VRB", "name": "Vero Beach Rgnl"}], latest, None,
                   now=dt.datetime(2026, 9, 24, tzinfo=dt.timezone.utc), watchlists=lists)
-        html_ = open(os.path.join(site, "list", "erausvfr", "index.html")).read()
-        self.assertIn('url=../../list/erausvfr/', open(os.path.join(site, "watch", "erausvfr", "index.html")).read())
-        self.assertIn('url=../list/erausvfr/', open(os.path.join(site, "erausvfr", "index.html")).read())
-        self.assertIn('content="https://amend.watch/list/erausvfr/card.png"', html_)
+        html_ = open(os.path.join(site, "list", "clubsvfr", "index.html")).read()
+        self.assertIn('url=../../list/clubsvfr/', open(os.path.join(site, "watch", "clubsvfr", "index.html")).read())
+        self.assertIn('url=../list/clubsvfr/', open(os.path.join(site, "clubsvfr", "index.html")).read())
+        self.assertIn('content="https://amend.watch/list/clubsvfr/card.png"', html_)
         self.assertIn('href="../../assets/style.css"', html_)
         self.assertIn('href="../?w=', html_)                             # add to my list
         self.assertTrue(os.path.exists(os.path.join(site, "about", "index.html")))
-        self.assertIn('content="ERAU SVFR: 1 of 2 airports change on 01 OCT · ACT 1"', html_)
+        self.assertIn('content="Club SVFR: 1 of 2 airports change on 01 OCT · ACT 1"', html_)
         self.assertIn("0800-2200 → 0600-2200", html_)
         self.assertIn("No changes in this cycle.", html_)        # DAB
 

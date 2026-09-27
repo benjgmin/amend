@@ -431,7 +431,7 @@ def watch_page(meta, directory, now):
 
 
 def named_watch_page(slug, wl, meta, info, latest, now, has_card):
-    """static page for a named watchlist at /list/<slug>/ (amend.watch/list/erausvfr): every change, expanded."""
+    """static page for a named watchlist at /list/<slug>/ (amend.watch/list/clubsvfr): every change, expanded."""
     upcoming, _ = status(meta, now)
     apts = sorted(wl["airports"], key=lambda a: (-counts(latest.get(a, []))["action"], -len(latest.get(a, [])), a))
     total = {p: sum(counts(latest.get(a, []))[p] for a in apts) for p, _, _ in PRIORITY}
@@ -462,9 +462,6 @@ def named_watch_page(slug, wl, meta, info, latest, now, has_card):
                 f"{wl['name']}: {desc}", image)
 
 
-ABOUT_AUTHOR = "Built by Ben Eccles, a student pilot at Embry-Riddle."
-
-
 def about_page(meta, latest, screenshots, now):
     upcoming, _ = status(meta, now)
     shots = "".join(f'<img src="shots/{e(s)}" alt="Amend on iPhone" loading="lazy">' for s in screenshots)
@@ -478,10 +475,6 @@ plates. Amend compares every cycle for every US airport and tells you what matte
 before it takes effect.</p>
 <div class="btns"><a class="btn" href="../">SEARCH AN AIRPORT</a><a class="btn ghost" href="../VRB/">SEE AN EXAMPLE</a></div></div>
 {f'<div class="shots">{shots}</div>' if shots else ''}
-<div class="sec"><span class="hdr">Why</span></div>
-<p>It started with a quiz question marked wrong. The course material said Vero Beach's tower closed at 2100. It had
-changed twice: to 2300 in January 2025, then to 0100 in July. Nobody caught it, because nothing tells you what changed
-from one cycle to the next. So I built something that does.</p>
 <div class="sec"><span class="hdr">What you get</span></div>
 {feat("ACT", "act", "Action items first", "Tower and Class D hours, frequencies, closed or renumbered runways, decommissioned navaids, new PPR rules: the changes that affect how you fly.")}
 {feat("IFR", "ifr", "Instrument procedures", "Amended, new and removed approaches, STARs and departures, down to which waypoints moved, with the new plate one tap away.")}
@@ -494,8 +487,7 @@ A TestFlight beta is coming soon.</p>
 <div class="sec"><span class="hdr">How it works</span></div>
 <p class="note">A daily job downloads the FAA's 28-day NASR data and d-TPP chart index, diffs every US airport, filters
 the noise with tested rules, and publishes the results here. Remarks are translated with AI; everything else is plain,
-deterministic code. It's open source on <a href="https://github.com/benjgmin/amend">GitHub</a>.</p>
-<p class="note">{e(ABOUT_AUTHOR)}</p>"""
+deterministic code. It's open source on <a href="https://github.com/benjgmin/amend">GitHub</a>.</p>"""
     return page("About Amend · what changed at your airport", "See what changed at any US airport each FAA cycle, "
                 "in plain English, before it takes effect.", f"{SITE_URL}about", body, "../assets/style.css",
                 image=f"{SITE_URL}assets/card.png")
