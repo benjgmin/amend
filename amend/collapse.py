@@ -2,6 +2,7 @@
 import re
 from collections import defaultdict
 
+from .diff import _canon
 from .english import procedure_name, summarize
 from .procedures import describe, split_code
 from .rules import REMARK_FILES, base
@@ -134,7 +135,8 @@ def is_frq_remark(r):
 
 
 def _norm(t):
-    return " ".join((t or "").upper().split())
+    """remark text for 'is this the same remark': RY/RWY spelling, spacing, final period."""
+    return _canon(t or "").rstrip(" .")
 
 
 def collapse(records, route_tables=None):
@@ -168,8 +170,23 @@ def collapse(records, route_tables=None):
         said = {r["row"].get("REMARK") for r in rs if src(r) in REMARK_FILES and r.get("row")}
         said |= {f["new"] for r in rs if src(r) in REMARK_FILES
                  for f in r.get("fields", []) if f["field"] == "REMARK"}
+        said = {_norm(t) for t in said if t}
         for r in rs:
-            if is_frq_remark(r) and _norm(r["fields"][0]["new"]) in {_norm(t) for t in said if t}:
+            if is_frq_remark(r):
+                t = _norm(r["fields"][0]["new"])
+                # already said by a remark file, or by another frequency row (122.7 and 122.8
+                # both carrying the same CTAF lighting remark)
+                if t in said:
+                    drop.add(id(r))
+                elif t:
+                    said.add(t)
+
+        # 3c. a runway added or removed outright: its runway-end rows are the same news
+        whole = {rid for r in rs if src(r) == "APT_RWY" and r["kind"] in ("added", "removed")
+                 and id(r) not in drop for rid in [r["row"].get("RWY_ID", "")]}
+        for r in rs:
+            if (src(r) == "APT_RWY_END" and r["kind"] in ("added", "removed")
+                    and r["row"].get("RWY_ID", "") in whole):
                 drop.add(id(r))
 
         rest = [r for r in rs if id(r) not in drop]
