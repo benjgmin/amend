@@ -13,6 +13,8 @@ import json
 import os
 import re
 
+from . import feeds
+
 SITE_URL = "https://amend.watch/"
 RESERVED = {"latest", "history", "assets", "watch", "list", "about", "guide", "index.html", "airports.json", "cycles.ics"}  # never an airport page
 PRIORITY = [("action", "ACT", "Action"), ("ifr", "IFR", "IFR procedures"), ("fyi", "FYI", "FYI")]
@@ -33,6 +35,12 @@ TIERS = {
             "Airport phone number changed"),
 }
 NO_CHG_TIP = "Nothing changed at this airport between the two cycles"
+# email alerts for named watchlists: paste a Buttondown embed-subscribe url here, e.g.
+# "https://buttondown.com/api/emails/embed-subscribe/amend". Empty = no email form, only the RSS feed.
+# Each signup is tagged list:<slug>, so one RSS-to-email automation per list can send just to its tag.
+EMAIL_FORM = ""
+# for airports (too many for one automation each): a free service where pilots subscribe to any feed themselves
+SELF_SERVE_EMAIL = "https://feedrabbit.com/"
 
 
 FONTS = ("https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600"
@@ -181,6 +189,9 @@ a.sbi:hover{background:var(--p2);text-decoration:none}.sbi.on{background:var(--p
 .sbi b{font:600 13px var(--mono)}.sbi.sub{color:var(--dm);font-size:13.5px}
 .sb .search{margin:14px 0 0;border-radius:9px;padding:0 10px;box-shadow:none}.sb .search input{font-size:14px;padding:7px 0}
 .sbfoot{margin-top:auto;padding:16px 8px 0;font-size:12.5px;color:var(--fn)}
+.alerts .btns{margin-top:10px}.alerts form{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.alerts input[type=email]{flex:1;min-width:0;border:1px solid var(--ln);border-radius:9px;background:var(--p);color:var(--tx);font:15px var(--sans);padding:7px 10px}
+.alerts input[type=email]:focus{outline:none;border-color:var(--cy)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 @media (max-width:639px){.wrow>a{flex-wrap:wrap;row-gap:6px}.wrow>a .chips{flex-basis:100%;padding-left:64px}}
 @media (min-width:640px){.cards{grid-template-columns:repeat(2,minmax(0,1fr))}.feats{grid-template-columns:repeat(2,minmax(0,1fr))}}
@@ -191,7 +202,7 @@ a.sbi:hover{background:var(--p2);text-decoration:none}.sbi.on{background:var(--p
  .mtop,.pfresh{display:none}
  .main{padding:32px 40px 56px}
  .main.two{grid-template-columns:minmax(0,1fr) 300px;column-gap:32px;align-items:start}
- .main.two>.full{grid-column:1/-1}
+ .main.two>.full{grid-column:1/-1}.main.two>.foot.full{grid-column:1}
  .rail{position:sticky;top:24px}.rail .hist{display:block}
  .it{grid-template-columns:104px minmax(0,1fr) auto;align-items:baseline}
  .it .k{font-size:13.5px;color:var(--dm)}.it .m{justify-content:flex-end}
@@ -404,6 +415,10 @@ async function load(id){try{const r=await fetch("../latest/"+id+".json");return 
     if(b.id==="add"){const l=[...new Set([...loadW(),...ids])];try{localStorage.setItem(KEY,JSON.stringify(l));
       if(!myName&&listName)localStorage.setItem(NKEY,listName)}catch(e){}b.textContent="Added";b.disabled=true}
     if(b.id==="copy"){(navigator.clipboard?navigator.clipboard.writeText(link):Promise.reject()).then(()=>b.textContent="Copied",()=>prompt("Copy this link:",link))}});
+  const om=document.getElementById("opml"),ot=esc(listName||"Amend watchlist");
+  if(om){om.href=URL.createObjectURL(new Blob(['<?xml version="1.0" encoding="utf-8"?>\n<opml version="2.0"><head><title>'+ot+'</title></head><body><outline text="'+ot+'">'+
+    ids.map(id=>'<outline type="rss" text="'+id+' · Amend" xmlUrl="https://amend.watch/'+id+'/feed.xml" htmlUrl="https://amend.watch/'+id+'/"/>').join("")+
+    '</outline></body></opml>\n'],{type:"text/x-opml"}));document.getElementById("alerts").hidden=false}
   const data=await Promise.all(ids.map(load));
   const items=ids.map((id,i)=>({id,d:data[i]})).sort((a,b)=>((b.d&&b.d.counts.action)||0)-((a.d&&a.d.counts.action)||0));
   out.innerHTML=items.map(({id,d})=>{const n=NAMES[id]||[];const k=d?[d.counts.action,d.counts.ifr,d.counts.fyi]:null;
@@ -464,6 +479,8 @@ const sb=document.getElementById("sharebtn");
 if(sb){sb.hidden=false;sb.addEventListener("click",()=>{const u=location.href.split("#")[0];
   if(navigator.share)navigator.share({title:document.title,url:u}).catch(()=>{});
   else(navigator.clipboard?navigator.clipboard.writeText(u):Promise.reject()).then(()=>sb.textContent="Copied",()=>prompt("Copy this link:",u))})}
+document.querySelectorAll("button[data-copy]").forEach(b=>{b.hidden=false;b.addEventListener("click",()=>{const u=b.dataset.copy;
+  (navigator.clipboard?navigator.clipboard.writeText(u):Promise.reject()).then(()=>b.textContent="Copied",()=>prompt("Copy this link:",u))})});
 addEventListener("keydown",e=>{if(e.key!=="/"||/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName))return;
   const i=[document.getElementById("q"),document.getElementById("sq")].find(x=>x&&x.offsetParent);if(i){e.preventDefault();i.focus()}});
 document.querySelectorAll(".seg a[data-f]").forEach(a=>a.addEventListener("click",ev=>{ev.preventDefault();const f=a.dataset.f;
@@ -575,6 +592,27 @@ def legend(root):
     return f'<div class="legend">{keys}<a href="{root}guide/">What do these mean?</a></div>'
 
 
+def alerts_box(feed_url, what, tag=None):
+    """rail card: the RSS feed for an airport or list, plus email. tag (named lists only) turns on the email
+    form once EMAIL_FORM is set; everywhere else, point at a service where pilots can email themselves a feed."""
+    if tag and EMAIL_FORM:
+        email = (f'<form action="{e(EMAIL_FORM)}" method="post" target="_blank">'
+                 '<input type="email" name="email" required placeholder="you@example.com" aria-label="Email address">'
+                 f'<input type="hidden" name="tag" value="{e(tag)}"><input type="hidden" name="embed" value="1">'
+                 '<button class="btn" type="submit">Email me</button></form>'
+                 f'<p class="foot">One email per FAA cycle when something changes at {e(what)}. Unsubscribe anytime.</p>')
+    elif SELF_SERVE_EMAIL:
+        email = (f'<p class="foot">Rather have email? Paste the feed link into a free RSS-to-email service like '
+                 f'<a href="{e(SELF_SERVE_EMAIL)}" target="_blank" rel="noopener">Feedrabbit</a>.</p>')
+    else:
+        email = ""
+    return (f'<div class="card box alerts" id="alerts"><h3>Get alerts</h3><p class="note">One update each FAA cycle '
+            f'with what changes at {e(what)}, action items first. Add the feed to any news reader'
+            f'{" or get it by email" if tag and EMAIL_FORM else ""}.</p>'
+            f'<div class="btns"><a class="btn" href="{e(feed_url)}" type="application/rss+xml">RSS feed</a>'
+            f'<button class="btn ghost" data-copy="{e(feed_url)}" hidden>Copy feed link</button></div>{email}</div>')
+
+
 def tier_rows(full):
     """ACT / IFR / FYI / No change with what each means; the guide's version adds an example."""
     rows = []
@@ -617,7 +655,7 @@ def sidebar(root, active, meta=None, now=None, on=""):
 
 
 def page(title, description, url, body, root, og_title=None, image=None, active="", meta=None, now=None,
-         two=False, on=""):
+         two=False, on="", feed=None):
     img = (f'<meta property="og:image" content="{e(image)}"><meta property="og:image:width" content="1200">'
            f'<meta property="og:image:height" content="630"><meta name="twitter:card" content="summary_large_image">'
            if image else '<meta name="twitter:card" content="summary">')
@@ -631,7 +669,8 @@ def page(title, description, url, body, root, og_title=None, image=None, active=
 <meta name="theme-color" content="#F6F7F9" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0D1015" media="(prefers-color-scheme: dark)">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="{FONTS}"><link rel="stylesheet" href="{root}assets/style.css?v={CSS_VERSION}">
+<link rel="stylesheet" href="{FONTS}"><link rel="stylesheet" href="{root}assets/style.css?v={CSS_VERSION}">{
+f'<link rel="alternate" type="application/rss+xml" title="{e(feed[1])}" href="{e(feed[0])}">' if feed else ""}
 </head><body data-root="{root}" data-cyc="{e(meta['to_cycle'] if meta else '')}" data-built="{(now or dt.datetime.now(dt.timezone.utc)):%Y-%m-%dT%H:%M:%SZ}"><script>{SEEN_JS.replace("__STALE__", str(STALE_HOURS))}</script><div class="app">{sidebar(root, active, meta, now, on)}
 <main class="main{' two' if two else ''}"><div class="card banner stale full" id="stale" hidden></div>{body}
 <p class="foot full">{freshness(meta, now or dt.datetime.now(dt.timezone.utc))}{'. ' if meta else ''}Not for navigation. Always use official FAA publications, NOTAMs and a proper preflight briefing.
@@ -720,7 +759,8 @@ def airport_page(apt, info, latest, hist, meta, now, has_card=False):
     body = [f'<header class="full"><div class="eyebrow">{e(eyebrow)}</div><h1>{e(apt)}{icao}</h1>'
             + (f'<div class="aname">{e(name)}</div>' if name else "")
             + f'<div class="btns"><button class="btn" id="wbtn" data-apt="{e(apt)}" hidden>+ Add to watchlist</button>'
-            '<button class="btn ghost" id="sharebtn" hidden>Share</button></div></header>']
+            '<button class="btn ghost" id="sharebtn" hidden>Share</button>'
+            '<a class="btn ghost" href="#alerts">Get alerts</a></div></header>']
     state = (f'<span class="ann {"ifr" if upcoming else "ok"}">{"Not in effect yet" if upcoming else "In effect"}</span>')
     if changes:
         seg = [f'<a class="on" href="#action" data-f="all">All<b>{len(changes)}</b></a>'] + \
@@ -750,7 +790,8 @@ def airport_page(apt, info, latest, hist, meta, now, has_card=False):
             f'<div class="kv"><span>Compared to</span><span>{nice(meta["from_cycle"])}</span></div>'
             f'<div class="kv"><span>{"Takes effect" if upcoming else "Next cycle"}</span>'
             f'<span>{countdown(next_changeover(meta, now)[0])}</span></div>'
-            f'<div class="kv"><span>Updated</span><span class="fresh">{built_at(now)}</span></div></div>']
+            f'<div class="kv"><span>Updated</span><span class="fresh">{built_at(now)}</span></div></div>',
+            alerts_box(f"{SITE_URL}{apt}/feed.xml", apt)]
     src = lambda href, text: f'<a class="hrow" href="{href}" target="_blank" rel="noopener"><span>{text}</span><span>↗</span></a>'
     rail.append('<div class="card box"><h3>Check the official source</h3>'
                 + src(SUPPLEMENT_SEARCH, f"Chart Supplement (search {e(apt)})") + src(DTPP_SEARCH, "Approach plates (d-TPP)")
@@ -767,7 +808,7 @@ def airport_page(apt, info, latest, hist, meta, now, has_card=False):
     image = (f"{SITE_URL}{apt}/card.png" if has_card
              else f"{SITE_URL}assets/nochange.png" if not changes else f"{SITE_URL}assets/card.png")
     return page(title, desc, f"{SITE_URL}{apt}/", "".join(body), "../", og_title, image, meta=meta, now=now,
-                two=True, on=apt)
+                two=True, on=apt, feed=(f"{SITE_URL}{apt}/feed.xml", f"{apt} changes each FAA cycle"))
 
 
 def landing_note(meta, now, upcoming):
@@ -859,6 +900,9 @@ def watch_page(meta, directory, now):
 <p class="note">{e(landing_note(meta, now, upcoming))}</p>
 <div class="kv"><span>{'Takes effect' if upcoming else 'Next cycle'}</span><span>{countdown(next_changeover(meta, now)[0])}</span></div>
 <div class="btns" id="actions"></div></div>
+<div class="card box alerts" id="alerts" hidden><h3>Get alerts</h3><p class="note">Every airport has its own RSS feed with
+one update per FAA cycle. Download them all as one file and import it into your news reader.</p>
+<div class="btns"><a class="btn" id="opml" download="amend-watchlist.opml">Download feeds (OPML)</a></div></div>
 <div class="card box"><h3>What the labels mean</h3>{legend("../")}</div></aside><script>{js}</script>"""
     return page("Amend · watchlist", "Everything that changed at a list of airports this FAA cycle.",
                 f"{SITE_URL}list/", body, "../", image=f"{SITE_URL}assets/card.png", active="list", meta=meta,
@@ -891,10 +935,12 @@ def named_watch_page(slug, wl, meta, info, latest, now, has_card):
 <p class="note">{e(landing_note(meta, now, upcoming))}</p>
 <div class="kv"><span>{'Takes effect' if upcoming else 'Next cycle'}</span><span>{countdown(next_changeover(meta, now)[0])}</span></div>
 <div class="btns"><a class="btn" href="../?w={','.join(apts)}&n={e(quote(wl['name']))}">Add to my watchlist</a><a class="btn ghost" href="../../">Search all airports</a></div></div>
+{alerts_box(f"{SITE_URL}list/{slug}/feed.xml", wl["name"], f"list:{slug}")}
 <div class="card box"><h3>What the labels mean</h3>{legend("../../")}</div></aside>"""
     image = f"{SITE_URL}list/{slug}/card.png" if has_card else f"{SITE_URL}assets/card.png"
     return page(f"{wl['name']} · Amend watchlist", desc, f"{SITE_URL}list/{slug}", body, "../../",
-                f"{wl['name']}: {desc}", image, active="list", meta=meta, now=now, two=True)
+                f"{wl['name']}: {desc}", image, active="list", meta=meta, now=now, two=True,
+                feed=(f"{SITE_URL}list/{slug}/feed.xml", f"{wl['name']} changes each FAA cycle"))
 
 
 def about_page(meta, latest, screenshots, now):
@@ -958,6 +1004,13 @@ GUIDE_SECTIONS = [
      "airports and counts down to the 0901Z changeover.</p>"
      "<p><b>Copy share link</b> gives you one link for the whole list, handy for a flight school or a training "
      "area. Anyone who opens it sees the same airports and can add them to their own list.</p>"),
+    ("alerts", "Alerts",
+     "<p>Every airport page and named watchlist has an RSS feed (<b>Get alerts</b>) with one update per FAA cycle: "
+     "what changes, action items first, usually within a day of the FAA posting it (about three weeks before it takes "
+     "effect). Add it to any news reader, or to an "
+     "RSS-to-email service to get it in your inbox.</p>"
+     "<p>On your watchlist page, <b>Download feeds (OPML)</b> gives you a feed for every airport on it in one file "
+     "that most news readers can import.</p>"),
     ("app", "iPhone app",
      "<p>The app adds a home airport and notifications when a new cycle changes your airports. A TestFlight beta is "
      "coming soon.</p>"),
@@ -1047,6 +1100,14 @@ def build(site, meta, directory, latest, history_dir, now=None, watchlists=None,
                             f"Effective {nice(meta['to_cycle'])}")
         with open(os.path.join(site, apt, "index.html"), "w", encoding="utf-8") as f:
             f.write(airport_page(apt, info.get(apt, {}), latest.get(apt), hist, meta, now, has_card))
+        with open(os.path.join(site, apt, "feed.xml"), "w", encoding="utf-8") as f:
+            f.write(feeds.airport_feed(apt, info.get(apt, {}), latest.get(apt), hist, meta, now))
+    # quiet airports get no page, but a feed anyone can subscribe to before the first change shows up
+    for apt in sorted(info.keys() - ids - RESERVED):
+        if re.fullmatch(r"[A-Z0-9]{2,4}", apt):
+            os.makedirs(os.path.join(site, apt), exist_ok=True)
+            with open(os.path.join(site, apt, "feed.xml"), "w", encoding="utf-8") as f:
+                f.write(feeds.airport_feed(apt, info[apt], None, None, meta, now, has_page=False))
     with open(os.path.join(site, "index.html"), "w", encoding="utf-8") as f:
         f.write(index_page(meta, directory, latest, ids, now))
     os.makedirs(os.path.join(site, "list"), exist_ok=True)
@@ -1082,4 +1143,12 @@ def build(site, meta, directory, latest, history_dir, now=None, watchlists=None,
                         f"Effective {nice(meta['to_cycle'])}")
         with open(os.path.join(folder, "index.html"), "w", encoding="utf-8") as f:
             f.write(named_watch_page(slug, wl, meta, info, latest, now, has_card))
+        hists = {}
+        for a in wl["airports"]:
+            path = os.path.join(history_dir or "", f"{a}.json")
+            if history_dir and os.path.isfile(path):
+                with open(path, encoding="utf-8") as f:
+                    hists[a] = json.load(f)
+        with open(os.path.join(folder, "feed.xml"), "w", encoding="utf-8") as f:
+            f.write(feeds.list_feed(slug, wl, info, latest, hists, meta, now))
     return len(ids)

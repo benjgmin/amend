@@ -573,6 +573,68 @@ class TestWeb(unittest.TestCase):
         self.assertIn("amend.watch", open(os.path.join(site, "index.html")).read())   # watchlist storage key
 
 
+class TestFeeds(unittest.TestCase):
+    def test_airport_feed(self):
+        import xml.etree.ElementTree as ET
+        site, _ = TestWeb().build()
+        xml = open(os.path.join(site, "VRB", "feed.xml"), encoding="utf-8").read()
+        ch = ET.fromstring(xml).find("channel")                       # well-formed RSS
+        self.assertEqual(ch.findtext("link"), "https://amend.watch/VRB/")
+        items = ch.findall("item")
+        self.assertEqual([i.findtext("guid") for i in items], ["amend.watch/VRB/2026-10-01", "amend.watch/VRB/2025-07-10"])
+        self.assertEqual(items[0].findtext("title"), "VRB: 2 changes (1 action item) on 01 Oct 2026")
+        self.assertEqual(items[0].findtext("pubDate"), "Thu, 03 Sep 2026 09:01:00 +0000")   # stable, never ahead
+        body = items[0].findtext("description")
+        self.assertLess(body.index("Action (1)"), body.index("IFR procedures (1)"))     # action items first
+        self.assertIn("0800-2200 → 0600-2200", body)
+        self.assertIn("NASR_Subscription/2026-10-01", body)
+        self.assertEqual(items[1].findtext("link"), "https://amend.watch/VRB/#c-2025-07-10")
+        page = open(os.path.join(site, "VRB", "index.html")).read()
+        self.assertIn('<link rel="alternate" type="application/rss+xml" title="VRB changes each FAA cycle" '
+                      'href="https://amend.watch/VRB/feed.xml">', page)
+        self.assertIn('id="alerts"', page)
+        self.assertIn('href="#alerts">Get alerts', page)
+        quiet = ET.parse(os.path.join(site, "DAB", "feed.xml")).getroot().find("channel")   # no page, still a feed
+        self.assertEqual(quiet.findall("item"), [])
+        self.assertEqual(quiet.findtext("link"), "https://amend.watch/")
+        self.assertFalse(os.path.exists(os.path.join(site, "DAB", "index.html")))
+        self.assertIn('id="opml"', open(os.path.join(site, "list", "index.html")).read())
+
+    def test_list_feed_and_email(self):
+        import datetime as dt
+        import xml.etree.ElementTree as ET
+        from amend import web
+        site = tempfile.mkdtemp()
+        hist = tempfile.mkdtemp()
+        with open(os.path.join(hist, "DAB.json"), "w") as f:
+            json.dump({"airport": "DAB", "entries": [
+                {"cycle": "2026-09-03", "priority": "fyi", "category": "remark", "kind": "changed",
+                 "summary": "remark reworded", "original": "RWY 7L CLSD", "source": "APT_RMK", "id": "r"}]}, f)
+        latest = {"VRB": [{"id": "a", "priority": "action", "category": "tower", "kind": "changed",
+                           "summary": "tower hours: 0800-2200 -> 0600-2200 local", "source": "ATC_BASE"}]}
+        meta = {"from_cycle": "2026-09-03", "to_cycle": "2026-10-01", "upcoming": True, "changed_airports": 1}
+        lists = {"club": {"name": "Club & Co", "description": "", "airports": ["DAB", "VRB"]}}
+        now = dt.datetime(2026, 9, 24, tzinfo=dt.timezone.utc)
+        web.build(site, meta, [{"id": "VRB", "name": "Vero Beach Rgnl"}], latest, hist, now=now, watchlists=lists)
+        items = ET.parse(os.path.join(site, "list", "club", "feed.xml")).getroot().find("channel").findall("item")
+        self.assertEqual([i.findtext("title") for i in items],
+                         ["Club & Co: 1 change at 1 airport on 01 Oct 2026 (1 action item)",
+                          "Club & Co: 1 change at 1 airport on 03 Sep 2026 (no action items)"])
+        self.assertIn("FAA text: RWY 7L CLSD", items[1].findtext("description"))
+        page = open(os.path.join(site, "list", "club", "index.html")).read()
+        self.assertIn('href="https://amend.watch/list/club/feed.xml"', page)
+        self.assertNotIn('name="email"', page)                       # no email form until EMAIL_FORM is set
+        old, web.EMAIL_FORM = web.EMAIL_FORM, "https://buttondown.com/api/emails/embed-subscribe/x"
+        try:
+            web.build(site, meta, [], latest, hist, now=now, watchlists=lists)
+        finally:
+            web.EMAIL_FORM = old
+        page = open(os.path.join(site, "list", "club", "index.html")).read()
+        self.assertIn('action="https://buttondown.com/api/emails/embed-subscribe/x"', page)
+        self.assertIn('name="tag" value="list:club"', page)
+        self.assertNotIn('name="email"', open(os.path.join(site, "VRB", "index.html")).read())   # lists only
+
+
 class TestWatchlists(unittest.TestCase):
     def test_validation(self):
         from amend.watchlists import validate
