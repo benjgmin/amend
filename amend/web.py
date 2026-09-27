@@ -88,7 +88,10 @@ h1 .icao{font:500 15px var(--mono);color:var(--fn);letter-spacing:0}
 .ann.new{color:var(--bg);background:var(--tx);padding:1px 8px}.ann.new::before{display:none}
 .it.new{box-shadow:inset 3px 0 0 var(--tx)}
 .sbi .ann.new{font:600 11px/1.5 var(--sans);padding:0 6px}
-time[data-until]{font-variant-numeric:tabular-nums;white-space:nowrap}
+time[data-until],time[data-ago]{font-variant-numeric:tabular-nums;white-space:nowrap}
+.pfresh{padding:7px 16px;font-size:12.5px;color:var(--dm);border-bottom:1px solid var(--ln);background:var(--p)}
+.is-stale .fresh{color:var(--am)}.stale{border-color:var(--am)}
+a.src{color:var(--dm)}a.src:hover{color:var(--cy)}
 .nx{display:grid;gap:7px;padding:12px 16px;border-top:1px solid var(--ln);color:var(--tx)}.nx:first-child{border-top:0}
 .nx:hover{background:var(--p2);text-decoration:none}
 .nxh{display:flex;align-items:center;gap:6px 12px;flex-wrap:wrap}.nxh .rname{color:var(--dm);font-size:14px}.nxh .chips{margin-left:auto}
@@ -185,7 +188,7 @@ a.sbi:hover{background:var(--p2);text-decoration:none}.sbi.on{background:var(--p
  .app{grid-template-columns:248px minmax(0,1fr)}
  .sb{display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto;border-right:1px solid var(--ln);background:var(--p);padding:16px 12px}
  .sb .brand{padding:4px 8px 0}
- .mtop{display:none}
+ .mtop,.pfresh{display:none}
  .main{padding:32px 40px 56px}
  .main.two{grid-template-columns:minmax(0,1fr) 300px;column-gap:32px;align-items:start}
  .main.two>.full{grid-column:1/-1}
@@ -371,7 +374,7 @@ W.addEventListener("click",ev=>{const b=ev.target.closest("button");if(!b)return
   if(b.id==="wskip")done();else if(b.id==="wnext"){if(i<steps.length-1){i++;show()}else{done();q.scrollIntoView({block:"center"});q.focus()}}});
 W.hidden=false;intro.hidden=true;show()})();
 """
-WATCH_JS = r"""const META=__META__,NAMES=__NAMES__,SEL=__PRI__;
+WATCH_JS = r"""const META=__META__,NAMES=__NAMES__,SEL=__PRI__,SRC=__SRC__;
 const P=new URLSearchParams(location.search),shared=parseW(P.get("w"));
 const ids=shared.length?shared:loadW();
 const NKEY="amend.watch.name",myName=(()=>{try{return localStorage.getItem(NKEY)||""}catch(e){return""}})();
@@ -382,7 +385,9 @@ const cap=s=>s.charAt(0).toUpperCase()+s.slice(1);
 function changeHtml(c){const s=esc(cap(c.summary)).replace(/ -&gt; /g," → ");
   let m="";const ch=c.chart||{};
   if(ch.amdt)m+='<span class="ann fyi plain">'+(["0","ORIG"].includes(ch.amdt.toUpperCase())?"Original":"Amdt "+esc(ch.amdt))+'</span>';
-  if(ch.pdf)m+='<a href="'+esc(ch.pdf)+'" target="_blank" rel="noopener">View plate ↗</a>';
+  if(ch.pdf)m+='<a href="'+esc(ch.pdf)+'" target="_blank" rel="noopener" title="Official FAA plate (d-TPP)">View plate ↗</a>';
+  else if((c.source||"").toUpperCase()==="D-TPP"||c.chart)m+='<a class="src" href="'+SRC.dtpp+'" target="_blank" rel="noopener" title="FAA d-TPP (terminal procedures) search">FAA source ↗</a>';
+  else m+='<a class="src" href="'+SRC.nasr+'" target="_blank" rel="noopener" title="FAA NASR data, file '+esc(c.source)+'">FAA source ↗</a>';
   let more="";if(c.original)more='<details class="more"><summary>FAA text</summary><pre>'+esc(c.original)+'</pre></details>';
   else if(c.details&&c.details.length)more='<details class="more"><summary>Details</summary><pre>'+c.details.map(d=>esc(d).replace(/ -&gt; /g," → ")).join("\n")+'</pre></details>';
   return '<div class="it p-'+esc(c.priority)+'" data-id="'+esc(c.id)+'"><span class="k">'+esc(cap(c.category))+'</span><div class="s">'+s+more+'</div><div class="m">'+m+'</div></div>'}
@@ -411,7 +416,7 @@ async function load(id){try{const r=await fetch("../latest/"+id+".json");return 
 """
 # every page, before anything else runs: what this browser has already seen (for "New" labels) and the
 # countdown to the next 0901Z changeover. First look at an airport marks nothing, it only remembers.
-SEEN_JS = r"""var AM=(()=>{const K="amend.seen",NC="amend.newc",SH="amend.newshown";
+SEEN_JS = r"""var AM=(()=>{const STALE=__STALE__,K="amend.seen",NC="amend.newc",SH="amend.newshown";
 const rd=(k,st)=>{try{return JSON.parse((st||localStorage).getItem(k)||"{}")||{}}catch(e){return{}}};
 const wr=(k,v,st)=>{try{(st||localStorage).setItem(k,JSON.stringify(v))}catch(e){}};
 // items: [{id, c: cycle}]. new = not seen before and from a cycle at or after the last look.
@@ -430,8 +435,14 @@ function mark(root,apt,cyc){const els=[...root.querySelectorAll(".it[data-id]")]
 const fmt=ms=>{const m=Math.floor(ms/6e4),d=Math.floor(m/1440),h=Math.floor(m%1440/60),mm=m%60;return(d?d+"d ":"")+(d||h?h+"h ":"")+mm+"m"};
 function tick(){document.querySelectorAll("time[data-until]").forEach(t=>{const ms=Date.parse(t.dataset.until)-Date.now();
   t.textContent=ms>0?"in "+fmt(ms):"now";t.title=t.getAttribute("datetime").slice(0,16).replace("T"," ")+"Z"})}
-setInterval(tick,15000);
-return{look,base,mark,pill,tick,newc:()=>rd(NC),setNewc:m=>wr(NC,m)}})();
+const ago=ms=>{const m=Math.floor(ms/6e4),h=Math.floor(m/60),d=Math.floor(h/24);return m<2?"just now":m<60?m+"m ago":h<48?h+"h ago":d+" days ago"};
+function fresh(){document.querySelectorAll("time[data-ago]").forEach(t=>{t.textContent=ago(Date.now()-Date.parse(t.dataset.ago))});
+  const b=document.body.dataset.built,age=b?Date.now()-Date.parse(b):0,st=document.getElementById("stale");
+  if(age>STALE*36e5){document.body.classList.add("is-stale");if(st){st.innerHTML='<span class="ann act">Out of date</span><span>This data was last updated '+
+    ago(age)+'. Amend’s daily update may have stopped, so newer FAA changes might be missing. Check the official FAA sources before you fly.</span>';st.hidden=false}}}
+function tick2(){tick();fresh()}
+setInterval(tick2,15000);
+return{look,base,mark,pill,tick:tick2,newc:()=>rd(NC),setNewc:m=>wr(NC,m)}})();
 """
 # every page: the sidebar watchlist, the / shortcut, filter tabs on airport pages, opening a linked history cycle
 SHELL_JS = r"""(()=>{const R=document.body.dataset.root||"",B=document.body.dataset,el=document.getElementById("sbw");
@@ -505,25 +516,47 @@ def chips(c, no_change=True):
     return f'<span class="chips">{"".join(out)}</span>'
 
 
-def change_html(c):
+# official FAA pages, so every change can be checked against the source it came from
+NASR_PAGE = "https://www.faa.gov/air_traffic/flight_info/aeronav/aero_data/NASR_Subscription/{cycle}"
+DTPP_SEARCH = "https://www.faa.gov/air_traffic/flight_info/aeronav/digital_products/dtpp/search/"
+SUPPLEMENT_SEARCH = "https://www.faa.gov/air_traffic/flight_info/aeronav/digital_products/dafd/search/"
+NOTAM_SEARCH = "https://notams.aim.faa.gov/notamSearch/"
+
+
+def source_link(c, cycle):
+    """the FAA publication a change came from: the plate for charts, the NASR cycle page for the rest."""
+    if (c.get("source") or "").upper() == "D-TPP" or c.get("chart"):
+        if c.get("chart", {}).get("pdf"):
+            return ""   # "View plate" already links the official plate
+        return (f'<a class="src" href="{DTPP_SEARCH}" target="_blank" rel="noopener" '
+                f'title="FAA d-TPP (terminal procedures) search">FAA source ↗</a>')
+    if not cycle:
+        return ""
+    return (f'<a class="src" href="{NASR_PAGE.format(cycle=e(cycle))}" target="_blank" rel="noopener" '
+            f'title="FAA NASR data, cycle {nice(cycle)}, file {e(c.get("source", ""))}">FAA source ↗</a>')
+
+
+def change_html(c, cycle=None):
     extra = []
     if c.get("chart", {}).get("amdt"):
         a = c["chart"]["amdt"]
         extra.append(f'<span class="ann fyi plain">{"Original" if a.upper() in ("0", "ORIG") else "Amdt " + e(a)}</span>')
     if c.get("chart", {}).get("pdf"):
-        extra.append(f'<a href="{e(c["chart"]["pdf"])}" target="_blank" rel="noopener">View plate ↗</a>')
+        extra.append(f'<a href="{e(c["chart"]["pdf"])}" target="_blank" rel="noopener" '
+                     f'title="Official FAA plate (d-TPP)">View plate ↗</a>')
     more = ""
     if c.get("original"):
         more = f'<details class="more"><summary>FAA text</summary><pre>{e(c["original"])}</pre></details>'
     elif c.get("details"):
         more = ('<details class="more"><summary>Details</summary><pre>'
                 + "\n".join(arrow(d) for d in c["details"]) + "</pre></details>")
+    extra.append(source_link(c, c.get("cycle") or cycle))
     ids = (f' data-id="{e(c["id"])}"' if c.get("id") else "") + (f' data-c="{e(c["cycle"])}"' if c.get("cycle") else "")
     return (f'<div class="it p-{e(c["priority"])}"{ids}><span class="k">{e(cap(c["category"]))}</span>'
             f'<div class="s">{arrow(cap(c["summary"]))}{more}</div><div class="m">{"".join(extra)}</div></div>')
 
 
-def grouped(changes, anchors=False):
+def grouped(changes, anchors=False, cycle=None):
     """one card per priority. anchors: give each an id and data-p so the filter tabs can find it."""
     out = []
     for p, _, title in PRIORITY:
@@ -531,7 +564,7 @@ def grouped(changes, anchors=False):
         if g:
             attrs = f' class="lst grp" id="{p}" data-p="{p}"' if anchors else ' class="lst"'
             out.append(f'<section{attrs}><div class="gh"><span><span class="dot d-{p}"></span>{title}</span>'
-                       f'<span class="n">{len(g)}</span></div>' + "".join(change_html(c) for c in g) + "</section>")
+                       f'<span class="n">{len(g)}</span></div>' + "".join(change_html(c, cycle) for c in g) + "</section>")
     return "".join(out)
 
 
@@ -569,6 +602,7 @@ def sidebar(root, active, meta=None, now=None, on=""):
         if upcoming:
             cyc += (f'<div class="sbi"><span>{nice(meta["to_cycle"], False)}</span>'
                     f'<span class="ann ifr">Upcoming</span></div>')
+        cyc += f'<div class="sbi sub fresh">Updated {built_at(now or dt.datetime.now(dt.timezone.utc))}</div>'
     side = (f'<nav class="sb" aria-label="Site"><a class="brand" href="{root}"><i></i>Amend</a>{search}'
             f'<div class="sbh">Browse</div>{link("", "Airports", "home")}{link("list/", "Watchlist", "list")}'
             f'{link("guide/", "Guide", "guide")}{link("about/", "About", "about")}'
@@ -577,6 +611,8 @@ def sidebar(root, active, meta=None, now=None, on=""):
     nav = lambda href, text, key: f'<a class="{"on" if key == active else ""}" href="{root}{href}">{text}</a>'
     top = (f'<header class="mtop"><a class="brand" href="{root}"><i></i>Amend</a><nav class="nav">'
            f'{nav("", "Search", "home")}{nav("guide/", "Guide", "guide")}{nav("about/", "About", "about")}</nav></header>')
+    if meta:
+        top += f'<div class="pfresh fresh">{freshness(meta, now or dt.datetime.now(dt.timezone.utc))}</div>'
     return side + top
 
 
@@ -596,9 +632,9 @@ def page(title, description, url, body, root, og_title=None, image=None, active=
 <meta name="theme-color" content="#0D1015" media="(prefers-color-scheme: dark)">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="{FONTS}"><link rel="stylesheet" href="{root}assets/style.css?v={CSS_VERSION}">
-</head><body data-root="{root}" data-cyc="{e(meta['to_cycle'] if meta else '')}"><script>{SEEN_JS}</script><div class="app">{sidebar(root, active, meta, now, on)}
-<main class="main{' two' if two else ''}">{body}
-<p class="foot full">Not for navigation. Always use official FAA publications, NOTAMs and a proper preflight briefing.
+</head><body data-root="{root}" data-cyc="{e(meta['to_cycle'] if meta else '')}" data-built="{(now or dt.datetime.now(dt.timezone.utc)):%Y-%m-%dT%H:%M:%SZ}"><script>{SEEN_JS.replace("__STALE__", str(STALE_HOURS))}</script><div class="app">{sidebar(root, active, meta, now, on)}
+<main class="main{' two' if two else ''}"><div class="card banner stale full" id="stale" hidden></div>{body}
+<p class="foot full">{freshness(meta, now or dt.datetime.now(dt.timezone.utc))}{'. ' if meta else ''}Not for navigation. Always use official FAA publications, NOTAMs and a proper preflight briefing.
 Data: FAA NASR and d-TPP. <a href="https://github.com/benjgmin/amend">Source</a></p></main></div>
 <script>{SHELL_JS}</script></body></html>"""
 
@@ -619,6 +655,24 @@ def countdown(when):
     """a <time> the page script turns into "in 3d 14h 22m"; without scripts it reads "01 Oct 0901Z"."""
     iso = when.strftime("%Y-%m-%dT%H:%M:00Z")
     return f'<time datetime="{iso}" data-until="{iso}">{when:%d %b} 0901Z</time>'
+
+
+STALE_HOURS = 36   # the update runs daily; past this the page says so instead of looking current
+
+
+def built_at(when):
+    """a <time> the page script turns into "2h ago"; without scripts it reads "27 Sep 2100Z"."""
+    iso = when.strftime("%Y-%m-%dT%H:%M:%SZ")
+    return f'<time datetime="{iso}" data-ago="{iso}">{when:%d %b %H%M}Z</time>'
+
+
+def freshness(meta, now):
+    """'FAA cycle 01 Oct 2026 (upcoming) · updated 2h ago', for every page."""
+    if not meta:
+        return ""
+    upcoming, _ = status(meta, now)
+    return (f'FAA cycle {nice(meta["to_cycle"])}{" (upcoming)" if upcoming else ""} · '
+            f'updated {built_at(now)}')
 
 
 def status(meta, now):
@@ -675,7 +729,7 @@ def airport_page(apt, info, latest, hist, meta, now, has_card=False):
     col = ['<div class="card banner" id="newnote" hidden></div>']
     if changes:
         col.append(f'<div class="card banner">{state}<span>{e(note)}</span></div>')
-        col.append(grouped(changes, anchors=True))
+        col.append(grouped(changes, anchors=True, cycle=meta["to_cycle"]))
     else:
         col.append(f'<div class="card none"><b>{"No upcoming changes" if upcoming else "Nothing changed"} at {e(apt)}</b>'
                    f'{"On" if upcoming else "In the"} {nice(meta["to_cycle"])} {"· current data stays the same" if upcoming else "cycle"}</div>')
@@ -695,7 +749,13 @@ def airport_page(apt, info, latest, hist, meta, now, has_card=False):
             f'<div class="kv"><span>Effective</span><span>{nice(meta["to_cycle"])} 0901Z</span></div>'
             f'<div class="kv"><span>Compared to</span><span>{nice(meta["from_cycle"])}</span></div>'
             f'<div class="kv"><span>{"Takes effect" if upcoming else "Next cycle"}</span>'
-            f'<span>{countdown(next_changeover(meta, now)[0])}</span></div></div>']
+            f'<span>{countdown(next_changeover(meta, now)[0])}</span></div>'
+            f'<div class="kv"><span>Updated</span><span class="fresh">{built_at(now)}</span></div></div>']
+    src = lambda href, text: f'<a class="hrow" href="{href}" target="_blank" rel="noopener"><span>{text}</span><span>↗</span></a>'
+    rail.append('<div class="card box"><h3>Check the official source</h3>'
+                + src(SUPPLEMENT_SEARCH, f"Chart Supplement (search {e(apt)})") + src(DTPP_SEARCH, "Approach plates (d-TPP)")
+                + src(NOTAM_SEARCH, "NOTAMs") + src(NASR_PAGE.format(cycle=meta["to_cycle"]), f"NASR data, {nice(meta['to_cycle'])}")
+                + '<p class="foot">Amend reads these FAA files. If they ever disagree, the FAA is right.</p></div>')
     if cycles:
         rail.append('<div class="card box hist"><h3>History</h3>' + "".join(
             f'<a class="hrow" href="#c-{e(cyc)}"><span>{nice(cyc)}</span>{chips(counts(by_cycle[cyc]), False)}</a>'
@@ -790,7 +850,8 @@ def watch_page(meta, directory, now):
     names = {a["id"]: [a.get("icao", "") if a.get("icao") != a["id"] else "", a.get("name", "")] for a in directory}
     pri = [[p, t] for p, _, t in PRIORITY]
     js = COMMON_JS + WATCH_JS.replace("__META__", json.dumps(meta)).replace(
-        "__NAMES__", json.dumps(names, separators=(",", ":"))).replace("__PRI__", json.dumps(pri))
+        "__NAMES__", json.dumps(names, separators=(",", ":"))).replace("__PRI__", json.dumps(pri)).replace(
+        "__SRC__", json.dumps({"nasr": NASR_PAGE.format(cycle=meta["to_cycle"]), "dtpp": DTPP_SEARCH}))
     body = f"""<header class="full"><div class="eyebrow">Watchlist · {nice(meta['to_cycle'])} cycle</div><h1 id="title">Watchlist</h1>
 <div class="aname" id="count"></div></header>
 <div class="col" id="list"><div class="note">Loading…</div></div>
@@ -816,7 +877,7 @@ def named_watch_page(slug, wl, meta, info, latest, now, has_card):
         head = (f'<summary class="card apthead"><span><span class="rid">{e(a)}</span> '
                 f'<span class="rname">{e(i.get("name", "Unknown airport"))}</span></span>{chips(counts(ch))}</summary>')
         link = f'<p class="foot"><a href="../../{e(a)}/">Full page and history ›</a></p>'
-        body = grouped(ch) if ch else '<div class="note">No changes in this cycle.</div>'
+        body = grouped(ch, cycle=meta["to_cycle"]) if ch else '<div class="note">No changes in this cycle.</div>'
         blocks.append(f'<details class="apt" data-look="{e(a)}"{" open" if ch else ""}>{head}{body}{link}</details>')
     parts = [f"{lbl} {total[p]}" for p, lbl, _ in PRIORITY if total[p]]
     when = f"{'on' if upcoming else 'since'} {efb(meta['to_cycle'])[:6]}"

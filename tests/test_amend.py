@@ -373,6 +373,13 @@ class TestWeb(unittest.TestCase):
         self.assertIn('data-id="x" data-c="2025-07-10"', page)       # history items carry their cycle
         self.assertIn('data-until="2026-10-01T09:01:00Z"', page)     # countdown to the changeover
         self.assertIn('id="wbtn" data-apt="VRB"', page)             # add to watchlist from the airport page
+        self.assertIn('NASR_Subscription/2026-10-01" target="_blank"', page)   # every change links its FAA source
+        self.assertIn('title="Official FAA plate (d-TPP)">View plate', page)
+        self.assertIn('NASR_Subscription/2025-07-10"', page)          # history links its own cycle
+        self.assertIn('FAA cycle 01 Oct 2026 (upcoming) · updated <time datetime="2026-09-24T00:00:00Z" '
+                      'data-ago="2026-09-24T00:00:00Z">24 Sep 0000Z</time>', page)
+        self.assertIn('data-built="2026-09-24T00:00:00Z"', page)      # the page says when it's stale
+        self.assertIn('id="stale" hidden', page)
 
     def test_countdown_and_calendar(self):
         import datetime as dt
