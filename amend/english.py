@@ -18,44 +18,50 @@ def field_phrases(fields, source, ctx=None):
     for k in ("TWR_HRS", "TOWER_HRS"):
         if k in by:
             f = by[k]
-            phrases.append(f"tower hours changed: {hrs(f['old'])} -> {hrs(f['new'])} local")
+            phrases.append(f"tower hours: {hrs(f['old'])} -> {hrs(f['new'])} local")
             break
     if "AIRSPACE_HRS" in by:
         f = by["AIRSPACE_HRS"]
-        phrases.append(f"airspace is now: {f['new'].lower()} (was: {f['old'].lower()})")
+        phrases.append(f"airspace: {f['old'].lower()} -> {f['new'].lower()}")
     prov = [by[k] for k in ("APCH_P_PROVIDER", "DEP_P_PROVIDER") if k in by]
     if prov:
-        phrases.append(f"approach/departure control now provided by {prov[0]['new']} "
-                       f"(was {prov[0]['old']})")
+        phrases.append(f"approach/departure control: {prov[0]['old']} -> {prov[0]['new']}")
     if "HOUR" in by and base(source) == "APT_ATT":
         f = by["HOUR"]
-        phrases.append(f"airport attendance hours changed: {f['old']} -> {f['new']}")
+        phrases.append(f"airport attendance hours: {f['old']} -> {f['new']}")
     if "PHONE_NO" in by:
         what = ("AWOS/ASOS " if base(source).startswith("AWOS")
                 else "airport " if base(source).startswith("APT") else "")
-        phrases.append(f"{what}phone number changed to {by['PHONE_NO']['new']}")
+        phrases.append(f"{what}phone number: {by['PHONE_NO']['old'] or 'none'} -> {by['PHONE_NO']['new'] or 'none'}")
     if "LNDG_FEE_FLAG" in by:
-        phrases.append("landing fee now charged" if by["LNDG_FEE_FLAG"]["new"] == "Y"
-                       else "landing fee removed")
+        phrases.append("landing fee: none -> charged" if by["LNDG_FEE_FLAG"]["new"] == "Y"
+                       else "landing fee: charged -> none")
     if "FREQ_USE" in by:
         f = by["FREQ_USE"]
         if f["new"]:
-            phrases.append(f"frequency {ctx.get('FREQ', '')} now listed for {f['new']} (was {f['old']})")
+            phrases.append(f"frequency {ctx.get('FREQ', '')} use: {f['old']} -> {f['new']}")
         else:
-            phrases.append(f"frequency {ctx.get('FREQ', '')} no longer listed for {f['old']}")
+            phrases.append(f"frequency {ctx.get('FREQ', '')} use: {f['old']} -> none")
     obst = {"OBSTN_HGT", "DIST_FROM_THR", "CNTRLN_OFFSET", "CNTRLN_DIR_CODE", "OBSTN_CLNC_SLOPE"}
     if obst & set(by):
         side = {"L": "left of", "R": "right of", "B": "either side of"}.get(
             ctx.get("CNTRLN_DIR_CODE", ""), "off")
+        def val(col, fmt="{}"):
+            """'53 -> 25' if the field changed, else just the current value"""
+            if col in by and by[col]["old"] and by[col]["new"]:
+                return f"{fmt.format(by[col]['old'])} -> {fmt.format(by[col]['new'])}"
+            v = ctx.get(col) or (by[col]["new"] if col in by else "")
+            return fmt.format(v) if v else ""
         bits = []
-        if ctx.get("OBSTN_HGT"):
-            bits.append(f"{ctx['OBSTN_HGT']} ft tall")
-        if ctx.get("DIST_FROM_THR"):
-            bits.append(f"{ctx['DIST_FROM_THR']} ft from threshold")
-        if ctx.get("CNTRLN_OFFSET"):
-            bits.append(f"{ctx['CNTRLN_OFFSET']} ft {side} centerline")
-        slope = f", clearance slope {ctx['OBSTN_CLNC_SLOPE']}:1" if ctx.get("OBSTN_CLNC_SLOPE") else ""
-        phrases.append(f"controlling obstacle changed (now {', '.join(bits)}{slope})")
+        if val("OBSTN_HGT"):
+            bits.append(f"{val('OBSTN_HGT')} ft tall")
+        if val("DIST_FROM_THR"):
+            bits.append(f"{val('DIST_FROM_THR')} ft from threshold")
+        if val("CNTRLN_OFFSET"):
+            bits.append(f"{val('CNTRLN_OFFSET')} ft {side} centerline")
+        if val("OBSTN_CLNC_SLOPE"):
+            bits.append(f"clearance slope {val('OBSTN_CLNC_SLOPE', '{}:1')}")
+        phrases.append(f"controlling obstacle: {', '.join(bits)}")
     declared = [c for c in DECLARED_DISTANCES if c in by]
     if declared:
         def ft(v):
@@ -65,25 +71,26 @@ def field_phrases(fields, source, ctx=None):
                 return v or "none"
         parts = [f"{DECLARED_DISTANCES[c][0]} ({DECLARED_DISTANCES[c][1]}) "
                  f"{ft(by[c]['old'])} -> {ft(by[c]['new'])}" for c in declared]
-        phrases.append("declared distances changed: " + "; ".join(parts))
+        phrases.append("declared distances: " + "; ".join(parts))
     if "RWY_MARKING_COND" in by:
-        phrases.append(f"markings now in {by['RWY_MARKING_COND']['new'].lower()} condition")
+        phrases.append(f"marking condition: {by['RWY_MARKING_COND']['old'].lower() or 'none'} -> "
+                       f"{by['RWY_MARKING_COND']['new'].lower() or 'none'}")
     if "COND" in by:
-        phrases.append(f"pavement now in {by['COND']['new'].lower()} condition")
+        phrases.append(f"pavement condition: {by['COND']['old'].lower() or 'none'} -> "
+                       f"{by['COND']['new'].lower() or 'none'}")
     if "NAV_TYPE" in by:
         f = by["NAV_TYPE"]
-        phrases.append(f"now a {NAV_NAMES.get(f['new'], f['new'])} "
-                       f"(was a {NAV_NAMES.get(f['old'], f['old'])})")
+        phrases.append(f"{NAV_NAMES.get(f['old'], f['old'])} -> {NAV_NAMES.get(f['new'], f['new'])}")
     if "TACAN_DME_STATUS" in by:
         f = by["TACAN_DME_STATUS"]
-        phrases.append(f"TACAN/DME status: {f['new'].lower() or 'none listed'}"
-                       f" (was {f['old'].lower() or 'none listed'})")
+        phrases.append(f"TACAN/DME status: {f['old'].lower() or 'none listed'} -> "
+                       f"{f['new'].lower() or 'none listed'}")
     if "FREQ" in by:
         f = by["FREQ"]
-        phrases.append(f"frequency changed: {f['old']} -> {f['new']}")
+        phrases.append(f"frequency: {f['old']} -> {f['new']}")
     if "FACILITY" in by:
         f = by["FACILITY"]
-        phrases.append(f"frequency now provided by {f['new']} (was {f['old']})")
+        phrases.append(f"frequency provided by: {f['old']} -> {f['new']}")
 
     handled = {"TWR_HRS", "TOWER_HRS", "AIRSPACE_HRS", "APCH_P_PROVIDER", "DEP_P_PROVIDER",
                "PHONE_NO", "NAV_TYPE", "FREQ", "FACILITY", "FAC_NAME", "LNDG_FEE_FLAG", "FREQ_USE",
@@ -94,7 +101,7 @@ def field_phrases(fields, source, ctx=None):
         if k in handled:
             continue
         if k in NAME_COLS:
-            phrases.append(f"{name_label(k, source, ctx)} changed: {f['old'].title()} -> {f['new'].title()}")
+            phrases.append(f"{name_label(k, source, ctx)}: {f['old'].title()} -> {f['new'].title()}")
         else:
             phrases.append(f"{label(k)}: {f['old'] or '(none)'} -> {f['new'] or '(none)'}")
     return phrases
@@ -130,10 +137,10 @@ def summarize(rec, remarks):
             new = next((f["new"] for f in rec["fields"] if f["field"] == "REMARK"),
                        ctx.get("REMARK", ""))
             rec["original"] = new
-            return f"remark updated: {remarks.get(new, new)}"
+            return f"revised remark: {remarks.get(new, new)}"
         text = row.get("REMARK", "")
         rec["original"] = text
-        return f"{'new remark' if kind == 'added' else 'remark removed'}: {remarks.get(text, text)}"
+        return f"{'new remark' if kind == 'added' else 'removed remark'}: {remarks.get(text, text)}"
 
     if b == "PFR_RMT_FMT":
         o, d = (row or ctx).get("Orig", "?"), (row or ctx).get("Dest", "?")
@@ -141,8 +148,8 @@ def summarize(rec, remarks):
         if kind == "added":
             return f"new preferred IFR route {o} -> {d}: {route}"
         if kind == "removed":
-            return f"preferred IFR route {o} -> {d} removed"
-        return f"preferred IFR route {o} -> {d} is now: {route}"
+            return f"preferred IFR route {o} -> {d}: discontinued"
+        return f"preferred IFR route {o} -> {d}: new routing {route}"
 
     if b.startswith(("STAR", "DP")):
         what = "arrival (STAR)" if b.startswith("STAR") else "departure (DP)"
@@ -152,25 +159,29 @@ def summarize(rec, remarks):
         who = row.get("NAME", "").title() or "someone"
         title = row.get("TITLE", "contact").lower()
         phone = f" ({row['PHONE_NO']})" if row.get("PHONE_NO") else ""
-        return (f"new airport {title} listed: {who}{phone}" if kind == "added"
-                else f"airport {title} no longer listed: {who}")
+        return (f"new airport {title}: {who}{phone}" if kind == "added"
+                else f"airport {title}: {who} -> none listed")
 
     if b == "NAV_BASE" and kind != "changed":
         t = NAV_NAMES.get(row.get("NAV_TYPE", ""), row.get("NAV_TYPE", "navaid"))
         freq = f" ({row['FREQ']})" if row.get("FREQ") else ""
-        verb = "decommissioned/removed" if kind == "removed" else "added"
         away = f" ({row['_NEAR_NM']} NM from the field)" if row.get("_NEAR_NM") else ""
-        return f"{row.get('NAV_ID', '')} {t}{freq}{away} {verb}"
+        if kind == "removed":
+            return f"{row.get('NAV_ID', '')} {t}{freq}{away}: decommissioned"
+        return f"new navaid: {row.get('NAV_ID', '')} {t}{freq}{away}"
 
     if b == "FRQ" and kind != "changed":
         use = row.get("FREQ_USE", "")
         if re.search(r"\bRCO\b", use.upper()):
             where = re.sub(r"\s*RCO\b.*", "", use, flags=re.I).title()
-            verb = "no longer available" if kind == "removed" else "now available"
-            return f"flight service (FSS) {row.get('FREQ', '?')} via the {where} outlet {verb}"
+            if kind == "removed":
+                return f"flight service (FSS) {row.get('FREQ', '?')} via the {where} outlet: discontinued"
+            return f"new flight service (FSS) {row.get('FREQ', '?')} via the {where} outlet"
         if kind == "added" and rec["priority"] == "fyi":
-            return f"frequency {row.get('FREQ', '?')} now also listed for {use}"
-        return f"frequency {row.get('FREQ', '?')} ({use}) {kind}"
+            return f"frequency {row.get('FREQ', '?')}: also listed for {use}"
+        if kind == "removed":
+            return f"frequency {row.get('FREQ', '?')} ({use}): discontinued"
+        return f"new frequency {row.get('FREQ', '?')} ({use})"
 
     if kind == "changed":
         where = ""

@@ -90,7 +90,8 @@ struct ChangeRow: View {
 
     /// capitalize the first letter; the backend writes lowercase summaries
     private var displaySummary: String {
-        change.summary.prefix(1).uppercased() + change.summary.dropFirst()
+        let s = change.summary.replacingOccurrences(of: " -> ", with: " → ")
+        return s.prefix(1).uppercased() + s.dropFirst()
     }
 
     private var icon: String {

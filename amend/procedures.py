@@ -67,7 +67,7 @@ def describe(new_name, old_name, old_routes, new_routes):
         t = f"; transitions {_join(new['transitions'])}" if new["transitions"] else ""
         return f"{new_name}: new procedure{t}"
     old = old_routes.get(old_name)
-    label = new_name if old_name == new_name else f"{new_name} (was {old_name})"
+    label = new_name if old_name == new_name else f"{old_name} -> {new_name}"
     if not old or not new:
         return f"{label}: route details not available"
     bits = []

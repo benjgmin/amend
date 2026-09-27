@@ -6,6 +6,11 @@ date. Files are minified UTF-8 JSON.
 
 If a field is added, `schema_version` stays the same. If a field is renamed or removed, it goes up.
 
+## Web pages (not part of the JSON contract)
+`index.html` (search), `<ID>/index.html` (one page per airport with changes or history) and
+`assets/style.css`. Page folders are always 2–4 uppercase letters/digits, so they never collide
+with the JSON paths below.
+
 ## `latest/meta.json`
 Which cycles `latest/` compares.
 

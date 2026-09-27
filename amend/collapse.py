@@ -21,7 +21,7 @@ def _one_apart(a, b):
 
 
 def _new_or_removed_airport(apt, rs, kind):
-    word = {"added": "new airport added to FAA database",
+    word = {"added": "new airport in FAA database",
             "removed": "airport removed from FAA database"}[kind]
     src = lambda r: base(r["source"])
     base_row = next(r for r in rs if src(r) == "APT_BASE" and r["kind"] == kind)
@@ -65,15 +65,16 @@ def _runway_changes(apt, rs):
         o_id, n_id = o.get("RWY_ID", "?"), n.get("RWY_ID", "?")
         extra = []
         if (o.get("RWY_LEN"), o.get("RWY_WIDTH")) != (n.get("RWY_LEN"), n.get("RWY_WIDTH")):
-            extra.append(f"now {n.get('RWY_LEN', '?')}x{n.get('RWY_WIDTH', '?')} ft, "
-                         f"was {o.get('RWY_LEN', '?')}x{o.get('RWY_WIDTH', '?')}")
+            extra.append(f"{o.get('RWY_LEN', '?')}x{o.get('RWY_WIDTH', '?')} -> "
+                         f"{n.get('RWY_LEN', '?')}x{n.get('RWY_WIDTH', '?')} ft")
         if o.get("SURFACE_TYPE_CODE") != n.get("SURFACE_TYPE_CODE"):
-            extra.append(f"surface now {n.get('SURFACE_TYPE_CODE', '?').lower()}")
+            extra.append(f"surface {o.get('SURFACE_TYPE_CODE', '?').lower()} -> "
+                         f"{n.get('SURFACE_TYPE_CODE', '?').lower()}")
         tail = f" ({'; '.join(extra)})" if extra else ""
         renumbered = (_one_apart(_rwy_num(o_id), _rwy_num(n_id)) or
                       (o.get("RWY_LEN") == n.get("RWY_LEN") and o.get("RWY_WIDTH") == n.get("RWY_WIDTH")))
-        s = (f"runway {o_id} renumbered to {n_id}{tail}" if renumbered
-             else f"runway {o_id} replaced by runway {n_id}{tail}")
+        s = (f"runway {o_id} -> {n_id} (renumbered){tail}" if renumbered
+             else f"runway {o_id} -> {n_id} (new runway){tail}")
         out.append({"airport": apt, "source": "APT_RWY.csv", "kind": "changed", "priority": "action",
                     "summary_override": s,
                     "fields": [{"field": "RWY_ID", "old": o_id, "new": n_id}]})
@@ -100,7 +101,7 @@ def _procedures(apt, procs, route_tables=None):
                 o, n = split_code(f["old"])[0], split_code(f["new"])[0]
                 if o != n and stem(o) == stem(n):
                     was[stem(n)] = o
-    labels = [f"{n} (was {was[stem(n)]})" if stem(n) in was else n for n in new_names]
+    labels = [f"{was[stem(n)]} -> {n}" if stem(n) in was else n for n in new_names]
     gone = [g for g in gone if stem(g) not in {stem(n) for n in new_names}]
     s = f"arrival/departure procedures new or updated: {', '.join(labels) or 'none'}"
     if gone:

@@ -114,15 +114,22 @@ private struct LatestView: View {
                 ContentUnavailableView("Couldn't load", systemImage: "wifi.exclamationmark",
                                        description: Text(error))
             } else if loaded && data == nil {
-                NoChangesView(text: store.meta.map {
-                    "NOTHING CHANGED AT \(id)\n\(Cycle.efb($0.fromCycle)) → \(Cycle.efb($0.toCycle))"
-                } ?? "NOTHING CHANGED AT \(id) THIS CYCLE")
+                NoChangesView(text: noChangesText)
             } else if !loaded {
                 ProgressView()
             }
         }
         .task { await load() }
         .refreshable { await load() }
+    }
+
+    /// talk about the new cycle, not the date range (things did change on the older date)
+    private var noChangesText: String {
+        guard let meta = store.meta else { return "NO CHANGES AT \(id) THIS CYCLE" }
+        let eff = Cycle.efb(meta.toCycle)
+        return Cycle.isInEffect(meta.toCycle)
+            ? "NOTHING CHANGED AT \(id)\nIN THE \(eff) CYCLE"
+            : "NO UPCOMING CHANGES AT \(id)\nON \(eff) · CURRENT DATA STAYS THE SAME"
     }
 
     private func load() async {
@@ -146,6 +153,9 @@ private struct HistoryView: View {
     @State private var error: String?
     @AppStorage(SettingsKey.historyRange) private var since: HistoryRange = .all
     @AppStorage(SettingsKey.historyShowFYI) private var showFYI = false
+    @State private var collapsed: Set<String> = []
+    /// collapsed cycles per airport, kept while the app is running (resets on relaunch)
+    @MainActor private static var memory: [String: Set<String>] = [:]
 
     private var groups: [(cycle: String, changes: [Change])] {
         guard let history else { return [] }
@@ -165,15 +175,17 @@ private struct HistoryView: View {
         List {
             controls.efbRow(top: 12, bottom: 8)
             ForEach(groups, id: \.cycle) { group in
+                let isCollapsed = collapsed.contains(group.cycle)
                 Section {
-                    ForEach(group.changes) { ChangeRow(change: $0).efbRow(top: 3, bottom: 3) }
-                } header: {
-                    HStack(spacing: 8) {
-                        Circle().fill(EFB.cyan).frame(width: 7, height: 7)
-                        EFBHeader(text: "EFF \(Cycle.efb(group.cycle))", color: EFB.text)
-                        Rectangle().fill(EFB.line).frame(height: 1)
+                    if !isCollapsed {
+                        ForEach(group.changes) { ChangeRow(change: $0).efbRow(top: 3, bottom: 3) }
                     }
-                    .padding(.vertical, 4)
+                } header: {
+                    Button { toggle(group.cycle) } label: {
+                        CycleHeader(cycle: group.cycle, changes: group.changes, collapsed: isCollapsed)
+                    }
+                    .buttonStyle(.plain)
+                    .pinnedHeader()
                 }
                 .listSectionSeparator(.hidden)
             }
@@ -194,9 +206,11 @@ private struct HistoryView: View {
             }
         }
         .task {
+            collapsed = Self.memory[id] ?? []
             do { history = try await API.history(id) } catch { self.error = error.localizedDescription }
             loaded = true
         }
+        .onChange(of: collapsed) { _, value in Self.memory[id] = value }
     }
 
     private var controls: some View {
@@ -217,7 +231,59 @@ private struct HistoryView: View {
                 Annunciator(text: showFYI ? "FYI ON" : "FYI OFF", color: showFYI ? EFB.text : EFB.faint)
             }
             .buttonStyle(.plain)
+            Button {
+                withAnimation(.snappy) {
+                    let all = Set(groups.map(\.cycle))
+                    collapsed = collapsed.isSuperset(of: all) ? [] : all
+                }
+            } label: {
+                Image(systemName: allCollapsed ? "rectangle.expand.vertical" : "rectangle.compress.vertical")
+                    .font(.system(size: 15, weight: .semibold))
+                    .foregroundStyle(EFB.dim)
+                    .frame(width: 30, height: 26)
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel(allCollapsed ? "Expand all cycles" : "Collapse all cycles")
         }
+    }
+
+    private var allCollapsed: Bool {
+        !groups.isEmpty && collapsed.isSuperset(of: groups.map(\.cycle))
+    }
+
+    private func toggle(_ cycle: String) {
+        withAnimation(.snappy) {
+            if collapsed.contains(cycle) { collapsed.remove(cycle) } else { collapsed.insert(cycle) }
+        }
+    }
+}
+
+/// tappable "EFF 10 JUL 2025" header; shows counts when collapsed so you still see what's inside
+private struct CycleHeader: View {
+    let cycle: String
+    let changes: [Change]
+    let collapsed: Bool
+
+    private var counts: Counts {
+        Counts(action: changes.filter { $0.level == .action }.count,
+               ifr: changes.filter { $0.level == .ifr }.count,
+               fyi: changes.filter { $0.level == .fyi }.count)
+    }
+
+    var body: some View {
+        HStack(spacing: 8) {
+            Image(systemName: "chevron.right")
+                .font(.system(size: 11, weight: .bold))
+                .foregroundStyle(EFB.cyan)
+                .rotationEffect(.degrees(collapsed ? 0 : 90))
+            EFBHeader(text: "EFF \(Cycle.efb(cycle))", color: EFB.text)
+            Rectangle().fill(EFB.line).frame(height: 1)
+            if collapsed {
+                CountAnnunciators(counts: counts, showNoChange: false)
+            }
+        }
+        .padding(.vertical, 4)
+        .contentShape(Rectangle())
     }
 }
 
@@ -238,6 +304,7 @@ struct ChangeSections: View {
                         Rectangle().fill(level.color.opacity(0.3)).frame(height: 1)
                     }
                     .padding(.vertical, 4)
+                    .pinnedHeader()
                 }
                 .listSectionSeparator(.hidden)
             }
@@ -287,5 +354,17 @@ private struct NoChangesView: View {
                 .multilineTextAlignment(.center)
                 .foregroundStyle(color)
         }
+    }
+}
+
+
+private extension View {
+    /// list section headers stick to the top while scrolling; give them the page background
+    /// so the rows underneath don't show through
+    func pinnedHeader() -> some View {
+        self.padding(.horizontal, 16)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(EFB.bg)
+            .listRowInsets(EdgeInsets())
     }
 }

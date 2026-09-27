@@ -3,6 +3,7 @@ Regression tests built from real cases found in FAA data.
 run:  python -m unittest -v
 """
 import io
+import json
 import os
 import tempfile
 import unittest
@@ -37,7 +38,7 @@ class TestRules(Case):
         new = {"ATC_BASE.csv": ["FACILITY_ID,TWR_HRS", "VRB,0700-0100"],
                "FRQ.csv": ["FACILITY,SERVICED_FACILITY,FREQ,TOWER_HRS", "VRB,VRB,126.3,0700-0100"]}
         s = self.summaries(self.diff(old, new, {"VRB"})["VRB"], "action")
-        self.assertEqual(s, ["tower hours changed: 0700-2100 -> 0700-0100 local"])
+        self.assertEqual(s, ["tower hours: 0700-2100 -> 0700-0100 local"])
 
     def test_frequency_belongs_to_served_airport(self):
         """DAB approach serving NSB is NSB's frequency, not DAB's."""
@@ -50,7 +51,7 @@ class TestRules(Case):
         old = {"NAV_BASE.csv": ["\ufeffNAV_ID,NAV_TYPE,NAME,CITY", "TRV,VORTAC,TREASURE,VRB"]}
         new = {"NAV_BASE.csv": ["\ufeffNAV_ID,NAV_TYPE,NAME,CITY", "TRV,DME,TREASURE,VRB"]}
         s = self.summaries(self.diff(old, new, {"VRB"})["VRB"])
-        self.assertIn("TRV (Treasure) navaid: now a DME (was a VORTAC)", s)
+        self.assertIn("TRV (Treasure) navaid: VORTAC -> DME", s)
 
     def test_tpa_does_not_match_tampa(self):
         old = {"PFR_RMT_FMT.csv": ["Orig,Route String,Dest,Type", "DAB,DAB WORAK DADES1 TPA,TPA,L"]}
@@ -64,7 +65,7 @@ class TestRules(Case):
         new = {"FRQ.csv": ["FACILITY,SERVICED_FACILITY,FREQ,FREQ_USE", "BNA,M02,118.4,APCH/P",
                            "BNA,M02,118.4,ALLLN STAR", "BNA,M02,122.9,CTAF"]}
         ch = self.diff(old, new, {"M02"})["M02"]
-        self.assertEqual(self.summaries(ch, "action"), ["frequency 122.9 (CTAF) added"])
+        self.assertEqual(self.summaries(ch, "action"), ["new frequency 122.9 (CTAF)"])
 
     def test_reworded_remark_is_fyi(self):
         old = {"APT_RMK.csv": ["ARPT_ID,LEGACY_ELEMENT_NUMBER,REMARK",
@@ -79,14 +80,14 @@ class TestRules(Case):
         ch = self.diff({"APT_CON.csv": [hdr, "BOS,MANAGER,EDWARD FRENI,617-555-0100"]},
                        {"APT_CON.csv": [hdr, "BOS,MANAGER,SHARON WILLIAMS,617-555-0100"]}, {"BOS"})["BOS"]
         self.assertEqual((ch[0]["priority"], ch[0]["summary"]),
-                         ("fyi", "airport manager changed: Edward Freni -> Sharon Williams"))
+                         ("fyi", "airport manager: Edward Freni -> Sharon Williams"))
 
     def test_rco_removal_is_fyi(self):
         old = {"FRQ.csv": ["FACILITY,SERVICED_FACILITY,FREQ,FREQ_USE", "BFD,BFD,122.2,BRADFORD RCO"]}
         new = {"FRQ.csv": ["FACILITY,SERVICED_FACILITY,FREQ,FREQ_USE"]}
         c = self.diff(old, new, {"BFD"})["BFD"][0]
         self.assertEqual((c["priority"], c["summary"]),
-                         ("fyi", "flight service (FSS) 122.2 via the Bradford outlet no longer available"))
+                         ("fyi", "flight service (FSS) 122.2 via the Bradford outlet: discontinued"))
 
 
 class TestRunways(Case):
@@ -96,20 +97,20 @@ class TestRunways(Case):
 
     def test_renumbered(self):
         ch = self.diff(self.rwy(["CMY,01/19,3032,95,ASPH"]), self.rwy(["CMY,02/20,3032,95,ASPH"]))
-        self.assertEqual(self.summaries(ch["CMY"]), ["runway 01/19 renumbered to 02/20"])
+        self.assertEqual(self.summaries(ch["CMY"]), ["runway 01/19 -> 02/20 (renumbered)"])
 
     def test_renumbered_and_remeasured(self):
         ch = self.diff(self.rwy(["CMY,10/28,2800,100,TURF"]), self.rwy(["CMY,09/27,2803,60,TURF"]))
         self.assertEqual(self.summaries(ch["CMY"]),
-                         ["runway 10/28 renumbered to 09/27 (now 2803x60 ft, was 2800x100)"])
+                         ["runway 10/28 -> 09/27 (renumbered) (2800x100 -> 2803x60 ft)"])
 
     def test_wraparound(self):
         ch = self.diff(self.rwy(["CMY,36/18,3000,75,ASPH"]), self.rwy(["CMY,01/19,3000,75,ASPH"]))
-        self.assertEqual(self.summaries(ch["CMY"]), ["runway 36/18 renumbered to 01/19"])
+        self.assertEqual(self.summaries(ch["CMY"]), ["runway 36/18 -> 01/19 (renumbered)"])
 
     def test_replaced(self):
         ch = self.diff(self.rwy(["CMY,18W/36W,5370,2300,WATER"]), self.rwy(["CMY,16W/34W,11936,2000,WATER"]))
-        self.assertIn("replaced by runway 16W/34W", ch["CMY"][0]["summary"])
+        self.assertIn("-> 16W/34W (new runway)", ch["CMY"][0]["summary"])
 
     def test_declared_distances(self):
         """VRB rwy 22: small ASDA/LDA wobble is fyi, in plain English."""
@@ -117,7 +118,7 @@ class TestRunways(Case):
         ch = self.diff({"APT_RWY_END.csv": [hdr, "VRB,04/22,22,4974,4974"]},
                        {"APT_RWY_END.csv": [hdr, "VRB,04/22,22,4945,4945"]}, {"VRB"})["VRB"]
         self.assertEqual((ch[0]["priority"], ch[0]["summary"]),
-                         ("fyi", "runway 22: declared distances changed: accelerate-stop distance "
+                         ("fyi", "runway 22: declared distances: accelerate-stop distance "
                                  "available (ASDA) 4,974 ft -> 4,945 ft; landing distance available "
                                  "(LDA) 4,974 ft -> 4,945 ft"))
 
@@ -133,7 +134,7 @@ class TestRunways(Case):
                "APT_RWY.csv": ["ARPT_ID,RWY_ID,RWY_LEN,RWY_WIDTH,SURFACE_TYPE_CODE", "02TT,18/36,2300,30,TURF"],
                "FRQ.csv": ["FACILITY,SERVICED_FACILITY,FREQ,FREQ_USE", "02TT,02TT,122.9,CTAF"]}
         s = self.summaries(self.diff(old, new)["02TT"])
-        self.assertEqual(s, ["new airport added to FAA database: Lunacity Ranch Airfield, "
+        self.assertEqual(s, ["new airport in FAA database: Lunacity Ranch Airfield, "
                              "runway 18/36 2300x30 ft turf, CTAF 122.9"])
 
 
@@ -153,8 +154,8 @@ class TestProcedures(Case):
                                       "LPERD.TTHOR3,BODY,LPERD-TTHOR,20,WOXXO",
                                       "NECCK.TTHOR3,TRANSITION,NECCK-LPERD,10,NECCK"]}
         ch = self.diff(old, new)["DAB"][0]
-        self.assertEqual(ch["summary"], "arrival/departure procedures new or updated: TTHOR3 (was TTHOR2)")
-        self.assertEqual(ch["details"], ["TTHOR3 (was TTHOR2): waypoints added NECCK, WOXXO; waypoints removed COL, LAANA; "
+        self.assertEqual(ch["summary"], "arrival/departure procedures new or updated: TTHOR2 -> TTHOR3")
+        self.assertEqual(ch["details"], ["TTHOR2 -> TTHOR3: waypoints added NECCK, WOXXO; waypoints removed COL, LAANA; "
                                          "transitions added NECCK; transitions removed COL"])
 
     def test_same_name_amended_in_all_airports_mode(self):
@@ -198,7 +199,7 @@ class TestNavaidsNearby(Case):
                        {"APT_BASE.csv": apt, "NAV_BASE.csv": [nav, "TRV,DME,TREASURE,27.6784,-80.4897"]})
         self.assertEqual(list(ch), ["VRB"])
         self.assertEqual(ch["VRB"][0]["summary"],
-                         "TRV (Treasure) navaid, 4 NM from the field: now a DME (was a VORTAC)")
+                         "TRV (Treasure) navaid, 4 NM from the field: VORTAC -> DME")
 
     def test_tacan_coordinates_are_noise(self):
         apt = ["ARPT_ID,ICAO_ID,FACILITY_USE_CODE,SITE_TYPE_CODE,LAT_DECIMAL,LONG_DECIMAL",
@@ -208,7 +209,7 @@ class TestNavaidsNearby(Case):
                        {"APT_BASE.csv": apt, "NAV_BASE.csv": [nav, "DQD,VORTAC,DENTON,33.2156,-97.1989,"
                                                                   "OPERATIONAL IFR,33.21555555"]})
         self.assertEqual(ch["DTO"][0]["summary"], "DQD (Denton) navaid, 1 NM from the field: "
-                                                  "TACAN/DME status: operational ifr (was none listed)")
+                                                  "TACAN/DME status: none listed -> operational ifr")
 
 
 class TestCharts(Case):
@@ -253,6 +254,48 @@ class TestDirectory(unittest.TestCase):
                                 "city": "Daytona Beach", "state": "FL", "type": "airport",
                                 "lat": 29.1799, "lon": -81.0581})
         self.assertNotIn("icao", d[0])
+
+
+class TestWeb(unittest.TestCase):
+    def build(self):
+        import datetime as dt
+        from amend import web
+        site = tempfile.mkdtemp()
+        os.makedirs(os.path.join(site, "latest"))
+        with open(os.path.join(site, "latest", "VRB.json"), "w") as f:
+            f.write("{}")                                  # stands in for the app's JSON
+        hist = tempfile.mkdtemp()
+        with open(os.path.join(hist, "VRB.json"), "w") as f:
+            json.dump({"airport": "VRB", "entries": [
+                {"cycle": "2025-07-10", "priority": "action", "category": "tower", "kind": "changed",
+                 "summary": "tower hours: 0700-2300 -> 0700-0100 local", "source": "ATC_BASE", "id": "x"}]}, f)
+        latest = {"VRB": [{"id": "a", "priority": "action", "category": "tower", "kind": "changed",
+                           "summary": "tower hours: 0800-2200 -> 0600-2200 local", "source": "ATC_BASE"},
+                          {"id": "b", "priority": "ifr", "category": "chart", "kind": "changed",
+                           "summary": "approach ILS OR LOC RWY 12R amended (amdt 3)", "source": "d-TPP",
+                           "chart": {"code": "IAP", "name": "ILS", "amdt": "3", "pdf": "https://x/y.PDF"}}]}
+        meta = {"from_cycle": "2026-09-03", "to_cycle": "2026-10-01", "upcoming": True, "changed_airports": 1}
+        directory = [{"id": "VRB", "icao": "KVRB", "name": "Vero Beach Rgnl", "city": "Vero Beach", "state": "FL"},
+                     {"id": "DAB", "icao": "KDAB", "name": "Daytona Beach Intl"}]
+        n = web.build(site, meta, directory, latest, hist, now=dt.datetime(2026, 9, 24, tzinfo=dt.timezone.utc))
+        return site, n
+
+    def test_airport_page(self):
+        site, n = self.build()
+        self.assertEqual(n, 1)
+        page = open(os.path.join(site, "VRB", "index.html")).read()
+        self.assertIn('<meta property="og:title" content="VRB · Vero Beach Rgnl">', page)
+        self.assertIn('content="ACT 1 · IFR 1 · tower hours: 0800-2200 -&gt; 0600-2200 local"', page)
+        self.assertIn("NOT IN EFFECT YET", page)
+        self.assertIn("0800-2200 → 0600-2200", page)
+        self.assertIn("VIEW PLATE", page)
+        self.assertIn("EFF 10 JUL 2025", page)          # history section
+
+    def test_json_paths_untouched(self):
+        site, _ = self.build()
+        self.assertEqual(open(os.path.join(site, "latest", "VRB.json")).read(), "{}")
+        self.assertTrue(os.path.exists(os.path.join(site, "index.html")))
+        self.assertTrue(os.path.exists(os.path.join(site, "assets", "style.css")))
 
 
 class TestSchema(Case):

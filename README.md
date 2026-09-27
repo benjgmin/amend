@@ -17,13 +17,19 @@ It started with a quiz question marked wrong. The course material said Vero Beac
 
 ```
 VRB  Vero Beach Rgnl
- EFF 10 JUL 2025   !! tower hours changed: 0700-2300 -> 0700-0100 local
-                   !! airspace is now: class d svc 0700-0100; other times class e
- EFF 23 JAN 2025   !! tower hours changed: 0700-2100 -> 0700-2300 local
-                   !! airspace is now: class d svc 0700-2300; other times class e
+ EFF 10 JUL 2025   !! tower hours: 0700-2300 -> 0700-0100 local
+                   !! airspace: class d svc 0700-2300 -> class d svc 0700-0100
+ EFF 23 JAN 2025   !! tower hours: 0700-2100 -> 0700-2300 local
+                   !! airspace: class d svc 0700-2100 -> class d svc 0700-2300
 ```
 
 The course was two changes behind.
+
+## On the web
+
+**[benjgmin.github.io/amend](https://benjgmin.github.io/amend/)**: search any airport, or go straight to one, like
+[/amend/VRB/](https://benjgmin.github.io/amend/VRB/). Every airport with changes gets its own page, styled like the
+app, with link previews so a page shared in iMessage or a group chat shows what changed.
 
 ## The app
 
@@ -38,7 +44,7 @@ SwiftUI, iOS 17+, styled like an EFB.
 
 ## How it works
 
-A GitHub Action runs daily. It downloads the FAA NASR 28-day subscription and d-TPP chart metadata, diffs every US airport (about 15 seconds, with 26 regression tests guarding the rules), and publishes static JSON to GitHub Pages. The app reads that JSON; there is no server.
+A GitHub Action runs daily. It downloads the FAA NASR 28-day subscription and d-TPP chart metadata, diffs every US airport (about 15 seconds, with 28 regression tests guarding the rules), and publishes static JSON to GitHub Pages. The app reads that JSON; there is no server.
 
 - **Airports and airspace:** tower and Class D hours, frequencies, runways (renumbering from magnetic drift, replacements, declared distances), attendance hours, contacts, new and closed airports, remarks
 - **Navaids:** decommissioned or changed VORs, VORTACs and DMEs, matched to the public airports within 10 NM ("TRV (Treasure) navaid, 4 NM from the field: now a DME")
@@ -62,6 +68,7 @@ Data is public at `https://benjgmin.github.io/amend/`, documented in [SCHEMA.md]
 | `amend/procedures.py` | waypoint-level STAR / DP comparisons |
 | `amend/pipeline.py` | the whole diff in one call, public JSON shape |
 | `amend/history.py`, `latest.py`, `airports.py` | history timeline, the published site, airport directory |
+| `amend/web.py` | the web pages: one per airport plus the search page |
 | `tests/` | regression tests built from real cases found in FAA data |
 | `SCHEMA.md` | the JSON format the app relies on |
 
