@@ -19,7 +19,7 @@ struct WelcomeView: View {
                 Spacer()
                 if page < pages - 1 {
                     Button("Skip") { onboarded = true }
-                        .font(EFB.mono(13, .semibold))
+                        .font(.system(size: 15, weight: .medium))
                         .foregroundStyle(EFB.dim)
                 }
             }
