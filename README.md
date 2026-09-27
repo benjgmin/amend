@@ -49,6 +49,7 @@ SwiftUI, iOS 17+, styled like an EFB.
 A GitHub Action runs daily. It downloads the FAA NASR 28-day subscription and d-TPP chart metadata, diffs every US airport (about 15 seconds, with 28 regression tests guarding the rules), and publishes static JSON to GitHub Pages. The app reads that JSON; there is no server.
 
 - **Airports and airspace:** tower and Class D hours, frequencies, runways (renumbering from magnetic drift, replacements, declared distances), attendance hours, contacts, new and closed airports, remarks
+- **Airspace shapes:** class B, C, D and E surface area floors, ceilings and boundaries from the FAA class airspace shapefiles, told from each airport's point of view ("Orlando class B over the field: 3,000-10,000 ft MSL -> 2,500-10,000 ft MSL"). Re-digitized boundaries are ignored; class E5 is skipped
 - **Navaids:** decommissioned or changed VORs, VORTACs and DMEs, matched to the public airports within 10 NM ("TRV (Treasure) navaid, 4 NM from the field: now a DME")
 - **Charts:** added, amended and removed approaches, departures, STARs and airport diagrams, with links to the new PDF plates
 - **Arrivals and departures down to the waypoint:** when a STAR or DP is amended, Amend compares the old and new routes and says what moved ("MINEE6 (was MINEE5): waypoints removed FUPGE, LBV, RINSE; transitions removed LBV")
@@ -67,6 +68,7 @@ Data is public at `https://amend.watch/`, documented in [SCHEMA.md](SCHEMA.md).
 | `amend/collapse.py`, `english.py` | turning raw rows into events and plain-English summaries |
 | `amend/remarks.py` | translating remarks with Claude |
 | `amend/dtpp.py` | approach plate / chart changes |
+| `amend/airspace.py` | class airspace shapefile: floors, ceilings, boundaries |
 | `amend/procedures.py` | waypoint-level STAR / DP comparisons |
 | `amend/pipeline.py` | the whole diff in one call, public JSON shape |
 | `amend/history.py`, `latest.py`, `airports.py` | history timeline, the published site, airport directory |

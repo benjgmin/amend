@@ -33,12 +33,21 @@ def dtpp_url(d):
     return f"https://aeronav.faa.gov/d-tpp/{dtpp_id(d)}/xml_data/d-tpp_Metafile.xml"
 
 
+def airspace_url(d):
+    """class airspace shapefiles, published with each NASR cycle (not in the CSV zip)."""
+    return f"https://nfdc.faa.gov/webContent/28DaySub/{d.isoformat()}/class_airspace_shape_files.zip"
+
+
 def zip_path(d):
     return os.path.join(DATA, f"{d.isoformat()}_CSV.zip")
 
 
 def dtpp_path(d):
     return os.path.join(DATA, f"dtpp_{dtpp_id(d)}.xml")
+
+
+def airspace_path(d):
+    return os.path.join(DATA, f"{d.isoformat()}_airspace.zip")
 
 
 def looks_valid(path, name=None):
@@ -87,3 +96,15 @@ def get_dtpp(d):
     """path to the d-TPP metafile for cycle d, or None (the FAA doesn't keep old ones)."""
     p = dtpp_path(d)
     return p if download(dtpp_url(d), p) else None
+
+
+def get_airspace(d):
+    """path to cycle d's class airspace shapefile zip, or None."""
+    p = airspace_path(d)
+    return p if download(airspace_url(d), p) else None
+
+
+def get_airspace_pair(old, new):
+    """(old, new) shapefile zips for pipeline.run(airspace=...), or None if either is missing."""
+    pair = (get_airspace(old), get_airspace(new))
+    return pair if all(pair) else None

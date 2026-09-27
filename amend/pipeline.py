@@ -1,4 +1,4 @@
-"""The whole diff in one call: load two cycles, diff, collapse, summarize, add charts."""
+"""The whole diff in one call: load two cycles, diff, collapse, summarize, add charts and airspace."""
 import datetime as dt
 import hashlib
 import os
@@ -6,6 +6,7 @@ import re
 import time
 from collections import defaultdict
 
+from . import airspace as arsp
 from .collapse import collapse, merge_freq_uses
 from .diff import diff
 from .dtpp import load_dtpp
@@ -64,8 +65,9 @@ def to_change(rec, airport, to_cycle):
     return out
 
 
-def run(old_zip, new_zip, ids=None, dtpp_path=None, llm=False, log=print):
+def run(old_zip, new_zip, ids=None, dtpp_path=None, llm=False, log=print, airspace=None):
     """diff two NASR CSV zips. ids=None means every airport.
+    airspace: optional (old, new) class airspace shapefile zips for floor/ceiling/boundary changes.
     returns {"from_cycle", "to_cycle", "airports": {apt: [change, ...]}, "hidden": {apt: n}}"""
     t0 = time.time()
     all_mode = ids is None
@@ -119,6 +121,20 @@ def run(old_zip, new_zip, ids=None, dtpp_path=None, llm=False, log=print):
                 r["summary"] = r["summary_override"]
             by_apt[apt].extend(recs)
         log(f"  {sum(len(v) for v in charts.values())} chart changes at {len(charts)} airports")
+
+    if airspace:
+        try:
+            old_a, new_a = (arsp.load(p) for p in airspace)
+        except Exception as e:     # a surprise in the shapefile must never stop the daily run
+            log(f"  couldn't read the class airspace shapefile ({e}), skipping airspace shapes")
+            old_a = new_a = None
+        if old_a is None or new_a is None:
+            log("  no class airspace shapefile in one of the airspace zips, skipping airspace shapes")
+        else:
+            recs = arsp.diff(old_a, new_a, near or NearIndex.from_zip(new_zip), ids)
+            for r in recs:
+                by_apt[r["airport"]].append(r)
+            log(f"  {len(recs)} airspace shape changes")
 
     airports = {}
     for apt, recs in by_apt.items():

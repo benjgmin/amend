@@ -22,6 +22,7 @@ Which cycles `latest/` compares.
 | `from_cycle`, `to_cycle` | string | ISO dates |
 | `upcoming` | bool | `true`: `to_cycle` hasn't taken effect yet |
 | `includes_charts` | bool | d-TPP chart changes included |
+| `includes_airspace` | bool | class airspace shape changes (floors, ceilings, boundaries) included |
 | `changed_airports` | int | |
 | `generated` | string | ISO timestamp, UTC |
 
@@ -53,7 +54,7 @@ Only exists if the airport changed. **A 404 means no changes**, not an error.
 | `category` | string | yes | `tower`, `airspace`, `frequency`, `navaid`, `runway`, `remark`, `procedure`, `route`, `chart`, `weather`, `airport`, `other` |
 | `kind` | string | yes | `added`, `removed`, `changed` |
 | `summary` | string | yes | plain-English, ready to display |
-| `source` | string | yes | FAA file it came from (`ATC_BASE`, `APT_RMK`, `d-TPP`, ...) |
+| `source` | string | yes | FAA file it came from (`ATC_BASE`, `APT_RMK`, `d-TPP`, `CLS_ARSP_SHP` for the class airspace shapefile, ...) |
 | `original` | string | no | raw FAA remark text (show under translated remarks) |
 | `fields` | array | no | `[{"field", "old", "new"}]` raw before/after values |
 | `details` | array of string | no | route-level lines behind a "preferred IFR routes" summary |
