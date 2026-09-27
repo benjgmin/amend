@@ -22,7 +22,6 @@ struct AmendApp: App {
         WindowGroup {
             AirportsView()
                 .environment(store)
-                .preferredColorScheme(.dark)
                 .tint(EFB.cyan)
         }
         .onChange(of: scenePhase) { _, phase in

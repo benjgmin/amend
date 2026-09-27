@@ -50,9 +50,8 @@ struct AddAirportView: View {
             .toolbarBackground(EFB.bg, for: .navigationBar)
             .toolbar {
                 ToolbarItem(placement: .principal) {
-                    Text("ADD AIRPORT")
-                        .font(EFB.mono(15, .bold))
-                        .tracking(2)
+                    Text("Add airport")
+                        .font(.system(size: 16, weight: .semibold))
                         .foregroundStyle(EFB.text)
                 }
                 ToolbarItem(placement: .cancellationAction) { Button("Done") { dismiss() } }

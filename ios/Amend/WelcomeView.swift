@@ -43,27 +43,27 @@ struct WelcomeView: View {
     // MARK: pages
 
     private var intro: some View {
-        pageLayout(icon: "airplane.departure", title: "AMEND") {
+        pageLayout(icon: "airplane.departure", title: "Welcome to Amend") {
             Text("Every 28 days the FAA publishes a new cycle of airport, airspace and chart data. Tower hours move, runways get renumbered, approaches get amended, and it's easy to miss.")
             Text("Amend compares each cycle to the last one and tells you what changed at your airports, in plain English, up to three weeks before it takes effect.")
         }
     }
 
     private var reading: some View {
-        pageLayout(icon: "list.bullet.rectangle", title: "HOW TO READ IT") {
+        pageLayout(icon: "list.bullet.rectangle", title: "How to read it") {
             chip("ACT", EFB.amber, "Changes how you fly it: tower hours, frequencies, runways, navaids")
             chip("IFR", EFB.cyan, "Approaches, STARs, departures and IFR routes")
             chip("FYI", EFB.dim, "Worth knowing: phone numbers, fees, obstacles, reworded remarks")
-            chip("NO CHG", EFB.green, "Nothing changed there this cycle")
+            chip("No change", EFB.green, "Nothing changed there this cycle")
             Text("Remarks are the FAA's free-text airport notes. They're translated to plain English, and the original FAA text is always one tap away.")
             Button("Read the full guide") { showingGuide = true }
-                .font(EFB.mono(13, .bold))
+                .font(.subheadline.weight(.semibold))
                 .foregroundStyle(EFB.cyan)
         }
     }
 
     private var setup: some View {
-        pageLayout(icon: "house", title: "SET UP") {
+        pageLayout(icon: "house", title: "Set up") {
             Text("Add your home field first. You'll be notified about any change there, and about action items at your other airports.")
 
             Button { showingAdd = true } label: {
@@ -86,8 +86,8 @@ struct WelcomeView: View {
             }
             .buttonStyle(.plain)
 
-            Text("NOT FOR NAVIGATION. Always use official FAA publications, NOTAMs and a proper preflight briefing.")
-                .font(EFB.mono(10))
+            Text("Not for navigation. Always use official FAA publications, NOTAMs and a proper preflight briefing.")
+                .font(.footnote)
                 .foregroundStyle(EFB.faint)
         }
     }
@@ -112,13 +112,12 @@ struct WelcomeView: View {
                     onboarded = true
                 }
             } label: {
-                Text(page < pages - 1 ? "NEXT" : "GET STARTED")
-                    .font(EFB.mono(15, .bold))
-                    .tracking(2)
+                Text(page < pages - 1 ? "Next" : "Get started")
+                    .font(.system(size: 16, weight: .semibold))
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 14)
                     .foregroundStyle(EFB.bg)
-                    .background(EFB.cyan, in: RoundedRectangle(cornerRadius: 8))
+                    .background(EFB.text, in: RoundedRectangle(cornerRadius: 12))
             }
         }
         .padding()
@@ -133,8 +132,7 @@ struct WelcomeView: View {
                     .foregroundStyle(EFB.cyan)
                     .padding(.top, 24)
                 Text(title)
-                    .font(EFB.mono(24, .bold))
-                    .tracking(2)
+                    .font(.system(size: 28, weight: .semibold))
                     .foregroundStyle(EFB.text)
                 VStack(alignment: .leading, spacing: 14) { content() }
                     .font(.body)
@@ -158,8 +156,8 @@ struct WelcomeView: View {
             Image(systemName: done ? "checkmark.circle.fill" : icon)
                 .foregroundStyle(done ? EFB.green : EFB.cyan)
                 .frame(width: 24)
-            Text(title.uppercased())
-                .font(EFB.mono(14, .bold))
+            Text(title)
+                .font(.system(size: 15, weight: .semibold))
                 .foregroundStyle(done ? EFB.green : EFB.text)
             Spacer()
             if !done { Image(systemName: "chevron.right").foregroundStyle(EFB.faint) }

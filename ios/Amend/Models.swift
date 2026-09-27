@@ -101,10 +101,10 @@ struct Chart: Decodable, Sendable, Hashable {
     let amdt: String?
     let pdf: String?
 
-    /// "AMDT 11C" / "ORIG" / nil
+    /// "Amdt 11C" / "Original" / nil
     var amdtLabel: String? {
         guard let amdt, !amdt.isEmpty else { return nil }
-        return ["0", "ORIG"].contains(amdt.uppercased()) ? "ORIG" : "AMDT \(amdt)"
+        return ["0", "ORIG"].contains(amdt.uppercased()) ? "Original" : "Amdt \(amdt)"
     }
 }
 
