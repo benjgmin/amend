@@ -284,6 +284,9 @@ class TestVerify(unittest.TestCase):
                 json.dump(obj, f)
         with open(os.path.join(d, "index.html"), "w") as f:
             f.write("<html>" + "x" * 2000)
+        os.makedirs(os.path.join(d, "assets"))
+        with open(os.path.join(d, "assets", "app.js"), "w") as f:
+            f.write("var AM;" + "x" * 2000)
         head = {"from_cycle": "2026-09-03", "to_cycle": "2026-10-01"}
         apts = {a: {"action": 1} for a in ["VRB", "DAB", "MCO"][:n_changed]}
         w("latest/meta.json", {**head, "changed_airports": n_changed})
@@ -314,8 +317,10 @@ class TestVerify(unittest.TestCase):
         d = self.site()
         os.remove(os.path.join(d, "latest", "meta.json"))
         os.remove(os.path.join(d, "index.html"))
+        os.remove(os.path.join(d, "assets", "app.js"))
         bad = freshness.verify(d, 5)
         self.assertIn("index.html missing", bad)
+        self.assertIn("assets/app.js missing", bad)
         self.assertTrue(any(p.startswith("latest/meta.json") for p in bad))
 
 
