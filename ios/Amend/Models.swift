@@ -115,7 +115,7 @@ enum Priority: String, CaseIterable, Identifiable, Sendable {
     var title: String {
         switch self {
         case .action: "Action"
-        case .ifr: "IFR Procedures"
+        case .ifr: "IFR procedures"
         case .fyi: "FYI"
         }
     }
@@ -145,13 +145,13 @@ enum Cycle {
 
     static func string(_ date: Date) -> String { parser.string(from: date) }
 
-    /// "01 OCT 2026"
+    /// "01 Oct 2026"
     static func efb(_ cycle: String) -> String {
         guard let d = date(cycle) else { return cycle }
-        return efbFormatter.string(from: d).uppercased()
+        return efbFormatter.string(from: d)
     }
 
-    /// "03 SEP"
+    /// "03 Sep"
     static func efbShort(_ cycle: String) -> String {
         String(efb(cycle).prefix(6))
     }

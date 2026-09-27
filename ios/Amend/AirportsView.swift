@@ -30,8 +30,8 @@ struct AirportsView: View {
                 }
                 .onMove { store.moveOthers(from: $0, to: $1) }
 
-                Text("NOT FOR NAVIGATION. ALWAYS CHECK OFFICIAL FAA PUBLICATIONS AND NOTAMS.")
-                    .font(EFB.mono(10))
+                Text("Not for navigation. Always check official FAA publications and NOTAMs.")
+                    .font(.footnote)
                     .foregroundStyle(EFB.faint)
                     .efbRow(top: 20, bottom: 20)
             }
@@ -127,9 +127,9 @@ private struct CycleStrip: View {
 
     private var countdown: String {
         switch days ?? 0 {
-        case ...0: "TODAY 0901Z"
-        case 1: "TOMORROW"
-        case let d: "IN \(d) DAYS"
+        case ...0: "today 0901Z"
+        case 1: "tomorrow"
+        case let d: "in \(d) days"
         }
     }
 
@@ -151,19 +151,19 @@ private struct CycleStrip: View {
             if upcoming {
                 label("Next cycle takes effect 0901Z")
                 HStack(alignment: .firstTextBaseline, spacing: 10) {
-                    Text(Cycle.efb(meta.toCycle)).font(EFB.mono(26, .bold)).foregroundStyle(EFB.text)
-                    Text(countdown).font(EFB.mono(13, .bold)).foregroundStyle(EFB.cyan)
+                    Text(Cycle.efb(meta.toCycle)).font(.system(size: 28, weight: .semibold)).foregroundStyle(EFB.text)
+                    Text(countdown).font(.system(size: 15, weight: .medium)).foregroundStyle(EFB.cyan)
                 }
                 detail("\(meta.changedAirports) airports change on this date")
-                Text("CHANGES SHOWN BELOW ARE NOT IN EFFECT YET")
-                    .font(EFB.mono(11, .semibold))
+                Text("Changes below aren't in effect yet.")
+                    .font(.system(size: 13, weight: .medium))
                     .foregroundStyle(EFB.cyan)
                 Rectangle().fill(EFB.line).frame(height: 1).padding(.vertical, 2)
                 detail("In effect now: \(Cycle.efbShort(meta.fromCycle)) – \(Cycle.efb(meta.toCycle)) 0901Z")
             } else {
                 label("Current cycle in effect (0901Z to 0901Z)")
                 Text("\(Cycle.efbShort(meta.toCycle)) – \(Cycle.efb(Cycle.shift(meta.toCycle, days: 28)))")
-                    .font(EFB.mono(22, .bold))
+                    .font(.system(size: 24, weight: .semibold))
                     .foregroundStyle(EFB.text)
                 detail("\(meta.changedAirports) airports changed since \(Cycle.efb(meta.fromCycle))")
             }
@@ -192,10 +192,10 @@ private struct AirportTile: View {
             VStack(alignment: .leading, spacing: 3) {
                 HStack(alignment: .firstTextBaseline, spacing: 8) {
                     Text(id)
-                        .font(EFB.mono(22, .bold))
+                        .font(EFB.mono(20, .semibold))
                         .foregroundStyle(EFB.text)
                     if let icao = info?.icao, icao != id {
-                        Text(icao).font(EFB.mono(12)).foregroundStyle(EFB.faint)
+                        Text(icao).font(.system(size: 13)).foregroundStyle(EFB.faint)
                     }
                     if isHome {
                         Image(systemName: "house.fill")
@@ -209,8 +209,8 @@ private struct AirportTile: View {
                         .foregroundStyle(EFB.text.opacity(0.85))
                         .lineLimit(1)
                     if !info.location.isEmpty {
-                        Text(info.location.uppercased())
-                            .font(EFB.mono(10))
+                        Text(info.location)
+                            .font(.system(size: 13))
                             .foregroundStyle(EFB.dim)
                     }
                 }
@@ -224,7 +224,7 @@ private struct AirportTile: View {
                 .foregroundStyle(EFB.faint)
         }
         .efbPanel()
-        .overlay(RoundedRectangle(cornerRadius: 8)
-            .stroke(isHome ? EFB.cyan.opacity(0.35) : Color.clear, lineWidth: 1))
+        .overlay(RoundedRectangle(cornerRadius: 14)
+            .stroke(isHome ? EFB.cyan.opacity(0.5) : Color.clear, lineWidth: 1))
     }
 }
