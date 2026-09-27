@@ -18,11 +18,13 @@ def field_phrases(fields, source, ctx=None):
     for k in ("TWR_HRS", "TOWER_HRS"):
         if k in by:
             f = by[k]
-            phrases.append(f"tower hours: {hrs(f['old'])} -> {hrs(f['new'])} local")
+            # "local" only when both sides are plain local times; 1500-0700Z++ or "OPEN 24 HRS" say it themselves
+            plain = all(re.fullmatch(r"\d{4}-\d{4}", (v or "").strip()) for v in (f["old"], f["new"]))
+            phrases.append(f"tower hours: {hrs(f['old'])} -> {hrs(f['new'])}{' local' if plain else ''}")
             break
     if "AIRSPACE_HRS" in by:
         f = by["AIRSPACE_HRS"]
-        phrases.append(f"airspace: {f['old'].lower()} -> {f['new'].lower()}")
+        phrases.append(f"airspace: {f['old']} -> {f['new']}")   # keep FAA casing: 0700Z, CLASS D
     prov = [by[k] for k in ("APCH_P_PROVIDER", "DEP_P_PROVIDER") if k in by]
     if prov:
         phrases.append(f"approach/departure control: {prov[0]['old']} -> {prov[0]['new']}")
@@ -121,6 +123,17 @@ def name_label(col, source, ctx):
     return "facility name"
 
 
+def remark_label(b, row):
+    """'remark', 'ILS RWY 22 remark', 'navaid remark', ..."""
+    if b == "ILS_RMK":
+        rwy = row.get("RWY_END_ID", "")
+        kind = row.get("SYSTEM_TYPE_CODE", "")
+        name = {"LD": "ILS/DME", "LS": "ILS", "LC": "localizer", "LA": "LDA", "SF": "SDF"}.get(kind, "ILS")
+        return f"{name} RWY {rwy} remark" if rwy else f"{name} remark"
+    return {"NAV_RMK": "navaid remark", "AWOS_RMK": "AWOS remark", "FRQ_RMK": "frequency remark",
+            "ATC_RMK": "tower/ATC remark", "CLS_ARSP_RMK": "airspace remark"}.get(b, "remark")
+
+
 def summarize(rec, remarks):
     """plain-English phrase(s) for one record. returns a string, or a list of phrases for
     'changed' records without a location prefix (so duplicates across files can be dropped).
@@ -133,14 +146,15 @@ def summarize(rec, remarks):
     ctx = rec.get("context", {})
 
     if b in REMARK_FILES:
+        what = remark_label(b, row or ctx)
         if kind == "changed":
             new = next((f["new"] for f in rec["fields"] if f["field"] == "REMARK"),
                        ctx.get("REMARK", ""))
             rec["original"] = new
-            return f"revised remark: {remarks.get(new, new)}"
+            return f"revised {what}: {remarks.get(new, new)}"
         text = row.get("REMARK", "")
         rec["original"] = text
-        return f"{'new remark' if kind == 'added' else 'removed remark'}: {remarks.get(text, text)}"
+        return f"{'new ' + what if kind == 'added' else 'removed ' + what}: {remarks.get(text, text)}"
 
     if b == "PFR_RMT_FMT":
         o, d = (row or ctx).get("Orig", "?"), (row or ctx).get("Dest", "?")

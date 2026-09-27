@@ -82,6 +82,27 @@ class TestRules(Case):
         self.assertEqual((ch[0]["priority"], ch[0]["summary"]),
                          ("fyi", "airport manager: Edward Freni -> Sharon Williams"))
 
+    def test_ils_remark_reads_like_a_remark(self):
+        """BIF: a new ILS remark came out as 'added (ils_rmk): rwy end id=22, ...'."""
+        hdr = "ARPT_ID,RWY_END_ID,ILS_LOC_ID,SYSTEM_TYPE_CODE,TAB_NAME,REF_COL_NAME,REMARK"
+        ch = self.diff({"ILS_RMK.csv": [hdr]},
+                       {"ILS_RMK.csv": [hdr, "BIF,22,BIF,LD,ILS,GENERAL_REMARK,ILS UNMON DLY 0700-1500Z++."]},
+                       {"BIF"})["BIF"][0]
+        self.assertEqual(ch["summary"], "new ILS/DME RWY 22 remark: ILS UNMON DLY 0700-1500Z++.")
+        self.assertEqual(ch["original"], "ILS UNMON DLY 0700-1500Z++.")
+
+    def test_zulu_tower_hours_not_called_local(self):
+        """BIF: 'OPEN 24 HRS. -> 1500-0700Z++ MON-SUN EXC HOLS local' is wrong; the Z already says it."""
+        old = {"ATC_BASE.csv": ["FACILITY_ID,TWR_HRS", "BIF,OPEN 24 HRS."]}
+        new = {"ATC_BASE.csv": ["FACILITY_ID,TWR_HRS", "BIF,1500-0700Z++ MON-SUN EXC HOLS"]}
+        s = self.summaries(self.diff(old, new, {"BIF"})["BIF"])
+        self.assertEqual(s, ["tower hours: OPEN 24 HRS. -> 1500-0700Z++ MON-SUN EXC HOLS"])
+
+    def test_sectorization_is_fyi(self):
+        old = {"FRQ.csv": ["FACILITY,SERVICED_FACILITY,FREQ,SECTORIZATION", "BIF,BIF,134.1,BLISS RDO"]}
+        new = {"FRQ.csv": ["FACILITY,SERVICED_FACILITY,FREQ,SECTORIZATION", "BIF,BIF,134.1,BIGGS AIC"]}
+        self.assertEqual(self.diff(old, new, {"BIF"})["BIF"][0]["priority"], "fyi")
+
     def test_rco_removal_is_fyi(self):
         old = {"FRQ.csv": ["FACILITY,SERVICED_FACILITY,FREQ,FREQ_USE", "BFD,BFD,122.2,BRADFORD RCO"]}
         new = {"FRQ.csv": ["FACILITY,SERVICED_FACILITY,FREQ,FREQ_USE"]}
