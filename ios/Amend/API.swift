@@ -12,7 +12,7 @@ enum APIError: LocalizedError {
 }
 
 struct API {
-    static let base = URL(string: "https://benjgmin.github.io/amend/")!
+    static let base = URL(string: "https://amend.watch/")!
 
     static let decoder: JSONDecoder = {
         let d = JSONDecoder()

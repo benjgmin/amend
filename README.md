@@ -27,9 +27,11 @@ The course was two changes behind.
 
 ## On the web
 
-**[benjgmin.github.io/amend](https://benjgmin.github.io/amend/)**: search any airport, or go straight to one, like
-[/amend/VRB/](https://benjgmin.github.io/amend/VRB/). Every airport with changes gets its own page, styled like the
-app, with link previews so a page shared in iMessage or a group chat shows what changed.
+**[amend.watch](https://amend.watch/)**: search any airport, or go straight to one, like
+[amend.watch/VRB](https://amend.watch/VRB/). Named watchlists live at the top level, like
+[amend.watch/daytona-training](https://amend.watch/daytona-training/), and [amend.watch/about](https://amend.watch/about/)
+explains the whole thing. Every airport with changes gets its own page, styled like the app, with link previews so a
+page shared in iMessage or a group chat shows what changed.
 
 ## The app
 
@@ -53,7 +55,7 @@ A GitHub Action runs daily. It downloads the FAA NASR 28-day subscription and d-
 - **Plain-English remarks:** FAA contractions ("RSCD NOT MNT 2300-0600 M-F") are translated with Claude using a fixed glossary. Unknown abbreviations are left as-is rather than guessed, and the original FAA text is always kept
 - **Noise filtering:** survey dates, pavement codes, coordinate rounding, duplicate files and reworded remarks are hidden or demoted, and one real-world event (a renumbered runway, a new airport, a new STAR version) becomes one line instead of dozens of raw rows
 
-Data is public at `https://benjgmin.github.io/amend/`, documented in [SCHEMA.md](SCHEMA.md).
+Data is public at `https://amend.watch/`, documented in [SCHEMA.md](SCHEMA.md).
 
 ## Repo layout
 
