@@ -6,6 +6,8 @@ command line:
   python -m amend latest [--no-llm]      build site/ (what the GitHub Action runs)
   python -m amend history [--llm] [--keep]   add new cycles to history/
   python -m amend set-key                store your Anthropic API key in .env
+  python -m amend check                  scheduled runs: is a rebuild needed? (build=true/false)
+  python -m amend verify [DIR]           refuse to deploy an empty or half-built site/
 """
 import argparse
 import sys
@@ -91,6 +93,9 @@ def main(argv=None):
     h.add_argument("--keep", action="store_true", help="keep downloaded zips")
 
     sub.add_parser("set-key", help="save your Anthropic API key to .env")
+    sub.add_parser("check", help="is a rebuild needed? writes build=true/false to $GITHUB_OUTPUT")
+    v = sub.add_parser("verify", help="check a built site before it's deployed")
+    v.add_argument("site", nargs="?", default="site")
 
     wl = sub.add_parser("watchlist", help="create or list named watchlists (watchlists/*.json)")
     wl.add_argument("action", choices=["create", "list"])
@@ -110,6 +115,17 @@ def main(argv=None):
         update(llm=a.llm, keep=a.keep)
     elif a.cmd == "set-key":
         set_key()
+    elif a.cmd == "check":
+        from .freshness import check
+        check()
+    elif a.cmd == "verify":
+        from .freshness import verify
+        bad = verify(a.site)
+        for b in bad:
+            print(f"  {b}")
+        if bad:
+            sys.exit(f"{a.site}/ failed {len(bad)} check(s); not deploying, the live site stays as it was")
+        print(f"{a.site}/ looks complete")
     elif a.cmd == "watchlist":
         from . import watchlists
         if a.action == "list":
