@@ -600,9 +600,12 @@ class TestWeb(unittest.TestCase):
         self.assertNotIn('rel="canonical"', missing)
         manifest = json.load(open(os.path.join(site, "site.webmanifest")))
         self.assertEqual(manifest["name"], "Amend")
-        # the mark sits on whole pixels at 16 and 32 px
-        for x0, y0, x1, y1, _ in brand.SHAPES:
-            self.assertTrue(all(v % 4 == 0 for v in (x0, y0, x1, y1)))
+        # the sign's border sits on whole pixels at 16, 32 and 48 px, and the A fits inside it
+        self.assertTrue(all(v % 4 == 0 for v in brand.BORDER))
+        inner = brand.BORDER[1]
+        for x, y in brand._letter()[0]:
+            self.assertTrue(inner < x < 64 - inner and inner < y < 64 - inner)
+        self.assertIn(brand.AMBER, open(os.path.join(site, "assets", "icon.svg")).read())
 
 
 class TestWatchlists(unittest.TestCase):

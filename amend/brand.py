@@ -1,5 +1,5 @@
-"""The Amend mark: three lines of text with an amber bar beside the one that changed, the way amended FAA
-publications mark revised text in the margin.
+"""The Amend mark: a taxiway location sign, the black sign with a yellow border and a yellow letter that tells
+a pilot where they are on the airport. Ours says A, in the amber the site uses for action items.
 
 One geometry, drawn as SVG for the site and with Pillow for the favicons, the link cards and the iOS app icon.
 `python -m amend.brand` rewrites the iOS app icons and docs/brand/ after a change here; the site's icons are
@@ -8,45 +8,70 @@ made on every build.
 import json
 import os
 
-INK = "#11151B"         # the tile
-INK_LIFT = "#28303B"    # the tile on dark pages: a shade lighter so it doesn't sink into the background
-AMBER = "#F5B040"       # the bar, the same amber the site uses for action items
-HI = "#F3F4F6"          # the changed line
-LO = "#5E6773"          # the lines that didn't change
+INK = "#11151B"         # the sign's panel
+INK_LIFT = "#28303B"    # the panel on dark pages: a shade lighter so it doesn't sink into the background
+AMBER = "#F5B040"       # the border and the letter, the same amber the site uses for action items
 TEXT, TEXT_DARK = "#0F1216", "#ECEEF1"    # the wordmark on light and dark pages
 ICON_GRADIENT = ("#1B212A", "#0C0F13")    # app and touch icons, top to bottom
-# on a 64-unit grid, all multiples of 4 so the mark lands on whole pixels at 16 and 32 px: x0, y0, x1, y1, colour
-SHAPES = [(12, 24, 20, 40, AMBER), (24, 12, 52, 20, LO), (24, 28, 52, 36, HI), (24, 44, 40, 52, LO)]
-RADIUS = 14             # tile corners on the same grid (favicon, site header, link cards)
-ICON_SCALE = 0.9        # the lines inside an app or touch icon, which the OS rounds and which read bigger
+RADIUS = 14             # the panel's corners on a 64-unit grid (favicon, site header, link cards)
+# the border's outer and inner edges, inset from the panel's sides. Multiples of 4, so the border lands on whole
+# pixels at 16, 32 and 48 px. The outer corners are slightly rounded and the inner ones square, like a real sign.
+BORDER = (8, 12)
+BORDER_RADIUS = 4
+# the A is Geist at weight 800, in font units. It's all straight lines, so it's kept here as two polygons (the
+# outline and the counter) and needs no font file to draw.
+A_OUTLINE = [(18.4, 0), (274.4, 710), (476, 710), (732, 0), (553.2, 0), (507, 134), (242.6, 134), (196.4, 0)]
+A_COUNTER = [(290, 272.4), (460.4, 272.4), (375.6, 522.2)]
+A_HEIGHT = 27           # the A's cap height on the grid, centred in the sign
+ICON_SCALE = 0.86       # the sign inside an app or touch icon, which the OS rounds and which reads bigger
+MASKABLE_SCALE = 0.72   # Android crops maskable icons to a circle: the border's corners stay inside it
 
 FONTS = os.path.join(os.path.dirname(os.path.abspath(__file__)), "fonts")
 WORDMARK_FONT = os.path.join(FONTS, "Geist-SemiBold.ttf")
 
 
+def _letter():
+    """the A's outline and counter on the 64-unit grid, y down."""
+    s = A_HEIGHT / 710
+    cx = (A_OUTLINE[0][0] + A_OUTLINE[3][0]) / 2
+    grid = lambda pts: [(32 + (x - cx) * s, 32 + A_HEIGHT / 2 - y * s) for x, y in pts]
+    return grid(A_OUTLINE), grid(A_COUNTER)
+
+
+def _sign_path():
+    """the border and the A as one path, filled even-odd."""
+    o, i = BORDER
+    r, far = BORDER_RADIUS, 64 - o
+    d = (f"M{o + r} {o}H{far - r}A{r} {r} 0 0 1 {far} {o + r}V{far - r}A{r} {r} 0 0 1 {far - r} {far}"
+         f"H{o + r}A{r} {r} 0 0 1 {o} {far - r}V{o + r}A{r} {r} 0 0 1 {o + r} {o}Z"
+         f"M{i} {i}V{64 - i}H{64 - i}V{i}Z")
+    for pts in _letter():
+        d += "M" + "L".join(f"{x:.2f} {y:.2f}" for x, y in pts) + "Z"
+    return d
+
+
 def svg(tile=INK, radius=RADIUS, tile_class="", size=None):
-    """the mark as <svg>: inline in a page (tile_class lets its CSS colour the tile, which the site lifts in dark
+    """the mark as <svg>: inline in a page (tile_class lets its CSS colour the panel, which the site lifts in dark
     mode) or, with a size, as a file of its own."""
     head = f' width="{size}" height="{size}"' if size else ' aria-hidden="true"'
     cls = f' class="{tile_class}"' if tile_class else ""
-    rects = "".join(f'<rect x="{x0}" y="{y0}" width="{x1 - x0}" height="{y1 - y0}" rx="4" fill="{c}"/>'
-                    for x0, y0, x1, y1, c in SHAPES)
     return (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"{head}>'
-            f'<rect{cls} width="64" height="64" rx="{radius}" fill="{tile}"/>{rects}</svg>')
+            f'<rect{cls} width="64" height="64" rx="{radius}" fill="{tile}"/>'
+            f'<path fill="{AMBER}" fill-rule="evenodd" d="{_sign_path()}"/></svg>')
 
 
 def _rgb(hex_):
     return tuple(int(hex_[i:i + 2], 16) for i in (1, 3, 5))
 
 
-def draw(size, tile=INK, radius=RADIUS, scale=1.0, gradient=None, colors=None):
+def draw(size, tile=INK, radius=RADIUS, scale=1.0, gradient=None, fg=AMBER):
     """the mark as a size x size RGBA Pillow image.
 
     radius=0 fills the square edge to edge (app and touch icons, which the OS rounds itself); scale shrinks
-    the lines toward the centre; gradient=(top, bottom) shades the tile; colors swaps SHAPES colours
-    (the tinted iOS icon is greyscale)."""
+    the sign toward the centre; gradient=(top, bottom) shades the panel; fg colours the border and the A
+    (the tinted iOS icon is white)."""
     from PIL import Image, ImageDraw
-    ss = 4                                  # drawn 4x and box-filtered down: smooth edges, whole-pixel lines
+    ss = 4                                  # drawn 4x and box-filtered down: smooth edges, whole-pixel border
     big = size * ss
     k = big / 64
     img = Image.new("RGBA", (big, big), (0, 0, 0, 0))
@@ -61,22 +86,25 @@ def draw(size, tile=INK, radius=RADIUS, scale=1.0, gradient=None, colors=None):
         img.paste(column.resize((big, big)), (0, 0), mask)
     elif tile:
         img.paste(Image.new("RGBA", (big, big), _rgb(tile) + (255,)), (0, 0), mask)
-    d = ImageDraw.Draw(img)
-    for x0, y0, x1, y1, c in SHAPES:
-        x0, y0, x1, y1 = (32 + (v - 32) * scale for v in (x0, y0, x1, y1))
-        r = min(x1 - x0, y1 - y0) / 2 * k
-        d.rounded_rectangle([x0 * k, y0 * k, x1 * k - 1, y1 * k - 1], radius=r,
-                            fill=_rgb((colors or {}).get(c, c)))
+    px = lambda v: (32 + (v - 32) * scale) * k     # grid units to pixels, pulled toward the centre by scale
+    sign = Image.new("L", (big, big), 0)
+    d = ImageDraw.Draw(sign)
+    o, i = BORDER
+    d.rounded_rectangle([px(o), px(o), px(64 - o) - 1, px(64 - o) - 1], radius=BORDER_RADIUS * scale * k, fill=255)
+    d.rectangle([px(i), px(i), px(64 - i) - 1, px(64 - i) - 1], fill=0)
+    outline, counter = _letter()
+    d.polygon([(px(x), px(y)) for x, y in outline], fill=255)
+    d.polygon([(px(x), px(y)) for x, y in counter], fill=0)
+    img.paste(Image.new("RGBA", (big, big), _rgb(fg) + (255,)), (0, 0), sign)
     return img.resize((size, size), Image.BOX)
 
 
-def app_icon(size=1024, variant="light"):
+def app_icon(size=1024, variant="light", scale=ICON_SCALE):
     """the iOS / touch icon: edge to edge, the OS rounds it. variant: light (the default icon), dark or tinted."""
-    if variant == "tinted":   # iOS tints by brightness: the bar brightest, the changed line next
-        return draw(size, tile="#000000", radius=0, scale=ICON_SCALE,
-                    colors={AMBER: "#FFFFFF", HI: "#C4C4C4", LO: "#4D4D4D"}).convert("RGB")
+    if variant == "tinted":   # iOS tints by brightness, so the sign is white on black
+        return draw(size, tile="#000000", radius=0, scale=scale, fg="#FFFFFF").convert("RGB")
     grad = ICON_GRADIENT if variant == "light" else ("#161B22", "#07090C")
-    return draw(size, radius=0, scale=ICON_SCALE, gradient=grad).convert("RGB")
+    return draw(size, radius=0, scale=scale, gradient=grad).convert("RGB")
 
 
 def write_site_icons(site):
@@ -107,8 +135,8 @@ def write_site_icons(site):
     app_icon(180).save(os.path.join(assets, "apple-touch-icon.png"), optimize=True)
     for s in (192, 512):
         draw(s).save(os.path.join(assets, f"icon-{s}.png"), optimize=True)
-    # maskable: Android crops to a circle or squircle, so the lines sit well inside the safe zone
-    app_icon(512).save(os.path.join(assets, "icon-maskable-512.png"), optimize=True)
+    # maskable: Android crops to a circle or squircle, so the whole sign sits inside the safe zone
+    app_icon(512, scale=MASKABLE_SCALE).save(os.path.join(assets, "icon-maskable-512.png"), optimize=True)
     return True
 
 
