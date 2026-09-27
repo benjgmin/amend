@@ -28,8 +28,8 @@ The course was two changes behind.
 ## On the web
 
 **[amend.watch](https://amend.watch/)**: search any airport, or go straight to one, like
-[amend.watch/VRB](https://amend.watch/VRB/). Named watchlists live at the top level, like
-[amend.watch/daytona-training](https://amend.watch/daytona-training/), and [amend.watch/about](https://amend.watch/about/)
+[amend.watch/VRB](https://amend.watch/VRB/). Watchlists live under /list/, like
+[amend.watch/list/daytona-training](https://amend.watch/list/daytona-training/), and [amend.watch/about](https://amend.watch/about/)
 explains the whole thing. Every airport with changes gets its own page, styled like the app, with link previews so a
 page shared in iMessage or a group chat shows what changed.
 
