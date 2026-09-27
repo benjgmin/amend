@@ -54,9 +54,16 @@ struct AirportsView: View {
             .toolbarBackground(EFB.bg, for: .navigationBar)
             .toolbar {
                 ToolbarItem(placement: .principal) {
-                    Text("Amend")
-                        .font(.system(size: 17, weight: .semibold))
-                        .foregroundStyle(EFB.text)
+                    HStack(spacing: 7) {
+                        Image("Logo")
+                            .resizable()
+                            .frame(width: 22, height: 22)
+                        Text("amend")
+                            .font(.system(size: 17, weight: .semibold))
+                            .foregroundStyle(EFB.text)
+                    }
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel("Amend")
                 }
                 ToolbarItem(placement: .topBarLeading) {
                     Button { showingSettings = true } label: { Image(systemName: "gearshape") }

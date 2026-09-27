@@ -572,6 +572,38 @@ class TestWeb(unittest.TestCase):
         self.assertIn('location.replace("../list/"+location.search', old)
         self.assertIn("amend.watch", open(os.path.join(site, "index.html")).read())   # watchlist storage key
 
+    def test_brand_and_trust(self):
+        from amend import brand
+        site, _ = self.build()
+        for f in ("favicon.ico", "site.webmanifest", "404.html", "assets/icon.svg", "assets/apple-touch-icon.png",
+                  "assets/icon-512.png", "assets/icon-maskable-512.png", "assets/fonts/geist-latin.woff2",
+                  "assets/fonts/OFL.txt"):
+            self.assertTrue(os.path.exists(os.path.join(site, f)), f)
+        page = open(os.path.join(site, "VRB", "index.html")).read()
+        self.assertNotIn("fonts.googleapis.com", page)                  # fonts come from amend.watch
+        self.assertIn('href="../assets/fonts/geist-latin.woff2" as="font"', page)
+        self.assertIn('<link rel="icon" href="../favicon.ico"', page)
+        self.assertIn('<link rel="canonical" href="https://amend.watch/VRB/">', page)
+        self.assertIn('static.cloudflareinsights.com/beacon.min.js', page)   # the about page's privacy note says so
+        self.assertIn('class="mk"', page)                               # the logo, tile coloured by the theme
+        self.assertIn("not affiliated with the FAA", page)
+        self.assertIn("issues/new?title=VRB%3A%20", page)               # report a wrong change
+        self.assertIn('url(fonts/geist-latin.woff2)', open(os.path.join(site, "assets", "style.css")).read())
+        about = open(os.path.join(site, "about", "index.html")).read()
+        for text in ('id="how"', 'id="limits"', 'id="privacy"', 'id="report"', "Cloudflare Web Analytics",
+                     "NOTAMs.</b>"):
+            self.assertIn(text, about)
+        self.assertNotIn("coming soon", about.lower())
+        missing = open(os.path.join(site, "404.html")).read()
+        self.assertIn('href="/assets/style.css?v=', missing)              # served at any depth
+        self.assertIn('fetch("/"+x+"/",{method:"HEAD"})', missing)      # /kvrb finds /VRB/
+        self.assertNotIn('rel="canonical"', missing)
+        manifest = json.load(open(os.path.join(site, "site.webmanifest")))
+        self.assertEqual(manifest["name"], "Amend")
+        # the mark sits on whole pixels at 16 and 32 px
+        for x0, y0, x1, y1, _ in brand.SHAPES:
+            self.assertTrue(all(v % 4 == 0 for v in (x0, y0, x1, y1)))
+
 
 class TestWatchlists(unittest.TestCase):
     def test_validation(self):

@@ -1,15 +1,25 @@
-# Amend.
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/brand/lockup-dark.svg">
+    <img src="docs/brand/lockup-light.svg" alt="amend" height="56">
+  </picture>
+</p>
 
-**Know what changed at your airports every FAA cycle.**
+<h3 align="center">What changed at your airport, every FAA cycle.</h3>
+
+<p align="center">
+  <a href="https://amend.watch/"><b>amend.watch</b></a> ·
+  <a href="https://amend.watch/about/#how">How it works</a> ·
+  <a href="https://amend.watch/guide/">Guide</a> ·
+  <a href="https://github.com/benjgmin/amend/issues/new">Report a problem</a>
+</p>
 
 Every 28 days the FAA publishes a new cycle of airport, airspace, frequency and chart data. The changes that matter (tower hours, a decommissioned VOR, a renumbered runway, an amended approach) are buried among tens of thousands of rows of bookkeeping noise. Amend diffs every cycle for every US airport, filters out the noise, and explains what's left in plain English, ranked by whether it changes how you fly. It shows upcoming changes up to three weeks before they take effect.
 
-<p align="center">
-  <img src="docs/screenshots/home.png" width="23%" alt="Home: saved airports and the upcoming cycle">
-  <img src="docs/screenshots/detail.png" width="23%" alt="Airport: this cycle's changes">
-  <img src="docs/screenshots/history.png" width="23%" alt="Airport: change history">
-  <img src="docs/screenshots/welcome.png" width="23%" alt="Onboarding">
-</p>
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/web/airport-dark.png">
+  <img src="docs/screenshots/web/airport-light.png" alt="The Charlotte/Douglas Intl page on amend.watch: 128 changes in the 03 Sep 2026 cycle, 18 of them action items">
+</picture>
 
 ## Why
 
@@ -26,16 +36,16 @@ VRB  Vero Beach Rgnl
 ## On the web
 
 **[amend.watch](https://amend.watch/)**: search any airport, or go straight to one, like
-[amend.watch/VRB](https://amend.watch/VRB/). Watchlists live under /list/, like
-[amend.watch/list/daytona-training](https://amend.watch/list/daytona-training/), and [amend.watch/about](https://amend.watch/about/)
-explains the whole thing. Every airport with changes gets its own page, styled like the app, with link previews so a
-page shared in iMessage or a group chat shows what changed.
+[amend.watch/VRB](https://amend.watch/VRB/) (lowercase and ICAO ids like amend.watch/kvrb work too). Save airports to a
+watchlist in your browser and share it as one link. Every airport with changes gets its own page with a link preview,
+so a page shared in iMessage or a group chat shows what changed. [amend.watch/about](https://amend.watch/about/) covers
+how it works, what it doesn't cover and what it stores.
 
-## The app
+## The iPhone app
 
-SwiftUI, iOS 17+, styled like an EFB.
+In testing, not on the App Store yet. SwiftUI, iOS 17+, light and dark.
 
-- **Your airports** with a home field pinned on top, each showing annunciator-style counts: `ACT` (changes how you fly it), `IFR` (approaches, STARs, departures, routes), `FYI`, or `NO CHG`
+- **Your airports** with a home field pinned on top, each showing counts: `ACT` (changes how you fly it), `IFR` (approaches, STARs, departures, routes), `FYI`, or `No change`
 - **Search** by FAA id, ICAO, name or city across ~20,000 airports
 - **Upcoming** and **History** (back to Aug 2024) for every airport, clearly marked as not in effect yet until the 0901Z changeover, with the original FAA text behind every translated remark
 - **Approach plates in the app:** amended charts open right inside Amend, with zoom and a share button to save them or open them in another EFB
@@ -44,17 +54,23 @@ SwiftUI, iOS 17+, styled like an EFB.
 
 ## How it works
 
-A GitHub Action checks the FAA every 3 hours and rebuilds when there's something new (or at least daily). It downloads the FAA NASR 28-day subscription and d-TPP chart metadata, diffs every US airport (about 15 seconds, with 28 regression tests guarding the rules), and publishes static JSON to GitHub Pages. The app reads that JSON; there is no server.
+A GitHub Action checks the FAA every 3 hours and rebuilds when there's something new (or at least daily). It downloads the FAA NASR 28-day subscription and d-TPP chart metadata, diffs every US airport (about 15 seconds, with regression tests guarding the rules), and publishes static JSON to GitHub Pages. The app reads that JSON; there is no server.
 
 - **Airports and airspace:** tower and Class D hours, frequencies, runways (renumbering from magnetic drift, replacements, declared distances), attendance hours, contacts, new and closed airports, remarks
 - **Airspace shapes:** class B, C, D and E surface area floors, ceilings and boundaries from the FAA class airspace shapefiles, told from each airport's point of view ("Orlando class B over the field: 3,000-10,000 ft MSL -> 2,500-10,000 ft MSL"). Re-digitized boundaries are ignored; class E5 is skipped
 - **Navaids:** decommissioned or changed VORs, VORTACs and DMEs, matched to the public airports within 10 NM ("TRV (Treasure) navaid, 4 NM from the field: now a DME")
 - **Charts:** added, amended and removed approaches, departures, STARs and airport diagrams, with links to the new PDF plates
 - **Arrivals and departures down to the waypoint:** when a STAR or DP is amended, Amend compares the old and new routes and says what moved ("MINEE6 (was MINEE5): waypoints removed FUPGE, LBV, RINSE; transitions removed LBV")
-- **Plain-English remarks:** FAA contractions ("RSCD NOT MNT 2300-0600 M-F") are translated with Claude using a fixed glossary. Unknown abbreviations are left as-is rather than guessed, and the original FAA text is always kept
+- **Plain-English remarks:** FAA contractions ("RSCD NOT MNT 2300-0600 M-F") are translated with Claude using a fixed glossary. Unknown abbreviations are left as-is rather than guessed, a translation that changes a number or gets a known contraction wrong is thrown out, and the original FAA text is always kept
 - **Noise filtering:** survey dates, pavement codes, coordinate rounding, duplicate files and reworded remarks are hidden or demoted, and one real-world event (a renumbered runway, a new airport, a new STAR version) becomes one line instead of dozens of raw rows
 
 Data is public at `https://amend.watch/`, documented in [SCHEMA.md](SCHEMA.md).
+
+## Independence and privacy
+
+- Amend is an independent project. It isn't affiliated with or endorsed by the FAA.
+- No accounts and no cookies. Watchlists live in your browser. Visitor counts come from Cloudflare Web Analytics, which is cookie-free. The details are at [amend.watch/about#privacy](https://amend.watch/about/#privacy).
+- Found a change that's wrong or missing? [Open an issue](https://github.com/benjgmin/amend/issues/new) with the airport, the cycle and what the FAA source says.
 
 ## Repo layout
 
@@ -70,13 +86,15 @@ Data is public at `https://amend.watch/`, documented in [SCHEMA.md](SCHEMA.md).
 | `amend/procedures.py` | waypoint-level STAR / DP comparisons |
 | `amend/pipeline.py` | the whole diff in one call, public JSON shape |
 | `amend/history.py`, `latest.py`, `airports.py` | history timeline, the published site, airport directory |
-| `amend/web.py` | the web pages: one per airport plus the search page |
+| `amend/web.py` | the web pages: one per airport plus search, watchlists, guide, about and 404 |
+| `amend/brand.py`, `amend/fonts/` | the logo (one geometry for the site, favicons, link cards and app icon) and the Geist fonts |
+| `docs/brand/` | the logo as SVG and a 1024 px icon |
 | `tests/` | regression tests built from real cases found in FAA data |
 | `SCHEMA.md` | the JSON format the app relies on |
 
 ## Run it locally
 
-Backend: Python 3.11+, standard library only.
+Backend: Python 3.11+, standard library only. Pillow is optional and draws the link-preview images and favicons.
 
 ```bash
 python -m amend set-key            # one time: Anthropic key for --llm, saved to .env
@@ -88,6 +106,8 @@ python -m amend history            # build/extend history/ back to Aug 2024
 python -m amend latest             # build site/ (what the GitHub Action runs)
 
 python -m unittest discover -s tests -t .
+
+python -m amend.brand              # after changing the logo: iOS app icons + docs/brand/ (needs Pillow, fontTools)
 ```
 
 App: open `ios/Amend.xcodeproj` in Xcode and run.
@@ -99,7 +119,7 @@ NASR data comes from the [FAA 28-Day NASR Subscription](https://www.faa.gov/air_
 - TestFlight
 - Home screen widget for your home airport
 - Night mode for plates
-- "New since you last looked" markers
+- Route and trip lists
 
 ## Disclaimer
 
@@ -107,4 +127,4 @@ NASR data comes from the [FAA 28-Day NASR Subscription](https://www.faa.gov/air_
 
 ## License
 
-MIT. FAA data is public domain.
+MIT. FAA data is public domain. Geist and Geist Mono are under the SIL Open Font License ([amend/fonts/OFL.txt](amend/fonts/OFL.txt)).

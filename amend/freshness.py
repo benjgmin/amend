@@ -23,7 +23,7 @@ SITE_URL = os.environ.get("AMEND_SITE_URL", "https://amend.watch")
 MAX_AGE = dt.timedelta(hours=20)   # rebuild at least this often (the site calls 36h stale)
 # what the site is built from, besides FAA data. the build records a hash of these in
 # build.json; a different hash in the repo means a merge (or a data commit) isn't live yet
-INPUTS = ("amend/*.py", "watchlists/*.json", "history/*.json", "remark_cache.json")
+INPUTS = ("amend/*.py", "amend/fonts/*", "watchlists/*.json", "history/*.json", "remark_cache.json")
 
 
 def fingerprint(root="."):

@@ -9,9 +9,11 @@ If a field is added, `schema_version` stays the same. If a field is renamed or r
 ## Web pages (not part of the JSON contract)
 `index.html` (search), `<ID>/index.html` (one page per airport with changes or history) and
 `assets/style.css`, `about/`, `list/` (a watchlist from `?w=` or the browser) and `list/<slug>/` (named
-watchlists from `watchlists/<slug>.json` in the repo, e.g. amend.watch/list/daytona-training; slugs are
+watchlists from `watchlists/<slug>.json` in the repo, served at amend.watch/list/<slug>; slugs are
 3–40 lowercase letters, digits or dashes). Old links (`watch/?w=`, `watch/<slug>/`, `<slug>/`) redirect
-there. `cycles.ics` is a calendar feed of the 0901Z cycle changeovers. `build.json` records what the deploy was built from, for the pipeline's own freshness check. Airport folders are always 2–4 uppercase letters/digits, so they never collide with the JSON paths below.
+there. `cycles.ics` is a calendar feed of the 0901Z cycle changeovers. `404.html` sends lowercase or ICAO
+paths (`/kvrb`) to the airport page when there is one. `favicon.ico`, `site.webmanifest` and `assets/` (styles,
+fonts, icons, link-preview images) are the site's own files. `build.json` records what the deploy was built from, for the pipeline's own freshness check. Airport folders are always 2–4 uppercase letters/digits, so they never collide with the JSON paths below.
 
 ## `latest/meta.json`
 Which cycles `latest/` compares.

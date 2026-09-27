@@ -12,8 +12,16 @@ from urllib.parse import quote
 import json
 import os
 import re
+import shutil
+
+from . import brand
 
 SITE_URL = "https://amend.watch/"
+REPO_URL = "https://github.com/benjgmin/amend"
+REPORT_URL = REPO_URL + "/issues/new"    # "report a problem" until there's an email address
+# Cloudflare Web Analytics: cookie-free visitor counts (the about page's privacy note says so). The token is
+# public by design; "" turns the beacon off.
+CF_BEACON = "d1ab67595c784b45827953de63a28e9a"
 RESERVED = {"latest", "history", "assets", "watch", "list", "about", "guide", "index.html", "airports.json", "cycles.ics"}  # never an airport page
 PRIORITY = [("action", "ACT", "Action"), ("ifr", "IFR", "IFR procedures"), ("fyi", "FYI", "FYI")]
 # what the labels mean, same words as the iOS guide (ios/Amend/GuideView.swift): css class, legend, tooltip,
@@ -35,19 +43,28 @@ TIERS = {
 NO_CHG_TIP = "Nothing changed at this airport between the two cycles"
 
 
-FONTS = ("https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600"
-         "&display=swap")
+# Geist and Geist Mono (SIL OFL, amend/fonts/OFL.txt), served from amend.watch itself so a page view never
+# touches Google. Variable fonts split like Google Fonts does: latin, and latin-ext only when a page needs it.
+LATIN = ("U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,"
+         "U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD")
+LATIN_EXT = ("U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,"
+             "U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF")
+WEB_FONTS = [("Geist", "geist-latin.woff2", LATIN), ("Geist", "geist-latin-ext.woff2", LATIN_EXT),
+             ("Geist Mono", "geist-mono-latin.woff2", LATIN), ("Geist Mono", "geist-mono-latin-ext.woff2", LATIN_EXT)]
+FONT_FACES = "".join(f'@font-face{{font-family:"{fam}";font-style:normal;font-weight:100 900;font-display:swap;'
+                     f'src:url(fonts/{file}) format("woff2");unicode-range:{rng}}}\n'
+                     for fam, file, rng in WEB_FONTS)
 # clean look: light and dark follow the device. amber = action, cyan = IFR, grey = FYI, green = nothing changed,
 # the same meaning as the iOS app.
-CSS = """
+CSS = FONT_FACES + """
 :root{--bg:#F6F7F9;--p:#FFFFFF;--p2:#EFF1F4;--ln:#E3E6EB;--tx:#0F1216;--dm:#5B6573;--fn:#848E9A;
 --am:#B25E00;--amS:#FFF1DC;--cy:#0969B8;--cyS:#E4F0FB;--gy:#5B6573;--gyS:#EDEFF2;--gn:#15803D;--gnS:#E6F5EA;
---amber:var(--am);--cyan:var(--cy);--dim:var(--dm);--shadow:0 1px 2px rgba(16,24,40,.05);
+--amber:var(--am);--cyan:var(--cy);--dim:var(--dm);--shadow:0 1px 2px rgba(16,24,40,.05);--mk:#11151B;
 --sans:"Geist",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
 --mono:"Geist Mono",ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,monospace;color-scheme:light}
 @media (prefers-color-scheme:dark){:root{--bg:#0D1015;--p:#151920;--p2:#1C212A;--ln:#262C36;--tx:#ECEEF1;
 --dm:#9AA3AF;--fn:#6E7885;--am:#F5B040;--amS:rgba(245,176,64,.13);--cy:#5CC2FF;--cyS:rgba(92,194,255,.13);
---gy:#A3ACB8;--gyS:rgba(163,172,184,.12);--gn:#4ADE80;--gnS:rgba(74,222,128,.12);--shadow:none;color-scheme:dark}}
+--gy:#A3ACB8;--gyS:rgba(163,172,184,.12);--gn:#4ADE80;--gnS:rgba(74,222,128,.12);--shadow:none;--mk:#28303B;color-scheme:dark}}
 *{box-sizing:border-box}html{background:var(--bg)}[hidden]{display:none!important}
 body{margin:0;color:var(--tx);background:var(--bg);font:15px/1.5 var(--sans);-webkit-font-smoothing:antialiased}
 a{color:var(--cy);text-decoration:none}a:hover{text-decoration:underline}
@@ -56,10 +73,9 @@ b,strong{font-weight:600}
 .app{display:grid;grid-template-columns:minmax(0,1fr);min-height:100vh}
 .sb{display:none}
 .mtop{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;border-bottom:1px solid var(--ln);background:var(--p);position:sticky;top:0;z-index:5}
-.brand{font:600 17px var(--sans);letter-spacing:-.2px;color:var(--tx);display:inline-flex;align-items:center;gap:8px}
+.brand{font:600 17px var(--sans);letter-spacing:-.35px;color:var(--tx);display:inline-flex;align-items:center;gap:8px}
 .brand:hover{text-decoration:none}
-.brand i{width:18px;height:18px;border-radius:5px;background:var(--tx);display:inline-grid;place-items:center}
-.brand i::after{content:"";width:6px;height:6px;border-radius:50%;background:var(--am)}
+.brand svg{width:22px;height:22px;flex:none}.brand .mk{fill:var(--mk)}
 .nav{display:flex;gap:16px;font-size:14px}.nav a{color:var(--dm)}.nav a.on{color:var(--tx);font-weight:500}
 .main{padding:20px 16px 48px;display:grid;gap:20px;grid-template-columns:minmax(0,1fr);align-content:start;width:100%;max-width:1400px;margin:0 auto}
 .col,.rail{display:grid;gap:16px;align-content:start;min-width:0}
@@ -74,7 +90,7 @@ h1 .icao{font:500 15px var(--mono);color:var(--fn);letter-spacing:0}
 .lede{color:var(--dm);font-size:16px;max-width:62ch;margin:8px 0 0}
 .big{font:600 26px/1.2 var(--sans);letter-spacing:-.6px}
 .note{font-size:14px;color:var(--dm);margin:6px 0 0}
-.foot{font-size:12.5px;color:var(--fn);margin:8px 0 0}
+.foot{font-size:12.5px;color:var(--fn);margin:8px 0 0}.foot a{color:var(--dm)}.foot a:hover{color:var(--cy)}
 .card{background:var(--p);border:1px solid var(--ln);border-radius:14px;box-shadow:var(--shadow)}
 .box{padding:14px 16px}.box>h3{margin:0 0 8px;font:600 14px var(--sans)}
 .kv{display:flex;justify-content:space-between;gap:12px;padding:7px 0;font-size:14px;border-top:1px solid var(--ln)}
@@ -180,7 +196,10 @@ kbd{font:500 12px var(--mono);border:1px solid var(--ln);border-radius:5px;paddi
 a.sbi:hover{background:var(--p2);text-decoration:none}.sbi.on{background:var(--p2);font-weight:500}
 .sbi b{font:600 13px var(--mono)}.sbi.sub{color:var(--dm);font-size:13.5px}
 .sb .search{margin:14px 0 0;border-radius:9px;padding:0 10px;box-shadow:none}.sb .search input{font-size:14px;padding:7px 0}
-.sbfoot{margin-top:auto;padding:16px 8px 0;font-size:12.5px;color:var(--fn)}
+.sbfoot{margin-top:auto;padding:16px 8px 0;font-size:12.5px;color:var(--fn)}.sbfoot a{color:var(--dm)}
+.prose p{margin:10px 0 0}.prose ul{margin:10px 0 0;padding-left:18px}.prose li{margin:6px 0}.prose li::marker{color:var(--fn)}
+.log{display:grid;grid-template-columns:minmax(0,1fr);gap:2px 16px;margin:10px 0 0;font-size:14.5px}
+.log dt{font-size:12.5px;color:var(--fn);margin-top:8px}.log dd{margin:0}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 @media (max-width:639px){.wrow>a{flex-wrap:wrap;row-gap:6px}.wrow>a .chips{flex-basis:100%;padding-left:64px}}
 @media (min-width:640px){.cards{grid-template-columns:repeat(2,minmax(0,1fr))}.feats{grid-template-columns:repeat(2,minmax(0,1fr))}}
@@ -201,7 +220,7 @@ a.sbi:hover{background:var(--p2);text-decoration:none}.sbi.on{background:var(--p
  h1{font-size:40px}.hero{font-size:36px}
 }
 @media print{:root{--bg:#fff;--p:#fff;--p2:#F2F3F5;--ln:#D5D9DF;--tx:#000;--dm:#444;--fn:#666;--am:#8A4600;--amS:#FFF1DC;
---cy:#0A5A9C;--cyS:#E4F0FB;--gy:#444;--gyS:#EDEFF2;--gn:#15803D;--gnS:#E6F5EA;--shadow:none;color-scheme:light}
+--cy:#0A5A9C;--cyS:#E4F0FB;--gy:#444;--gyS:#EDEFF2;--gn:#15803D;--gnS:#E6F5EA;--shadow:none;--mk:#11151B;color-scheme:light}
  .sb,.mtop,.rail,.seg,.btns,.search,#res,#welcome,#newnote,#next .nxm{display:none!important}
  .app{display:block}.main{display:block;padding:0;max-width:none}.main>*,.col>*{margin-bottom:12px}
  body{font-size:12.5px}a{color:inherit}.it,.apthead,.nx{break-inside:avoid}.it.new{box-shadow:none}}
@@ -211,15 +230,19 @@ a.sbi:hover{background:var(--p2);text-decoration:none}.sbi.on{background:var(--p
 # never pairs it with new HTML
 CSS_VERSION = hashlib.sha1(CSS.encode()).hexdigest()[:10]
 
-FONT_PATHS = {  # first one that exists wins (GitHub's Ubuntu runners have DejaVu; Macs have Menlo)
-    "mono": ["/usr/share/fonts/truetype/dejavu/DejaVuSansMono-Bold.ttf", "/System/Library/Fonts/Menlo.ttc"],
-    "sans": ["/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", "/System/Library/Fonts/Helvetica.ttc"],
-    "reg": ["/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", "/System/Library/Fonts/Helvetica.ttc"],
+FONT_PATHS = {  # the site's own Geist first; DejaVu (GitHub's Ubuntu runners) and Helvetica (Macs) as fallbacks
+    "sans": [os.path.join(brand.FONTS, "Geist-SemiBold.ttf"), "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
+             "/System/Library/Fonts/Helvetica.ttc"],
+    "med": [os.path.join(brand.FONTS, "Geist-Medium.ttf"), "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+            "/System/Library/Fonts/Helvetica.ttc"],
+    "reg": [os.path.join(brand.FONTS, "Geist-Regular.ttf"), "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+            "/System/Library/Fonts/Helvetica.ttc"],
 }
-# the site's dark palette
-COLORS = {"bg": (13, 16, 21), "panel": (21, 25, 32), "line": (38, 44, 54), "text": (236, 238, 241),
-          "dim": (154, 163, 175), "faint": (110, 120, 133), "action": (245, 176, 64), "ifr": (92, 194, 255),
-          "fyi": (163, 172, 184), "ok": (74, 222, 128)}
+# the site's light palette: key -> (text, soft background) for the chips
+COLORS = {"bg": (246, 247, 249), "panel": (255, 255, 255), "line": (227, 230, 235), "text": (15, 18, 22),
+          "dim": (91, 101, 115), "faint": (132, 142, 154)}
+CHIP_COLORS = {"action": ((178, 94, 0), (255, 241, 220)), "ifr": ((9, 105, 184), (228, 240, 251)),
+               "fyi": ((91, 101, 115), (237, 239, 242)), "ok": ((21, 128, 61), (230, 245, 234))}
 
 
 def _font(kind, size):
@@ -240,7 +263,7 @@ def _fit(draw, text, font, width):
 
 
 def card(path, big, name, loc, chip_list, line, footer):
-    """1200x630 link-preview image in the site's dark look. returns False if Pillow is missing."""
+    """1200x630 link-preview image in the site's light look, with the logo. returns False if Pillow is missing."""
     try:
         from PIL import Image, ImageDraw
     except ImportError:
@@ -250,13 +273,14 @@ def card(path, big, name, loc, chip_list, line, footer):
     d = ImageDraw.Draw(img)
     d.rounded_rectangle([P - 24, P - 24, W - P + 24, H - P + 24], radius=28, fill=COLORS["panel"],
                         outline=COLORS["line"], width=2)
-    # brand: a rounded square with an amber dot, then the name
-    d.rounded_rectangle([P, P + 2, P + 36, P + 38], radius=9, fill=COLORS["text"])
-    d.ellipse([P + 12, P + 14, P + 24, P + 26], fill=COLORS["action"])
-    brand = _font("sans", 32)
-    d.text((P + 50, P), "Amend", font=brand, fill=COLORS["text"])
+    # the logo: the mark, then "amend" centred on it the way the site header sets it
+    mark = brand.draw(48)
+    img.paste(mark, (P, P - 4), mark)
+    word = _font("sans", 37)
+    top, bottom = d.textbbox((0, 0), "amend", font=word, anchor="ls")[1::2]
+    d.text((P + 60, P + 20 - (top + bottom) / 2), "amend", font=word, fill=COLORS["text"], anchor="ls")
     small = _font("reg", 26)
-    d.text((W - P - d.textlength(footer, font=small), P + 6), footer, font=small, fill=COLORS["dim"])
+    d.text((W - P, P + 20), footer, font=small, fill=COLORS["dim"], anchor="rm")
     size = 132
     while size > 48 and d.textlength(big, font=_font("sans", size)) > W - 2 * P:
         size -= 8
@@ -264,18 +288,17 @@ def card(path, big, name, loc, chip_list, line, footer):
     y = P + 250
     if name:
         d.text((P, y), _fit(d, name, _font("sans", 46), W - 2 * P), font=_font("sans", 46), fill=COLORS["text"])
-        y += 62
+        y += 62 if loc else 76
     if loc:
         d.text((P, y), loc, font=small, fill=COLORS["dim"])
         y += 50
-    x, cf = P, _font("sans", 30)
+    x, cf = P, _font("med", 30)
     for text, key in chip_list:
         tw = d.textlength(text, font=cf)
-        col = COLORS[key]
-        d.rounded_rectangle([x, y, x + tw + 64, y + 52], radius=26,
-                            fill=tuple(int(c * 0.16 + COLORS["panel"][i] * 0.84) for i, c in enumerate(col)))
+        col, soft = CHIP_COLORS[key]
+        d.rounded_rectangle([x, y, x + tw + 64, y + 52], radius=26, fill=soft)
         d.ellipse([x + 20, y + 20, x + 32, y + 32], fill=col)
-        d.text((x + 44, y + 9), text, font=cf, fill=col)
+        d.text((x + 44, y + 26), text, font=cf, fill=col, anchor="lm")
         x += tw + 80
     if line:
         d.text((P, y + 78), _fit(d, line, _font("reg", 32), W - 2 * P), font=_font("reg", 32),
@@ -587,6 +610,23 @@ def tier_rows(full):
     return "".join(rows)
 
 
+def logo(root):
+    """the mark and the lowercase wordmark, linking home. The tile lifts a shade in dark mode (--mk)."""
+    return f'<a class="brand" href="{root}" aria-label="Amend home">{brand.svg(tile_class="mk")}amend</a>'
+
+
+def head_links(root, url):
+    """icons, the manifest, the font preload, the canonical url and cookie-free analytics, on every page."""
+    beacon = (f"<script defer src=\"https://static.cloudflareinsights.com/beacon.min.js\" "
+              f"data-cf-beacon='{json.dumps({'token': CF_BEACON})}'></script>" if CF_BEACON else "")
+    return (f'<link rel="icon" href="{root}favicon.ico" sizes="32x32">'
+            f'<link rel="icon" href="{root}assets/icon.svg" type="image/svg+xml">\n'
+            f'<link rel="apple-touch-icon" href="{root}assets/apple-touch-icon.png">'
+            f'<link rel="manifest" href="{root}site.webmanifest"><meta name="apple-mobile-web-app-title" content="Amend">\n'
+            f'<link rel="preload" href="{root}assets/fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin>'
+            + (f'<link rel="canonical" href="{e(url)}">' if url else "") + beacon)
+
+
 def sidebar(root, active, meta=None, now=None, on=""):
     """desktop sidebar (and the phone top bar): search, pages, this browser's watchlist, the cycle."""
     link = lambda href, text, key: f'<a class="sbi{" on" if key == active else ""}" href="{root}{href}">{text}</a>'
@@ -603,13 +643,15 @@ def sidebar(root, active, meta=None, now=None, on=""):
             cyc += (f'<div class="sbi"><span>{nice(meta["to_cycle"], False)}</span>'
                     f'<span class="ann ifr">Upcoming</span></div>')
         cyc += f'<div class="sbi sub fresh">Updated {built_at(now or dt.datetime.now(dt.timezone.utc))}</div>'
-    side = (f'<nav class="sb" aria-label="Site"><a class="brand" href="{root}"><i></i>Amend</a>{search}'
+    side = (f'<nav class="sb" aria-label="Site">{logo(root)}{search}'
             f'<div class="sbh">Browse</div>{link("", "Airports", "home")}{link("list/", "Watchlist", "list")}'
             f'{link("guide/", "Guide", "guide")}{link("about/", "About", "about")}'
             f'<div id="sbw" data-on="{e(on)}"></div>{cyc}'
-            f'<div class="sbfoot">Not for navigation. <a href="https://github.com/benjgmin/amend">Source</a></div></nav>')
+            f'<div class="sbfoot">Not for navigation. Independent, not affiliated with the FAA.<br>'
+            f'<a href="{root}about/#privacy">Privacy</a> · <a href="{REPORT_URL}">Report a problem</a> · '
+            f'<a href="{REPO_URL}">Source</a></div></nav>')
     nav = lambda href, text, key: f'<a class="{"on" if key == active else ""}" href="{root}{href}">{text}</a>'
-    top = (f'<header class="mtop"><a class="brand" href="{root}"><i></i>Amend</a><nav class="nav">'
+    top = (f'<header class="mtop">{logo(root)}<nav class="nav">'
            f'{nav("", "Search", "home")}{nav("guide/", "Guide", "guide")}{nav("about/", "About", "about")}</nav></header>')
     if meta:
         top += f'<div class="pfresh fresh">{freshness(meta, now or dt.datetime.now(dt.timezone.utc))}</div>'
@@ -627,15 +669,16 @@ def page(title, description, url, body, root, og_title=None, image=None, active=
 <meta name="description" content="{e(description)}">
 <meta property="og:type" content="website"><meta property="og:site_name" content="Amend">
 <meta property="og:title" content="{e(og_title or title)}"><meta property="og:description" content="{e(description)}">
-<meta property="og:url" content="{e(url)}">{img}
+{f'<meta property="og:url" content="{e(url)}">' if url else ''}{img}
 <meta name="theme-color" content="#F6F7F9" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0D1015" media="(prefers-color-scheme: dark)">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="{FONTS}"><link rel="stylesheet" href="{root}assets/style.css?v={CSS_VERSION}">
+{head_links(root, url)}
+<link rel="stylesheet" href="{root}assets/style.css?v={CSS_VERSION}">
 </head><body data-root="{root}" data-cyc="{e(meta['to_cycle'] if meta else '')}" data-built="{(now or dt.datetime.now(dt.timezone.utc)):%Y-%m-%dT%H:%M:%SZ}"><script>{SEEN_JS.replace("__STALE__", str(STALE_HOURS))}</script><div class="app">{sidebar(root, active, meta, now, on)}
 <main class="main{' two' if two else ''}"><div class="card banner stale full" id="stale" hidden></div>{body}
 <p class="foot full">{freshness(meta, now or dt.datetime.now(dt.timezone.utc))}{'. ' if meta else ''}Not for navigation. Always use official FAA publications, NOTAMs and a proper preflight briefing.
-Data: FAA NASR and d-TPP. <a href="https://github.com/benjgmin/amend">Source</a></p></main></div>
+Amend is independent and not affiliated with the FAA. Data: FAA NASR and d-TPP.
+<a href="{root}about/#how">How it works</a> · <a href="{root}about/#privacy">Privacy</a> · <a href="{REPORT_URL}">Report a problem</a> · <a href="{REPO_URL}">Source</a></p></main></div>
 <script>{SHELL_JS}</script></body></html>"""
 
 
@@ -755,7 +798,8 @@ def airport_page(apt, info, latest, hist, meta, now, has_card=False):
     rail.append('<div class="card box"><h3>Check the official source</h3>'
                 + src(SUPPLEMENT_SEARCH, f"Chart Supplement (search {e(apt)})") + src(DTPP_SEARCH, "Approach plates (d-TPP)")
                 + src(NOTAM_SEARCH, "NOTAMs") + src(NASR_PAGE.format(cycle=meta["to_cycle"]), f"NASR data, {nice(meta['to_cycle'])}")
-                + '<p class="foot">Amend reads these FAA files. If they ever disagree, the FAA is right.</p></div>')
+                + '<p class="foot">Amend reads these FAA files. If they ever disagree, the FAA is right. '
+                f'<a href="{REPORT_URL}?title={quote(apt + ": ")}">Report a wrong change</a></p></div>')
     if cycles:
         rail.append('<div class="card box hist"><h3>History</h3>' + "".join(
             f'<a class="hrow" href="#c-{e(cyc)}"><span>{nice(cyc)}</span>{chips(counts(by_cycle[cyc]), False)}</a>'
@@ -837,7 +881,7 @@ approach plates. Build a watchlist of your airports, or share one link for a who
 <p class="note">{e(landing_note(meta, now, upcoming))}</p>
 <p class="note"><a href="webcal://amend.watch/cycles.ics">Add cycle dates to your calendar</a> (<a href="cycles.ics">.ics</a>)</p></div>
 <div class="card box"><h3>What the labels mean</h3>{legend("")}</div>
-<div class="card box note" style="margin:0">An iPhone app with your saved airports and cycle alerts is on the way.</div></aside>
+</aside>
 <script>{js}</script>"""
     return page("Amend · what changed at your airport", "See what changed at any US airport each FAA cycle, "
                 "in plain English, before it takes effect.", SITE_URL, body, "", image=f"{SITE_URL}assets/card.png",
@@ -897,10 +941,74 @@ def named_watch_page(slug, wl, meta, info, latest, now, has_card):
                 f"{wl['name']}: {desc}", image, active="list", meta=meta, now=now, two=True)
 
 
+# what shipped, newest first, for the about page. Add a line when something people can see changes.
+UPDATES = [
+    ("Sep 2026", [
+        "A new logo, and this page now says how Amend works, what it doesn't cover, what it stores and how to report "
+        "a problem.",
+        "New FAA data is picked up within hours of being posted, and a failed download can no longer publish a "
+        "half-built site.",
+        "Survey bookkeeping, like a glide slope elevation rounded by a tenth of a foot, no longer counts as an action "
+        "item (from the 01 Oct 2026 cycle on).",
+        "About 470 remark translations that got a contraction or a number wrong were thrown out. The FAA text shows "
+        "instead.",
+        "A <span class=\"ann new\">New</span> label on changes you haven't seen, a countdown to each 0901Z "
+        "changeover, and a calendar of cycle dates.",
+        "A desktop layout, and light and dark mode that follow your device.",
+        "Class B, C, D and E surface area changes, told from each airport's point of view.",
+    ]),
+]
+
+
 def about_page(meta, latest, screenshots, now):
     shots = "".join(f'<img src="shots/{e(s)}" alt="Amend on iPhone" loading="lazy">' for s in screenshots)
     feat = lambda tag, cls, title, text: (f'<div class="card box"><span class="ann {cls}">{tag}</span>'
                                           f'<h3>{title}</h3><div class="note">{text}</div></div>')
+    sec = lambda id_, title, inner, cls="": f'<section class="card box prose{cls}" id="{id_}"><h3>{title}</h3>{inner}</section>'
+    how = sec("how", "How it works", (
+        "<p>Amend checks the FAA for new data every 3 hours. When a new cycle is posted, it compares every US airport "
+        "with the cycle before, sorts each change with fixed rules and publishes the result here. AI only rewords "
+        "remarks; everything else is plain code you can read on GitHub.</p><ul>"
+        "<li><b>Sources:</b> the FAA 28-day NASR subscription (airports, runways, frequencies, tower hours, navaids, "
+        "remarks), the d-TPP chart index (approaches, STARs, departures) and the FAA class airspace shapefiles. "
+        "Every change links the FAA source it came from.</li>"
+        "<li><b>Noise:</b> survey dates, pavement codes, coordinate rounding, re-digitized airspace boundaries and "
+        "duplicate rows are hidden. One real event, like a renumbered runway or a new STAR version, is one line "
+        "instead of dozens of rows.</li>"
+        '<li><b>Priority:</b> ACT, IFR and FYI come from fixed rules, not AI. <a href="../guide/">The guide</a> '
+        "explains each one.</li>"
+        "<li><b>Remarks:</b> AI turns FAA contractions into plain English using a fixed glossary. Code checks every "
+        "translation, and one that adds, drops or changes a number or gets a known contraction wrong is thrown out "
+        "so the FAA text shows instead. The original is always one tap away.</li>"
+        "<li><b>Tests:</b> regression tests built from real cases in FAA data run before every update. If one fails, "
+        "nothing is published and the last good version stays up.</li></ul>"), " wide")
+    limits = sec("limits", "What it doesn't cover", (
+        "<ul><li><b>NOTAMs.</b> Temporary changes are published as NOTAMs and never show up here.</li>"
+        "<li><b>Class E airspace above the surface</b> (E5). Surface areas are covered.</li>"
+        "<li><b>Chart history before fall 2026</b>, because the FAA doesn't keep old chart indexes online. "
+        "Airport data goes back to Aug 2024.</li>"
+        "<li><b>What the FAA hasn't posted yet.</b> A new cycle can take a few hours to show up here after the FAA "
+        "posts it.</li></ul>"))
+    privacy = sec("privacy", "Privacy", (
+        "<p>No accounts and no cookies. Your watchlist and the changes you've already seen are saved in your "
+        "browser, and only leave it in a link you choose to share.</p>"
+        "<p>Visitor counts come from Cloudflare Web Analytics, which doesn't use cookies or track you across sites. "
+        "The site is hosted on GitHub Pages, which logs visitor IP addresses for security. Fonts are served by "
+        "amend.watch itself.</p>"
+        "<p>The iPhone app has no account either. It keeps your airports on your phone and only downloads data "
+        "from amend.watch and charts from the FAA.</p>"))
+    independent = sec("independent", "Independent and open source", (
+        "<p>Amend is an independent project. It isn't affiliated with or endorsed by the FAA. The code, including "
+        f'the rules that sort every change, is <a href="{REPO_URL}">open source on GitHub</a> under the MIT '
+        "license.</p>"
+        "<p><b>Not for navigation.</b> Amend helps you notice changes. It doesn't replace official FAA publications, "
+        "NOTAMs or a preflight briefing, and if Amend and the FAA ever disagree, the FAA is right.</p>"))
+    report = sec("report", "Report a problem", (
+        f'<p>Found a change that\'s wrong, missing or hard to understand? <a href="{REPORT_URL}">Open an issue on '
+        "GitHub</a> with the airport, the cycle and what the FAA source says. It takes a free GitHub account.</p>"))
+    updates = sec("updates", "Recent updates", "".join(
+        '<dl class="log">' + f"<dt>{e(month)}</dt>" + "".join(f"<dd>{item}</dd>" for item in items) + "</dl>"
+        for month, items in UPDATES), " wide")
     body = f"""<header class="full" style="padding:12px 0 4px"><h1 class="hero">Know what changed at your airport.</h1>
 <p class="lede">Every 28 days the FAA changes tower hours, frequencies, runways, navaids and approach
 plates. Amend compares every cycle for every US airport and tells you what matters, in plain English, up to three weeks
@@ -911,15 +1019,13 @@ before it takes effect.</p>
 {feat("ACT", "act", "Action items first", "Tower and Class D hours, frequencies, closed or renumbered runways, decommissioned navaids, new PPR rules: the changes that affect how you fly.")}
 {feat("IFR", "ifr", "Instrument procedures", "Amended, new and removed approaches, STARs and departures, down to which waypoints moved, with the new plate one tap away.")}
 {feat("FYI", "fyi", "Everything else, in plain English", "FAA remarks translated from contractions, with the original text always kept alongside.")}
-{feat("Watchlists", "ifr", "Watchlists you can share", "Save your airports, name the list, and share one link for a whole training area, like amend.watch/list/daytona-training.")}
+{feat("Watchlists", "ifr", "Watchlists you can share", "Save your airports, name the list, and share one link with your flight school or club.")}
 {feat("History", "fyi", "Two years of history", "Every change at every airport since August 2024, grouped by cycle.")}
-{feat("iPhone", "ok", "iPhone app", "Keeps your home airport and watchlists on your phone and notifies you when a new cycle affects them. A TestFlight beta is coming soon.")}
+{feat("iPhone", "ok", "iPhone app", "In testing and not on the App Store yet. It keeps your home airport and watchlists on your phone and notifies you when a new cycle changes them.")}
 </div></div>
-<div class="full card box" style="max-width:760px"><h3>How it works</h3><p class="note">A daily job downloads the FAA's 28-day NASR data and d-TPP chart index, diffs every US airport, filters
-the noise with tested rules, and publishes the results here. Remarks are translated with AI; everything else is plain,
-deterministic code. It's open source on <a href="https://github.com/benjgmin/amend">GitHub</a>.</p></div>"""
-    return page("About Amend · what changed at your airport", "See what changed at any US airport each FAA cycle, "
-                "in plain English, before it takes effect.", f"{SITE_URL}about", body, "../",
+<div class="full ggrid">{how}{limits}{privacy}{independent}{report}{updates}</div>"""
+    return page("About Amend · what changed at your airport", "How Amend works, what it covers, what it stores, "
+                "and how to report a problem.", f"{SITE_URL}about/", body, "../",
                 image=f"{SITE_URL}assets/card.png", active="about", meta=meta, now=now)
 
 
@@ -935,7 +1041,8 @@ GUIDE_SECTIONS = [
      "<p>Remarks are the free-text notes in the FAA Chart Supplement (the old A/FD) for an airport: things like PPR "
      "requirements, runway restrictions, wildlife, noise abatement, when services aren't available.</p>"
      "<p>The FAA writes them in contractions (RSCD NOT MNT 2300-0600 M-F). Amend translates them to plain English "
-     "with AI using a fixed FAA glossary; unknown abbreviations are left as-is instead of guessed. Open "
+     "with AI using a fixed FAA glossary; unknown abbreviations are left as-is instead of guessed. A translation "
+     "that changes a number or gets a known contraction wrong is thrown out, and the FAA text shows instead. Open "
      "<b>FAA text</b> on any remark to see the original, and trust the original if they ever disagree.</p>"),
     ("cycles", "Cycles",
      "<p>The FAA publishes airport and airspace data every 28 days (NASR) and instrument charts on the same schedule "
@@ -958,9 +1065,6 @@ GUIDE_SECTIONS = [
      "airports and counts down to the 0901Z changeover.</p>"
      "<p><b>Copy share link</b> gives you one link for the whole list, handy for a flight school or a training "
      "area. Anyone who opens it sees the same airports and can add them to their own list.</p>"),
-    ("app", "iPhone app",
-     "<p>The app adds a home airport and notifications when a new cycle changes your airports. A TestFlight beta is "
-     "coming soon.</p>"),
 ]
 
 
@@ -994,6 +1098,30 @@ def cycles_ics(meta, now):
     return "\r\n".join(lines + ["END:VCALENDAR"]) + "\r\n"
 
 
+# 404.html: GitHub Pages serves it for any missing path, so its links are root-absolute. amend.watch/vrb,
+# /KVRB and /kvrb/ go to the VRB page when there is one; otherwise it says why there's no page.
+NOT_FOUND_JS = r"""(()=>{const seg=location.pathname.split("/").filter(Boolean),raw=(seg[0]||"").toUpperCase();
+if(seg.length!==1||!/^K?[A-Z0-9]{2,4}$/.test(raw))return;
+const ids=[...new Set([raw,raw.replace(/^K(?=[A-Z0-9]{3}$)/,"")])],id=ids[ids.length-1];
+document.getElementById("q404").value=id;
+(async()=>{for(const x of ids){try{const r=await fetch("/"+x+"/",{method:"HEAD"});if(r.ok){location.replace("/"+x+"/"+location.hash);return}}catch(e){}}
+  document.getElementById("nf").textContent="Amend makes a page for every airport with a change on record since Aug 2024, so if "+id+
+    " is an airport, nothing there has changed since then. Search to check the ID."})()})();
+"""
+
+
+def not_found_page(meta, now):
+    body = (f'<header class="full"><div class="eyebrow">Page not found</div><h1 class="hero">No page here</h1>'
+            f'<p class="lede" id="nf">That link doesn\'t match an airport or a page on Amend. Search for the airport '
+            f'instead.</p></header><div class="full"><form class="search" action="/" method="get" role="search">'
+            f'<span aria-hidden="true">⌕</span><input id="q404" name="q" placeholder="Search by ID, ICAO, name or city" '
+            f'aria-label="Search airports" autocomplete="off"></form>'
+            f'<div class="btns"><a class="btn ghost" href="/">Home</a><a class="btn ghost" href="/guide/">Guide</a></div>'
+            f'</div><script>{NOT_FOUND_JS}</script>')
+    return page("Page not found · Amend", "See what changed at any US airport each FAA cycle, in plain English.",
+                "", body, "/", meta=meta, now=now)
+
+
 def redirect(folder, to, title, keep_query=False):
     """tiny page at folder/index.html that forwards to the relative url `to`."""
     os.makedirs(folder, exist_ok=True)
@@ -1011,17 +1139,24 @@ def build(site, meta, directory, latest, history_dir, now=None, watchlists=None,
     os.makedirs(os.path.join(site, "assets"), exist_ok=True)
     with open(os.path.join(site, "assets", "style.css"), "w") as f:
         f.write(CSS)
+    os.makedirs(os.path.join(site, "assets", "fonts"), exist_ok=True)
+    for n in [x[1] for x in WEB_FONTS] + ["OFL.txt"]:
+        shutil.copy(os.path.join(brand.FONTS, n), os.path.join(site, "assets", "fonts", n))
+    brand.write_site_icons(site)
+    with open(os.path.join(site, "404.html"), "w", encoding="utf-8") as f:
+        f.write(not_found_page(meta, now))
     with open(os.path.join(site, "cycles.ics"), "w", newline="") as f:
         f.write(cycles_ics(meta, now))
     info = {a["id"]: a for a in directory}
-    card(os.path.join(site, "assets", "card.png"), "amend.", "What changed at your airport",
-         "", [("ACT", "action"), ("IFR", "ifr"), ("FYI", "fyi"), ("NO CHG", "ok")],
-         "Every FAA cycle, in plain English.", f"Effective {nice(meta['to_cycle'])}")
+    card(os.path.join(site, "assets", "card.png"), "What changed at your airport",
+         "Every FAA cycle, in plain English", "", [("ACT", "action"), ("IFR", "ifr"), ("FYI", "fyi"), ("No change", "ok")],
+         "Tower hours, frequencies, runways, navaids and approach plates.",
+         f"Effective {nice(meta['to_cycle'])}")
     # one shared card for the ~10k airports with nothing changing this cycle (the title names the airport)
     upcoming_now, _ = status(meta, now)
     card(os.path.join(site, "assets", "nochange.png"), "No changes", "Nothing new at this airport", "",
-         [("NO CHG", "ok")],
-         f"{'Nothing changes on' if upcoming_now else 'Nothing changed in the'} {efb(meta['to_cycle'])} "
+         [("No change", "ok")],
+         f"{'Nothing changes on' if upcoming_now else 'Nothing changed in the'} {nice(meta['to_cycle'])} "
          f"{'' if upcoming_now else 'cycle'}".strip(), f"Effective {nice(meta['to_cycle'])}")
     hist_ids = set()
     if history_dir and os.path.isdir(history_dir):
@@ -1058,7 +1193,6 @@ def build(site, meta, directory, latest, history_dir, now=None, watchlists=None,
     about = os.path.join(site, "about")
     os.makedirs(os.path.join(about, "shots"), exist_ok=True)
     if screenshots_dir and os.path.isdir(screenshots_dir):
-        import shutil
         for n in sorted(os.listdir(screenshots_dir)):
             if n.lower().endswith((".png", ".jpg", ".jpeg")):
                 shutil.copy(os.path.join(screenshots_dir, n), os.path.join(about, "shots", n))
@@ -1077,7 +1211,7 @@ def build(site, meta, directory, latest, history_dir, now=None, watchlists=None,
         tot = {p: sum(counts(latest.get(a, []))[p] for a in wl["airports"]) for p, _, _ in PRIORITY}
         changed = sum(1 for a in wl["airports"] if latest.get(a))
         has_card = card(os.path.join(folder, "card.png"), wl["name"], "", "",
-                        [(f"{lbl} {tot[p]}", p) for p, lbl, _ in PRIORITY if tot[p]] or [("NO CHG", "ok")],
+                        [(f"{lbl} {tot[p]}", p) for p, lbl, _ in PRIORITY if tot[p]] or [("No change", "ok")],
                         f"{len(wl['airports'])} airports · {changed} with changes this cycle",
                         f"Effective {nice(meta['to_cycle'])}")
         with open(os.path.join(folder, "index.html"), "w", encoding="utf-8") as f:

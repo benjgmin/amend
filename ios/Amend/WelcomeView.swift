@@ -43,7 +43,7 @@ struct WelcomeView: View {
     // MARK: pages
 
     private var intro: some View {
-        pageLayout(icon: "airplane.departure", title: "Welcome to Amend") {
+        pageLayout(icon: "airplane.departure", title: "Welcome to Amend", logo: true) {
             Text("Every 28 days the FAA publishes a new cycle of airport, airspace and chart data. Tower hours move, runways get renumbered, approaches get amended, and it's easy to miss.")
             Text("Amend compares each cycle to the last one and tells you what changed at your airports, in plain English, up to three weeks before it takes effect.")
         }
@@ -123,14 +123,23 @@ struct WelcomeView: View {
         .padding()
     }
 
-    private func pageLayout<Content: View>(icon: String, title: String,
+    private func pageLayout<Content: View>(icon: String, title: String, logo: Bool = false,
                                      @ViewBuilder _ content: () -> Content) -> some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
-                Image(systemName: icon)
-                    .font(.system(size: 40, weight: .semibold))
-                    .foregroundStyle(EFB.cyan)
-                    .padding(.top, 24)
+                Group {
+                    if logo {
+                        Image("Logo")
+                            .resizable()
+                            .frame(width: 52, height: 52)
+                            .accessibilityHidden(true)
+                    } else {
+                        Image(systemName: icon)
+                            .font(.system(size: 40, weight: .semibold))
+                            .foregroundStyle(EFB.cyan)
+                    }
+                }
+                .padding(.top, 24)
                 Text(title)
                     .font(.system(size: 28, weight: .semibold))
                     .foregroundStyle(EFB.text)
