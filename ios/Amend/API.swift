@@ -57,7 +57,7 @@ enum FAALinks {
     /// where a change came from: the chart search for charts, the NASR cycle page for everything else
     static func source(for change: Change, cycle: String?) -> URL? {
         if change.source.uppercased() == "D-TPP" || change.chart != nil { return dtpp }
-        return (change.cycle ?? cycle).flatMap(nasr)
+        return (change.cycle ?? cycle).flatMap { nasr($0) }
     }
 
     /// "report a wrong change" (a GitHub issue until there's an email address)

@@ -4,6 +4,8 @@ struct ChangeRow: View {
     let change: Change
     /// the cycle this change belongs to, for its FAA source link (history entries carry their own)
     var cycle: String? = nil
+    /// not there the last time you looked at this airport
+    var isNew = false
     @State private var expanded = false
     @State private var plate: Plate?
 
@@ -29,6 +31,7 @@ struct ChangeRow: View {
                     .textCase(.uppercase)
                     .foregroundStyle(EFB.faint)
             }
+            if isNew { NewPill() }
             Text(displaySummary)
                 .font(.system(size: 15))
                 .foregroundStyle(EFB.text)

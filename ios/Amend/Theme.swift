@@ -168,3 +168,13 @@ struct StaleBanner: View {
         .overlay(RoundedRectangle(cornerRadius: EFB.radius).stroke(EFB.amber, lineWidth: 1))
     }
 }
+
+/// "New" / "3 new": changes you haven't seen yet, like the site's label
+struct NewPill: View {
+    var count: Int? = nil
+
+    var body: some View {
+        Annunciator(text: count.map { "\($0) new" } ?? "New", color: EFB.text, solid: true)
+            .accessibilityLabel(count.map { "\($0) new since you last looked" } ?? "New since you last looked")
+    }
+}

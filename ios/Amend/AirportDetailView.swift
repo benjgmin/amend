@@ -147,6 +147,9 @@ private struct LatestView: View {
     @State private var data: AirportChanges?
     @State private var loaded = false
     @State private var error: String?
+    /// new since the last look, kept while this page is open
+    @State private var fresh: Set<String> = []
+    @State private var lastLook: Date?
 
     var body: some View {
         List {
@@ -154,9 +157,19 @@ private struct LatestView: View {
                 StaleBanner(meta: meta).efbRow(top: 12, bottom: 0)
             }
             if let data {
+                if !fresh.isEmpty, let lastLook {
+                    HStack(spacing: 8) {
+                        NewPill(count: fresh.count)
+                        Text("\(fresh.count == 1 ? "change" : "changes") since you last looked here on \(lastLook.formatted(.dateTime.day().month(.abbreviated))).")
+                            .font(.footnote)
+                            .foregroundStyle(EFB.text.opacity(0.85))
+                    }
+                    .efbPanel()
+                    .efbRow(top: 12, bottom: 0)
+                }
                 EffectiveNote(fromCycle: data.fromCycle, toCycle: data.toCycle)
                     .efbRow(top: 12, bottom: 6)
-                ChangeSections(changes: data.changes, cycle: data.toCycle)
+                ChangeSections(changes: data.changes, cycle: data.toCycle, fresh: fresh)
             } else if loaded && error == nil {
                 // a row, not an overlay, so the sources below it stay readable
                 NoChangesView(text: noChangesText)
@@ -195,6 +208,14 @@ private struct LatestView: View {
         do {
             data = try await API.latest(id)
             error = nil
+            // label what's new since the last look, then remember this one (a refresh keeps the labels)
+            let cycle = data?.toCycle ?? store.meta?.toCycle
+            if let cycle {
+                let changes = data?.changes ?? []
+                let now = store.newIDs(id, changes, cycle: cycle)
+                if !now.isEmpty { fresh.formUnion(now); lastLook = store.seen[id]?.at }
+                store.look(id, changes, cycle: cycle)
+            }
         } catch {
             self.error = error.localizedDescription
         }
@@ -361,13 +382,14 @@ private struct CycleHeader: View {
 struct ChangeSections: View {
     let changes: [Change]
     var cycle: String? = nil
+    var fresh: Set<String> = []
 
     var body: some View {
         ForEach(Priority.allCases) { level in
             let group = changes.filter { $0.level == level }
             if !group.isEmpty {
                 Section {
-                    ForEach(group) { ChangeRow(change: $0, cycle: cycle).efbRow(top: 3, bottom: 3) }
+                    ForEach(group) { ChangeRow(change: $0, cycle: cycle, isNew: fresh.contains($0.id)).efbRow(top: 3, bottom: 3) }
                 } header: {
                     HStack(spacing: 8) {
                         EFBHeader(text: "\(level.title)  \(group.count)", color: level.color)

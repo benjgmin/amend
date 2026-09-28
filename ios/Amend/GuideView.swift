@@ -22,6 +22,17 @@ struct GuideView: View {
                             text: "Nothing at this airport changed between the two cycles.")
                 }
 
+                section("Reading a change") {
+                    Text("Changes read old → new. \"Tower hours: 0700-2100 → 0700-0100 local\" means it was 0700-2100 and becomes 0700-0100.")
+                        .guideBody()
+                    Text("FAA text opens the original remark the FAA published. Details shows every field that changed. View plate opens the new approach or procedure chart, and the Amdt label is its amendment number (Original means a brand new procedure). FAA source opens the FAA page the change came from.")
+                        .guideBody()
+                    HStack(alignment: .top, spacing: 10) {
+                        NewPill().frame(width: 92, alignment: .leading)
+                        Text("Not there the last time you opened that airport on this phone.").guideBody()
+                    }
+                }
+
                 section("Remarks") {
                     Text("Remarks are the free-text notes in the FAA Chart Supplement (the old A/FD) for an airport: things like PPR requirements, runway restrictions, wildlife, noise abatement, when services aren't available.")
                         .guideBody()
@@ -30,18 +41,32 @@ struct GuideView: View {
                 }
 
                 section("Cycles") {
-                    Text("The FAA publishes airport and airspace data every 28 days (NASR) and instrument charts on the same schedule (d-TPP). Each cycle has an effective date.")
+                    Text("The FAA publishes airport and airspace data every 28 days (NASR) and instrument charts on the same schedule (d-TPP). Each cycle has an effective date and switches over at 0901Z that day.")
                         .guideBody()
                     tierRow(color: EFB.cyan, label: "Upcoming",
-                            text: "The next cycle is already published but not in effect yet, so you can see changes before they happen. Great time to check your airports.")
+                            text: "The next cycle is already published but not in effect yet, so you can see changes before they happen. Until then the value before the → is the one that applies. Great time to check your airports.")
                     tierRow(color: EFB.green, label: "In effect",
                             text: "The newest cycle is active. Shows what changed compared to the one before it.")
+                    if let url = URL(string: "webcal://amend.watch/cycles.ics") {
+                        Link("Add the cycle dates to your calendar", destination: url)
+                            .font(.subheadline.weight(.medium))
+                            .foregroundStyle(EFB.cyan)
+                    }
                     Text("History goes back to Aug 2024 for airport data. Chart history starts in fall 2026 because the FAA doesn't keep old chart indexes online.")
                         .guideBody()
                 }
 
                 section("Home airport") {
                     Text("Pinned at the top. You get notified about any change there, even FYI, since it's where you fly most. Other airports follow your notification setting.")
+                        .guideBody()
+                }
+
+                section("Lists") {
+                    Text("Keep as many lists as you like, say one for your home area and one for a trip. Tap + in search to add an airport to the list on screen, or use the list button on any airport's page. The menu next to the list's name shares, renames or deletes it. Lists stay on this phone; no account needed.")
+                        .guideBody()
+                    Text("Share gives one amend.watch link for a whole list, handy for a flight school or a training area. Anyone who opens it sees the same airports and can save the list as their own.")
+                        .guideBody()
+                    Text("Coming up at your airports, on the main screen, shows the top changes at every airport you keep and counts down to the 0901Z changeover.")
                         .guideBody()
                 }
 
