@@ -36,8 +36,9 @@ PROMPT = (
     "nothing. A short phrase is fine; it doesn't have to be a full sentence, but it has to read as "
     "English: a listed meaning may change its form to fit, and small grammar words (is, are, the, on) "
     "may be added: 'WHEN TWR HR EXTN' is 'when tower hours are extended', not 'when tower hour "
-    "extension'. Write it in normal sentence case: the FAA writes everything in capitals, but only "
-    "codes, identifiers and the contractions you copy stay in capitals.\n"
+    "extension', and 'WHILE PRK' is 'while parked', not 'while park'. Write it in normal sentence "
+    "case: the FAA writes everything in capitals, but only codes, identifiers and the contractions "
+    "you copy stay in capitals.\n"
     "Rules:\n"
     "- Expand a contraction ONLY to the meaning listed for it under Meanings. Copy every other "
     "contraction, abbreviation, code and name exactly as written, even if you think you know "
@@ -52,7 +53,8 @@ PROMPT = (
     "order, as many times as the remark has them. Never add a number, or a unit (feet, degrees) "
     "after a number that has none.\n"
     "- Copy codes of letters and digits exactly, with their letters: D523-4244, C850-283-4244, "
-    "100LL, H1, 24U, BAK-12B.\n"
+    "100LL, H1, 24U, BAK-12B. A runway keeps its side letter: 'RWY 33C' is 'runway 33C' and "
+    "'RWY 15C/33C' is 'runway 15C/33C', never '33 center'.\n"
     "- Keep a + or - in front of a height: '+22 FT FENCE' is '+22 foot fence', never '22-foot fence', "
     "'plus 22' or '22 feet high'. Keep '++' after a time exactly as written; it's decoded for you.\n"
     "- FT is 'foot' only right before the thing it measures ('+22 foot fence'); anywhere else it's "
@@ -69,7 +71,7 @@ PROMPT = (
 def prompt_for(batch):
     """PROMPT plus the verified meanings of the contractions in this batch, and the ones that
     have none and must be copied."""
-    meanings, copy = {}, set()
+    meanings, copy, where = {}, set(), {}
     for raw in batch:
         for term in terms(raw):
             if term in PLAIN_WORDS or term in NEGATIONS:
@@ -77,13 +79,18 @@ def prompt_for(batch):
             entry = glossary.lookup(term)
             if entry and entry["verified"] and entry["prompt"]:
                 meanings[term] = entry["expansion"]
+            n, side, rule = _context(term, raw)
+            if n:
+                where[term] = _where(side, rule)
+                meanings[f"{term} {where[term]}"] = rule["meaning"]
         copy.update(unverified(raw))
     text = PROMPT
     if meanings:
         text += ("Meanings (from the FAA Chart Supplement and FAA Order JO 7340.2):\n"
                  + "\n".join(f"{t} = {m}" for t, m in sorted(meanings.items())) + "\n")
     if copy:
-        text += "These have no verified meaning; copy them exactly as written: " + ", ".join(sorted(copy)) + "\n"
+        text += "These have no verified meaning; copy them exactly as written: " + ", ".join(
+            f"{t} (anywhere but {where[t]})" if t in where else t for t in sorted(copy)) + "\n"
     return text + "\nRemarks:\n" + json.dumps(batch, indent=1)
 
 
@@ -109,8 +116,7 @@ def translate_remarks(texts, use_llm, ids=frozenset(), states=frozenset()):
     cache = kept
     STATS["unknown_terms"] = dict(Counter(t for raw in {x for x in texts if x}
                                           for t in set(review_terms(raw, ids, states))).most_common())
-    rejects = _load(_rejects_file(), {})
-    rejects = rejects.get("remarks", {}) if rejects.get("engine") == ENGINE_VERSION else {}
+    rejects = rejected()
     todo = sorted({t for t in texts if t and t not in cache})
     STATS["rejects_skipped"] = sum(1 for t in todo if t in rejects)
     todo = [t for t in todo if t not in rejects]
@@ -163,6 +169,53 @@ def translate_remarks(texts, use_llm, ids=frozenset(), states=frozenset()):
     return cache
 
 
+def rejected():
+    """{raw: why} for the remarks whose answer broke the checks under this ENGINE_VERSION"""
+    r = _load(_rejects_file(), {})
+    return r.get("remarks", {}) if r.get("engine") == ENGINE_VERSION else {}
+
+
+def untranslated(raw, plain=None, why=(), ids=frozenset(), states=frozenset()):
+    """a line for the reader when a remark shows the FAA's words, or None. plain is its checked
+    translation (the FAA text itself when the model gave that back), why the problems of an answer
+    the checks rejected (rejected()). a translation gets a line only for a term it keeps that remarks
+    use more than one way (glossary remarks_use): 'NA is left as the FAA wrote it: it can mean not
+    authorized or not available, and Amend doesn't guess which.' ids and states: review_terms"""
+    if not raw:
+        return None
+    if plain and plain != raw:
+        kept = [t for t in dict.fromkeys(unverified(raw)) if _uses(t)]
+        return " ".join(f"{t} is left as the FAA wrote it: it {_can_mean(t)}." for t in kept) or None
+    if plain is None and not why:
+        return "Kept in the FAA's words until it's translated."
+    unknown, misread = [], []
+    for p in why:
+        if m := re.match(r"(\S+) (?:has no verified meaning|is not in the verified glossary)", p):
+            unknown.append(m[1])
+        elif m := re.match(r"(\S+) is '(.+?)' \(.*\), not what the translation says$", p):
+            misread.append((m[1], m[2].lower()))
+    if plain == raw:        # the model gave the FAA text back: say what in it has no verified meaning
+        unknown = review_terms(raw, ids, states)
+        if not unknown:
+            return None
+    unknown = list(dict.fromkeys(unknown))
+    parts = [f"{t} {_can_mean(t)}" for t in unknown if _uses(t)]
+    if other := [t for t in unknown if not _uses(t)][:3]:
+        parts.append(f"Amend has no verified meaning for {_either(other, 'and')}")
+    if misread:
+        said = _either([f"{t} ({m})" for t, m in dict.fromkeys(misread[:3])], "and")
+        parts.append(f"the plain-English version didn't use the verified meaning for {said}")
+    return "Kept in the FAA's words: " + ("; ".join(parts) or "the plain-English version didn't pass Amend's checks") + "."
+
+
+def _uses(term):
+    return (glossary.lookup(term) or {}).get("remarks_use")
+
+
+def _can_mean(term):
+    return f"can mean {_either(_uses(term))}, and Amend doesn't guess which"
+
+
 def _load(path, default):
     if not os.path.exists(path):
         return default
@@ -196,11 +249,13 @@ def _why(e):
 
 def scrub_history(hist_dir="history"):
     """history/ keeps each summary as it was written, so a translation the checks now reject
-    outlives its cache entry there: put the FAA text back in its place. run it whenever the checks
-    get stricter, in the same change. ids stay as stored, so nothing shows as new, and only files
-    that change are rewritten. returns (summaries, airport files) changed."""
+    outlives its cache entry there: put the FAA text back in its place, with the reason
+    (untranslated). a translation that passes is said the way readable() says it now (a runway
+    side, ++), with a line for a term it leaves as written. run it whenever the checks or readable()
+    change, in the same change. ids stay as stored, so nothing shows as new, and only files that
+    change are rewritten. returns (FAA text put back, translations reworded, airport files changed)."""
     from .output import dump    # output imports pipeline, which imports this module
-    fixed = files = 0
+    back = reworded = files = 0
     for path in sorted(glob.glob(os.path.join(hist_dir, "*.json"))):
         with open(path, encoding="utf-8") as f:
             h = json.load(f)
@@ -208,13 +263,25 @@ def scrub_history(hist_dir="history"):
         for e in h.get("entries", []):
             raw = e.get("original")
             head, sep, plain = e["summary"].partition(": ")
-            if raw and sep and e.get("source") in REMARK_FILES + ("FRQ",) and not faithful(raw, plain):
-                e["summary"] = f"{head}: {raw}"
-                n += 1
+            if not (raw and sep and plain != raw and e.get("source") in REMARK_FILES + ("FRQ",)):
+                continue
+            if not faithful(raw, plain):
+                why = untranslated(raw, None, problems(raw, plain)[:3])
+                e["summary"], back = f"{head}: {raw}", back + 1
+            else:
+                now = readable(raw, plain)
+                why = untranslated(raw, now)
+                if now == plain and why == e.get("untranslated"):
+                    continue
+                e["summary"], reworded = f"{head}: {now}", reworded + (now != plain)
+            e.pop("untranslated", None)
+            if why:
+                e["untranslated"] = why
+            n += 1
         if n:
             dump(h, path)
-            fixed, files = fixed + n, files + 1
-    return fixed, files
+            files += 1
+    return back, reworded, files
 
 
 # lighting you turn on from the cockpit: "ACTVT MIRL RWY 17/35 - CTAF." nobody answers on
@@ -239,7 +306,7 @@ PLAIN_WORDS = {"A", "AN", "THE", "OF", "TO", "IN", "ON", "AT", "BY", "FOR", "WIT
 # negations may be reworded ("NOT AVBL" -> "unavailable", "NO FUEL" -> "fuel not available"), but a
 # translation has to say as many as the FAA text does: "RWY NOT CLSD" isn't "runway closed", and
 # "TWY A LGTD" isn't "taxiway A is not lighted". UN- and NON- words count (UNAVBL, "unmarked",
-# "non-standard"), and so does a contraction whose FAA meaning is one (NA, NLT, NSTD)
+# "non-standard"), and so does a contraction whose FAA meaning is one (NLT, NSTD, U/S)
 NEGATIONS = {"NOT", "NO", "NON", "NONE", "NEVER", "CANNOT", "WITHOUT", "NOR", "UNLESS"}
 NOT_NEGATIVE = ("UNDER", "UNTIL", "UNIT", "UNICOM", "UNION", "UNIFORM", "UNIFIED", "UNIVERS", "UNIQUE")
 # except NO before a case number: "SEE AIRSPACE CASE NO. 2024-ASW-7785-NRA"
@@ -255,10 +322,58 @@ def faithful(raw, plain):
 
 
 def readable(raw, plain):
-    """a checked translation with each ++ after a UTC time said the way the Chart Supplement's legend
-    explains it (see DAYLIGHT). the model copies ++; code says what it means, the same way every time.
-    an answer that is the FAA text itself stays the FAA text"""
-    return plain if plain == raw else ZPLUS.sub(lambda m: DAYLIGHT + (" " if m[1] else ""), plain)
+    """a checked translation said the same way every time: each ++ after a UTC time the way the Chart
+    Supplement's legend explains it (see DAYLIGHT), a runway side the way the FAA writes it (see
+    runway_sides), and a term copied where a glossary rule gives it a meaning with that meaning (see
+    in_context). the model copies ++; code says what it means. an answer that is the FAA text itself
+    stays the FAA text"""
+    if plain == raw:
+        return plain
+    return in_context(raw, runway_sides(raw, ZPLUS.sub(lambda m: DAYLIGHT + (" " if m[1] else ""), plain)))
+
+
+def in_context(raw, plain):
+    """a term the translation copied where a glossary rule gives it a meaning, said with it: 'TRANS
+    alert' is 'transient alert' where the remark writes TRANS ALERT (glossary.BEFORE), 'high PER' is
+    'high performance' (glossary.AFTER). only while the translation has the term and its meaning
+    there no more often than the remark has the term there"""
+    for term in dict.fromkeys(terms(raw)):
+        n, side, rule = _context(term, raw)
+        copied = n and _context_re(term, side, rule, copied=True)
+        if not copied or not 0 < len(copied.findall(plain)) + len(_context_re(term, side, rule).findall(plain)) <= n:
+            continue
+        def said(m):       # 'TRANS ALERT: ...' copied in capitals is 'Transient alert: ...'
+            start = m.start() == 0 or re.search(r"[.!?]\s+$", plain[:m.start()])
+            meaning = rule["meaning"][0].upper() + rule["meaning"][1:] if start else rule["meaning"]
+            return m[1] + meaning if side == "after" else meaning + (m[2].lower() if m[2].isupper() else m[2])
+        plain = copied.sub(said, plain)
+    return plain
+
+
+# a runway's side the way the FAA writes it, "runway 33C" and "runway 15C/33C": translations said
+# it four ways ("33 Left", "33 left", "33 Center", "33C"). only a runway number the remark writes
+# with its side letter, only after "runway" in the translation, and never a number the remark also
+# writes with a word after it: "RWY 6 RIGHT TFC" is right traffic, "20 L OF CNTRLN" 20 feet left
+SIDE_CODE = re.compile(r"(?<![A-Z0-9])(\d{1,2})([LRC])(?![A-Z0-9])")
+SIDE_APART = re.compile(r"(?<![A-Z0-9])(\d{1,2})\s+(?:L|R|C|LEFT|RIGHT|CENTER|CENTRE|CNTR|CTR)\b")
+RUNWAYS = re.compile(r"\b(?:runways?|rwys?)\s+(?:\d{1,2}(?:\s*(?:left|right|cent(?:er|re)|[lrc]))?\b"
+                     r"(?:\s*(?:/|-|,|&|\band\b|\bor\b)\s*(?=\d))?)+", re.I)
+SAID_SIDE = re.compile(r"(?<![\d.])(\d{1,2})\s*(left|right|cent(?:er|re)|[lrc])\b", re.I)
+
+
+def runway_sides(raw, plain):
+    """'runway 33 Center', 'runways 33 left and 33c' -> 'runway 33C', 'runways 33L and 33C', with the
+    remark's own code (09L stays 09L)"""
+    up = raw.upper()
+    apart = {int(m[1]) for m in SIDE_APART.finditer(up)}
+    code = {}
+    for m in SIDE_CODE.finditer(up):
+        code.setdefault((int(m[1]), m[2]), m[0])
+
+    def side(m):
+        n = int(m[1])
+        return code.get((n, m[2][0].upper()), m[0]) if n not in apart else m[0]
+    return RUNWAYS.sub(lambda m: SAID_SIDE.sub(side, m[0]), plain)
 
 
 def problems(raw, plain):
@@ -280,7 +395,18 @@ def problems(raw, plain):
         joined.setdefault(b, set()).add((a + b).lower())
     out = []
     for term in dict.fromkeys(ts):
-        if term in PLAIN_WORDS or _kept(term, plain) or _inflected(term, words):
+        if term in PLAIN_WORDS:
+            continue
+        n, side, rule = _context(term, raw)
+        if n:       # each time the remark has it there, copied or said with the rule's meaning; elsewhere copied
+            total, copied = ts.count(term), len(_kept_re(term).findall(plain))
+            if copied + min(len(_context_re(term, side, rule).findall(plain)), n) >= total:
+                continue    # HI PER said as 'high performance', TRANS ALERT as 'transient alert'
+            if copied >= total - n:
+                out.append(f"{term} is {rule['meaning']!r} ({rule['source']}, {_where(side, rule)}), "
+                           "not what the translation says")
+                continue
+        elif _kept(term, plain) or _inflected(term, words):
             continue
         if term in NEGATIONS:       # counted below; a case NO. has to stay a number
             numbered = term == "NO" and not re.search(r"\bNO\b", NUMBER_NO.sub(" ", raw.upper()))
@@ -338,16 +464,55 @@ def terms(raw):
 def unverified(raw):
     """contractions in a remark that a translation must leave as written: the review queue.
     single letters and roman numerals are names here (TWY C, PHASE II), not contractions."""
-    out = []
-    for t in terms(raw):
+    out, ts = [], terms(raw)
+    for t in ts:
         if t in PLAIN_WORDS or t in NEGATIONS or len(t) == 1 or re.fullmatch(r"[IVX]+", t):
             continue
         entry = glossary.lookup(t)
         if entry and entry.get("english"):
             continue
         if (entry and not entry["verified"]) or (not entry and _looks_contracted(t)):
-            out.append(t)
+            if _context(t, raw)[0] < ts.count(t):      # every TRANS a TRANS ALERT: it has a meaning
+                out.append(t)
     return out
+
+
+def _context(term, raw):
+    """(how many times, 'after' or 'before', the rule): the remark has the term right after or right
+    before the words its glossary rule names, where the term takes the rule's meaning. PER right after
+    HI, HIGH or LOW is performance (glossary.AFTER), TRANS right before ALERT transient (glossary.BEFORE)"""
+    entry = glossary.lookup(term) or {}
+    side = next((s for s in ("after", "before") if s in entry), None)
+    if not side:
+        return 0, None, None
+    near, t = "|".join(map(re.escape, entry[side]["words"])), re.escape(term)
+    pat = rf"\b(?:{near})\s+{t}\b" if side == "after" else rf"\b{t}\s+(?:{near})\b"
+    return len(re.findall(pat, raw.upper())), side, entry[side]
+
+
+def _where(side, rule):
+    return f"right {side} {_either(rule['words'])}"
+
+
+def _context_re(term, side, rule, copied=False):
+    """the rule's place in a translation: the words next to the term as a translation says them
+    ('high' for HI), with the rule's meaning ('high performance', 'transient alert') or the term
+    copied as written ('high PER', 'TRANS alert'). groups: (near words, term) for a rule on the
+    'after' side, (term, near words) for one on the 'before' side"""
+    near = {w.lower() for w in rule["words"]}
+    for w in rule["words"]:
+        e = glossary.lookup(w)
+        if e and e["verified"] and not e.get("english"):
+            near.update(m.lower() for m in e.get("meanings") or [e["expansion"]])
+    near = "(?:" + "|".join(map(re.escape, sorted(near, key=len, reverse=True))) + ")"
+    word = re.escape(term) if copied else r"[\s-]+".join(map(re.escape, rule["meaning"].split()))
+    if side == "after":
+        return re.compile(rf"(?<![A-Za-z])({near}[\s-]+)({word})(?![A-Za-z])", re.I)
+    return re.compile(rf"(?<![A-Za-z])({word})([\s-]+{near}s?)(?![A-Za-z])", re.I)
+
+
+def _either(words, conj="or"):
+    return ", ".join(words[:-1]) + f" {conj} " + words[-1] if len(words) > 1 else words[0]
 
 
 # the review queue leaves out the parts of a postal address: they're names, not contractions.
@@ -509,8 +674,8 @@ def _one_word(a, b):
 
 def _negations(raw, plain):
     """(fewest, most) negations a translation may say, and how many it does. NOT, NO, UNAVBL and
-    'unmarked' count wherever they are. a contraction whose FAA meaning is a negation (NA is 'not
-    authorized', U/S is 'unserviceable') may be said with one or not ('out of service'): the check
+    'unmarked' count wherever they are. a contraction whose FAA meaning is a negation (NLT is 'not
+    later than', U/S is 'unserviceable') may be said with one or not ('out of service'): the check
     of its meaning covers it."""
     ts = terms(NUMBER_NO.sub(" ", raw.upper()))
     least = sum(map(_negative, ts))
@@ -763,6 +928,10 @@ def _sources(raw):
         for t in texts:
             most |= Counter(_vocab(t))      # 'south-south west' has two souths
         src.update(most)
+    for term in set(terms(raw)):    # HI PER: 'performance', TRANS ALERT: 'transient', once each time
+        n, side, rule = _context(term, raw)
+        for _ in range(n):
+            src.update(_vocab(rule["meaning"]))
     return src
 
 

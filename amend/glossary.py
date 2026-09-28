@@ -22,6 +22,10 @@ glossary.json holds one entry per term:
   parts      for a pair like SS-SR: the terms it joins, which have to come out in that order
   english    an everyday English word in remarks (END, MUST), never expanded as a contraction
   spelling_of for a remark's own spelling (APRCH): the FAA contraction whose meaning it takes
+  after      a meaning the term takes only right after certain words (AFTER: HI PER is performance)
+  before     one it takes only right before certain words, from the FAA contraction it spells there
+             (BEFORE: TRANS ALERT is transient alert, the FAA's TRAN)
+  remarks_use for a term copied as written: the meanings remarks give it, for the reader's line
 
 refresh the FAA lists and rebuild (needs faa.gov access and pypdf):
     python -m amend.glossary --refresh
@@ -98,6 +102,29 @@ ENGLISH = {
     "VAN",
 }
 
+# an FAA meaning an ENGLISH word takes right after certain words, where every NASR remark with it
+# there means that: {term: (the words before it, the FAA meaning, what was read)}. anywhere else
+# it stays the word. build() refuses a meaning that isn't FAA text for the term
+AFTER = {
+    "PER": (("HI", "HIGH", "LOW"), "performance",
+            "all 16 of NASR's HI PER, HIGH PER and LOW PER remarks on 2026-10-01 mean performance ('HI PER "
+            "JET TRNG', 'HIGH PER TAKEOFF RQRD', 'LOW PER OR LOW PWRD ACFT'). most of its other 241 are the "
+            "word per ('$15 PER NIGHT', 'PER AC 150/5390-2') or an id in a list; about 10 mean performance with "
+            "nothing before them that shows it ('CHECK ACFT PER DATA CALCULATIONS'), and a translation can "
+            "only keep those as the word"),
+}
+
+# a term that spells an FAA contraction right before certain words, where every NASR remark with it
+# there means that (2026-10-01 cycle, all remark fields): {term: (the words after it, the FAA
+# contraction, what was read)}. it takes that contraction's verified meaning there, and stays as
+# written anywhere else. a translation may still copy it as written
+BEFORE = {
+    "TRANS": (("ALERT",), "TRAN",
+              "all 26 of NASR's TRANS ALERT remarks on 2026-10-01 (23 texts) mean the military transient alert "
+              "service ('TRANS ALERT SVC AVBL H24', 'PRIOR TO TRANS ALERT CLOSING'); 158 others write it the "
+              "FAA's way, TRAN ALERT"),
+}
+
 
 # ---------------------------------------------------------------- curated choices
 # where the FAA lists more than one meaning, where its only meaning doesn't fit remarks, or where
@@ -106,6 +133,8 @@ ENGLISH = {
 #              anything that isn't FAA text for the term (or for its root, when "root" is given)
 #   None       the term stays unverified and must be copied as written
 #   accept     regexes for how translations correctly say the meaning in other words
+#   remarks_use  for a term copied as written: the meanings remarks give it, read against every
+#              NASR remark with it. a reader is told the term can mean any of them (remarks.untranslated)
 CURATED = {
     # meanings picked from several
     "FM": {"expansion": "from",
@@ -171,16 +200,30 @@ CURATED = {
     "EMS": {"expansion": None, "note": "not an FAA contraction: EM + S would read as 'emission', but "
                                        "remarks use EMS for emergency medical services"},
     "ARNG": {"expansion": None, "note": "the FAA lists 'arrange'; military remarks use ARNG for Army National Guard"},
-    "TRANS": {"expansion": None, "note": "the FAA lists 'transmit'; remarks use TRANS ALERT for transient alert"},
+    "TRANS": {"expansion": None,
+              "note": "the FAA lists 'transmit', and remarks use TRANS for transmit ('TRANS INTENTIONS'), "
+                      "transition ('TRANS SFC') and transient ('TRANS ACFT'). right before ALERT it's the "
+                      "FAA's TRAN (BEFORE)"},
     "DECR": {"expansion": None, "note": "not an FAA contraction (JO 7340.2 has DCR); DEC + R would read as December"},
     "FRM": {"expansion": None, "note": "the FAA lists 'form'; remarks use FRM for from"},
     "MTUS": {"expansion": None, "note": "MTU + S would read as 'metric units'; remarks use MTUS for mountains"},
     "REQD": {"expansion": None, "note": "REQ + D would read as 'requested'; remarks use REQD for required"},
-    "TEMP": {"expansion": None,
+    "TEMP": {"expansion": None, "remarks_use": ["temporary", "temperature"],
              "note": "the FAA lists 'temperature' (its temporary is TMPRY), and remarks use TEMP both ways: "
                      "'HELIPAD TEMP CLSD' is temporary, 'WIND, TEMP, & ALTM INFO' and 'AWOS TEMP UNRELBL' "
                      "are temperature (10 and 8 of NASR's 18 on 2026-10-01). a check can't tell which one "
                      "a translation picked"},
+    "N/A": {"expansion": None, "remarks_use": ["not authorized", "not available", "not applicable"],
+            "note": "the FAA lists 'not applicable', and remarks use N/A three ways: not authorized "
+                    "('AUTOPILOT COUPLED APCH N/A BLW 1570 FT', 'RSTD: SOLO STU N/A', 'TOUCH AND GO'S N/A'), "
+                    "not available ('SNOW REMOVAL N/A', 'TWY P & S EDGE LGT N/A') and not applicable "
+                    "('LNDG FEE (N/A FOR MIL AIRCRAFT)'): 11, 6 and 2 of NASR's 19 on 2026-10-01. a check "
+                    "can't tell which one a translation picked"},
+    "NA": {"expansion": None, "remarks_use": ["not authorized", "not available"],
+           "note": "the FAA lists 'not authorized', and most remarks mean that ('TGL NA', 'AUTO CPD APCH NA "
+                   "BLW 1200 FT MSL'), but dozens of NASR's 576 on 2026-10-01 mean not available ('SNOW "
+                   "REMOVAL NA', 'AFT HR FUEL NA', 'ARFF NA', 'FONE NA'), and 'TGL, SVCS, CELL RECEPTION NA' "
+                   "means both at once. a check can't tell which one a translation picked"},
     "TO": {"expansion": None, "note": "the FAA lists 'travel order'; remarks use TO for 'to', and for takeoff "
                                       "('TO AND LDG NA')"},
     "UNSBL": {"expansion": None, "note": "JO 7340.2 lists 'unseasonable' (NWS); remarks use it for unusable"},
@@ -247,7 +290,6 @@ CURATED = {
     **{t: {"prompt": False, "note": n} for t, n in [
         ("ALT", "remarks also use ALT for alternate ('ALT PHONE'), which no FAA list gives"),
         ("HELI", "remarks also use HELI for helicopter ('HELI OPNS'), which no FAA list gives"),
-        ("NA", "remarks also use NA for not available ('FLOAT SPACE LMTD OR NA')"),
         ("OBS", "remarks also use OBS for obstacle ('CTL OBS'), which no FAA list gives"),
     ]},
     # the FAA meaning, said the way remarks and pilots say it
@@ -549,7 +591,9 @@ def build(sources=None):
             entry["prompt"] = cur.get("prompt", len(term) > 1)
         if not entry["verified"] and ("accept" in cur or "parts" in cur):
             raise ValueError(f"{term}: accept patterns need a verified meaning")
-        for k in ("note", "accept"):
+        if "remarks_use" in cur and entry["verified"]:
+            raise ValueError(f"{term}: remarks_use is for a term copied as written")
+        for k in ("note", "accept", "remarks_use"):
             if k in cur:
                 entry[k] = cur[k]
         terms[term] = entry
@@ -570,6 +614,18 @@ def build(sources=None):
         terms[term] = {"expansion": None, "verified": False, "source": None,
                        "faa": entry["faa"] if entry else [], "prompt": False, "english": True,
                        "note": "an everyday English word in remarks; kept as the word, never expanded"}
+    for term, (before, meaning, seen) in AFTER.items():
+        if term not in ENGLISH:
+            raise ValueError(f"{term}: an AFTER rule is for a word remarks otherwise use as English")
+        terms[term]["after"] = {"words": list(before), "meaning": meaning,
+                                "source": _source_of(term, meaning, found), "note": seen}
+    for term, (after, form, seen) in BEFORE.items():
+        base, entry = terms.get(form), terms.get(term)
+        if not (base and base["verified"]) or base.get("parts") or not entry or entry["verified"] \
+                or entry.get("english"):
+            raise ValueError(f"{term}: a BEFORE rule gives a term copied as written a verified contraction's meaning")
+        entry["before"] = {"words": list(after), "meaning": base["expansion"], "spelling_of": form,
+                           "source": f"{base['source']}, spelled {form}", "note": seen}
     return {"about": ("Contractions a remark translation may expand, each traced to an FAA list. "
                       "Built by amend/glossary.py from faa_abbreviations.json; edit CURATED there, "
                       "not this file."),

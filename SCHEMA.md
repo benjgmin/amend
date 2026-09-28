@@ -62,6 +62,7 @@ Only exists if the airport changed. **A 404 means no changes**, not an error.
 | `summary` | string | yes | plain-English, ready to display |
 | `source` | string | yes | FAA file it came from (`ATC_BASE`, `APT_RMK`, `d-TPP`, `CLS_ARSP_SHP` for the class airspace shapefile, ...) |
 | `original` | string | no | raw FAA remark text (show under translated remarks) |
+| `untranslated` | string | no | why a remark's `summary` shows FAA words, ready to display: all of it ("Kept in the FAA's words: Amend has no verified meaning for RT.") or a term the translation leaves as written because remarks use it more than one way ("NA is left as the FAA wrote it: it can mean not authorized or not available, and Amend doesn't guess which."). Absent when there's nothing to explain. Older `history/` entries may lack it |
 | `fields` | array | no | `[{"field", "old", "new"}]` raw before/after values. A whole row added or removed lists its columns with `old` or `new` empty. `ATTENDANCE` (source `APT_ATT`) is the airport's whole attendance schedule, its rows' MONTH DAY HOUR joined with `; ` |
 | `details` | array of string | no | the lines behind a grouped summary: route-level lines behind "preferred IFR routes", or each FAA frequency row (`removed: 125.2 BETHEL RCAG (LOW)`) behind a grouped frequency change |
 | `procedures` | object | no | `{"updated": [...], "removed": [...]}` STAR/DP names |
