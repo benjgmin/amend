@@ -7,6 +7,11 @@ the repo have the same process with file and line references. When the pipeline 
 Anchors #how, #sources, #limits, #api and #open are linked from the site, the app and older pages, so
 keep them.
 """
+import html
+import json
+import os
+import re
+
 from . import subsite, web
 from .web import DTPP_SEARCH, FAA_INQUIRY, NASR_PAGE, REPO_URL, REPORT_URL, SITE_URL
 
@@ -15,9 +20,23 @@ CSS = """<style>
 .dx-toc{position:sticky;top:76px;max-height:calc(100vh - 92px);overflow-y:auto;font-size:13.5px;padding:4px 0 16px}
 .dx-toc .g{font:600 11px/1.4 var(--sans);text-transform:uppercase;letter-spacing:.08em;color:var(--fn);margin:18px 0 6px 12px}
 .dx-toc .g:first-child{margin-top:0}
-.dx-toc a{display:block;padding:5px 12px;color:var(--dm);border-radius:6px;border-left:2px solid transparent}
+.dx-toc a,.dx-jump a{display:block;padding:5px 12px;color:var(--dm);border-radius:6px}
 .dx-toc a:hover{color:var(--tx);background:var(--p2);text-decoration:none}
-.dx-toc a.on{color:var(--tx);background:var(--p2);border-left-color:var(--am);font-weight:500;border-radius:0 6px 6px 0}
+.dx-p{font-weight:500;margin-top:2px}.dx-p.on{color:var(--tx)!important;font-weight:600}
+.dx-s{margin:2px 0 10px 12px;border-left:1px solid var(--ln)}.dx-s a{padding:4px 12px;font-size:13px;border-radius:0 6px 6px 0;margin-left:-1px;border-left:2px solid transparent}
+.dx-s a.on{color:var(--tx);background:var(--p2);border-left-color:var(--am);font-weight:500}
+.dx-crumb{font:600 12px/1.4 var(--sans);text-transform:uppercase;letter-spacing:.08em;color:var(--am);margin:0 0 8px}
+.dx pre{margin:10px 0 14px;padding:12px 14px;background:var(--p2);border:1px solid var(--ln);border-radius:8px;overflow-x:auto;font:12.5px/1.6 var(--mono)}
+.dx pre code{background:none;padding:0;font:inherit;overflow-wrap:normal}
+.dx .tw{margin:10px 0 16px;overflow-x:auto;border:1px solid var(--ln);border-radius:8px;background:var(--p)}
+.dx-tb{border-collapse:collapse;width:100%;font-size:13.5px;line-height:1.55}
+.dx-tb th,.dx-tb td{text-align:left;vertical-align:top;padding:8px 12px;border-top:1px solid var(--ln)}
+.dx-tb th{border-top:0;background:var(--p2);font-weight:600;font-size:12.5px;color:var(--dm);white-space:nowrap}
+.dx-tb td:first-child{white-space:nowrap}.dx-tb td:not(:first-child) code{overflow-wrap:anywhere}
+.dx-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:6px}
+.dx-card{display:block;padding:14px 16px;border:1px solid var(--ln);border-radius:10px;background:var(--p);color:var(--tx)}
+.dx-card:hover{border-color:var(--ln2);text-decoration:none}.dx-card b{display:block;margin-bottom:2px}.dx-card span{color:var(--dm);font-size:14px;line-height:1.5}
+@media (max-width:560px){.dx-cards{grid-template-columns:minmax(0,1fr)}}
 .dx-body{max-width:46rem;min-width:0}
 .dx h1{font:600 32px/1.15 var(--sans);letter-spacing:-.5px;margin:0 0 10px}
 .dx .lede{font-size:17px;line-height:1.55;color:var(--dm);margin:0 0 8px}
@@ -44,12 +63,12 @@ border:1px solid var(--ln);border-radius:8px;background:var(--p);font-size:14.5p
 .dx-jump{display:none}
 @media (max-width:860px){.dx-jump{display:block;margin:4px 0 0;border:1px solid var(--ln);border-radius:8px;background:var(--p)}
 .dx-jump>summary{cursor:pointer;padding:10px 14px;font-size:14px;font-weight:500}
-.dx-jump nav{display:grid;padding:0 14px 10px}.dx-jump a{padding:6px 0;border-top:1px solid var(--ln);font-size:14px}}
+.dx-jump nav{padding:0 8px 8px}.dx-jump a{padding:7px 8px;font-size:14px}.dx-jump .dx-s{margin:0 0 6px 8px}}
 @media (max-width:479px){.dx-kv{grid-template-columns:minmax(0,1fr);gap:2px}.dx-kv dd{margin-bottom:8px}}
 </style>"""
 
 # the table of contents follows the section you're reading
-TOC_JS = """<script>(()=>{const a=[...document.querySelectorAll(".dx-toc a")];if(!a.length||!("IntersectionObserver" in window))return;
+TOC_JS = """<script>(()=>{const a=[...document.querySelectorAll(".dx-toc .dx-s a")];if(!a.length||!("IntersectionObserver" in window))return;
 const on=id=>a.forEach(x=>x.classList.toggle("on",x.getAttribute("href")==="#"+id));const seen=new Map();
 const io=new IntersectionObserver(es=>{es.forEach(e=>seen.set(e.target.id,e.isIntersecting));
 const first=a.map(x=>x.getAttribute("href").slice(1)).find(id=>seen.get(id));if(first)on(first)},{rootMargin:"-70px 0px -60% 0px"});
@@ -201,8 +220,10 @@ def sections():
             "<dt>Plain-English remarks</dt><dd>How many changed remarks read in plain English, and whether the "
             "translator was reachable.</dd>"
             "<dt>Website and data files</dt><dd>When the site and its files were last published.</dd>"
-            "<dt>Recent runs</dt><dd>The last 30 runs, oldest on the left: green published, blue waiting, magenta "
-            "blocked or crashed, grey skipped. Each opens its record.</dd>"
+            "<dt>Checks for new FAA data</dt><dd>When Amend last checked the FAA, and the recent checks, one every "
+            "10 minutes. Most find nothing new and stop after a few seconds, so they build nothing.</dd>"
+            "<dt>Recent builds</dt><dd>The last 30 builds, oldest on the left: green published, blue waiting, "
+            "magenta blocked or crashed, grey skipped. Hover one for its exact time; each opens its record.</dd>"
             "<dt>Problems</dt><dd>Every blocked or crashed run in the last three cycles, with the reason.</dd>"
             "</dl>"
             "<p>The status page is published with the site, so a blocked run appears there after the next run that "
@@ -238,22 +259,6 @@ def sections():
             "build runs, usually within about 20 minutes.</li></ul>"
             "<p>Amend doesn't publish an accuracy percentage. It would need a large set of changes checked by hand "
             "against the FAA source, and that set is still being built.</p>")),
-        ("api", "Data files", (
-            "<p>Everything on the site is built from plain JSON files anyone can download. No key and no sign-up, "
-            "and you're welcome to build on them.</p><ul>"
-            "<li><code>latest/meta.json</code>: which two cycles are being compared, and whether the newer one is in "
-            "effect yet.</li>"
-            "<li><code>latest/index.json</code>: every airport with changes, with its ACT, IFR and FYI counts.</li>"
-            "<li><code>latest/&lt;ID&gt;.json</code>: every change at one airport. A 404 means nothing changed "
-            "there.</li>"
-            "<li><code>history/&lt;ID&gt;.json</code>: earlier cycles at one airport.</li>"
-            "<li><code>airports.json</code>: every airport ID with its name and location.</li>"
-            "<li><code>&lt;ID&gt;/feed.xml</code> and <code>list/&lt;name&gt;/feed.xml</code>: the alert feeds "
-            "(RSS), and <code>cycles.ics</code>, the cycle dates as a calendar.</li></ul>"
-            f'<p>They all live under <code>{SITE_URL}</code>. The fields are described in '
-            f'<a href="{REPO_URL}/blob/master/SCHEMA.md">SCHEMA.md</a>. Airport IDs are FAA IDs (VRB, not KVRB) '
-            "and dates are the FAA effective date. The data carries the same warning as the site: "
-            f'<a href="{SITE_URL}terms/">not for navigation</a>.</p>')),
         ("open", "Open source and reporting problems", (
             f'<p>The engine, the rules and the site are <a href="{REPO_URL}">on GitHub</a> under the MIT license. '
             f'Found something wrong? <a href="{REPORT_URL}">Open an issue</a> with the airport, the cycle and what '
@@ -262,23 +267,305 @@ def sections():
     ]
 
 
-GROUPS = [("Overview", ["what", "cycle"]), ("The process", ["how", "labels", "remarks", "checks"]),
-          ("Reference", ["status", "sources", "limits", "api", "open"])]
+
+
+def more_sections():
+    """the sections the getting-started and using pages add to the ones above."""
+    site, guide = SITE_URL, f"{SITE_URL}guide/"
+    card = lambda href, title, text: f'<a class="dx-card" href="{href}"><b>{title}</b><span>{text}</span></a>'
+    return [
+        ("start", "Quick start", (
+            '<ol class="dx-steps">'
+            + step("Find your airport", "search", (
+                f'Search on <a href="{site}">amend.watch</a> by FAA ID (<code>DAB</code>), ICAO code '
+                "(<code>KDAB</code>), name or city. If an airport has no changes on record, Amend says so."))
+            + step("Read what changed", "airport page", (
+                "Changes are sorted ACT first, then IFR, then FYI. Each one says what changed in plain English, "
+                "shows the old and new values, and links the FAA source it came from."))
+            + step("Keep a list", "lists", (
+                "Add the airports you fly to a list from any airport page. Lists stay in your browser: no account, "
+                "nothing sent anywhere. The home page then shows what's coming up at your airports first."))
+            + step("Get alerts", "optional", (
+                "Every airport and list has an alert feed (RSS). Paste its link into a news reader app and you "
+                f'hear about the next change without checking. <a href="{site}cycles.ics">cycles.ics</a> puts '
+                "every cycle date in your calendar."))
+            + "</ol>")),
+        ("next", "Where to go next", (
+            '<div class="dx-cards">'
+            + card(web.sub_url("docs", None, "using/"), "Using Amend",
+                   "Reading a change, the labels, remarks, lists and alerts.")
+            + card(web.sub_url("docs", None, "how-it-works/"), "How it works",
+                   "Every step from the FAA's files to your screen, and what stops a bad update.")
+            + card(web.sub_url("docs", None, "api/"), "API and data",
+                   "The public JSON files behind the site, for your own tools.")
+            + card(web.sub_url("status"), "Status", "Whether Amend is up to date right now.")
+            + "</div>")),
+        ("airport", "Reading an airport page", (
+            "<p>An airport page lists what changes between the cycle in effect and the next one, or, once the new "
+            "cycle is in effect, what just changed. Each change has:</p><ul>"
+            "<li><b>A label</b>: ACT, IFR or FYI (below).</li>"
+            "<li><b>A summary</b> in plain English, like a tower that now closes an hour earlier.</li>"
+            "<li><b>The values</b> before and after, as the FAA wrote them.</li>"
+            "<li><b>The FAA source</b> it came from, so you can check the original.</li></ul>"
+            "<p>Below that are the airport's earlier cycles, back to Aug 2024, so you can see what changed since "
+            f'you last flew there. The <a href="{guide}">guide</a> walks through real examples.</p>')),
+        ("ahead", "Seeing changes ahead of time", (
+            "<p>The FAA posts each cycle before it takes effect. Once it's posted, Amend shows the changes as "
+            "<b>coming up</b>, with the value in effect today first and the new one after it, and a countdown to "
+            "the switch.</p>"
+            "<p>At 0901Z on cycle day, every page switches to <b>in effect</b> on its own, even if "
+            "it's already open. They use a clock checked against the server's, in case your device's clock "
+            "is off.</p>")),
+        ("lists", "Lists", (
+            "<p>A list is a set of airports you want to follow: your home field, a training area, a trip. You can "
+            "keep several, each with up to 200 airports.</p><ul>"
+            "<li><b>Add an airport</b> from its page. The home page shows what's coming up at the airports on "
+            "your lists, and which list each one is on.</li>"
+            "<li><b>Share a list</b> with its link. Whoever opens it sees the same airports and can save a copy "
+            "to their own lists.</li>"
+            f'<li><b>Named lists</b>, like <a href="{site}list/daytona-training/">daytona-training</a>, have a '
+            "fixed address and their own alert feed, for a school or club.</li></ul>"
+            "<p>Your own lists are stored in your browser only. Clearing site data removes them, and they don't "
+            "move between devices, so share the link to yourself to copy one.</p>")),
+        ("alerts", "Alerts and the cycle calendar", (
+            "<p>Amend has no accounts and sends no email. Instead, every airport and every named list has an RSS "
+            "feed with one item per cycle with changes. Paste the feed's link into a news reader app (Feedly, "
+            "Inoreader, NetNewsWire) and new changes show up there.</p><ul>"
+            f"<li><b>One airport:</b> <code>{site}DAB/feed.xml</code>, or <b>Get alerts</b> on its page.</li>"
+            f"<li><b>A named list:</b> <code>{site}list/daytona-training/feed.xml</code>.</li>"
+            "<li><b>Your own list:</b> its page has <b>Download all alerts</b>, one file that adds a feed for "
+            "every airport on it to your reader.</li>"
+            f'<li><b>Cycle dates:</b> <a href="{site}cycles.ics">cycles.ics</a> adds every changeover at 0901Z '
+            "to your calendar.</li></ul>")),
+    ]
+
+
+# ---- the API page, built from SCHEMA.md so it can't drift from the files' real contract ----
+
+SCHEMA_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "SCHEMA.md")
+# SCHEMA.md heading -> (anchor, heading on the page). Only these are part of the JSON contract
+SCHEMA_PARTS = {"`latest/meta.json`": ("meta", "latest/meta.json"), "`latest/index.json`": ("index", "latest/index.json"),
+                "`latest/<ID>.json`": ("airport", "latest/<ID>.json"), "Change": ("change", "The Change object"),
+                "`airports.json`": ("airports", "airports.json"), "`history/<ID>.json`": ("history", "history/<ID>.json"),
+                "`history/index.json`": ("history-index", "history/index.json")}
+
+
+def inline(text):
+    """SCHEMA.md's inline markdown (`code`, **bold**) to HTML, escaping everything else."""
+    out = []
+    for i, part in enumerate(re.split(r"`([^`]*)`", text)):
+        if i % 2:
+            out.append(f"<code>{html.escape(part)}</code>")
+        else:
+            out.append(re.sub(r"\*\*(.+?)\*\*", r"<b>\1</b>", html.escape(part, quote=False)))
+    return "".join(out)
+
+
+def md(block):
+    """the small slice of markdown SCHEMA.md uses: paragraphs, pipe tables and fenced code."""
+    out, para, lines, i = [], [], block.split("\n"), 0
+    flush = lambda: (out.append(f"<p>{inline(' '.join(para))}</p>"), para.clear()) if para else None
+    while i < len(lines):
+        ln = lines[i]
+        if ln.startswith("```"):
+            flush()
+            j = i + 1
+            while j < len(lines) and not lines[j].startswith("```"):
+                j += 1
+            out.append(f'<pre><code>{html.escape(chr(10).join(lines[i + 1:j]))}</code></pre>')
+            i = j + 1
+            continue
+        if ln.startswith("|"):
+            flush()
+            rows = []
+            while i < len(lines) and lines[i].startswith("|"):
+                cells = [c.strip() for c in lines[i].strip().strip("|").split("|")]
+                if not all(set(c) <= set("-: ") for c in cells):
+                    rows.append(cells)
+                i += 1
+            head, *body = rows
+            out.append('<div class="tw"><table class="tb dx-tb"><tr>' + "".join(f"<th>{inline(c)}</th>" for c in head)
+                       + "</tr>" + "".join("<tr>" + "".join(f"<td>{inline(c)}</td>" for c in r) + "</tr>" for r in body)
+                       + "</table></div>")
+            continue
+        if ln.strip():
+            para.append(ln.strip())
+        else:
+            flush()
+        i += 1
+    flush()
+    return "".join(out)
+
+
+def schema():
+    """SCHEMA.md as {heading: markdown body}, plus the intro (key "")."""
+    with open(SCHEMA_PATH, encoding="utf-8") as f:
+        text = f.read()
+    parts = re.split(r"^## (.+)$", text, flags=re.M)
+    out = {"": parts[0].split("\n", 1)[1] if "\n" in parts[0] else ""}
+    for k in range(1, len(parts), 2):
+        out[parts[k].strip()] = parts[k + 1].strip()
+    return out
+
+
+def api_sections():
+    site = SITE_URL
+    sch = schema()
+    missing = [h for h in SCHEMA_PARTS if h not in sch]
+    if missing:   # a renamed heading in SCHEMA.md would otherwise drop that file from the docs without a word
+        raise ValueError(f"SCHEMA.md has no section {missing}; update SCHEMA_PARTS in docspage.py")
+    files = [("latest/meta.json", "meta", "Which two cycles are compared, and when the newer one takes effect."),
+             ("latest/index.json", "index", "Every airport with changes, with its ACT, IFR and FYI counts."),
+             ("latest/<ID>.json", "airport", "Every change at one airport. A 404 means nothing changed there."),
+             ("airports.json", "airports", "Every airport in the current cycle, for names and search."),
+             ("history/<ID>.json", "history", "Every change at one airport since Aug 2024."),
+             ("history/index.json", "history-index", "Which cycles and airports have history."),
+             ("<ID>/feed.xml", "feeds", "An airport's alert feed (RSS 2.0)."),
+             ("cycles.ics", "feeds", "Every cycle changeover, as a calendar.")]
+    table = ('<div class="tw"><table class="tb dx-tb"><tr><th>File</th><th>What it holds</th></tr>'
+             + "".join(f'<tr><td><a href="#{a}"><code>{html.escape(p)}</code></a></td><td>{t}</td></tr>' for p, a, t in files)
+             + "</table></div>")
+    fetch_js = html.escape(
+        'const base = "https://amend.watch/";\n'
+        'const meta = await (await fetch(base + "latest/meta.json")).json();\n'
+        'const res = await fetch(base + "latest/DAB.json");\n'
+        'if (res.status === 404) {\n'
+        '  console.log("No changes at DAB for", meta.to_cycle);\n'
+        '} else {\n'
+        '  const { changes } = await res.json();\n'
+        '  for (const c of changes) console.log(c.priority.toUpperCase(), c.summary);\n'
+        '}')
+    out = [
+        ("overview", "Overview", (
+            "<p>Everything Amend shows is built from plain JSON files that anyone can download. There's no key, "
+            "no sign-up and nothing to install, and you're welcome to build on them.</p>"
+            '<dl class="dx-kv">'
+            f"<dt>Base URL</dt><dd><code>{site}</code></dd>"
+            "<dt>Format</dt><dd>Minified UTF-8 JSON, one file per question. Just <code>GET</code> it.</dd>"
+            "<dt>From a browser</dt><dd>The files are on GitHub Pages, which lets any website fetch them (CORS).</dd>"
+            "<dt>Airport IDs</dt><dd>FAA IDs, like <code>VRB</code>, not <code>KVRB</code>. "
+            "<code>airports.json</code> maps them to ICAO codes.</dd>"
+            "<dt>Dates</dt><dd>Cycles are ISO dates of the FAA effective date (<code>2026-10-01</code>). Times are "
+            "UTC.</dd>"
+            "<dt>Updates</dt><dd>The files change when a build publishes: when the FAA posts a new cycle, usually "
+            "within about 20 minutes. The cycle itself takes effect at 0901Z on its date, by the clock, with no "
+            "new files needed.</dd></dl>"
+            f'<p>The data carries the same warning as the site: <a href="{site}terms/">not for navigation</a>. '
+            "Always use official FAA publications and NOTAMs to fly.</p>")),
+        ("quickstart", "Quick start", (
+            "<p>Which cycles are compared, then every change coming up at Daytona Beach (DAB):</p>"
+            f"<pre><code>curl {site}latest/meta.json\ncurl {site}latest/DAB.json</code></pre>"
+            f"<p>The same in JavaScript, in a browser or Node 18 and later:</p><pre><code>{fetch_js}</code></pre>"
+            "<p>A <b>404 on an airport file means no changes</b> at that airport, not an error.</p>")),
+        ("files", "Files", table),
+    ]
+    for head, (anchor, title) in SCHEMA_PARTS.items():
+        out.append((anchor, html.escape(title), md(sch[head])))
+    out += [
+        ("recipes", "Recipes", (
+            "<h3>Badge the airports someone saved</h3>"
+            "<p>Download <code>latest/index.json</code> once and look each airport up in <code>airports</code>. "
+            "Only fetch <code>latest/&lt;ID&gt;.json</code> for the ones that are there.</p>"
+            "<h3>Is the new cycle in effect yet?</h3>"
+            "<p>Compare <code>effective</code> in <code>latest/meta.json</code> with the time now. Don't rely on "
+            "<code>upcoming</code> alone: it was true when the file was built, and the files aren't rebuilt at "
+            "the changeover.</p>"
+            "<h3>What changed since I last flew there?</h3>"
+            "<p>Fetch <code>history/&lt;ID&gt;.json</code> and keep the entries whose <code>cycle</code> is after "
+            "that date.</p>"
+            "<h3>Remember what someone has already seen</h3>"
+            "<p>Every change has a stable 12-character <code>id</code>. Store the ids a user has seen and highlight "
+            "the rest.</p>")),
+        ("feeds", "Feeds and calendar", (
+            "<ul>"
+            f"<li><code>{site}&lt;ID&gt;/feed.xml</code>: RSS 2.0 for any airport in <code>airports.json</code>, "
+            "one item per cycle with changes, newest first, about a year of them. An item's <code>guid</code> "
+            "never changes.</li>"
+            f"<li><code>{site}list/&lt;name&gt;/feed.xml</code>: the same for a named list.</li>"
+            f"<li><code>{site}cycles.ics</code>: every cycle changeover at 0901Z, as a calendar feed.</li></ul>")),
+        ("versions", "Versions and changes", (
+            "<p>Every JSON file has a <code>schema_version</code>, now 1. A new field can appear at any time without "
+            "changing it, so ignore fields you don't know. Renaming or removing a field raises it.</p>"
+            "<p>Each change also records the <code>engine</code> version that made it. The engine's rules, and "
+            f'the full contract in <a href="{REPO_URL}/blob/master/SCHEMA.md">SCHEMA.md</a>, are on GitHub. '
+            f'If you build on the files and something breaks, <a href="{REPORT_URL}">open an issue</a>.</p>')),
+    ]
+    return out
+
+
+# the four pages: (path under docs.amend.watch, title in the menu, h1, lede, description, section ids)
+PAGES = [
+    ("", "Getting started", "Getting started with Amend",
+     "Amend shows what changes in each FAA data cycle at every US airport, in plain English, before it takes effect.",
+     "What Amend is, how FAA cycles work, and how to find, follow and get alerts for your airports.",
+     ["what", "start", "cycle", "next", "open"]),
+    ("using/", "Using Amend", "Using Amend",
+     "How to read a change, what the labels mean, how remarks are translated, and how lists and alerts work.",
+     "Reading an airport page, ACT, IFR and FYI, plain-English remarks, lists and alerts.",
+     ["airport", "labels", "remarks", "ahead", "lists", "alerts"]),
+    ("how-it-works/", "How it works", "How it works",
+     "From the FAA posting a new cycle to a change on your screen: every step, what's checked along the way, and "
+     "what Amend doesn't cover.",
+     "Every step from the FAA's files to your screen, what stops a bad update, the status page, sources and limits.",
+     ["how", "checks", "status", "sources", "limits"]),
+    ("api/", "API and data", "API and data",
+     "The public JSON files behind Amend: what each one holds, every field, and how to use them in your own tools.",
+     "Amend's public JSON files: URLs, fields, examples and recipes. No key needed.",
+     None),   # None: api_sections()
+]
+
+# old single-page links (docs.amend.watch/#api, the about page's #how) go on to the page that section is on now
+MOVED_JS = """<script>(()=>{const m=%s[location.hash.slice(1)];if(m)location.replace(%s+m+location.hash)})()</script>"""
+
+
+def all_sections():
+    return {i: (h, x) for i, h, x in sections() + more_sections()}
+
+
+def nav(cur, secs):
+    """the sidebar: every page, and the current page's sections under it."""
+    out = []
+    for path, name, *_ in PAGES:
+        on = path == cur
+        out.append(f'<a class="dx-p{" on" if on else ""}" href="{web.sub_url("docs", None, path)}"'
+                   f'{" aria-current=page" if on else ""}>{name}</a>')
+        if on:
+            out.append('<div class="dx-s">' + "".join(f'<a href="#{i}">{h}</a>' for i, h, _ in secs) + "</div>")
+    return "".join(out)
+
+
+def one_page(n, meta, now):
+    path, name, h1, lede, desc, ids = PAGES[n]
+    every = all_sections()
+    secs = api_sections() if ids is None else [(i, *every[i]) for i in ids]
+    prev = PAGES[n - 1] if n else None
+    nxt = PAGES[n + 1] if n + 1 < len(PAGES) else None
+    pn = ((f'<a href="{web.sub_url("docs", None, prev[0])}"><small>Previous</small>{prev[1]}</a>' if prev else "")
+          + (f'<a class="r" href="{web.sub_url("docs", None, nxt[0])}"><small>Next</small>{nxt[1]}</a>' if nxt
+             else f'<a class="r" href="{web.sub_url("status")}"><small>See also</small>Status</a>'))
+    body = ('<div class="dx"><nav class="dx-toc" aria-label="Docs">' + nav(path, secs) + '</nav><article class="dx-body">'
+            f'<p class="dx-crumb">Docs · {name}</p><h1>{h1}</h1><p class="lede">{lede}</p>'
+            + '<details class="dx-jump"><summary>Docs menu</summary><nav>' + nav(path, secs) + "</nav></details>"
+            + "".join(f'<section id="{i}"><h2><a href="#{i}">{h}</a></h2>{x}</section>' for i, h, x in secs)
+            + f'<nav class="dx-nn">{pn}</nav></article></div>{TOC_JS}')
+    early = ""
+    if not path:
+        moved = {i: p for p, *_, ids in PAGES if p and ids for i in ids}
+        moved["api"] = "api/"   # the old one-page docs' "Data files"
+        early = MOVED_JS % (json.dumps(moved, sort_keys=True), json.dumps(web.sub_url("docs")))
+    title = "Amend Docs" if not path else f"{name} · Amend Docs"
+    return subsite.page("docs", title, desc, body, meta, now, head=CSS, path=path, early=early)
 
 
 def page(meta, now):
-    secs = sections()
-    heads = {i: h for i, h, _ in secs}
-    toc = "".join(f'<div class="g">{g}</div>' + "".join(f'<a href="#{i}">{heads[i]}</a>' for i in ids) for g, ids in GROUPS)
-    body = ('<div class="dx"><nav class="dx-toc" aria-label="On this page">' + toc + '</nav><article class="dx-body">'
-            '<h1>How Amend works</h1><p class="lede">From the FAA posting a new cycle to a change on your screen: '
-            "every step, what's checked along the way, and what Amend doesn't cover.</p>"
-            + '<details class="dx-jump"><summary>On this page</summary><nav>'
-            + "".join(f'<a href="#{i}">{h}</a>' for i, h, _ in secs) + "</nav></details>"
-            + "".join(f'<section id="{i}"><h2><a href="#{i}">{h}</a></h2>{x}</section>' for i, h, x in secs)
-            + f'<nav class="dx-nn"><a href="{SITE_URL}guide/"><small>Next</small>Guide: how to read a change</a>'
-            f'<a class="r" href="{web.sub_url("status")}"><small>See also</small>Status</a></nav>'
-            f"</article></div>{TOC_JS}")
-    return subsite.page("docs", "Amend Docs", "How Amend turns each FAA cycle into plain-English changes: every "
-                        "step, the checks, the sources, what it doesn't cover and the public data files.",
-                        body, meta, now, head=CSS)
+    """site/docs/index.html (getting started). build() writes the rest."""
+    return one_page(0, meta, now)
+
+
+def build(site, meta, now):
+    """write every docs page: site/docs/index.html, site/docs/using/ and so on."""
+    for n, (path, *_) in enumerate(PAGES):
+        folder = os.path.join(site, "docs", path)
+        os.makedirs(folder, exist_ok=True)
+        with open(os.path.join(folder, "index.html"), "w", encoding="utf-8") as f:
+            f.write(one_page(n, meta, now))

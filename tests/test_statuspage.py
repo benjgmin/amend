@@ -165,7 +165,7 @@ class TestStatusPage(unittest.TestCase):
         self.assertLess(strip.index("27 Sep 2026 20:00:00Z"), strip.index("28 Sep 2026 10:00:00Z"))
         self.assertIn('data-t="2026-09-27T10:00:00Z"', strip)            # the tooltip's exact time
         self.assertEqual(strip.count('class="ok"'), 3)
-        self.assertIn("3 runs: 3 published", text(html))
+        self.assertIn("3 builds: 3 published", text(html))
         self.assertEqual(html.count("<summary>Every step of the latest build</summary>"), 1)
 
 
@@ -189,6 +189,27 @@ def behind(now, last="2026-09-28T12:42:05+00:00", cyc="2026-10-01", up="1"):
 
 
 @unittest.skipUnless(shutil.which("node"), "node isn't installed")
+class TestAlwaysDoneSteps(unittest.TestCase):
+    """normalizing and the tests always happen on a real build, so they never read "not recorded"
+    (to a pilot that reads like the step was skipped)"""
+
+    def test_normalize_is_done_once_the_comparison_ran(self):
+        self.assertIn("k-ok", statuspage.s_norm({"changes": {}}))
+        self.assertNotIn("Not recorded", statuspage.s_norm({"changes": {}}))
+        self.assertIn("Not run", statuspage.s_norm({}))
+
+    def test_tests_passed_on_a_github_build(self):
+        html = statuspage.s_tests({"run": {"trigger": "schedule"}})
+        self.assertIn("k-ok", html)
+        self.assertIn(">Passed<", html)
+
+    def test_local_build_says_the_tests_did_not_run(self):
+        for r in ({"run": {"trigger": "local"}}, {}):
+            html = statuspage.s_tests(r)
+            self.assertIn(">Not run<", html)
+            self.assertNotIn("Not recorded", html)
+
+
 class TestBehindCheck(unittest.TestCase):
     def test_fresh_build_stays_green(self):
         self.assertEqual(behind("2026-09-28T14:00:00Z"), "")
@@ -233,7 +254,7 @@ class TestSubdomains(unittest.TestCase):
         site = tempfile.mkdtemp()
         statuspage.build(site, META, NOW, log_dir=tempfile.mkdtemp())
         with open(os.path.join(site, "status", "index.html"), encoding="utf-8") as f:
-            return f.read(), docspage.page(META, NOW)
+            return f.read(), "".join(docspage.one_page(n, META, NOW) for n in range(len(docspage.PAGES)))
 
     def test_off_keeps_everything_on_amend_watch(self):
         """with the names off (as before they worked), nothing forwards and every link stays on amend.watch"""
@@ -242,14 +263,16 @@ class TestSubdomains(unittest.TestCase):
         with mock.patch.object(web, "SUBDOMAINS", False):
             status, docs = self.pages()
         for html in (status, docs):
-            self.assertNotIn("location.replace", html.split("</head>")[0])
+            self.assertNotIn('location.hostname===', html.split("</head>")[0])
             self.assertIn('href="https://amend.watch/docs/"', html)
             self.assertIn('href="https://amend.watch/status/"', html)
             # shared files from the page's own origin: the proxy passes /assets/ through to amend.watch
             self.assertIn('href="/assets/style.css?v=', html)
             self.assertIn('src="/assets/app.js?v=', html)
-        for anchor in ("how", "sources", "limits", "api", "open", "status"):   # linked from the site and the app
+        for anchor in ("how", "sources", "limits", "open", "status"):   # linked from the site and the app
             self.assertIn(f'<section id="{anchor}">', docs)
+        for path in ("using/", "how-it-works/", "api/"):
+            self.assertIn(f'href="https://amend.watch/docs/{path}"', docs)
 
     def test_on_forwards_the_old_pages_and_links(self):
         from amend import web
@@ -261,8 +284,10 @@ class TestSubdomains(unittest.TestCase):
                       '+location.search+location.hash)', status)
         self.assertIn('location.replace("https://docs.amend.watch/"', docs)
         self.assertIn('<link rel="canonical" href="https://status.amend.watch/">', status)
-        self.assertIn('href="https://docs.amend.watch/#status"', status)
-        self.assertIn('"how": "https://docs.amend.watch/#how"', about)
+        self.assertIn('href="https://docs.amend.watch/how-it-works/#status"', status)
+        self.assertIn('"how": "https://docs.amend.watch/how-it-works/#how"', about)
+        for path in ("using/", "how-it-works/", "api/"):   # each docs page forwards to its own address
+            self.assertIn(f'location.replace("https://docs.amend.watch/{path}"', docs)
         self.assertIn('href="https://status.amend.watch/">Status</a>', about)
         self.assertNotIn('href="../docs/"', about)
 
@@ -287,6 +312,86 @@ process.stdout.write(JSON.stringify({out,calls}))"""
         self.assertEqual(res["calls"], ["GET https://amend.watch/status/", "GET https://amend.watch/docs/",
                                         "GET https://amend.watch/assets/style.css?v=1",
                                         "HEAD https://amend.watch/latest/meta.json"])
+
+    def run_js(self, js):
+        d = tempfile.mkdtemp()
+        shutil.copy(os.path.join("cloudflare", "_worker.js"), os.path.join(d, "w.mjs"))
+        with open(os.path.join(d, "t.mjs"), "w") as f:
+            f.write(js)
+        return json.loads(subprocess.run(["node", "t.mjs"], cwd=d, capture_output=True, text=True, check=True).stdout)
+
+    def test_docs_pages(self):
+        res = self.run_js("""import w from "./w.mjs";const calls=[];
+globalThis.fetch=async(u,o)=>{calls.push(o.method+" "+u);return new Response("x",{status:200})};const out=[];
+for(const u of ["https://docs.amend.watch/api/","https://docs.amend.watch/how-it-works/?x=1","https://docs.amend.watch/using",
+  "https://docs.amend.watch/api/index.html","https://docs.amend.watch/apix/","https://status.amend.watch/api/"]){
+  const r=await w.fetch(new Request(u));out.push(r.status+" "+(r.headers.get("location")||""))}
+process.stdout.write(JSON.stringify({out,calls}))""")
+        self.assertEqual(res["out"], ["200 ", "200 ", "301 https://docs.amend.watch/using/", "200 ",
+                                      "301 https://amend.watch/apix/", "301 https://amend.watch/api/"])
+        self.assertEqual(res["calls"], ["GET https://amend.watch/docs/api/", "GET https://amend.watch/docs/how-it-works/",
+                                        "GET https://amend.watch/docs/api/"])
+
+    def test_checks_json(self):
+        """status.amend.watch/checks.json: GitHub's run list, trimmed; a GitHub error still answers, with no runs"""
+        res = self.run_js("""import w from "./w.mjs";const calls=[];let ok=true;
+globalThis.fetch=async(u,o)=>{calls.push(u);return ok?new Response(JSON.stringify({workflow_runs:[{id:1,event:"workflow_dispatch",
+  status:"completed",conclusion:"success",run_started_at:"2026-09-28T21:43:05Z",updated_at:"2026-09-28T21:43:30Z",
+  html_url:"https://github.com/benjgmin/amend/actions/runs/1",actor:{login:"x"},head_commit:{message:"m"}}]}),{status:200})
+  :new Response("rate limited",{status:403})};
+const a=await (await w.fetch(new Request("https://status.amend.watch/checks.json"))).json();ok=false;
+const r=await w.fetch(new Request("https://status.amend.watch/checks.json"));const b=await r.json();
+const d=await w.fetch(new Request("https://docs.amend.watch/checks.json"));
+process.stdout.write(JSON.stringify({a,b,st:r.status,type:r.headers.get("content-type"),docs:d.status+" "+d.headers.get("location"),calls}))""")
+        self.assertEqual(res["a"], {"runs": [{"event": "workflow_dispatch", "status": "completed", "conclusion": "success",
+                                              "started": "2026-09-28T21:43:05Z", "updated": "2026-09-28T21:43:30Z",
+                                              "url": "https://github.com/benjgmin/amend/actions/runs/1"}]})
+        self.assertEqual(res["b"]["runs"], [])
+        self.assertEqual((res["st"], res["type"]), (200, "application/json; charset=utf-8"))
+        self.assertEqual(res["docs"], "301 https://amend.watch/checks.json")
+        self.assertTrue(all(u.startswith("https://api.github.com/repos/benjgmin/amend/actions/workflows/update.yml/runs")
+                            for u in res["calls"]))
+
+
+class TestChecksCard(unittest.TestCase):
+    def test_card_links_github_and_loads_checks_only_off_amend_watch(self):
+        html = statuspage.checks_card()
+        self.assertIn('href="https://github.com/benjgmin/amend/actions/workflows/update.yml"', html)
+        self.assertIn('fetch("/checks.json")', html)
+        self.assertIn('location.hostname==="amend.watch")return', html)
+        self.assertNotIn("innerHTML", statuspage.CHECKS_JS + statuspage.TIP_JS)   # GitHub's text never goes in as HTML
+
+
+class TestDocsPages(unittest.TestCase):
+    def test_api_page_carries_every_schema_field(self):
+        """the API page is built from SCHEMA.md, so every field in its tables is on the page"""
+        from amend import docspage
+        api = docspage.one_page(len(docspage.PAGES) - 1, META, NOW)
+        with open("SCHEMA.md", encoding="utf-8") as f:
+            fields = re.findall(r"^\| `([a-z_]+)`", f.read(), flags=re.M)
+        self.assertGreater(len(fields), 20)
+        for fld in fields:
+            self.assertIn(f"<code>{fld}</code>", api)
+        self.assertIn("<pre><code>{&quot;schema_version&quot;: 1", api)
+        self.assertIn('<section id="change">', api)
+
+    def test_old_single_page_anchors_move_to_their_page(self):
+        from amend import docspage
+        home = docspage.one_page(0, META, NOW)
+        head = home.split("</head>")[0]
+        m = json.loads(re.search(r"const m=(\{.*?\})\[", head).group(1))
+        self.assertEqual({k: m[k] for k in ("how", "limits", "sources", "status", "labels", "remarks", "api")},
+                         {"how": "how-it-works/", "limits": "how-it-works/", "sources": "how-it-works/",
+                          "status": "how-it-works/", "labels": "using/", "remarks": "using/", "api": "api/"})
+        self.assertLess(head.index("const m="), head.index('location.hostname==="amend.watch"'))   # before the forward
+        self.assertNotIn("open", m)   # still on the first page
+
+    def test_a_renamed_schema_heading_fails_loudly(self):
+        from unittest import mock
+        from amend import docspage
+        with mock.patch.object(docspage, "schema", lambda: {"": ""}):
+            with self.assertRaises(ValueError):
+                docspage.api_sections()
 
 
 class TestVerifyRefreshesThePage(unittest.TestCase):
