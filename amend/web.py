@@ -1256,6 +1256,10 @@ data-name="{e(wl['name'])}">Save to my lists</a><button class="btn ghost" id="co
 # what shipped, newest first, for /changelog/. Add a line when something people can see changes.
 UPDATES = [
     ("Sep 2026", [
+        "Remarks that write approach as APRCH or APPCH, or extended as EXTNDD, now read \"approach\" and "
+        "\"extended\". The FAA's own contractions are APCH and EXTD, and every remark in the FAA's data that "
+        "spells them this way means that. TEMP stays as written: the FAA's list says it means temperature, "
+        "and remarks use it for both temperature and temporary.",
         "A ++ after a time in a remark now reads \"(one hour earlier during daylight saving time)\". The FAA's "
         "data writes ++ where the Chart Supplement prints ‡, and the Chart Supplement's legend says those "
         "hours are one hour earlier during daylight saving time. Translations may also change a word's form "
