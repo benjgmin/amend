@@ -100,10 +100,22 @@ private struct LatestView: View {
 
     var body: some View {
         List {
+            if let meta = store.meta, meta.isStale {
+                StaleBanner(meta: meta).efbRow(top: 12, bottom: 0)
+            }
             if let data {
                 EffectiveNote(fromCycle: data.fromCycle, toCycle: data.toCycle)
                     .efbRow(top: 12, bottom: 6)
-                ChangeSections(changes: data.changes)
+                ChangeSections(changes: data.changes, cycle: data.toCycle)
+            } else if loaded && error == nil {
+                // a row, not an overlay, so the sources below it stay readable
+                NoChangesView(text: noChangesText)
+                    .frame(maxWidth: .infinity)
+                    .efbRow(top: 48, bottom: 36)
+            }
+            if loaded && error == nil {
+                SourcesPanel(id: id, cycle: store.meta?.toCycle ?? data?.toCycle)
+                    .efbRow(top: 16, bottom: 24)
             }
         }
         .listStyle(.plain)
@@ -112,8 +124,6 @@ private struct LatestView: View {
             if let error {
                 ContentUnavailableView("Couldn't load", systemImage: "wifi.exclamationmark",
                                        description: Text(error))
-            } else if loaded && data == nil {
-                NoChangesView(text: noChangesText)
             } else if !loaded {
                 ProgressView()
             }
@@ -146,6 +156,7 @@ private struct LatestView: View {
 
 private struct HistoryView: View {
     let id: String
+    @Environment(AirportStore.self) private var store
 
     @State private var history: AirportHistory?
     @State private var loaded = false
@@ -161,8 +172,11 @@ private struct HistoryView: View {
         let cutoff = since.months.flatMap { months in
             Calendar.current.date(byAdding: .month, value: -months, to: .now).map { Cycle.string($0) }
         }
+        // once the newest cycle is in effect it's added to history too, but it's already the list on the
+        // first tab (made with today's rules, the one to trust), so history starts with the cycle before it
+        let shown = store.meta?.toCycle
         let entries = history.entries.filter { e in
-            guard let c = e.cycle else { return false }
+            guard let c = e.cycle, c != shown else { return false }
             if let cutoff, c < cutoff { return false }
             return showFYI || e.level != .fyi
         }
@@ -177,7 +191,7 @@ private struct HistoryView: View {
                 let isCollapsed = collapsed.contains(group.cycle)
                 Section {
                     if !isCollapsed {
-                        ForEach(group.changes) { ChangeRow(change: $0).efbRow(top: 3, bottom: 3) }
+                        ForEach(group.changes) { ChangeRow(change: $0, cycle: group.cycle).efbRow(top: 3, bottom: 3) }
                     }
                 } header: {
                     Button { toggle(group.cycle) } label: {
@@ -195,10 +209,10 @@ private struct HistoryView: View {
             if let error {
                 ContentUnavailableView("Couldn't load", systemImage: "wifi.exclamationmark",
                                        description: Text(error))
-            } else if loaded && history == nil {
-                NoChangesView(text: "NO CHANGES RECORDED AT \(id)\nSINCE 08 AUG 2024")
+            } else if loaded && nothingOnRecord {
+                NoChangesView(text: "No changes on record at \(id)\nsince Aug 2024")
             } else if loaded && groups.isEmpty {
-                NoChangesView(text: "NOTHING IN THIS RANGE\nTRY A LONGER RANGE OR SHOW FYI",
+                NoChangesView(text: "Nothing in this range\nTry a longer range or turn on FYI",
                               color: EFB.dim).padding(.top, 60)
             } else if !loaded {
                 ProgressView()
@@ -246,6 +260,12 @@ private struct HistoryView: View {
         }
     }
 
+    /// no history file, or only the cycle already shown on the first tab
+    private var nothingOnRecord: Bool {
+        guard let history else { return true }
+        return history.entries.allSatisfy { $0.cycle == store.meta?.toCycle }
+    }
+
     private var allCollapsed: Bool {
         !groups.isEmpty && collapsed.isSuperset(of: groups.map(\.cycle))
     }
@@ -290,13 +310,14 @@ private struct CycleHeader: View {
 
 struct ChangeSections: View {
     let changes: [Change]
+    var cycle: String? = nil
 
     var body: some View {
         ForEach(Priority.allCases) { level in
             let group = changes.filter { $0.level == level }
             if !group.isEmpty {
                 Section {
-                    ForEach(group) { ChangeRow(change: $0).efbRow(top: 3, bottom: 3) }
+                    ForEach(group) { ChangeRow(change: $0, cycle: cycle).efbRow(top: 3, bottom: 3) }
                 } header: {
                     HStack(spacing: 8) {
                         EFBHeader(text: "\(level.title)  \(group.count)", color: level.color)
@@ -338,6 +359,51 @@ private struct EffectiveNote: View {
                 .fixedSize(horizontal: false, vertical: true)
         }
         .efbPanel()
+    }
+}
+
+/// the FAA publications Amend reads, to check a change against (the same box as on amend.watch)
+private struct SourcesPanel: View {
+    let id: String
+    let cycle: String?
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            EFBHeader(text: "Check the official source").padding(.bottom, 6)
+            row("Chart Supplement (search \(id))", FAALinks.supplement)
+            row("Approach plates (d-TPP)", FAALinks.dtpp)
+            row("NOTAMs", FAALinks.notams)
+            if let cycle, let url = FAALinks.nasr(cycle) {
+                row("NASR data, \(Cycle.efb(cycle))", url)
+            }
+            Text("Amend reads these FAA files. If they ever disagree, the FAA is right.")
+                .font(.footnote)
+                .foregroundStyle(EFB.dim)
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(.top, 10)
+            if let url = FAALinks.report(id) {
+                Link("Report a wrong change", destination: url)
+                    .font(.footnote.weight(.medium))
+                    .foregroundStyle(EFB.cyan)
+                    .buttonStyle(.borderless)
+                    .padding(.top, 4)
+            }
+        }
+        .efbPanel()
+    }
+
+    private func row(_ title: String, _ url: URL) -> some View {
+        Link(destination: url) {
+            HStack {
+                Text(title).font(.system(size: 14.5)).foregroundStyle(EFB.text)
+                Spacer()
+                Image(systemName: "arrow.up.right").font(.system(size: 12, weight: .semibold)).foregroundStyle(EFB.faint)
+            }
+            .padding(.vertical, 9)
+            .overlay(alignment: .bottom) { Rectangle().fill(EFB.line).frame(height: 1) }
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.borderless)   // several links share one list row; each is its own tap target
     }
 }
 

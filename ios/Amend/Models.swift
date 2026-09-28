@@ -11,6 +11,16 @@ struct Meta: Decodable, Sendable {
     let includesCharts: Bool
     let changedAirports: Int
     let generated: String
+
+    /// how long ago amend.watch last rebuilt its data (it rebuilds at least daily); nil if unreadable
+    var age: TimeInterval? {
+        _ = CycleClock.shared.tick
+        let f = ISO8601DateFormatter()
+        return f.date(from: generated).map { ServerClock.now.timeIntervalSince($0) }
+    }
+
+    /// past this the app says the data may be out of date, same as the site (36 hours)
+    var isStale: Bool { (age ?? 0) > 36 * 3600 }
 }
 
 struct Counts: Decodable, Sendable, Hashable {
@@ -75,6 +85,8 @@ struct Change: Decodable, Identifiable, Hashable, Sendable {
     let summary: String
     let source: String
     let original: String?
+    /// why a remark still reads in FAA words, ready to show ("Kept in the FAA's words: ...")
+    let untranslated: String?
     let fields: [FieldChange]?
     let details: [String]?
     let procedures: Procedures?

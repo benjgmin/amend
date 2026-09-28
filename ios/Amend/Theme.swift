@@ -146,3 +146,25 @@ extension View {
             .listRowInsets(EdgeInsets(top: top, leading: 16, bottom: bottom, trailing: 16))
     }
 }
+
+/// shown when amend.watch hasn't rebuilt its data in over 36 hours (it rebuilds at least daily), like the site's
+struct StaleBanner: View {
+    let meta: Meta
+
+    private var ago: String {
+        let hours = Int((meta.age ?? 0) / 3600)
+        return hours < 48 ? "\(hours)h ago" : "\(hours / 24) days ago"
+    }
+
+    var body: some View {
+        HStack(alignment: .top, spacing: 10) {
+            Annunciator(text: "Out of date", color: EFB.amber)
+            Text("This data was last updated \(ago). Amend's daily update may have stopped, so newer FAA changes might be missing. Check the official FAA sources before you fly.")
+                .font(.footnote)
+                .foregroundStyle(EFB.text.opacity(0.85))
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .efbPanel()
+        .overlay(RoundedRectangle(cornerRadius: EFB.radius).stroke(EFB.amber, lineWidth: 1))
+    }
+}

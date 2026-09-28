@@ -12,6 +12,9 @@ struct AirportsView: View {
             List {
                 if let meta = store.meta {
                     CycleStrip(meta: meta) { showingGuide = true }.efbRow(top: 8, bottom: 12)
+                    if meta.isStale {
+                        StaleBanner(meta: meta).efbRow(top: 0, bottom: 12)
+                    }
                 }
 
                 // a row, not an overlay: an overlay stays put while pull-to-refresh moves the list,

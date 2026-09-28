@@ -2,11 +2,18 @@ import SwiftUI
 
 struct ChangeRow: View {
     let change: Change
+    /// the cycle this change belongs to, for its FAA source link (history entries carry their own)
+    var cycle: String? = nil
     @State private var expanded = false
     @State private var plate: Plate?
 
     private var hasMore: Bool {
         change.original != nil || !(change.details ?? []).isEmpty
+    }
+
+    /// "View plate" already opens the official chart, so a chart with a plate needs no other source link
+    private var sourceURL: URL? {
+        change.chart?.pdf != nil ? nil : FAALinks.source(for: change, cycle: cycle)
     }
 
     var body: some View {
@@ -28,7 +35,15 @@ struct ChangeRow: View {
                 .fixedSize(horizontal: false, vertical: true)
                 .textSelection(.enabled)
 
-            if hasMore || change.chart?.amdtLabel != nil || change.chart?.pdf != nil {
+            // a remark that still reads in FAA words says why, like the site
+            if let why = change.untranslated, !why.isEmpty {
+                Text(why)
+                    .font(.system(size: 13))
+                    .foregroundStyle(EFB.dim)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+
+            if hasMore || change.chart?.amdtLabel != nil || change.chart?.pdf != nil || sourceURL != nil {
                 HStack(spacing: 12) {
                     if let amdt = change.chart?.amdtLabel {
                         Annunciator(text: amdt, color: EFB.dim)
@@ -56,6 +71,15 @@ struct ChangeRow: View {
                         .buttonStyle(.plain)
                     }
                     Spacer(minLength: 0)
+                    if let url = sourceURL {
+                        Link(destination: url) {
+                            Text("FAA source ↗")
+                                .font(.system(size: 13, weight: .medium))
+                                .foregroundStyle(EFB.dim)
+                        }
+                        .buttonStyle(.borderless)   // in a list row, only the link itself is the tap target
+                        .accessibilityLabel("FAA source, opens the FAA website")
+                    }
                 }
                 .padding(.top, 2)
             }

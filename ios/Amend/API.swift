@@ -42,3 +42,28 @@ struct API {
     static func latest(_ id: String) async throws -> AirportChanges? { try await get("latest/\(id).json") }
     static func history(_ id: String) async throws -> AirportHistory? { try await get("history/\(id).json") }
 }
+
+/// the FAA's own publications, for checking a change against the source (the same links as amend.watch)
+enum FAALinks {
+    static let supplement = URL(string: "https://www.faa.gov/air_traffic/flight_info/aeronav/digital_products/dafd/search/")!
+    static let dtpp = URL(string: "https://www.faa.gov/air_traffic/flight_info/aeronav/digital_products/dtpp/search/")!
+    static let notams = URL(string: "https://notams.aim.faa.gov/notamSearch/")!
+
+    /// the NASR subscription page for one cycle ("2026-10-01")
+    static func nasr(_ cycle: String) -> URL? {
+        URL(string: "https://www.faa.gov/air_traffic/flight_info/aeronav/aero_data/NASR_Subscription/\(cycle)")
+    }
+
+    /// where a change came from: the chart search for charts, the NASR cycle page for everything else
+    static func source(for change: Change, cycle: String?) -> URL? {
+        if change.source.uppercased() == "D-TPP" || change.chart != nil { return dtpp }
+        return (change.cycle ?? cycle).flatMap(nasr)
+    }
+
+    /// "report a wrong change" (a GitHub issue until there's an email address)
+    static func report(_ id: String) -> URL? {
+        var c = URLComponents(string: "https://github.com/benjgmin/amend/issues/new")
+        c?.queryItems = [URLQueryItem(name: "title", value: "\(id): ")]
+        return c?.url
+    }
+}
