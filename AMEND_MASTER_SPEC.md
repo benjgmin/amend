@@ -22,6 +22,12 @@ Every 28 days the FAA publishes a new cycle of airport, airspace, frequency and 
 answers one question for each US airport: **what changed this cycle?** It does that without making
 anyone read CSV files, old/new records or chart supplements.
 
+It also answers it **before the change takes effect.** The FAA posts each cycle's data ahead of its
+effective date, and Amend shows the upcoming cycle's changes as soon as the files are posted, weeks
+ahead of the 0901Z changeover (`amend/latest.py:22-28`). The preview is a core capability, not an
+extra. The exact lead time varies by cycle and hasn't been measured yet, so say "weeks ahead", not a
+number of days.
+
 The long-term product is the **data engine and the structured change data it produces**. The web
 site and the iOS app are how that data is shown and tested today. They are not the product, and
 the engine must never depend on them.
@@ -46,11 +52,12 @@ correction is noted.
 | Claim | Reality in this repo |
 |---|---|
 | FAA cycle data is processed | Yes. Every US airport, every cycle: NASR CSVs, d-TPP chart metadata and class airspace shapefiles (`amend/pipeline.py:69-149`). |
-| History since about Aug 2024 | Yes for NASR: 27 cycles diffed, 2024-09-05 through 2026-09-03 (`history/cycles.json`), starting from the oldest cycle in the FAA archive, 2024-08-08 (`amend/cycles.py:14`). Chart (d-TPP) history only starts Oct 2026 because the FAA doesn't keep old metafiles online (`SCHEMA.md:82-83`). |
+| History since about Aug 2024 | Yes for NASR: 27 cycles diffed, 2024-09-05 through 2026-09-03 (`history/cycles.json`), diffed against 2024-08-08, the first cycle Amend reads (`FIRST_ARCHIVED`, `amend/cycles.py:14`). That's where Amend's history starts, not where the FAA's archive ends: the FAA still serves NASR zips back to 2022-05-19 (checked in PR #24), and the comment on `FIRST_ARCHIVED` saying otherwise is wrong. Chart (d-TPP) history only starts Oct 2026 because the FAA doesn't keep old metafiles online (`SCHEMA.md:82-83`). |
 | Future cycles are stored | Change history is stored and committed (`history/`). **The raw FAA files are not**: each zip is deleted after it's diffed (`amend/history.py:95-98`) and the Actions cache keeps only the newest three (`.github/workflows/update.yml:109-114`). |
 | "Processed within about two minutes of publication" | **Wrong.** A scheduled job checks every 3 hours at :17 (`update.yml:9`), and GitHub can delay or drop scheduled runs. New FAA data is usually live **within a few hours** of being posted. A rebuild is also forced at least every 20 hours (`amend/freshness.py:23`). |
 | "AI is implemented as part of the application" | **Wrong.** AI runs only at build time, only on remark text, through one model (`amend/remarks.py:7`). Diffing, classification, ranking and every other summary are plain deterministic code. The web pages and the iOS app never call a model. |
 | An API exists | Not as a server. The public JSON on amend.watch (`SCHEMA.md`) is the de facto read-only API. There is no database, no auth and no server. |
+| Preview of upcoming changes | Yes. When the FAA has posted the next cycle, the site compares it with the cycle in effect and marks it upcoming until the 0901Z changeover (`latest.py:22-28`, `SCHEMA.md:23`). The lead time is weeks, not measured precisely yet. |
 | Tests | 90 unit tests (`tests/`). They gate every deploy (`update.yml:66-67`) and, from this change on, every pull request (`.github/workflows/tests.yml`). |
 
 Nothing above is production-grade just because it works. The project replaces assumptions with
@@ -91,7 +98,7 @@ How each stage maps to the code today. Detail is in [docs/data-pipeline.md](docs
 | # | Stage | Requirement | Today |
 |---|---|---|---|
 | 1 | Ingestion | Identify the cycle, download, record retrieval time, source URL and checksums, detect incomplete downloads, malformed files, unexpected file and record counts. | Cycle math and URLs in `amend/cycles.py:12-53`. Downloads retry, check `Content-Length`, reject HTML error pages, test every zip CRC, require 7 core CSVs and parse XML to the end (`cycles.py:78-180`). **Missing:** retrieval time, checksums, file counts and record counts aren't recorded or compared. |
-| 2 | Raw storage | Immutable raw source per cycle with metadata (cycle, retrieved_at, source, file and record counts, checksum, engine version). Never depend on the live FAA file alone. | **Missing.** Zips are deleted after use (`history.py:95-98`). |
+| 2 | Raw storage | Immutable raw source per cycle with metadata (cycle, retrieved_at, source, file and record counts, checksum, engine version). Never depend on the live FAA file alone. | **Missing on `master`.** Zips are deleted after use (`history.py:95-98`). Open PR #24 keeps each cycle's raw files, with a sha256 manifest, as a GitHub Release. |
 | 3 | Parsing | Read every file; a parse error is a failure. | `amend/nasr.py:123-162`. **Weak:** a `csv.Error` prints a warning and drops the rest of that file (`nasr.py:160-161`), and a second file with the same name in a nested zip is skipped silently (`nasr.py:130`). |
 | 4 | Normalization | Canonical values before comparison, so `1200-0400Z` and `1200Z-0400Z` don't read as a change. | **Partial and ad hoc:** noise columns (`amend/rules.py:112-124`), survey rounding (`rules.py:78-80`, `132-141`), remark spelling variants (`amend/diff.py:78-86`). No normalization layer for hours, frequencies or runway ids. |
 | 5 | Diff | Structured additions, deletions and field-level modifications with old and new values, no AI. | `diff.py:147-220`. Rows are paired by per-file keys (`rules.py:21-35`) or, without keys, by at least 50% matching columns. **Weak:** pairing is greedy and order-dependent (`diff.py:162-173`), and exact duplicate rows collapse into one (`diff.py:151-155`). |
@@ -175,7 +182,12 @@ moves thousands of outputs still reads as "tests pass".
 A hand-verified set of real changes, starting at 100 to 500. Each case records the FAA source,
 cycle, airport, field, old value, new value, expected classification, expected interpretation and
 the terminology involved. Every significant engine change runs against it and reports a score
-("487 / 487", or whatever the real number is). **Today: doesn't exist yet.**
+("487 / 487", or whatever the real number is).
+
+**Only human-verified cases count.** A case enters the gold set, and the score, only after a person
+has checked the expected answer against the FAA source. Cases proposed by a model or copied from
+Amend's own output are candidates until then, and are kept apart from the scored set. Otherwise the
+dataset would just grade Amend against itself. **Today: doesn't exist yet.**
 
 ### Benchmark against general-purpose AI
 
@@ -208,8 +220,10 @@ Today on `master`:
 Every run should write a record: cycle, source URLs, retrieved_at, file checksums and sizes, record
 counts, changes by priority, AI requests, tokens, cost and rejections, unknown terms, validation
 result, published or not, engine version, duration. **Today:** stdout in the Actions log, plus
-`build.json` with the commit and an input hash (`amend/latest.py:56-58`). A partial per-cycle log
-is in open PR #19.
+`build.json` with the commit and an input hash (`amend/latest.py:56-58`). Open PR #25 adds a
+record per run (`audit/runs/<cycle>.json`) with sources, sha256, row counts per file, changes by
+priority, the audit result, the outcome and an engine version, committed even when a run is blocked
+or fails.
 
 ### Engine health view
 
@@ -266,7 +280,7 @@ Minimum before broad public testing. Status is for `master`; open PRs are noted.
 | Item | Requirement | Status |
 |---|---|---|
 | Changelog | Dated technical history: data, engine, glossary, validation and infra changes, known issues. Not marketing. | Missing (a short "recent updates" list is in PR #21) |
-| Status page | Site, FAA ingestion, latest cycle, processing, history. **Must tell an FAA delay apart from an Amend failure**, and show last success and incidents. Written by every run, including failed ones. | Missing. The page footer shows the cycle and build time (`web.py:669-675`), and pages flag themselves after 36h (`web.py:660`). |
+| Status page | Site, FAA ingestion, latest cycle, processing, history. **Must tell an FAA delay apart from an Amend failure**, and show last success and incidents. Written by every run, including failed ones. | Missing. Plan below. The page footer shows the cycle and build time (`web.py:669-675`), and pages flag themselves after 36h (`web.py:660`). |
 | How Amend works | FAA source, then Amend processing, then AI interpretation, clearly separated. AI is never presented as the source. | Short version on the About page (`web.py:918-920`) and README. Its "a daily job" wording is out of date: the job checks every 3 hours. |
 | Data sources | Datasets, cycles, retrieval, coverage, latency. | Partial: README links, per-change FAA source link. |
 | Disclaimer | Independent, processes public FAA data, verify against official sources, not error-free, no FAA affiliation. | Exists: "Not for navigation" on every page (`web.py:610`, `web.py:637`). Have it reviewed before public testing. |
@@ -274,7 +288,7 @@ Minimum before broad public testing. Status is for `master`; open PRs are noted.
 | Privacy policy | Only what the system actually does: hosting logs, analytics, local storage, fonts, any form. | Missing on `master` (drafted in PR #21) |
 | Report an error | Wrong, missing or stale change, wrong term or AI text, broken link. No account required. | Missing on `master` (PR #21 links GitHub issues, which need an account) |
 | Accuracy and validation | How results are checked, with real numbers only. No invented percentages. | Missing |
-| Known limitations | Supported and unsupported data, AI limits, latency, coverage, edge cases. | Partial (PR #21) |
+| Known limitations | Supported and unsupported data, AI limits, latency, coverage, edge cases. | Partial (PR #21). The named limits are listed below. |
 | Provenance | Where practical, on each change. | Partial (section 8) |
 | Health monitoring | Real monitoring of the running service. | Partial: deploy gate and a daily failure check; no external uptime check. |
 
@@ -282,6 +296,32 @@ Accounts, auth, email collection, server-side watchlists, payments and API keys 
 shouldn't be built just to look mature. When any of them, or any new third-party service, is added,
 update the privacy policy and terms first. Never say "we collect no data" unless the infrastructure
 backs it up.
+
+### Status page plan
+
+The status page is static, like the rest of the site. Every run, including blocked and failed ones,
+commits its run log record (PR #25), and the status page is built from those records. It shows,
+per component: whether the FAA has posted the expected cycle, whether Amend processed it, the last
+successful run, the cycle live on the site, and recent incidents with start and end times. "The FAA
+hasn't posted yet" and "Amend failed" are separate states and never shown as the same thing. A
+failed run deploys nothing, so the page can't rely on its own deployed copy: it loads the latest
+records from the repository when it's opened, and a failed build still shows as failed.
+
+There is no protected dashboard. GitHub Pages can't password-protect a page, and nothing in the log
+needs hiding. The internal health view (section 7) is a report generated from the same records.
+
+### Known limitations
+
+To state publicly, alongside the limits pages already list:
+
+- **No NOTAMs and no mid-cycle changes.** Amend only sees the FAA's 28-day publications. Anything
+  published between cycles, including every NOTAM, isn't covered.
+- **Partial Chart Supplement coverage.** Amend reads the NASR data behind the Chart Supplement, not
+  the Supplement itself, so content that exists only in the Supplement isn't diffed.
+- **Plates are flagged, not diffed.** The d-TPP metafile says a chart was added, amended or removed
+  (`amend/dtpp.py:15-39`). Amend links the new plate but doesn't compare what's drawn on it.
+- **No class E5 airspace.** Class E airspace with 700 or 1,200 ft floors is skipped
+  (`amend/airspace.py:14`, `22-24`). B, C, D and E surface areas and extensions are covered.
 
 ## 11. Working on this repo
 
@@ -326,12 +366,11 @@ time. If a task crosses a boundary, write the dependency down.
 
 ### Model and effort
 
-Pick model strength by the cost of a mistake, not the size of the task. Strongest reasoning for
-anything that can corrupt data: ingestion, normalization, diff, classification, validation,
-regression architecture, provenance, AI interpretation, security, the data contract and correctness
-bugs. Strong reasoning for planning, backend work, test design and review. Lighter settings for UI,
-docs, simple tests and mechanical refactors. For critical work, prefer fewer careful passes over
-many shallow ones, and never merge a worker's change without inspecting it and running the tests.
+Reasoning effort scales with the cost of an error, not with the size of the task. Work that can
+corrupt data or the data contract (ingestion, normalization, diff, classification, validation,
+provenance, AI interpretation, security) gets the most care; well-defined routine work gets less.
+For critical work, prefer fewer careful passes over many shallow ones, and never merge a worker's
+change without inspecting it and running the tests.
 
 ### Docs
 
@@ -354,8 +393,8 @@ In order. Status is for `master`.
 | 7 | No-guess enforced in code | Partial (section 6) |
 | 8 | Provenance | Partial (section 8) |
 | 9 | AI output validation | Partial (section 6) |
-| 10 | Processing logs | Missing on `master` (partial in PR #19) |
-| 11 | Anomaly detection | Download and deploy gates on `master`; output checks in PR #19; input checks missing |
+| 10 | Processing logs | Missing on `master` (open PR #25) |
+| 11 | Anomaly detection | Download and deploy gates on `master`; output checks in PR #19; input checks in PR #25 |
 | 12 | Engine health view | Missing |
 
 Not in phase 1, and not until there's demand: accounts, a server, a database, a hosted API,

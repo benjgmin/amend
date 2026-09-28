@@ -98,7 +98,7 @@ everything reads its rules from `rules`. `web` only formats results. Nothing in 
 
 | Path | Written by | Kept where | What |
 |---|---|---|---|
-| `history/<ID>.json`, `history/index.json` | `history.py` | committed to `master` by the workflow | every change per airport since the first archived cycle |
+| `history/<ID>.json`, `history/index.json` | `history.py` | committed to `master` by the workflow | every change per airport since Aug 2024 |
 | `history/cycles.json` | `history.py:92-94` | committed | which cycles are done, which were skipped as missing |
 | `remark_cache.json` | `remarks.py:116-117` | committed | raw remark to translation, re-checked every run |
 | `site/latest/<ID>.json`, `index.json`, `meta.json` | `output.py`, `latest.py:39-44` | GitHub Pages | the current or upcoming diff |

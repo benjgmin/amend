@@ -15,9 +15,10 @@ Line references are against `master` at `8b18fdf`.
 | Class airspace shapefile zip | `nfdc.faa.gov/webContent/28DaySub/YYYY-MM-DD/class_airspace_shape_files.zip` | `cycles.py:39-41` | class B, C, D and E surface-area shapes |
 
 Cycles are 28 days apart, anchored on 2026-09-03 (`cycles.py:12-19`), and change over at 0901Z
-(`cycles.py:56`, `72-75`). The FAA posts the next cycle's NASR data about three weeks early, which is
-what the "upcoming" view shows. The oldest cycle in the FAA's NASR archive is 2024-08-08
-(`cycles.py:14`).
+(`cycles.py:56`, `72-75`). The FAA posts the next cycle's NASR data weeks before it takes effect (the
+exact lead time hasn't been measured), which is what the "upcoming" view shows. Amend's history
+starts from 2024-08-08 (`FIRST_ARCHIVED`, `cycles.py:14`). The comment there calls that the oldest
+cycle in the FAA archive, but the FAA still serves NASR zips back to 2022-05-19 (checked in PR #24).
 
 ## 1. Trigger
 
