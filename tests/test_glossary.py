@@ -17,17 +17,23 @@ with open(glossary.SOURCES_FILE) as f:
     SOURCES = json.load(f)
 
 
-def faa_rows(term):
-    """(list, usage, text) for every FAA row that defines term, read straight from
-    faa_abbreviations.json rather than through glossary.senses()."""
-    out = []
+def _index():
+    """{TERM: [(list, usage, text)]} for every FAA row, read straight from faa_abbreviations.json
+    rather than through glossary.senses(). a Chart Supplement cell like 'lgt, lgtd, lgts' names three terms."""
+    out = {}
     for abbr, text in SOURCES["chart_supplement"]["rows"]:
-        if term in [k.upper() for k in re.split(r",\s*|\s+or\s+", glossary.norm(abbr))]:
-            out.append(("CS", None, glossary.norm(text)))
+        for k in re.split(r",\s*|\s+or\s+", glossary.norm(abbr)):
+            out.setdefault(k.upper(), []).append(("CS", None, glossary.norm(text)))
     for abbr, text, usage in SOURCES["jo_7340_2"]["rows"]:
-        if glossary.norm(abbr).upper() == term:
-            out.append(("JO", usage, glossary.norm(text)))
+        out.setdefault(glossary.norm(abbr).upper(), []).append(("JO", usage, glossary.norm(text)))
     return out
+
+
+FAA_ROWS = _index()
+
+
+def faa_rows(term):
+    return FAA_ROWS.get(term, [])
 
 
 def says(meaning, text):

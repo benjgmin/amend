@@ -3121,7 +3121,7 @@
   "STAGN": {"expansion": null, "verified": false, "source": null, "faa": ["JO: stagnation (NWS)"], "prompt": false, "note": "only a weather-report meaning in JO 7340.2"},
   "STALO": {"expansion": "stabilized local oscillator", "verified": true, "source": "JO 2-1-1 (GEN)", "faa": ["JO: stabilized local oscillator (GEN)"], "prompt": true, "meanings": ["stabilized local oscillator"]},
   "STAR": {"expansion": "standard instrument arrival", "verified": true, "source": "JO 2-1-1 (ICAO)", "faa": ["JO: standard instrument arrival (ICAO)", "JO: standard terminal arrival (GEN)"], "prompt": true, "meanings": ["standard instrument arrival", "standard terminal arrival"]},
-  "STATE": {"expansion": null, "verified": false, "source": null, "faa": ["JO: military, customs, or police services (ICAO)"], "prompt": false, "note": "the FAA lists more than one meaning; copied as written until one is picked"},
+  "STATE": {"expansion": null, "verified": false, "source": null, "faa": ["JO: military, customs, or police services (ICAO)"], "prompt": false, "english": true, "note": "an everyday English word in remarks; kept as the word, never expanded"},
   "STBL": {"expansion": "stable", "verified": true, "source": "JO 2-1-1 (GEN)", "faa": ["JO: stable (GEN)"], "prompt": true, "meanings": ["stable"]},
   "STBY": {"expansion": "standby", "verified": true, "source": "JO 2-1-1 (ICAO)", "faa": ["JO: standby (ICAO)"], "prompt": true, "meanings": ["standby"]},
   "STCLB": {"expansion": "start climb", "verified": true, "source": "JO 2-1-1 (ATC)", "faa": ["JO: start climb (ATC)"], "prompt": true, "meanings": ["start climb"]},

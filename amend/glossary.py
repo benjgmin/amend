@@ -66,8 +66,9 @@ CS_RUN_TOGETHER = {
 # the word; nothing is expanded, and the model isn't asked to copy them as codes
 ENGLISH = {
     # the FAA lists these as contractions, but remarks mean the word: "RWY END", "BASE OPS",
-    # "NEW CONCRETE", "PER FAR 91" (END = stop-end of an RVR, PER = performance)
-    "BASE", "CAN", "DO", "END", "FEW", "GRASS", "NEW", "PER", "SELF", "SET", "SPOT", "TOP", "UP", "VIA",
+    # "NEW CONCRETE", "PER FAR 91", "WA STATE" (END = stop-end of an RVR, PER = performance)
+    "BASE", "CAN", "DO", "END", "FEW", "GRASS", "NEW", "PER", "SELF", "SET", "SPOT", "STATE", "TOP", "UP",
+    "VIA",
     # the same for function words: A is Amber, AS Air Station, IS island to the FAA. remarks.py
     # never reads these as contractions. IN (inch: '6 IN') and NO (number: 'CASE NO. 2024-...') stay
     "A", "AS", "BY", "IF", "IS",
