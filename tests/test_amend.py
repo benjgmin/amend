@@ -598,6 +598,10 @@ class TestWeb(unittest.TestCase):
         self.assertRegex(index, r'<script src="assets/app\.js\?v=[0-9a-f]{10}"></script>')
         vrb = open(os.path.join(site, "VRB", "index.html")).read()
         self.assertIn('<input type="hidden" name="go" value="1">', vrb)     # sidebar search: an exact ID opens it
+        self.assertIn('id="sq"', index)                                     # same sidebar on the home page
+        self.assertIn('id="sbw"', index)
+        app = open(os.path.join(site, "assets", "app.js")).read()
+        self.assertIn('SBO="amend.sb.open"', app)                           # sidebar lists remember open/closed
         self.assertIn('href="list/">Lists</a>', index)                      # phone top bar reaches the lists
         lists = open(os.path.join(site, "list", "index.html")).read()
         for part in ('id="ltabs"', 'id="actions"', 'id="manage"', 'id="lnote"', '"DAB":["KDAB","Daytona Beach Intl"]'):
@@ -616,7 +620,7 @@ class TestWeb(unittest.TestCase):
         self.assertEqual(r.returncode, 0, r.stderr)
 
     def test_brand_and_trust(self):
-        from amend import brand
+        from amend import brand, web
         site, _ = self.build()
         for f in ("favicon.ico", "site.webmanifest", "404.html", "assets/icon.svg", "assets/apple-touch-icon.png",
                   "assets/icon-512.png", "assets/icon-maskable-512.png", "assets/fonts/plex-sans-latin.woff2",
@@ -633,10 +637,20 @@ class TestWeb(unittest.TestCase):
         self.assertIn("issues/new?title=VRB%3A%20", page)               # report a wrong change
         self.assertIn('url(fonts/plex-sans-latin.woff2)', open(os.path.join(site, "assets", "style.css")).read())
         about = open(os.path.join(site, "about", "index.html")).read()
-        for text in ('id="how"', 'id="limits"', 'id="privacy"', 'id="report"', "Cloudflare Web Analytics",
-                     "NOTAMs.</b>"):
-            self.assertIn(text, about)
-        self.assertNotIn("coming soon", about.lower())
+        self.assertIn('id="report"', about)
+        self.assertIn('"privacy": "../privacy/"', about)                 # old /about/#privacy links still land
+        self.assertIn('"how": "../docs/#how"', about)
+        read = lambda p: open(os.path.join(site, p, "index.html")).read()
+        docs, privacy, terms, log = read("docs"), read("privacy"), read("terms"), read("changelog")
+        for text in ('id="how"', 'id="limits"', 'id="api"', "NOTAMs.</b>"):
+            self.assertIn(text, docs)
+        for text in ("Cloudflare Web Analytics", "GitHub Pages", "served by amend.watch itself", "No accounts"):
+            self.assertIn(text, privacy)
+        self.assertIn("Not for navigation", terms)
+        self.assertIn(web.UPDATES[0][1][0][:40], log)
+        for p in (about, docs, privacy, terms, log):
+            self.assertNotIn("coming soon", p.lower())
+            self.assertIn('href="../privacy/">Privacy</a>', p)
         missing = open(os.path.join(site, "404.html")).read()
         self.assertIn('href="/assets/style.css?v=', missing)              # served at any depth
         self.assertIn('replace(/^K(?=[A-Z]{3}$)/,"")', missing)          # /kvrb goes on to /VRB/
@@ -753,6 +767,8 @@ class TestFeeds(unittest.TestCase):
         self.assertEqual(quiet.findtext("link"), "https://amend.watch/")
         self.assertFalse(os.path.exists(os.path.join(site, "DAB", "index.html")))
         self.assertIn('id="opml"', open(os.path.join(site, "list", "index.html")).read())
+        self.assertIn("Copy alert link", page)                               # pilot words first, RSS under More options
+        self.assertIn("<summary>More options</summary>", page)
 
     def test_list_feed_and_email(self):
         import datetime as dt
@@ -795,6 +811,7 @@ class TestWatchlists(unittest.TestCase):
         self.assertTrue(validate("Club SVFR!", {"name": "x", "airports": ["DAB"]}))     # bad link name
         self.assertTrue(validate("about", {"name": "x", "airports": ["DAB"]}))          # reserved
         self.assertTrue(validate("guide", {"name": "x", "airports": ["DAB"]}))
+        self.assertTrue(validate("privacy", {"name": "x", "airports": ["DAB"]}))
         self.assertTrue(validate("list", {"name": "x", "airports": ["DAB"]}))
         self.assertTrue(validate("clubsvfr", {"name": "", "airports": ["DAB"]}))        # no name
         self.assertTrue(validate("clubsvfr", {"name": "x", "airports": ["not an id"]}))

@@ -8,7 +8,7 @@ If a field is added, `schema_version` stays the same. If a field is renamed or r
 
 ## Web pages (not part of the JSON contract)
 `index.html` (search), `<ID>/index.html` (one page per airport with changes or history) and
-`assets/style.css` and `assets/app.js` (shared by every page), `about/`, `list/` (one of the lists saved in the
+`assets/style.css` and `assets/app.js` (shared by every page), `about/`, `guide/`, `docs/`, `changelog/`, `privacy/`, `terms/`, `list/` (one of the lists saved in the
 browser, `?l=<id>`, or a shared one, `?w=DAB,OMN&n=Club%20SVFR`) and `list/<slug>/` (named
 lists from `watchlists/<slug>.json` in the repo, e.g. amend.watch/list/daytona-training; slugs are
 3–40 lowercase letters, digits or dashes). Old links (`watch/?w=`, `watch/<slug>/`, `<slug>/`) redirect

@@ -9,7 +9,7 @@
 
 <p align="center">
   <a href="https://amend.watch/"><b>amend.watch</b></a> ·
-  <a href="https://amend.watch/about/#how">How it works</a> ·
+  <a href="https://amend.watch/docs/#how">How it works</a> ·
   <a href="https://amend.watch/guide/">Guide</a> ·
   <a href="https://github.com/benjgmin/amend/issues/new">Report a problem</a>
 </p>
@@ -41,8 +41,8 @@ lists of airports as you like (one for your training area, one per trip), saved 
 as one link. Named lists live under /list/, like [amend.watch/list/daytona-training](https://amend.watch/list/daytona-training/).
 Every airport with changes gets its own page with a link preview, so a page shared in iMessage or a group chat shows
 what changed. Every airport and named list also has an RSS feed (like [amend.watch/VRB/feed.xml](https://amend.watch/VRB/feed.xml))
-with one update per FAA cycle, action items first. [amend.watch/about](https://amend.watch/about/) covers how it works,
-what it doesn't cover and what it stores.
+with one update per FAA cycle, action items first. [amend.watch/docs](https://amend.watch/docs/) covers how it works
+and what it doesn't cover, and [amend.watch/privacy](https://amend.watch/privacy/) what it stores.
 
 ## The iPhone app
 
@@ -73,7 +73,7 @@ Data is public at `https://amend.watch/`, documented in [SCHEMA.md](SCHEMA.md).
 ## Independence and privacy
 
 - Amend is an independent project. It isn't affiliated with or endorsed by the FAA.
-- No accounts and no cookies. Watchlists live in your browser. Visitor counts come from Cloudflare Web Analytics, which is cookie-free. The details are at [amend.watch/about#privacy](https://amend.watch/about/#privacy).
+- No accounts and no cookies. Watchlists live in your browser. Visitor counts come from Cloudflare Web Analytics, which is cookie-free. The details are at [amend.watch/privacy](https://amend.watch/privacy/).
 - Found a change that's wrong or missing? [Open an issue](https://github.com/benjgmin/amend/issues/new) with the airport, the cycle and what the FAA source says.
 
 ## Repo layout
