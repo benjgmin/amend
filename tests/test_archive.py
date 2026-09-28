@@ -164,6 +164,10 @@ class ArchiveTest(unittest.TestCase):
         self.assertEqual(self.run_cycle(PAST, FakeFAA(gone=["CSV.zip"])), "unavailable")
         self.assertEqual(self.gh.releases, [])
 
+    def test_upcoming_cycle_not_posted_at_all_waits(self):
+        self.assertEqual(self.run_cycle(NEXT, FakeFAA(gone=["CSV.zip", "shape", "d-tpp"])), "not-yet")
+        self.assertEqual(self.gh.releases, [])
+
     def test_upcoming_cycle_waits_for_every_file(self):
         self.assertEqual(self.run_cycle(NEXT, FakeFAA(gone=["d-tpp"])), "not-yet")
         self.assertEqual(self.gh.releases, [])

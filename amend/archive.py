@@ -295,6 +295,9 @@ def archive_cycle(gh, d, at=None, log=print):
         if not any(f["kind"] == "nasr_csv" for f in files):
             if rel:
                 raise ArchiveError(f"{t}: a draft exists but the FAA no longer serves the CSV zip")
+            if d > in_effect(at):
+                log(f"{d}: upcoming and not posted yet, trying again next run")
+                return "not-yet"
             log(f"{d}: the FAA doesn't serve this cycle's CSV zip, nothing to archive")
             return "unavailable"
         if missing and d > in_effect(at):
