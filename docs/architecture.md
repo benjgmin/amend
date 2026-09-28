@@ -1,7 +1,6 @@
 # Architecture
 
-How Amend is built today. For the rules it has to follow, see
-[AMEND_MASTER_SPEC.md](../AMEND_MASTER_SPEC.md). For what a run does step by step, see
+How Amend is built today. For what a run does step by step, see
 [data-pipeline.md](data-pipeline.md).
 
 Line references are against `master` at `8b18fdf`.
@@ -125,5 +124,4 @@ engine that produced a given history entry.
 ## What isn't here
 
 No database, no API server, no accounts or auth, no raw FAA archive, no engine version on outputs,
-no processing log beyond the Actions output, no health dashboard. See section 12 of the
-[master spec](../AMEND_MASTER_SPEC.md) for the order these get built.
+no processing log beyond the Actions output, no health dashboard.
