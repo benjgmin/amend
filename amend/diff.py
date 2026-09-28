@@ -6,7 +6,7 @@ from collections import defaultdict
 from .rules import (ACTION_COL_WORDS, ACTION_PREFIXES, ACTION_TEXT_WORDS, ATC_SERVICE_WORDS,
                     COL_CATEGORY, CONTEXT_COLS, DECLARED_ACTION_FT, DECLARED_ACTION_PCT,
                     DECLARED_DISTANCES, DECLINATION_COLS, DECLINATION_NAV_TYPES, FSS_OUTLET,
-                    HIDDEN_FILES, HIDDEN_ONLY_COLS, ID_COLS, IFR_REMARK_FILES, PAIR_KEYS,
+                    FSS_OUTLET_NOT, HIDDEN_FILES, HIDDEN_ONLY_COLS, ID_COLS, IFR_REMARK_FILES, PAIR_KEYS,
                     REWORD_ALIASES, REWORD_BLOCKERS, REWORD_PHRASES, ROW_ACTION, ROW_FYI, base, is_fyi_col,
                     is_hours_col, is_noise_col, small_change)
 
@@ -98,9 +98,11 @@ def empty_non_atct(fname, row):
 
 
 def fss_outlet_note(fname, row):
-    """a tower/ATC remark that's only about an FSS outlet (T03 'PRESCOTT RADIO ... RCO')."""
+    """a tower/ATC remark that only says which FSS talks on an outlet
+    (T03 'COMMUNICATIONS PRVDD BY PRESCOTT RADIO ... (TUBA CITY RCO)')."""
     t = row.get("REMARK", "").upper()
     return (base(fname) == "ATC_RMK" and bool(re.search(FSS_OUTLET, t))
+            and not re.search(FSS_OUTLET_NOT, t)
             and not any(re.search(rf"\b{re.escape(w)}\b", t) for w in ACTION_TEXT_WORDS))
 
 
@@ -181,13 +183,15 @@ def _days(tok):
 
 def _schedule(text):
     """what an hours text says, order and spelling aside: {(days, time range, qualifier
-    words)} when open, the days/holidays/times after CLSD or EXC, and every other number,
-    airspace class, PPR or O/R."""
+    words)} when open, the days/holidays/times after CLSD or EXC, and every other token
+    (numbers, airspace class, PPR, CLSD itself, any word that isn't filler) wherever it is.
+    a word that comes or goes is never a reformat: "0700-2100" -> "0700-2100 CLSD" is a
+    tower closing, "MAY-SEP" -> "JUN-AUG" a season moving."""
     t = _canon(text)
     t = re.sub(r"\b(\d{4})Z\s*-\s*(\d{4})Z", r"\1-\2Z", t)   # 1330Z-0530Z -> 1330-0530Z
     for pat, rep in _HOURS_ALIASES:
         t = re.sub(pat, rep, t)
-    is_open, closed, nums = set(), set(), set()
+    is_open, closed, rest = set(), set(), set()
     for sentence in re.split(r";|\.(?:\s|$)", t):
         closing = False
         for seg in sentence.split(","):
@@ -200,8 +204,13 @@ def _schedule(text):
             for kind, tok in toks:
                 if kind == "closed":
                     closing = True
+                    rest.add(tok)
                 elif kind in ("num", "keep"):     # NGW "OTHER TIMES CLASS E" -> "CLASS G"
-                    nums.add(tok)
+                    rest.add(tok)
+                elif kind == "word" and tok not in _HOURS_FILLER:
+                    rest.add(tok)
+                    if not closing:
+                        words.add(tok)
                 elif closing:
                     if kind == "days":
                         closed |= _days(tok)
@@ -213,13 +222,11 @@ def _schedule(text):
                     days.add("HOL")
                 elif kind == "time":
                     times.append(tok)
-                elif tok not in _HOURS_FILLER:
-                    words.add(tok)
             for tm in times:
                 is_open.add((frozenset(days or DAYS), tm, frozenset(words)))
             if days and not times:
                 is_open.add((frozenset(days), None, frozenset()))
-    return is_open, closed, nums
+    return is_open, closed, rest
 
 
 def same_hours(old, new):

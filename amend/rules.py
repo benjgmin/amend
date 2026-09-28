@@ -98,7 +98,9 @@ ATC_SERVICE_WORDS = {"TWR", "APCH", "DEP", "CTL", "PROVIDER", "HRS", "CALLS"}
 # an FSS outlet note in a tower/ATC remark (T03 "COMMUNICATIONS PRVDD BY PRESCOTT RADIO ON
 # FREQS 122.05R/113.5T (TUBA CITY RCO)") is fyi like any FSS outlet, unless its text has an act
 # word (AVL "COMM UNAVBL BLO 6000 FT ... WHEN AVL APCH CTL CLSD")
-FSS_OUTLET = r"\bRCO\b|\bFSS\b|\b[A-Z]+ RADIO\b"
+FSS_OUTLET = r"\bPRVDD BY [A-Z .]+? (?:RADIO|FSS)\b"
+# ...unless the outlet is how you get a clearance (CD/CLNC) or cancel IFR there
+FSS_OUTLET_NOT = r"\b(?:CLNC|CLR|CD|CLRNC|IFR)\b"
 
 # VOR-family navaids are aligned to a magnetic variation: when it changes (OTZ 15E -> 9E, epoch
 # 2010 -> 2025) every radial moves, so it's act. on other navaids it's the area's variation.
@@ -118,7 +120,7 @@ SMALL_CHANGE = {"RWY_LEN": (10, 50), "RWY_WIDTH": (1, 10), "APCH_BEAR": (1, 1),
                 "RWY_END_ELEV": (1, 1), "TDZ_ELEV": (1, 1), "ARPT_ELEV": (1, 1),
                 "DISPLACED_THR_ELEV": (1, 1), "THR_CROSSING_HGT": (1, 1),
                 # BNA 800 -> 801 ft with a new survey
-                "DISPLACED_THR_LEN": (10, 50)}
+                "DISPLACED_THR_LEN": (10, 10)}
 
 # columns kept on a changed record so the summary can describe it ("runway 15: ...")
 CONTEXT_COLS = ("Orig", "Dest", "Route String", "FREQ", "FREQ_USE", "NAV_ID", "NAV_TYPE",
