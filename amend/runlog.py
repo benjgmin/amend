@@ -49,7 +49,9 @@ Run:
                            translated, "raw_fallback": shown as FAA text, "ai": what the
                            translator reported (remarks.STATS), else null: llm_calls,
                            input_tokens, output_tokens, est_cost_usd, sent, translated,
-                           rejected (broke the no-guess check), bad_batches, cache_retired,
+                           rejected (broke the no-guess check), sent_back (the answer was
+                           the FAA text, for a remark with a contraction to expand; not kept,
+                           asked again at the next ENGINE_VERSION), bad_batches, cache_retired,
                            rejects_skipped (not asked: this ENGINE_VERSION already rejected
                            their answer), llm_errors (calls that failed: no credit, bad key,
                            API down, timeout), llm_error (the first one's HTTP status and

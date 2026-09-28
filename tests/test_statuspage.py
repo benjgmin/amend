@@ -122,7 +122,7 @@ class TestStatusPage(unittest.TestCase):
         self.assertIn("The latest run didn't publish", t)
         self.assertNotIn("Amend is up to date", t)
         self.assertIn("APT_RMK.csv went from 90009 to 100 rows", t)        # in Problems, with the reason
-        self.assertIn('class="bad" href=', html)                          # and a magenta bar in the strip
+        self.assertIn('class="bad" data-t=', html)                        # and a magenta bar in the strip
         self.assertIn("&lt;b&gt;", html)             # FAA/run text is escaped, never markup
         self.assertNotIn("-> 2026-10-01 <b>", html)
 
@@ -161,8 +161,9 @@ class TestStatusPage(unittest.TestCase):
         c["started_at"] = "2026-09-28T10:00:00+00:00"
         html = self.render(a, b, c)
         strip = html[html.index('class="sx-bars"'):html.index('class="sx-legend"')]
-        self.assertLess(strip.index("27 Sep 1000Z"), strip.index("27 Sep 2000Z"))
-        self.assertLess(strip.index("27 Sep 2000Z"), strip.index("28 Sep 1000Z"))
+        self.assertLess(strip.index("27 Sep 2026 10:00:00Z"), strip.index("27 Sep 2026 20:00:00Z"))
+        self.assertLess(strip.index("27 Sep 2026 20:00:00Z"), strip.index("28 Sep 2026 10:00:00Z"))
+        self.assertIn('data-t="2026-09-27T10:00:00Z"', strip)            # the tooltip's exact time
         self.assertEqual(strip.count('class="ok"'), 3)
         self.assertIn("3 runs: 3 published", text(html))
         self.assertEqual(html.count("<summary>Every step of the latest build</summary>"), 1)
@@ -234,10 +235,12 @@ class TestSubdomains(unittest.TestCase):
         with open(os.path.join(site, "status", "index.html"), encoding="utf-8") as f:
             return f.read(), docspage.page(META, NOW)
 
-    def test_off_until_the_names_work(self):
+    def test_off_keeps_everything_on_amend_watch(self):
+        """with the names off (as before they worked), nothing forwards and every link stays on amend.watch"""
+        from unittest import mock
         from amend import web
-        self.assertFalse(web.SUBDOMAINS)       # flip it only once both names open in a browser
-        status, docs = self.pages()
+        with mock.patch.object(web, "SUBDOMAINS", False):
+            status, docs = self.pages()
         for html in (status, docs):
             self.assertNotIn("location.replace", html.split("</head>")[0])
             self.assertIn('href="https://amend.watch/docs/"', html)
@@ -249,11 +252,11 @@ class TestSubdomains(unittest.TestCase):
             self.assertIn(f'<section id="{anchor}">', docs)
 
     def test_on_forwards_the_old_pages_and_links(self):
-        from unittest import mock
         from amend import web
-        with mock.patch.object(web, "SUBDOMAINS", True):
-            status, docs = self.pages()
-            about = web.about_page(META, {}, [], NOW)
+        self.assertTrue(web.SUBDOMAINS)        # on since both names opened in a browser, 2026-09-28
+        status, docs = self.pages()
+        about = web.about_page(META, {}, [], NOW)
+        self.assertIn('href="/assets/style.css?v=', status)   # shared files still from the page's own origin
         self.assertIn('if(location.hostname==="amend.watch")location.replace("https://status.amend.watch/"'
                       '+location.search+location.hash)', status)
         self.assertIn('location.replace("https://docs.amend.watch/"', docs)

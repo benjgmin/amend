@@ -11,16 +11,19 @@ from . import subsite, web
 from .web import DTPP_SEARCH, FAA_INQUIRY, NASR_PAGE, REPO_URL, REPORT_URL, SITE_URL
 
 CSS = """<style>
-.dx{display:grid;grid-template-columns:200px minmax(0,1fr);grid-template-areas:". head" "toc body";column-gap:56px}
-.dx-head{grid-area:head;max-width:44rem}.dx-body{grid-area:body}
-.dx-toc{grid-area:toc;position:sticky;top:84px;align-self:start;font-size:13.5px;padding-top:36px}
-.dx-toc a{display:block;padding:5px 0 5px 14px;color:var(--dm);border-left:2px solid var(--ln)}
-.dx-toc a:hover{color:var(--tx);text-decoration:none}.dx-toc a.on{color:var(--tx);border-left-color:var(--am);font-weight:500}
-.dx-body{max-width:44rem;min-width:0}
-.dx h1{font:600 34px/1.15 var(--sans);letter-spacing:-.6px;margin:0 0 12px}
-.dx .lede{font-size:17.5px;line-height:1.55;color:var(--dm);margin:0}
-.dx section{padding-top:30px;margin-top:30px;border-top:1px solid var(--ln);scroll-margin-top:72px}
-.dx h2{font:600 22px/1.3 var(--sans);letter-spacing:-.25px;margin:0 0 12px}
+.dx{display:grid;grid-template-columns:220px minmax(0,1fr);column-gap:48px;align-items:start}
+.dx-toc{position:sticky;top:76px;max-height:calc(100vh - 92px);overflow-y:auto;font-size:13.5px;padding:4px 0 16px}
+.dx-toc .g{font:600 11px/1.4 var(--sans);text-transform:uppercase;letter-spacing:.08em;color:var(--fn);margin:18px 0 6px 12px}
+.dx-toc .g:first-child{margin-top:0}
+.dx-toc a{display:block;padding:5px 12px;color:var(--dm);border-radius:6px;border-left:2px solid transparent}
+.dx-toc a:hover{color:var(--tx);background:var(--p2);text-decoration:none}
+.dx-toc a.on{color:var(--tx);background:var(--p2);border-left-color:var(--am);font-weight:500;border-radius:0 6px 6px 0}
+.dx-body{max-width:46rem;min-width:0}
+.dx h1{font:600 32px/1.15 var(--sans);letter-spacing:-.5px;margin:0 0 10px}
+.dx .lede{font-size:17px;line-height:1.55;color:var(--dm);margin:0 0 8px}
+.dx section{padding-top:28px;margin-top:28px;border-top:1px solid var(--ln);scroll-margin-top:72px}
+.dx h2{font:600 21px/1.3 var(--sans);letter-spacing:-.25px;margin:0 0 12px}
+.dx h2 a{color:inherit}.dx h2 a:hover{text-decoration:none}.dx h2 a::after{content:" #";color:var(--ln2);opacity:0}.dx h2:hover a::after{opacity:1}
 .dx h3{font:600 16px/1.4 var(--sans);margin:22px 0 6px}
 .dx p,.dx li{line-height:1.65}.dx p{margin:0 0 12px}.dx ul{padding-left:20px;margin:0 0 12px}.dx li{margin:5px 0}
 .dx code{font:13px var(--mono);background:var(--p2);padding:1px 5px;border-radius:4px;overflow-wrap:anywhere}
@@ -33,11 +36,15 @@ border:1px solid var(--ln2);background:var(--p);font:600 13px/28px var(--mono);t
 .dx-steps .t{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-weight:600;font-size:16px;line-height:30px}
 .dx-steps .t .ann{font-weight:600}.dx-steps p{margin:2px 0 0;color:var(--dm)}
 .dx-kv{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:8px 18px;margin:14px 0;padding:14px 16px;
-border:1px solid var(--ln);border-radius:10px;background:var(--p);font-size:14.5px}
+border:1px solid var(--ln);border-radius:8px;background:var(--p);font-size:14.5px}
 .dx-kv dt{font-weight:600}.dx-kv dd{margin:0;color:var(--dm)}
-@media (max-width:860px){.dx{grid-template-columns:minmax(0,1fr);grid-template-areas:"head" "toc" "body";gap:0}
-.dx-toc{position:static;display:flex;flex-wrap:wrap;gap:6px 16px;margin:24px 0 0;padding:0}
-.dx-toc a{border:0;padding:0}.dx h1{font-size:28px}}
+.dx-nn{display:flex;justify-content:space-between;gap:16px;margin-top:40px;padding-top:20px;border-top:1px solid var(--ln);font-size:14px}
+.dx-nn a{display:block}.dx-nn small{display:block;color:var(--fn);font-size:12px}.dx-nn .r{text-align:right;margin-left:auto}
+@media (max-width:860px){.dx{grid-template-columns:minmax(0,1fr);gap:0}.dx-toc{display:none}.dx h1{font-size:28px}}
+.dx-jump{display:none}
+@media (max-width:860px){.dx-jump{display:block;margin:4px 0 0;border:1px solid var(--ln);border-radius:8px;background:var(--p)}
+.dx-jump>summary{cursor:pointer;padding:10px 14px;font-size:14px;font-weight:500}
+.dx-jump nav{display:grid;padding:0 14px 10px}.dx-jump a{padding:6px 0;border-top:1px solid var(--ln);font-size:14px}}
 @media (max-width:479px){.dx-kv{grid-template-columns:minmax(0,1fr);gap:2px}.dx-kv dd{margin-bottom:8px}}
 </style>"""
 
@@ -255,14 +262,23 @@ def sections():
     ]
 
 
+GROUPS = [("Overview", ["what", "cycle"]), ("The process", ["how", "labels", "remarks", "checks"]),
+          ("Reference", ["status", "sources", "limits", "api", "open"])]
+
+
 def page(meta, now):
     secs = sections()
-    toc = "".join(f'<a href="#{i}">{h}</a>' for i, h, _ in secs)
-    body = ('<div class="dx"><header class="dx-head"><h1>How Amend works</h1><p class="lede">From the FAA posting a '
-            "new cycle to a change on your screen: every step, what's checked along the way, and what Amend doesn't "
-            f'cover.</p></header><nav class="dx-toc" aria-label="On this page">{toc}</nav><article class="dx-body">'
-            + "".join(f'<section id="{i}"><h2>{h}</h2>{x}</section>' for i, h, x in secs)
-            + f"</article></div>{TOC_JS}")
+    heads = {i: h for i, h, _ in secs}
+    toc = "".join(f'<div class="g">{g}</div>' + "".join(f'<a href="#{i}">{heads[i]}</a>' for i in ids) for g, ids in GROUPS)
+    body = ('<div class="dx"><nav class="dx-toc" aria-label="On this page">' + toc + '</nav><article class="dx-body">'
+            '<h1>How Amend works</h1><p class="lede">From the FAA posting a new cycle to a change on your screen: '
+            "every step, what's checked along the way, and what Amend doesn't cover.</p>"
+            + '<details class="dx-jump"><summary>On this page</summary><nav>'
+            + "".join(f'<a href="#{i}">{h}</a>' for i, h, _ in secs) + "</nav></details>"
+            + "".join(f'<section id="{i}"><h2><a href="#{i}">{h}</a></h2>{x}</section>' for i, h, x in secs)
+            + f'<nav class="dx-nn"><a href="{SITE_URL}guide/"><small>Next</small>Guide: how to read a change</a>'
+            f'<a class="r" href="{web.sub_url("status")}"><small>See also</small>Status</a></nav>'
+            f"</article></div>{TOC_JS}")
     return subsite.page("docs", "Amend Docs", "How Amend turns each FAA cycle into plain-English changes: every "
                         "step, the checks, the sources, what it doesn't cover and the public data files.",
-                        body, meta, now, head=CSS, wide=True)
+                        body, meta, now, head=CSS)
