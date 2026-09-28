@@ -1,5 +1,5 @@
 {
- "engine": "1.2.2",
+ "engine": "1.2.3",
  "remarks": {
   "100LL AND JET-A FUEL AVBL 24 HRS SELF SVC W/ CREDIT CARD.": [
    "W is 'West or White' (CS), not what the translation says"
@@ -30,26 +30,25 @@
    "added 'performance'"
   ],
   "CONES FOR 2400 FT W/300 FT OF OVERUN": [
-   "W is 'West or White' (CS), not what the translation says",
-   "dropped OVERUN",
-   "added 'overrun'"
+   "W is 'West or White' (CS), not what the translation says"
   ],
   "CTLG OBSTN 150 FT TREE  0 FT, 170 FT RT; TREES 100 FT, ARND RWY END 19.": [
+   "CTLG is 'control' (CS + JO 1-2-3 suffix G), not what the translation says",
    "RT has no verified meaning (the FAA lists more than one meaning; copied as written until one is picked); it must stay as written",
-   "added 'right'"
+   "added 'cataloged'"
   ],
   "CTLG OBSTN EXCEEDS A 45 DEG SLP. APCH SLP 17:1 TO DTHR OVR +93 FT TREES, 1588 FT DIST, 0 FT B.": [
+   "CTLG is 'control' (CS + JO 1-2-3 suffix G), not what the translation says",
    "B has no verified meaning (the FAA lists more than one meaning; copied as written until one is picked); it must stay as written",
-   "added 'below'"
+   "added 'cataloged'"
   ],
   "HEL SELF SVC NA, FUEL 24 HR CREDIT CARD SVC AVBL.": [
    "NA is 'Not Authorized' (CS), not what the translation says",
    "repeated 'available'"
   ],
   "INDY APPCH - R, E 134.85 OR 377.1, TWR - 1200-0400Z++ EXCLD HOL. 126.2 OR 243.6 FSS-TERRE HAUTE HUF-NOTAM HUF.": [
-   "APPCH is not in the verified glossary; it must stay as written",
-   "EXCLD is 'exclude' (CS), not what the translation says",
-   "added 'approach'"
+   "INDY is not in the verified glossary; it must stay as written",
+   "added 'indianapolis'"
   ],
   "MILITARY: ANG: OPR 1030-2100Z++ MON-THUR EXC HOL. PPR TSNT ACFT OFFL BUS ONLY. AFLD MGR C315-233-2399, AFT DUTY HR CTC C315-233-2399. PPR REQ FOR ALL TSNT ACFT DUE LTD TSNT SVC. NTFY AFLD MGR OF ETA DLA OVR 30 MIN OR MSN CNL IS RQR.": [
    "REQ is 'request' (CS), not what the translation says"
@@ -65,12 +64,12 @@
   "PUB RD 209 FT FM RWY END, 14 FT ABV RWY & 14 FT FM LT OF CTLN.": [
    "RD is not in the verified glossary; it must stay as written",
    "LT has no verified meaning (remarks use it for left ('440 FT LT OF CTLN'); JO 7340.2's 'turn left after take-off' doesn't fit); it must stay as written",
-   "added 'road'"
+   "CTLN is not in the verified glossary; it must stay as written"
   ],
   "REIL RWY 11 & 29 OPR CONSLY; PAPI RWY 11, 16, 29 & 34 OPR CONSLY. ACTVT MALS RWY 34; REILRWY 16;  RWY 16/34 EDGE LIGHTS; TWY LGTS CTAF.": [
    "dropped REILRWY",
-   "repeated 'end'",
-   "repeated 'identifier'"
+   "repeated 'reil'",
+   "added 'mic'"
   ],
   "RSTD: ALL TXY LEAD IN LINES SW OF CNTR AND EAST RAMP ARE TO BE UTILIZED FOR TOW OPS ONLY.": [
    "TXY is not in the verified glossary; it must stay as written",
@@ -82,14 +81,17 @@
    "LOC is 'Localizer' (CS), not what the translation says"
   ],
   "RWY 03 CALM WIND RWY. RDC D/II/5000; APRC B/II/5000; DPRC B/II. MIDFIELD DEP & STOP & GO LNDG NA. TGL NA 2130-0600.": [
+   "APRC is not in the verified glossary; it must stay as written",
    "NA is 'Not Authorized' (CS), not what the translation says",
-   "added 'available'"
+   "added 'approach'"
   ],
   "RWY 07/25 NOT PLOWED FOR SN,  OPN TO SKI EQUIPED ACFT.": [
    "dropped EQUIPED"
   ],
   "RY 04S/22S FOR SKI/TUNDRA TIRE EQUIPD ACFT.": [
-   "dropped EQUIPD"
+   "dropped EQUIPD",
+   "changed 04S; a code of letters and digits stays as written",
+   "changed 22S; a code of letters and digits stays as written"
   ],
   "SELF SVC FUEL H24.": [
    "lost number 24"
@@ -100,7 +102,7 @@
   "SIMUL OPS RWY 04/22 & 04S/22S NA.": [
    "SIMUL is 'simultaneous/ly' (JO 2-1-1 (ICAO)), not what the translation says",
    "NA is 'Not Authorized' (CS), not what the translation says",
-   "added 'available'"
+   "changed 04S; a code of letters and digits stays as written"
   ],
   "SKI OR TUNDRA TIRE ACFT ONLY. WINTER MAINT NA.": [
    "NA is 'Not Authorized' (CS), not what the translation says",
@@ -110,8 +112,9 @@
    "W is 'West or White' (CS), not what the translation says"
   ],
   "SOUTH FLD - PAD 1 LGTS STD AND IN SVC, BUT NOT IAW REG CRITERIA. NGT LDGS USE CTN. PAD 2 UNLGTD BUT EASTERN AND WESTERN WIND INDICATORS LGTD. TSNT ACFT LDGS RSTD TO PAD 1 DUE TO GND TFC HAZ ASSOC WITH PAD 2. PAD 2 OPS RQRS LOCAL SAFTEY BRIEFING. SLOPES WI EAST AND WEST CLEAR ZONE OF PAD 1 EXCEED REG CRITERIA LMTS.  NORTH FLD - PAD LGTS IN SVC. ALS AVBL BOTH DIR. WIND INDICATOR LGTD.": [
+   "dropped SAFTEY",
    "DIR is 'director' (JO 2-1-1 (GEN)), not what the translation says",
-   "added 'directions'"
+   "added 'safety'"
   ],
   "TIMBERED MOUTAIN SLOPE.": [
    "dropped MOUTAIN",
