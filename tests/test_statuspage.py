@@ -122,7 +122,7 @@ class TestStatusPage(unittest.TestCase):
         self.assertIn("The latest run didn't publish", t)
         self.assertNotIn("Amend is up to date", t)
         self.assertIn("APT_RMK.csv went from 90009 to 100 rows", t)        # in Problems, with the reason
-        self.assertIn('class="bad" data-t=', html)                        # and a magenta bar in the strip
+        self.assertIn('class="b-bad" data-t=', html)                        # and a magenta bar in the strip
         self.assertIn("&lt;b&gt;", html)             # FAA/run text is escaped, never markup
         self.assertNotIn("-> 2026-10-01 <b>", html)
 
@@ -164,7 +164,7 @@ class TestStatusPage(unittest.TestCase):
         self.assertLess(strip.index("27 Sep 2026 10:00:00Z"), strip.index("27 Sep 2026 20:00:00Z"))
         self.assertLess(strip.index("27 Sep 2026 20:00:00Z"), strip.index("28 Sep 2026 10:00:00Z"))
         self.assertIn('data-t="2026-09-27T10:00:00Z"', strip)            # the tooltip's exact time
-        self.assertEqual(strip.count('class="ok"'), 3)
+        self.assertEqual(strip.count('class="b-ok"'), 3)
         self.assertIn("3 builds: 3 published", text(html))
         self.assertEqual(html.count("<summary>Every step of the latest build</summary>"), 1)
 
@@ -360,6 +360,10 @@ class TestChecksCard(unittest.TestCase):
         self.assertIn('fetch("/checks.json")', html)
         self.assertIn('location.hostname==="amend.watch")return', html)
         self.assertNotIn("innerHTML", statuspage.CHECKS_JS + statuspage.TIP_JS)   # GitHub's text never goes in as HTML
+        # the site's own .none/.ok/.bad classes pad and centre things; a cancelled check once drew as a tall box
+        for cls in set(statuspage.BAR.values()) | set(re.findall(r'\["(b-[a-z]+)",', statuspage.CHECKS_JS)):
+            self.assertTrue(cls.startswith("b-"), cls)
+        self.assertNotRegex(statuspage.CHECKS_JS, r'\["(none|ok|bad|info)",')
 
 
 class TestDocsPages(unittest.TestCase):

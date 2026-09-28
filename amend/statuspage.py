@@ -88,7 +88,7 @@ box-shadow:0 0 0 5px color-mix(in srgb,var(--c) 18%,transparent)}
 .sx-bars{display:flex;gap:3px;height:34px;position:relative}
 .sx-bars>*{flex:1;min-width:3px;border-radius:2px;background:var(--gn);opacity:.85;display:block}
 .sx-bars>*:hover,.sx-bars>*:focus-visible{opacity:1;text-decoration:none;outline-offset:1px}
-.sx-bars .info{background:var(--cy)}.sx-bars .bad{background:var(--am)}.sx-bars .none{background:var(--ln2)}
+.sx-bars .b-info{background:var(--cy)}.sx-bars .b-bad{background:var(--am)}.sx-bars .b-none{background:var(--ln2)}
 .sx-legend{display:flex;justify-content:space-between;gap:12px;color:var(--fn);font-size:12px;margin-top:8px}
 .sx-tip{position:absolute;z-index:6;pointer-events:none;background:var(--tx);color:var(--bg);font-size:12.5px;line-height:1.45;
 padding:8px 10px;border-radius:6px;box-shadow:0 4px 14px rgba(0,0,0,.25);white-space:nowrap;transform:translate(-50%,-100%);margin-top:-8px}
@@ -573,7 +573,8 @@ def components(top, pub, meta, now):
     return f'<div class="sx-list">{"".join(rows)}</div>'
 
 
-BAR = {"live": "ok", "warn": "ok", "wait": "info", "held": "bad", "fail": "bad", "skip": "none", "none": "none"}
+# bar colours. Prefixed: the site already has .none and .ok classes (padded, centred) that would reshape a bar
+BAR = {"live": "b-ok", "warn": "b-ok", "wait": "b-info", "held": "b-bad", "fail": "b-bad", "skip": "b-none", "none": "b-none"}
 
 
 def bars(recs):
@@ -644,12 +645,13 @@ const why={workflow_dispatch:"check",schedule:"check",push:"after a code change"
 fetch("/checks.json").then(r=>r.ok?r.json():null).then(j=>{const runs=(j&&Array.isArray(j.runs)?j.runs:[]).filter(r=>r&&Date.parse(r.started));
   if(!runs.length)return;runs.sort((a,b)=>Date.parse(a.started)-Date.parse(b.started));
   const done=runs.filter(r=>r.status==="completed"),last=done[done.length-1];if(!last)return;
-  const mins=Math.floor((clock()-Date.parse(last.started))/6e4),late=mins>3*+w.dataset.every;
+  // late only if no check has even started lately: during a deploy, checks wait in line behind it
+  const mins=Math.floor((clock()-Date.parse(last.started))/6e4),late=(clock()-Date.parse(runs[runs.length-1].started))/6e4>3*+w.dataset.every;
   const line=el("p","sx-last"+(late?" late":""));line.append(el("span","sx-dot"),"Last checked ",el("b","",mins<1?"just now":mins<120?mins+" min ago":Math.floor(mins/60)+"h ago"),
     el("span","sx-when",fmt(last.started)));if(late)line.append(el("span","sx-when","no check for a while, the timer may have stopped"));
   const bars=el("div","sx-bars sx-chk"),tally={};
-  for(const r of runs.slice(-40)){const ok=r.status!=="completed"?["info","Running"]:r.conclusion==="success"?["","Passed"]:
-      r.conclusion==="failure"?["bad","Failed"]:["none",(r.conclusion||"ended").replace(/_/g," ")];
+  for(const r of runs.slice(-40)){const ok=r.status!=="completed"?["b-info","Running"]:r.conclusion==="success"?["b-ok","Passed"]:
+      r.conclusion==="failure"?["b-bad","Failed"]:["b-none",(r.conclusion||"ended").replace(/_/g," ")];
     tally[ok[1]]=(tally[ok[1]]||0)+1;
     const u=typeof r.url==="string"&&r.url.startsWith("https://github.com/")?r.url:"",b=el(u?"a":"span",ok[0]);if(u)b.href=u;
     const sec=Date.parse(r.updated)-Date.parse(r.started);
