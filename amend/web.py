@@ -21,6 +21,8 @@ from . import feeds
 SITE_URL = "https://amend.watch/"
 REPO_URL = "https://github.com/benjgmin/amend"
 REPORT_URL = REPO_URL + "/issues/new"    # "report a problem" until there's an email address
+# the FAA's own form for a mistake in its data (charts, procedures, airport and navaid data). Amend can't fix those
+FAA_INQUIRY = "https://www.faa.gov/air_traffic/flight_info/aeronav/aero_data/Aeronautical_Inquiries/"
 # Cloudflare Web Analytics: cookie-free visitor counts (the about page's privacy note says so). The token is
 # public by design; "" turns the beacon off.
 CF_BEACON = "d1ab67595c784b45827953de63a28e9a"
@@ -1229,6 +1231,9 @@ UPDATES = [
     ("Sep 2026", [
         "Pages switch from upcoming to in effect at exactly 0901Z on cycle day, even if you have the page open, "
         "using the server's clock if your device's is off. Amend also checks the FAA for new data every 10 minutes.",
+        "Docs, Privacy and Terms now say how to tell the FAA when its own data is wrong, what Amend can't see "
+        "between cycles, what choices you have about your data, and that other sites' rules apply when you "
+        "follow a link.",
         "The sidebar stays in place while you scroll, and its lists open one at a time with a quick slide.",
         "The sidebar looks the same on every page, search included, and each list in it folds open or shut and "
         "stays the way you left it. Alerts are explained in plain words, and the old About page is now About, "
@@ -1283,7 +1288,10 @@ def about_page(meta, latest, screenshots, now, example="VRB"):
         "NOTAMs or a preflight briefing, and if Amend and the FAA ever disagree, the FAA is right.</p>"))
     report = sec("report", "Report a problem", (
         f'<p>Found a change that\'s wrong, missing or hard to understand? <a href="{REPORT_URL}">Open an issue on '
-        "GitHub</a> with the airport, the cycle and what the FAA source says. It takes a free GitHub account.</p>"))
+        "GitHub</a> with the airport, the cycle and what the FAA source says. It takes a free GitHub account.</p>"
+        "<p>If Amend matches the FAA and it's the FAA's data that looks wrong, like a frequency or a chart that "
+        f'doesn\'t match the real airport, Amend can\'t fix it. Tell the FAA through its <a href="{FAA_INQUIRY}">'
+        "Aeronautical Inquiries</a> page.</p>"))
     moved = json.dumps(ABOUT_MOVED)
     body = f"""<script>(()=>{{const m={moved},h=location.hash.slice(1);if(m[h])location.replace(m[h])}})()</script>
 <header class="full" style="padding:12px 0 4px"><h1 class="hero">Know what changed at your airport.</h1>
@@ -1340,10 +1348,16 @@ def docs_page(meta, now):
             "with a link to each plate.</li>"
             "<li><b>FAA class airspace shapefiles:</b> Class B, C, D and E surface area floors, ceilings and "
             "boundaries.</li></ul>"
+            "<p>The FAA posts each cycle's files before they take effect (the d-TPP page says 20 days ahead), which "
+            "is how Amend can show a change before it happens.</p>"
             "<p>Every change links the FAA source it came from, so you can check it against the original in one "
             "tap.</p>")),
         ("limits", "What it doesn't cover", (
             "<ul><li><b>NOTAMs.</b> Temporary changes are published as NOTAMs and never show up here.</li>"
+            "<li><b>Corrections between cycles.</b> The FAA sometimes fixes data mid-cycle, usually by NOTAM. Amend "
+            "only reads the 28-day files, so a fix like that shows up here in a later cycle, if at all.</li>"
+            "<li><b>Chart Supplement pages that aren't in the FAA data files</b>, like its special notices. Airport "
+            "remarks are covered.</li>"
             "<li><b>Class E airspace above the surface</b> (E5). Surface areas are covered.</li>"
             "<li><b>Chart history before fall 2026</b>, because the FAA doesn't keep old chart indexes online. "
             "Airport data goes back to Aug 2024.</li>"
@@ -1371,7 +1385,8 @@ def docs_page(meta, now):
         ("open", "Open source", (
             f'<p>The engine, the rules and this site are <a href="{REPO_URL}">on GitHub</a> under the MIT license. '
             f'Found something wrong? <a href="{REPORT_URL}">Open an issue</a> with the airport, the cycle and what '
-            "the FAA source says.</p>")),
+            "the FAA source says. If the FAA's own data is wrong, only the FAA can fix it: "
+            f'use its <a href="{FAA_INQUIRY}">Aeronautical Inquiries</a> page.</p>')),
     ]
     return doc_page("docs", "Docs", "How Amend works, where the data comes from, what it doesn't cover, and the "
                     "files behind it.", sections, "How Amend compares FAA cycles, its data sources, what it doesn't "
@@ -1399,7 +1414,8 @@ def privacy_page(meta, now):
     sections = [
         ("short", "The short version", (
             "<p>No accounts, no cookies, no ads, and nothing sold. Your lists stay in your browser. Visitor counts "
-            "come from cookie-free Cloudflare Web Analytics, and the site is hosted on GitHub Pages.</p>")),
+            "come from cookie-free Cloudflare Web Analytics, and the site is hosted on GitHub Pages. Amend runs no "
+            "server or database of its own; GitHub and Cloudflare keep only what's described below.</p>")),
         ("browser", "What stays in your browser", (
             "<p>Amend saves a few things in your browser's local storage so the site remembers you without an "
             "account:</p><ul><li>your lists of airports and which one you're using</li>"
@@ -1427,6 +1443,16 @@ def privacy_page(meta, now):
             "<p>The app has no account either. It keeps your airports and settings on your phone, and it only "
             "downloads data from amend.watch and charts from the FAA. Notifications are worked out on your phone; "
             "no server knows which airports you follow.</p>")),
+        ("choices", "Your choices", (
+            "<p>Since Amend keeps nothing about you, there's nothing for it to show you, correct or delete. What "
+            "there is, you control:</p><ul>"
+            "<li>Clear this site's data in your browser to delete your lists and settings.</li>"
+            "<li>Block the Cloudflare script with a content blocker if you'd rather not be counted. Amend works the "
+            "same without it.</li>"
+            "<li>For what GitHub or Cloudflare keep, use their own privacy settings and requests.</li></ul>")),
+        ("children", "Children", (
+            "<p>Amend doesn't ask anyone for personal information, so it doesn't collect any from children "
+            "either.</p>")),
         ("changes", "Changes to this page", (
             f"<p>Last changed {POLICY_DATE}. Changes are listed in the <a href=\"../changelog/\">changelog</a>, and "
             f"every edit is in the page's history <a href=\"{REPO_URL}\">on GitHub</a>. Questions go to "
@@ -1449,7 +1475,10 @@ def terms_page(meta, now):
             "<p>Amend is provided as is, without any warranty. Its data can be wrong, late or incomplete: the FAA "
             "can correct a cycle after it's posted, an update can fail, and a rule can sort a change the wrong way. "
             "Plain-English remarks are made by AI and checked by code, and the FAA text next to them is the one "
-            "that counts. The site or its data can be unavailable at any time.</p>")),
+            "that counts. The site or its data can be unavailable at any time, and features can change or stop "
+            "without notice.</p>"
+            f'<p>If the FAA\'s own data looks wrong, report it to the FAA through its <a href="{FAA_INQUIRY}">'
+            "Aeronautical Inquiries</a> page. Amend only repeats what the FAA publishes.</p>")),
         ("liability", "Liability", (
             "<p>As far as the law allows, Amend and the people who make it aren't liable for any loss or damage "
             "that comes from using it or relying on it, including in flight planning or training.</p>")),
@@ -1459,8 +1488,12 @@ def terms_page(meta, now):
         ("use", "Using the site and data", (
             "<p>You're free to use the site, the alert feeds and the JSON files, including in your own tools and "
             "training material. Please don't present Amend's data as official FAA data, and keep automated "
-            "requests reasonable: the data only changes a few times a day.</p>"
+            "requests reasonable: the data only changes a few times a day. Don't try to break, overload or get around "
+            "how the site works.</p>"
             f'<p>The code is open source under the <a href="{REPO_URL}/blob/master/LICENSE">MIT license</a>.</p>')),
+        ("links", "Other sites", (
+            "<p>Amend links to sites it doesn't run, like FAA pages and plates, GitHub, and alert services such as "
+            "Feedrabbit. Their own terms and privacy policies apply there, and Amend isn't responsible for them.</p>")),
         ("changes", "Changes", (
             f"<p>Last changed {POLICY_DATE}. These terms can change as Amend does; changes are listed in the "
             f'<a href="../changelog/">changelog</a> and every edit is <a href="{REPO_URL}">on GitHub</a>. '
