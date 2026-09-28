@@ -122,7 +122,7 @@ class TestStatusPage(unittest.TestCase):
         self.assertIn("The latest run didn't publish", t)
         self.assertNotIn("Amend is up to date", t)
         self.assertIn("APT_RMK.csv went from 90009 to 100 rows", t)        # in Problems, with the reason
-        self.assertIn('class="bad" href=', html)                          # and a magenta bar in the strip
+        self.assertIn('class="bad" data-t=', html)                        # and a magenta bar in the strip
         self.assertIn("&lt;b&gt;", html)             # FAA/run text is escaped, never markup
         self.assertNotIn("-> 2026-10-01 <b>", html)
 
@@ -161,8 +161,9 @@ class TestStatusPage(unittest.TestCase):
         c["started_at"] = "2026-09-28T10:00:00+00:00"
         html = self.render(a, b, c)
         strip = html[html.index('class="sx-bars"'):html.index('class="sx-legend"')]
-        self.assertLess(strip.index("27 Sep 1000Z"), strip.index("27 Sep 2000Z"))
-        self.assertLess(strip.index("27 Sep 2000Z"), strip.index("28 Sep 1000Z"))
+        self.assertLess(strip.index("27 Sep 2026 10:00:00Z"), strip.index("27 Sep 2026 20:00:00Z"))
+        self.assertLess(strip.index("27 Sep 2026 20:00:00Z"), strip.index("28 Sep 2026 10:00:00Z"))
+        self.assertIn('data-t="2026-09-27T10:00:00Z"', strip)            # the tooltip's exact time
         self.assertEqual(strip.count('class="ok"'), 3)
         self.assertIn("3 runs: 3 published", text(html))
         self.assertEqual(html.count("<summary>Every step of the latest build</summary>"), 1)

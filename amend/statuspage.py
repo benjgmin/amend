@@ -52,48 +52,62 @@ NR = '<span class="nr">not recorded</span>'
 BEHIND_HOURS = 30
 
 CSS = """<style>
-.st-top{display:grid;gap:10px}.st-ans{display:flex;gap:10px;align-items:flex-start}
-.st-ans .ann{margin-top:6px}.st-ans b{font:600 20px/1.3 var(--sans);letter-spacing:-.3px}
-.stg{display:grid;grid-template-columns:104px minmax(0,1fr);gap:4px 12px;padding:11px 0;border-top:1px solid var(--ln);font-size:14px}
-.stg:first-child{border-top:0}.stg>.ann{justify-self:start;margin-top:2px}
-.stg .t{font-weight:600}.stg .k{font-size:11px;color:var(--fn);text-transform:uppercase;letter-spacing:.06em}.stg .d{color:var(--dm);overflow-wrap:anywhere}.stg .more{grid-column:2}
+.stg{display:grid;grid-template-columns:10px minmax(0,1fr);gap:0 14px;padding:14px 0;border-top:1px solid var(--ln);font-size:14px}
+.stg:first-child{border-top:0}
+.stg-dot{width:10px;height:10px;border-radius:50%;margin-top:6px;background:var(--gn)}
+.stg.k-info .stg-dot{background:var(--cy)}.stg.k-bad .stg-dot{background:var(--am)}.stg.k-none .stg-dot{background:var(--ln2)}
+.stg-h{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px}
+.stg .t{font-weight:600}.stg .k{font-size:11px;color:var(--fn);text-transform:uppercase;letter-spacing:.06em}
+.stg .s{margin-left:auto;font-size:12.5px;font-weight:500;color:var(--gn);white-space:nowrap}
+.stg.k-info .s{color:var(--cy)}.stg.k-bad .s{color:var(--am)}.stg.k-none .s{color:var(--fn)}
+.stg .d{color:var(--dm);margin-top:2px;overflow-wrap:anywhere}
+.stg .more{margin-top:6px}.stg .more>summary{font-size:13px}
 .nr{color:var(--fn);font-style:italic}
-.tw{overflow-x:auto;margin-top:6px;border:1px solid var(--ln);border-radius:6px}
+.tw{overflow-x:auto;margin-top:8px;border:1px solid var(--ln);border-radius:6px}
 .tb{border-collapse:collapse;width:100%;font-size:12.5px;font-variant-numeric:tabular-nums}
 .tb th,.tb td{text-align:left;padding:5px 8px;border-top:1px solid var(--ln);vertical-align:top}
 .tb th{border-top:0;font-weight:600;color:var(--dm);white-space:nowrap}.tb td.n{text-align:right;white-space:nowrap}
 .tb .h{font:11.5px/1.45 var(--mono);overflow-wrap:anywhere;min-width:16ch}
 .msgs{margin:6px 0 0;padding-left:18px}.msgs li{margin:4px 0;overflow-wrap:anywhere}
-.run>summary .when{font-variant-numeric:tabular-nums}.run>summary .sub{color:var(--dm);font-weight:400}
-.run .stages{padding:0 16px 8px}
 .warn-row td{color:var(--am)}
-@media (max-width:479px){.stg{grid-template-columns:minmax(0,1fr)}.stg .more{grid-column:1}}
-.sx-hero{--c:var(--gn);--s:var(--gnS);display:flex;gap:14px;align-items:flex-start;padding:22px 22px 20px;border-radius:12px;
+.sx-hero{--c:var(--gn);--s:var(--gnS);display:flex;gap:14px;align-items:flex-start;padding:22px 24px 20px;border-radius:10px;
 background:var(--s);border:1px solid color-mix(in srgb,var(--c) 28%,transparent)}
 .sx-hero.is-info{--c:var(--cy);--s:var(--cyS)}.sx-hero.is-bad{--c:var(--am);--s:var(--amS)}.sx-hero.is-none{--c:var(--fn);--s:var(--gyS)}
 .sx-dot{width:12px;height:12px;border-radius:50%;background:var(--c);flex:none;margin-top:9px;
 box-shadow:0 0 0 5px color-mix(in srgb,var(--c) 18%,transparent)}
 .sx-hero h1{font:600 23px/1.3 var(--sans);letter-spacing:-.3px;margin:0}.sx-hero p{margin:4px 0 0;color:var(--dm)}
-.sx-list{margin-top:20px;border:1px solid var(--ln);border-radius:12px;background:var(--p)}
-.sx-row{display:flex;gap:16px;align-items:center;padding:15px 18px;border-top:1px solid var(--ln)}.sx-row:first-child{border-top:0}
+.sx-list{margin-top:24px;border:1px solid var(--ln);border-radius:10px;background:var(--p)}
+.sx-row{display:flex;gap:16px;align-items:center;padding:15px 20px;border-top:1px solid var(--ln)}.sx-row:first-child{border-top:0}
 .sx-n{font-weight:600}.sx-d{color:var(--dm);font-size:13.5px;margin-top:1px}
 .sx-st{margin-left:auto;display:inline-flex;align-items:center;gap:7px;font-size:13.5px;font-weight:500;white-space:nowrap;color:var(--gn)}
 .sx-st::before{content:"";width:8px;height:8px;border-radius:50%;background:currentColor;flex:none}
 .sx-st.info{color:var(--cy)}.sx-st.bad{color:var(--am)}.sx-st.none{color:var(--fn)}
-.sx-bars{display:flex;gap:3px;height:36px}.sx-bars>*{flex:1;min-width:3px;border-radius:2px;background:var(--gn);opacity:.85}
-.sx-bars>*:hover{opacity:1;text-decoration:none}.sx-bars .info{background:var(--cy)}.sx-bars .bad{background:var(--am)}
-.sx-bars .none{background:var(--ln2)}
-.sx-legend{display:flex;justify-content:space-between;gap:12px;color:var(--fn);font-size:12px;margin-top:6px}
-.sx-none{color:var(--dm);margin:0}
-.sx-inc{list-style:none;margin:0;padding:0;border:1px solid var(--ln);border-radius:12px;background:var(--p)}
-.sx-inc li{display:flex;align-items:center;gap:16px;padding:13px 18px;border-top:1px solid var(--ln)}
-.sx-inc li:first-child{border-top:0}.sx-inc .sx-d{overflow-wrap:anywhere}
-.sx-full{margin-top:28px;border:1px solid var(--ln);border-radius:12px;background:var(--p);padding:0 18px}
-.sx-full>summary{cursor:pointer;padding:14px 0;font-weight:600}.sx-full[open]>summary{border-bottom:1px solid var(--ln)}
-.sx-full .stages{padding-bottom:10px}
+.sx-card{border:1px solid var(--ln);border-radius:10px;background:var(--p);padding:16px 20px}
+.sx-card>.sx-h{margin:0 0 12px}
+.sx-bars{display:flex;gap:3px;height:34px;position:relative}
+.sx-bars>*{flex:1;min-width:3px;border-radius:2px;background:var(--gn);opacity:.85;display:block}
+.sx-bars>*:hover,.sx-bars>*:focus-visible{opacity:1;text-decoration:none;outline-offset:1px}
+.sx-bars .info{background:var(--cy)}.sx-bars .bad{background:var(--am)}.sx-bars .none{background:var(--ln2)}
+.sx-legend{display:flex;justify-content:space-between;gap:12px;color:var(--fn);font-size:12px;margin-top:8px}
+.sx-tip{position:absolute;z-index:6;pointer-events:none;background:var(--tx);color:var(--bg);font-size:12.5px;line-height:1.45;
+padding:8px 10px;border-radius:6px;box-shadow:0 4px 14px rgba(0,0,0,.25);white-space:nowrap;transform:translate(-50%,-100%);margin-top:-8px}
+.sx-tip b{font-weight:600;font-variant-numeric:tabular-nums}.sx-tip .sx-sub{opacity:.75}
+.sx-tip::after{content:"";position:absolute;left:50%;top:100%;margin-left:-5px;border:5px solid transparent;border-top-color:var(--tx)}
+.sx-none{color:var(--dm);margin:0;font-size:14px}
+.sx-inc{list-style:none;margin:0;padding:0}
+.sx-inc li{display:flex;align-items:center;gap:16px;padding:12px 0;border-top:1px solid var(--ln)}
+.sx-inc li:first-child{border-top:0;padding-top:0}.sx-inc li:last-child{padding-bottom:0}.sx-inc .sx-d{overflow-wrap:anywhere}
+.sx-full{margin-top:28px;border:1px solid var(--ln);border-radius:10px;background:var(--p);padding:0 20px}
+.sx-full>summary{cursor:pointer;padding:14px 0;font-weight:600;display:flex;align-items:center;gap:10px}
+.sx-full>summary::marker{content:""}.sx-full>summary::-webkit-details-marker{display:none}
+.sx-full>summary::before{content:"";width:7px;height:7px;border-right:1.5px solid var(--fn);border-bottom:1.5px solid var(--fn);transform:rotate(-45deg);transition:transform .15s;margin-left:2px}
+.sx-full[open]>summary::before{transform:rotate(45deg)}
+.sx-full[open]>summary{border-bottom:1px solid var(--ln)}
+.sx-full .sx-meta{color:var(--fn);font-size:13px;margin:12px 0 4px}
+.sx-full .stages{padding-bottom:6px}
 .sx-about{color:var(--fn);font-size:13px;margin-top:28px}
 @media (max-width:479px){.sx-row{flex-direction:column;align-items:flex-start;gap:6px}.sx-st{margin-left:0}
-.sx-hero{padding:18px}.sx-hero h1{font-size:20px}}
+.sx-hero{padding:18px}.sx-hero h1{font-size:20px}.stg .s{margin-left:0}}
 </style>"""
 
 
@@ -124,14 +138,17 @@ def when(iso):
     return f'{t:%d %b %Y %H%M}Z (<time datetime="{z}" data-ago="{z}">{t:%d %b %H%M}Z</time>)'
 
 
+# each stage's state: (css colour, label). Passed and Done differ on purpose: Done means the stage ran and its
+# numbers are below, Passed means a check ran and found nothing wrong
+KINDS = {"pass": ("ok", "Passed"), "done": ("ok", "Done"), "warn": ("info", "Warnings"), "fail": ("bad", "Failed"),
+         "skip": ("none", "Not run"), "none": ("none", "Not recorded"), "wait": ("info", "Waiting"),
+         "live": ("ok", "Published"), "held": ("bad", "Not published"), "noted": ("info", "Noted")}
+
+
 def chip(kind, label=None):
-    """the status label on a stage. Passed and Done differ on purpose: Done means the stage ran and
-    its numbers are below, Passed means a check ran and found nothing wrong."""
-    cls, text = {"pass": ("ok", "Passed"), "done": ("fyi", "Done"), "warn": ("ifr", "Warnings"),
-                 "fail": ("act", "Failed"), "skip": ("fyi", "Not run"), "none": ("fyi", "Not recorded"),
-                 "wait": ("ifr", "Waiting"), "live": ("ok", "Published"), "held": ("act", "Not published"),
-                 "noted": ("ifr", "Noted")}[kind]
-    return f'<span class="ann {cls}">{label or text}</span>'
+    """a status word with its coloured dot (the same look as the component rows)."""
+    cls, text = KINDS[kind]
+    return f'<span class="sx-st {cls}">{label or text}</span>'
 
 
 def more(label, inner):
@@ -147,9 +164,11 @@ STEPS = {"Downloaded the FAA files": "Ingestion", "Read the FAA data": "Parsing"
 
 
 def stage(kind, title, detail, extra=""):
-    step = f'<div class="k">{STEPS[title]}</div>' if title in STEPS else ""
-    return (f'<div class="stg">{chip(kind)}<div>{step}<div class="t">{title}</div>'
-            f'<div class="d">{detail}</div></div>{extra}</div>')
+    cls, text = KINDS[kind]
+    step = f'<span class="k">{STEPS[title]}</span>' if title in STEPS else ""
+    return (f'<div class="stg k-{cls}"><span class="stg-dot" aria-hidden="true"></span><div><div class="stg-h">'
+            f'<span class="t">{title}</span>{step}<span class="s">{text}</span></div>'
+            f'<div class="d">{detail}</div>{extra}</div></div>')
 
 
 def cycles(r):
@@ -392,9 +411,8 @@ def s_other(r):
     if not extra:
         return ""
     rows = "".join(f'<tr><td>{e(k)}</td><td>{generic(v)}</td></tr>' for k, v in extra.items())
-    return (f'<div class="stg">{chip("done")}<div><div class="t">Other recorded fields</div><div class="d">Fields this page '
-            f'doesn\'t describe yet, as the run wrote them.</div></div>'
-            + more("Show", f'<div class="tw"><table class="tb">{rows}</table></div>') + "</div>")
+    return stage("done", "Other recorded fields", "Fields this page doesn't describe yet, as the run wrote them.",
+                 more("Show", f'<div class="tw"><table class="tb">{rows}</table></div>'))
 
 
 def stages(r):
@@ -549,7 +567,8 @@ BAR = {"live": "ok", "warn": "ok", "wait": "info", "held": "bad", "fail": "bad",
 
 
 def bars(recs):
-    """the last SHOWN runs as a strip, oldest on the left; each opens its record on GitHub."""
+    """the last SHOWN runs as a strip, oldest on the left. Hovering (or tapping) one shows exactly when it ran, what
+    it was and how it ended (TIP_JS); clicking opens its record on GitHub."""
     shown = recs[:SHOWN][::-1]
     if not shown:
         return ""
@@ -558,17 +577,43 @@ def bars(recs):
         kind, label = verdict(r)
         tally[label] = tally.get(label, 0) + 1
         try:
-            t = dt.datetime.fromisoformat(r.get("started_at")).astimezone(dt.timezone.utc).strftime("%d %b %H%MZ")
+            t = dt.datetime.fromisoformat(r.get("started_at")).astimezone(dt.timezone.utc)
+            iso, exact = t.strftime("%Y-%m-%dT%H:%M:%SZ"), t.strftime("%d %b %Y %H:%M:%SZ")
         except (TypeError, ValueError):
-            t = "time not recorded"
-        what = "history" if r.get("mode") == "history" else "site build"
-        tip = e(f"{t} · {what} · {label} · {cycles(r)}")
-        href = f'{web.REPO_URL}/blob/master/{e(r["_path"])}' if r.get("_path") else (e((r.get("run") or {}).get("url") or ""))
-        out.append(f'<a class="{BAR[kind]}" href="{href}" title="{tip}" aria-label="{tip}"></a>' if href
-                   else f'<span class="{BAR[kind]}" title="{tip}"></span>')
+            iso, exact = "", "time not recorded"
+        run = r.get("run") or {}
+        trig = {"schedule": "scheduled check", "push": "code change", "workflow_dispatch": "started by hand",
+                "local": "local build"}.get(run.get("trigger"), run.get("trigger") or "")
+        what = ("history" if r.get("mode") == "history" else "site build") + (f", {trig}" if trig else "")
+        sec = f", {r['seconds']:,.0f}s" if r.get("seconds") is not None else ""
+        tip = e(f"{exact} · {what} · {label} · {cycles(r)}")
+        href = f'{web.REPO_URL}/blob/master/{e(r["_path"])}' if r.get("_path") else e(run.get("url") or "")
+        attrs = (f'class="{BAR[kind]}" data-t="{iso}" data-x="{e(exact)}" data-w="{e(what + sec)}" data-l="{e(label)}" '
+                 f'data-c="{e(cycles(r))}" aria-label="{tip}"')
+        out.append(f'<a {attrs} href="{href}"></a>' if href else f'<span {attrs}></span>')
     counts = ", ".join(f"{n} {k.lower()}" for k, n in sorted(tally.items(), key=lambda kv: -kv[1]))
-    return (f'<div class="sx-bars">{"".join(out)}</div><div class="sx-legend"><span>Older</span>'
-            f'<span>{len(shown)} runs: {e(counts)}</span><span>Newest</span></div>')
+    return (f'<div class="sx-bars" id="sxbars">{"".join(out)}</div><div class="sx-legend"><span>Older</span>'
+            f'<span>{len(shown)} runs: {e(counts)}</span><span>Newest</span></div>{TIP_JS}')
+
+
+# the tooltip on a run bar: the exact UTC time (and how long ago, on the site's clock), what the run was, how it
+# ended and which cycles it compared. Shown on hover or focus, and on a tap, where the first tap shows it and the
+# second follows the link
+TIP_JS = r"""<script>(()=>{const w=document.getElementById("sxbars");if(!w)return;let tip=null,cur=null;
+const clock=()=>typeof AM!=="undefined"&&AM.now?AM.now():Date.now();
+const ago=t=>{if(!t)return"";const m=Math.floor((clock()-Date.parse(t))/6e4),h=Math.floor(m/60),d=Math.floor(h/24);
+  return m<1?"just now":m<60?m+" min ago":h<48?h+"h ago":d+" days ago"};
+function show(b){hide();const d=b.dataset,a=ago(d.t);tip=document.createElement("div");tip.className="sx-tip";
+  tip.innerHTML="<b>"+d.x+"</b>"+(a?' <span class="sx-sub">('+a+")</span>":"")+"<br>"+d.w+" · "+d.l+'<br><span class="sx-sub">'+d.c+"</span>";
+  w.appendChild(tip);const r=b.getBoundingClientRect(),p=w.getBoundingClientRect();
+  let x=r.left-p.left+r.width/2;const half=tip.offsetWidth/2;x=Math.max(half,Math.min(p.width-half,x));
+  tip.style.left=x+"px";tip.style.top="0";cur=b}
+function hide(){if(tip)tip.remove();tip=null;cur=null}
+w.querySelectorAll("[data-x]").forEach(b=>{b.addEventListener("mouseenter",()=>show(b));b.addEventListener("mouseleave",hide);
+  b.addEventListener("focus",()=>show(b));b.addEventListener("blur",hide);
+  b.addEventListener("touchstart",ev=>{if(cur!==b){ev.preventDefault();show(b)}},{passive:false});
+  b.addEventListener("click",ev=>{if(matchMedia("(hover:none)").matches&&cur!==b){ev.preventDefault();show(b)}})});
+document.addEventListener("touchstart",ev=>{if(!w.contains(ev.target))hide()},{passive:true})})()</script>"""
 
 
 def problems(recs):
@@ -605,11 +650,11 @@ def page(recs, meta, now):
             + (BEHIND_JS if behind_attrs else ""),
             components(top, next((r for r in builds if r.get("published")), None), meta, now)]
     if recs:
-        body.append(f'<h2 class="sx-h">Recent runs</h2>{bars(recs)}')
-    body.append(f'<h2 class="sx-h">Problems</h2>{problems(recs)}')
+        body.append(f'<h2 class="sx-h">Recent runs</h2><div class="sx-card">{bars(recs)}</div>')
+    body.append(f'<h2 class="sx-h">Incidents</h2><div class="sx-card">{problems(recs)}</div>')
     if top is not None:
         body.append(f'<details class="sx-full"><summary>Every step of the latest build</summary>'
-                    f'<p class="note">{run_meta(top)}</p><div class="stages">{stages(top)}</div></details>')
+                    f'<p class="sx-meta">{run_meta(top)}</p><div class="stages">{stages(top)}</div></details>')
     body.append(f'<p class="sx-about">Every value on this page comes from the run log Amend writes on each run; nothing '
                 f'is estimated. <a href="{docs}#status">How this page works</a> · '
                 f'<a href="{web.REPO_URL}/tree/master/audit/runs">All run records</a></p>')
