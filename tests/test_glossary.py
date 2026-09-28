@@ -93,6 +93,29 @@ class TestGlossary(unittest.TestCase):
             self.assertTrue(g[t]["english"], t)
             self.assertFalse(g[t]["verified"], t)
 
+    def test_the_model_is_told_only_reviewed_meanings(self):
+        """a JO 7340.2-only meaning is accepted but not suggested until it's in CURATED: plenty are
+        from other fields. the Chart Supplement's own list is what remarks are written with."""
+        for term, e in glossary.load().items():
+            if e["prompt"]:
+                self.assertTrue(e["source"].startswith("CS") or term in glossary.CURATED, term)
+        self.assertFalse(glossary.lookup("PRVD")["prompt"])        # provide: JO 7340.2 only
+        self.assertTrue(glossary.lookup("OUBD")["prompt"])         # read against real remarks
+
+    def test_meanings_from_other_fields_are_not_verified(self):
+        for t in ("LL", "GOV", "LT", "PTS", "OB", "DP", "CC", "NC", "CTR", "RTG", "POC"):
+            e = glossary.lookup(t)
+            self.assertFalse(e["verified"], t)
+            self.assertIn("doesn't fit", e["note"], t)
+        for t in ("STRONG", "EVERY", "SPAN", "LONG"):             # words, not stereo routes or longitude
+            self.assertTrue(glossary.lookup(t)["english"], t)
+
+    def test_a_comma_inside_parentheses_is_one_meaning(self):
+        self.assertEqual(glossary.lookup("DME")["expansion"],
+                         "Distance Measuring Equipment (UHF standard, TACAN compatible)")
+        self.assertTrue(glossary.lookup("HF")["verified"])
+        self.assertIsNone(glossary.lookup("SEC").get("note"))     # picked in CURATED, so no "more than one" note
+
     def test_derived_forms(self):
         """JO 7340.2 1-2-3: HRS is HR + S. a derived form keeps its root's meaning."""
         hrs = glossary.lookup("HRS")
@@ -290,6 +313,10 @@ class TestPrompt(unittest.TestCase):
         self.assertEqual(sorted(copy), ["TRANS", "UNMKD"])
         # plain words, single letters and terms remarks use two ways get no meaning
         for t in ("TO", "L", "ALT", "PER", "NA"):
+            self.assertNotIn(f"\n{t} = ", p)
+        # nor do JO 7340.2-only meanings nobody has read against remarks, or ones that don't fit
+        p = remarks.prompt_for(["100 LL AVBL.", "GOV ACFT ONLY.", "FUEL PRVD BY FBO."])
+        for t in ("LL", "GOV", "PRVD"):
             self.assertNotIn(f"\n{t} = ", p)
 
 

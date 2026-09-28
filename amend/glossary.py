@@ -82,6 +82,11 @@ ENGLISH = {
     "GET", "GO", "HOT", "ICE", "JET", "KEY", "LEG", "LOT", "LOW", "MAY", "NOW", "OFF", "OIL", "OLD",
     "ONE", "ONLY", "OUR", "OUT", "OWN", "PAD", "PAY", "RED", "ROW", "RUN", "SEA", "SEE", "SIX", "SKI",
     "TEN", "TIE", "TOO", "TWO", "US", "USE", "WAY", "WET", "YOU",
+    # words and names JO 7340.2 happens to list, or the suffix rule would build: "STRONG DOWNDRAFTS"
+    # isn't stereo routes, "WING SPAN" isn't a stored program, "EVERY MON" isn't evening
+    "AMAR", "ARC", "BALL", "CACTUS", "DISCS", "ELBA", "EVEN", "EVERY", "FILL", "HANG", "HEAD", "HEADS",
+    "HELD", "LONG", "NESS", "PAUL", "PLANS", "RODD", "RUTS", "SPAN", "SPANS", "STRONG", "TAIL", "TIP",
+    "VAN",
 }
 
 
@@ -165,6 +170,61 @@ CURATED = {
     "WKND": {"expansion": None, "note": "the FAA lists 'weaken'; remarks use WKND for weekend (WKEND)"},
     "XS": {"expansion": None, "note": "JO 7340.2 lists XS only as atmospherics (ICAO); remarks use it "
                                       "for 'crosses', which no FAA list spells out"},
+    # JO 7340.2 meanings from other fields, where remarks mean something else by the same letters
+    **{t: {"expansion": None, "note": f"remarks use it for {use}; JO 7340.2's {faa!r} doesn't fit"}
+       for t, (use, faa) in {
+           "A/C": ("aircraft ('A/C MAINT')", "approach control"),
+           "AFM": ("airfield manager ('CTC AFM')", "affirmative"),
+           "AIRFLD": ("airfield", "air refueling"),
+           "AR": ("Army Reserve ('ARNG, AR AND A')", "Atlantic Route"),
+           "BSC": ("basic ('NSTD SMALL BSC MARKINGS')", "bird sweep completed"),
+           "CA": ("California", "clear above (PIREP only)"),
+           "CC": ("credit card ('100LL AVBL 24 HRS WITH CC')", "carbon copy"),
+           "CONF": ("confirm and conference ('CONF RWY CONDS', 'CONF ROOM')", "confidential"),
+           "CONSDR": ("consider", "continuous (CONS + DR)"),
+           "CP": ("command post ('126TH CP')", "circular polarization"),
+           "CTR": ("center ('MED CTR', 'RWY 29 CTR')", "control zone"),
+           "DC": ("the DC-10", "direct current"),
+           "DE": ("de- ('DE-ICE', 'DE-RIGGED')", "From (before a call sign)"),
+           "DEF": ("defined ('DEF BY FAR PART 77')", "defense"),
+           "DP": ("departure procedure", "dew point temperature"),
+           "DPTS": ("departures ('PPR OR DPTS')", "depth (DPT + S)"),
+           "DST": ("distance and daylight saving time", "distort"),
+           "DZ": ("drop zone", "drizzle"),
+           "EAS": ("Eareckson Air Station", "equivalent airspeed"),
+           "ECA": ("explosive cargo area", "enter control area"),
+           "ER": ("taxiway names ('TWYS EL AND ER')", "here"),
+           "ET": ("Eastern Time ('M-F 8-4 ET')", "electronic technician"),
+           "GOV": ("government ('MIL/GOV', 'NON DOD GOV')", "Governor"),
+           "INS": ("inches ('CRACKS OVER 2 INS WIDE')", "inertial navigation system"),
+           "KC": ("the KC-135 tanker", "kilocycles"),
+           "LL": ("fuel ('100 LL & JET A AVBL')", "landline"),
+           "LT": ("left ('440 FT LT OF CTLN')", "turn left after take-off"),
+           "MAND": ("mandatory ('LDG PERMIT MAND')", "manual (MAN + D)"),
+           "MOC": ("a maintenance office ('AIRFIELD MGMT, MOC & POL')", "minimum obstacle clearance"),
+           "NC": ("North Carolina", "no change"),
+           "OB": ("'+5 FT FENCE OB OF CNTRLN', not on board", "on board"),
+           "OWS": ("Operational Weather Squadron ('CTC 15 OWS')", "one way (OW + S)"),
+           "PIT": ("hot pit refueling ('HOT PIT AVBL')", "pilot instructor training"),
+           "POC": ("point of contact ('BASE OPS POC')", "proceed or proceeding on course"),
+           "POCS": ("points of contact", "proceed or proceeding on course (POC + S)"),
+           "PR": ("prior ('PR TO XNG RWY 10 THLD')", "photo reconnaissance"),
+           "PRES": ("president", "pressure"),
+           "PROVD": ("provide ('MUST PROVD 30 MIN PPR')", "provisional (PROV + D)"),
+           "PTS": ("points ('BORROW PTS', 'GND CK PTS')", "polar track structure"),
+           "RE": ("re- ('RE-ENTER')", "regard"),
+           "RPA": ("remotely piloted aircraft", "request present altitude"),
+           "RQ": ("required ('24-HR PPR RQ')", "Indication of a request"),
+           "RTG": ("rotating ('ACTVT RTG BCN')", "radiotelegraph"),
+           "SAN": ("San Antonio and San Juan", "sanitary"),
+           "SP": ("names and specs ('TXL SP', 'SP PRESAIR')", "standard holding pattern"),
+           "SUB": ("substandard ('RWY MARKINGS ARE SUB')", "substitute"),
+           "VA": ("Virginia and taxiway names ('TWY VA')", "victor airways"),
+           "WV": ("West Virginia", "wind at altitude (PIREP only)"),
+       }.items()},
+    # JO 7340.2-only meanings read against real remarks: the model is told these
+    "OUBD": {"note": "'DITCH 30 FT OUBD FM THLD', 'INBD & OUBD TO/FM KFFO'"},
+    "OPDT": {"note": "'WITH LNDG LGT ON; OPDT'"},
     # the FAA meaning holds, but remarks also use the term another way: the model isn't told the
     # FAA meaning (so it won't force it on 'ALT PHONE'), and a translation still has to use it
     **{t: {"prompt": False, "note": n} for t, n in [
@@ -295,7 +355,7 @@ _FILLER = {"and", "the", "for", "with", "from", "into", "not"}
 def _one_sense(meanings):
     """true when every meaning is a form of the first: 'Civil, civil, civilian' or 'beacon' and
     'Rotating Light or Beacon', not 'Fan Marker, Frequency Modulation'."""
-    parts = [p for m in meanings for p in re.split(r",\s*", m) if p.strip()]
+    parts = [p for m in meanings for p in re.split(r",(?![^()]*\))\s*", m) if p.strip()]
     return all(_related(parts[0], p) for p in parts[1:])
 
 
@@ -325,8 +385,11 @@ def default_entry(term, found):
     if not _one_sense(base):
         entry["note"] = "the FAA lists more than one meaning; copied as written until one is picked"
         return entry
+    # the model is only told Chart Supplement meanings. a JO 7340.2-only meaning is still accepted,
+    # but it's suggested only once it's in CURATED: many are from other fields (LL = landline,
+    # GOV = governor) and would push the model to a wrong reading
     entry.update(expansion=base[0], meanings=_dedup(base + also), verified=True, source=source,
-                 prompt=len(term) > 1)
+                 prompt=len(term) > 1 and source == "CS")
     return entry
 
 
@@ -361,8 +424,9 @@ def build(sources=None):
                 entry["faa"] = [f"{root}: {f}" for f in terms[root]["faa"]]
             entry.update(expansion=" or ".join(picked), meanings=picked, verified=True, source=source,
                          prompt=cur.get("prompt", True))
-        elif "prompt" in cur:
-            entry["prompt"] = cur["prompt"]
+            entry.pop("note", None)
+        elif entry["verified"]:     # reviewed against real remarks: the model may be told the meaning
+            entry["prompt"] = cur.get("prompt", len(term) > 1)
         if not entry["verified"] and ("accept" in cur or "parts" in cur):
             raise ValueError(f"{term}: accept patterns need a verified meaning")
         for k in ("note", "accept"):
