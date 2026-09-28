@@ -9,6 +9,9 @@ struct AirportsView: View {
     @State private var naming: Naming?
     @State private var nameText = ""
     @State private var deleting: AirportList?
+    @State private var importing = false
+    @State private var importText = ""
+    @State private var importNote: String?
     @AppStorage(SettingsKey.onboarded) private var onboarded = false
 
     var body: some View {
@@ -152,6 +155,18 @@ struct AirportsView: View {
             } message: {
                 Text("This can't be undone. The airports stay on your other lists.")
             }
+            .alert("Open a shared list", isPresented: $importing) {
+                TextField("amend.watch/list link or airport IDs", text: $importText)
+                    .textInputAutocapitalization(.never)
+                    .autocorrectionDisabled()
+                Button("Save") { Task { await importList() } }
+                Button("Cancel", role: .cancel) { }
+            } message: {
+                Text("Paste a list link someone shared from amend.watch or this app, or type airport IDs.")
+            }
+            .alert(importNote ?? "", isPresented: Binding(get: { importNote != nil }, set: { if !$0 { importNote = nil } })) {
+                Button("OK") { importNote = nil }
+            }
             .alert("Couldn't load FAA data", isPresented: .constant(store.errorMessage != nil)) {
                 Button("OK") { store.errorMessage = nil }
             } message: {
@@ -179,6 +194,10 @@ struct AirportsView: View {
                     }
                 }
                 Button { startNaming(.new, "") } label: { Label("New list", systemImage: "plus") }
+                Button {
+                    importText = ""
+                    importing = true
+                } label: { Label("Open a shared list", systemImage: "link") }
                 if let list {
                     Button(role: .destructive) { deleting = list } label: {
                         Label("Delete \(list.name)", systemImage: "trash")
@@ -190,6 +209,22 @@ struct AirportsView: View {
                     .frame(width: 36, height: 28)
             }
             .accessibilityLabel("List options")
+        }
+    }
+
+    /// saves a shared list, or switches to it if you already have the same airports
+    private func importList() async {
+        do {
+            let shared = try await SharedList.read(importText)
+            if let have = store.sameList(shared.ids, name: shared.name) {
+                store.useList(have.id)
+                importNote = "You already have these airports as \u{201C}\(have.name)\u{201D}."
+            } else {
+                let list = store.createList(shared.name, ids: shared.ids)
+                importNote = "Saved \u{201C}\(list.name)\u{201D} with \(list.ids.count) airport\(list.ids.count == 1 ? "" : "s")."
+            }
+        } catch {
+            importNote = error.localizedDescription
         }
     }
 

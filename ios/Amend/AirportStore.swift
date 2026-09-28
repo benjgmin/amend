@@ -218,6 +218,13 @@ final class AirportStore {
         return list
     }
 
+    /// a shared list you already have (the same airports), the same name first, like the site's LS.same
+    func sameList(_ ids: [String], name: String) -> AirportList? {
+        let want = Set(ids)
+        let matches = lists.filter { Set($0.ids) == want && $0.ids.count == want.count }
+        return matches.first { $0.name == name } ?? matches.first
+    }
+
     func renameList(_ listID: String, to name: String) {
         guard let i = lists.firstIndex(where: { $0.id == listID }) else { return }
         lists[i].name = uniqueName(name, skip: listID)
