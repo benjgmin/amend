@@ -4,7 +4,11 @@ import Observation
 @MainActor
 @Observable
 final class AirportStore {
-    private(set) var saved: [String] = []
+    /// your lists of airports, like the site's (no account: they live on this phone)
+    private(set) var lists: [AirportList] = []
+    /// the list the home screen shows, and where + adds
+    private(set) var activeListID: String?
+    /// pinned at the top of home; it doesn't have to be on a list
     private(set) var home: String?
     private(set) var meta: Meta?
     private(set) var index: LatestIndex?
@@ -19,8 +23,17 @@ final class AirportStore {
 
     init() {
         let d = UserDefaults.standard
-        saved = d.stringArray(forKey: SettingsKey.saved) ?? []
         home = d.string(forKey: SettingsKey.home)
+        if let data = d.data(forKey: SettingsKey.lists),
+           let stored = try? JSONDecoder().decode([AirportList].self, from: data) {
+            lists = stored
+        } else {
+            // before lists there was one list of saved airports (home among them): it becomes "My airports"
+            let old = (d.stringArray(forKey: SettingsKey.saved) ?? []).filter { $0 != home }
+            if !old.isEmpty { lists = [AirportList(id: Self.newID(), name: "My airports", ids: old)] }
+            persist()
+        }
+        activeListID = d.string(forKey: SettingsKey.activeList)
         if let data = try? Data(contentsOf: directoryCache) {
             applyDirectory(data)
         }
@@ -30,7 +43,20 @@ final class AirportStore {
 
     func counts(for id: String) -> Counts? { index?.airports[id] }
     func info(for id: String) -> AirportInfo? { byID[id] }
-    func isSaved(_ id: String) -> Bool { saved.contains(id) }
+
+    /// every airport you keep: home first, then each list's, without repeats
+    var saved: [String] {
+        var seen = Set<String>()
+        return ([home].compactMap { $0 } + lists.flatMap(\.ids)).filter { seen.insert($0).inserted }
+    }
+
+    /// on any list, or your home field
+    func isSaved(_ id: String) -> Bool { home == id || lists.contains { $0.ids.contains(id) } }
+
+    /// the list in use: the one you picked last, else the first
+    var activeList: AirportList? { lists.first { $0.id == activeListID } ?? lists.first }
+
+    func listsContaining(_ id: String) -> [AirportList] { lists.filter { $0.ids.contains(id) } }
 
     /// the airports with the most action items this cycle, as on the site's home page (most changes breaks ties)
     private(set) var busiest: [String] = []
@@ -45,8 +71,6 @@ final class AirportStore {
             .map(\.key)
     }
 
-    /// saved airports except home, in the user's order
-    var others: [String] { saved.filter { $0 != home } }
 
     /// ranked: exact id/ICAO, then id/ICAO prefix, then name, then city.
     /// within a rank, real airports with an ICAO id (towered/bigger fields) come first.
@@ -115,7 +139,7 @@ final class AirportStore {
         try? FileManager.default.removeItem(at: directoryCache)
     }
 
-    // MARK: saved airports
+    // MARK: lists
 
     /// "kdab " -> "DAB". Returns nil if it doesn't look like an airport id.
     static func normalize(_ raw: String) -> String? {
@@ -127,45 +151,103 @@ final class AirportStore {
         return id
     }
 
+    /// puts an airport on the list in use (starting "My airports" if there's no list yet). Never sets home.
     @discardableResult
     func add(_ raw: String) -> String? {
         guard let id = Self.normalize(raw) else { return nil }
-        if !saved.contains(id) {
-            saved.append(id)   // never sets home: only an explicit pick does
-            persist()
-        }
+        let list = activeList ?? createList("My airports")
+        setOnList(id, list.id, true)
         return id
     }
 
-    func remove(_ id: String) {
-        saved.removeAll { $0 == id }
-        if home == id { setHome(nil) }
+    /// on or off one list
+    func setOnList(_ id: String, _ listID: String, _ on: Bool) {
+        guard let i = lists.firstIndex(where: { $0.id == listID }) else { return }
+        if on {
+            guard !lists[i].ids.contains(id), lists[i].ids.count < AirportList.maxAirports else { return }
+            lists[i].ids.append(id)
+        } else {
+            lists[i].ids.removeAll { $0 == id }
+        }
         persist()
     }
 
-    /// offsets are into `others`
-    func removeOthers(at offsets: IndexSet) {
-        let ids = offsets.map { others[$0] }
-        saved.removeAll { ids.contains($0) }
+    /// same names as the site: trimmed, 60 characters at most, and a repeat gets " 2"
+    @discardableResult
+    func createList(_ name: String, ids: [String] = []) -> AirportList {
+        let list = AirportList(id: Self.newID(), name: uniqueName(name, skip: nil),
+                               ids: Array(ids.reduce(into: [String]()) { if !$0.contains($1) { $0.append($1) } }
+                                   .prefix(AirportList.maxAirports)))
+        lists.append(list)
+        useList(list.id)
+        persist()
+        return list
+    }
+
+    func renameList(_ listID: String, to name: String) {
+        guard let i = lists.firstIndex(where: { $0.id == listID }) else { return }
+        lists[i].name = uniqueName(name, skip: listID)
         persist()
     }
 
-    /// offsets are into `others`
-    func moveOthers(from source: IndexSet, to destination: Int) {
-        var list = others
-        list.move(fromOffsets: source, toOffset: destination)
-        saved = (home.map { [$0] } ?? []) + list
+    func deleteList(_ listID: String) {
+        lists.removeAll { $0.id == listID }
+        if activeListID == listID { useList(lists.first?.id) }
+        persist()
+    }
+
+    func useList(_ listID: String?) {
+        activeListID = listID
+        UserDefaults.standard.set(listID, forKey: SettingsKey.activeList)
+    }
+
+    /// offsets are into the list's airports
+    func move(in listID: String, from source: IndexSet, to destination: Int) {
+        guard let i = lists.firstIndex(where: { $0.id == listID }) else { return }
+        lists[i].ids.move(fromOffsets: source, toOffset: destination)
         persist()
     }
 
     func setHome(_ id: String?) {
         home = id
-        if let id, !saved.contains(id) { saved.insert(id, at: 0) }
         UserDefaults.standard.set(id, forKey: SettingsKey.home)
         persist()
     }
 
+    private func uniqueName(_ raw: String, skip: String?) -> String {
+        let base = String(raw.trimmingCharacters(in: .whitespacesAndNewlines).prefix(60))
+        let name = base.isEmpty ? "My airports" : base
+        var candidate = name, n = 2
+        while lists.contains(where: { $0.id != skip && $0.name.lowercased() == candidate.lowercased() }) {
+            candidate = "\(name.prefix(56)) \(n)"
+            n += 1
+        }
+        return candidate
+    }
+
+    private static func newID() -> String { String(UUID().uuidString.prefix(8)).lowercased() }
+
     private func persist() {
-        UserDefaults.standard.set(saved, forKey: SettingsKey.saved)
+        let d = UserDefaults.standard
+        if let data = try? JSONEncoder().encode(lists) { d.set(data, forKey: SettingsKey.lists) }
+        // background alerts read this: every airport you keep, home included
+        d.set(saved, forKey: SettingsKey.saved)
+    }
+}
+
+/// one list of airports ("Club SVFR", "Bahamas trip"), the same shape as the site's
+struct AirportList: Codable, Identifiable, Hashable, Sendable {
+    let id: String
+    var name: String
+    var ids: [String]
+
+    static let maxAirports = 200
+
+    /// amend.watch/list/?w=DAB,VRB&n=Club%20SVFR: anyone can open it, and save it on the site
+    var shareURL: URL? {
+        var c = URLComponents(url: API.base.appending(path: "list/"), resolvingAgainstBaseURL: false)
+        c?.queryItems = [URLQueryItem(name: "w", value: ids.joined(separator: ",")),
+                         URLQueryItem(name: "n", value: name)]
+        return c?.url
     }
 }

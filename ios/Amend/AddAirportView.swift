@@ -32,6 +32,12 @@ struct AddAirportView: View {
                 .padding()
 
                 List {
+                    if !makeHome, store.lists.count > 1, let list = store.activeList, !results.isEmpty {
+                        Text("Tap + to add to \(list.name). Switch lists on the home screen.")
+                            .font(.footnote)
+                            .foregroundStyle(EFB.faint)
+                            .efbRow(top: 0, bottom: 4)
+                    }
                     ForEach(results) { apt in
                         HStack(spacing: 8) {
                             Button { open(apt.id) } label: {
@@ -72,20 +78,22 @@ struct AddAirportView: View {
         }
     }
 
-    /// + adds to your airports, ✓ takes it off again
+    /// + puts it on the list in use (starting "My airports" if there's none), ✓ takes it off that list
     private func toggle(_ id: String) -> some View {
-        let saved = store.isSaved(id)
+        let list = store.activeList
+        let on = list?.ids.contains(id) ?? false
+        let name = list?.name ?? "My airports"
         return Button {
-            if saved { store.remove(id) } else { store.add(id) }
+            if on, let list { store.setOnList(id, list.id, false) } else { store.add(id) }
         } label: {
-            Image(systemName: saved ? "checkmark" : "plus")
+            Image(systemName: on ? "checkmark" : "plus")
                 .font(.system(size: 15, weight: .semibold))
-                .foregroundStyle(saved ? EFB.green : EFB.cyan)
+                .foregroundStyle(on ? EFB.green : EFB.cyan)
                 .frame(width: 44, height: 44)
                 .background(EFB.panel, in: RoundedRectangle(cornerRadius: 6))
         }
         .buttonStyle(.borderless)
-        .accessibilityLabel(saved ? "Remove \(id) from my airports" : "Add \(id) to my airports")
+        .accessibilityLabel(on ? "Remove \(id) from \(name)" : "Add \(id) to \(name)")
     }
 
     private func open(_ id: String) {
@@ -95,7 +103,7 @@ struct AddAirportView: View {
     }
 
     private func pick(_ id: String) {
-        if let id = store.add(id) { store.setHome(id) }
+        if let id = AirportStore.normalize(id) { store.setHome(id) }
         dismiss()
     }
 

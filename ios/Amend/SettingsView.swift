@@ -102,7 +102,7 @@ struct SettingsView: View {
         } header: {
             EFBHeader(text: "Home")
         } footer: {
-            Text("Your home field is pinned at the top. Add more airports with + on the main screen.")
+            Text("Your home field is pinned at the top of the main screen, above your lists. Find more airports with the search there.")
                 .font(.footnote).foregroundStyle(EFB.faint)
         }
     }

@@ -3,7 +3,9 @@ import SwiftUI
 
 /// UserDefaults keys, shared by @AppStorage in views and by background code.
 enum SettingsKey {
-    static let saved = "savedAirports"
+    static let saved = "savedAirports"           // every airport kept (home + lists), for background alerts
+    static let lists = "airportLists"            // [AirportList] as JSON
+    static let activeList = "activeList"
     static let home = "homeAirport"
     static let notifyEnabled = "notifyEnabled"
     static let notifyMode = "notifyMode"            // NotifyMode raw value
