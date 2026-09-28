@@ -1,0 +1,32 @@
+name: tests
+
+# every pull request runs the same test suite the deploy runs (update.yml), so a broken rule or
+# summary shows up on the PR instead of after the merge, when the scheduled build refuses to deploy.
+# read-only: no secrets, no FAA downloads, nothing published
+on:
+  pull_request:
+  workflow_dispatch:           # "Run workflow" button in the Actions tab
+
+permissions:
+  contents: read
+
+concurrency:                   # a new push to the same PR cancels the run it replaces
+  group: tests-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  unittest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"   # same as the deploy
+
+      - name: install Pillow (link-preview images; the web tests draw them)
+        run: pip install pillow
+
+      - name: tests
+        run: python -m unittest discover -s tests -t .
