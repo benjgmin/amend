@@ -5,6 +5,10 @@ struct AirportsView: View {
     @State private var showingAdd = false
     @State private var showingSettings = false
     @State private var showingGuide = false
+    /// the list name being typed: a new list (nil id) or a rename
+    @State private var naming: Naming?
+    @State private var nameText = ""
+    @State private var deleting: AirportList?
     @AppStorage(SettingsKey.onboarded) private var onboarded = false
 
     var body: some View {
@@ -34,18 +38,39 @@ struct AirportsView: View {
                 if let home = store.home {
                     EFBHeader(text: "Home").efbRow(top: 4, bottom: 2)
                     tile(home, isHome: true)
-                        .swipeActions { removeButton(home) }
+                        .swipeActions {
+                            Button(role: .destructive) { store.setHome(nil) } label: {
+                                Label("Unpin", systemImage: "house.slash")
+                            }
+                        }
                 }
 
-                if !store.others.isEmpty {
-                    EFBHeader(text: store.home == nil ? "My airports" : "Watching")
-                        .efbRow(top: 12, bottom: 2)
+                if !store.lists.isEmpty || store.home != nil {
+                    listHeader.efbRow(top: 12, bottom: 2)
                 }
-                ForEach(store.others, id: \.self) { id in
-                    tile(id, isHome: false)
-                        .swipeActions { removeButton(id) }
+                if let list = store.activeList {
+                    if store.lists.count > 1 {
+                        ListTabs(lists: store.lists, active: list.id) { store.useList($0) }
+                            .efbRow(top: 2, bottom: 6)
+                    }
+                    ForEach(list.ids, id: \.self) { id in
+                        tile(id, isHome: id == store.home)
+                            .swipeActions {
+                                // takes it off this list only; it doesn't delete any data
+                                Button(role: .destructive) { store.setOnList(id, list.id, false) } label: {
+                                    Label("Remove", systemImage: "minus.circle")
+                                }
+                            }
+                    }
+                    .onMove { store.move(in: list.id, from: $0, to: $1) }
+                    if list.ids.isEmpty {
+                        Text("No airports on \(list.name) yet. Tap the magnifying glass, find an airport and tap + to add it.")
+                            .font(.subheadline)
+                            .foregroundStyle(EFB.dim)
+                            .efbPanel()
+                            .efbRow(top: 3, bottom: 3)
+                    }
                 }
-                .onMove { store.moveOthers(from: $0, to: $1) }
 
                 // the site's "Most action items this cycle": the busiest airports nationally, to browse
                 if !store.busiest.isEmpty, let meta = store.meta {
@@ -97,15 +122,6 @@ struct AirportsView: View {
                     Button { showingAdd = true } label: { Image(systemName: "magnifyingglass") }
                         .accessibilityLabel("Search airports")
                 }
-                ToolbarItem(placement: .topBarTrailing) {
-                    if let url = watchlistURL {
-                        ShareLink(item: url, subject: Text("My airports on Amend"),
-                                  message: Text("What's changing at my airports this FAA cycle")) {
-                            Image(systemName: "square.and.arrow.up")
-                        }
-                        .accessibilityLabel("Share watchlist")
-                    }
-                }
             }
             .navigationDestination(for: String.self) { id in
                 AirportDetailView(id: id)
@@ -118,6 +134,21 @@ struct AirportsView: View {
             }
             .refreshable { await store.refresh() }
             .task { await store.refresh() }
+            .alert(naming?.title ?? "", isPresented: Binding(get: { naming != nil }, set: { if !$0 { naming = nil } })) {
+                TextField("Name, e.g. Club SVFR or Bahamas trip", text: $nameText)
+                Button(naming?.action ?? "Save") { saveName() }
+                Button("Cancel", role: .cancel) { naming = nil }
+            }
+            .confirmationDialog("Delete \u{201C}\(deleting?.name ?? "")\u{201D}?",
+                                isPresented: Binding(get: { deleting != nil }, set: { if !$0 { deleting = nil } }),
+                                titleVisibility: .visible) {
+                Button("Delete list", role: .destructive) {
+                    if let deleting { store.deleteList(deleting.id) }
+                    deleting = nil
+                }
+            } message: {
+                Text("This can't be undone. The airports stay on your other lists.")
+            }
             .alert("Couldn't load FAA data", isPresented: .constant(store.errorMessage != nil)) {
                 Button("OK") { store.errorMessage = nil }
             } message: {
@@ -126,15 +157,52 @@ struct AirportsView: View {
         }
     }
 
-    /// the website shows the same list at amend.watch/list/?w=DAB,VRB,...
-    private var watchlistURL: URL? {
-        guard !store.saved.isEmpty else { return nil }
-        return URL(string: "\(API.base.absoluteString)list/?w=\(store.saved.joined(separator: ","))")
+    /// "Club SVFR · 4" with what you can do to the list in use; "Your lists" with more than one
+    private var listHeader: some View {
+        let list = store.activeList
+        return HStack {
+            EFBHeader(text: store.lists.count == 1 ? list.map { "\($0.name) · \($0.ids.count)" } ?? "Your lists" : "Your lists")
+            Spacer()
+            Menu {
+                if let list {
+                    if let url = list.shareURL, !list.ids.isEmpty {
+                        ShareLink(item: url, subject: Text("\(list.name) on Amend"),
+                                  message: Text("What's changing at these airports this FAA cycle")) {
+                            Label("Share \(list.name)", systemImage: "square.and.arrow.up")
+                        }
+                    }
+                    Button { startNaming(.rename(list.id), list.name) } label: {
+                        Label("Rename \(list.name)", systemImage: "pencil")
+                    }
+                }
+                Button { startNaming(.new, "") } label: { Label("New list", systemImage: "plus") }
+                if let list {
+                    Button(role: .destructive) { deleting = list } label: {
+                        Label("Delete \(list.name)", systemImage: "trash")
+                    }
+                }
+            } label: {
+                Image(systemName: "ellipsis.circle")
+                    .font(.system(size: 17))
+                    .frame(width: 36, height: 28)
+            }
+            .accessibilityLabel("List options")
+        }
     }
 
-    /// same swipe action everywhere: it takes the airport off your list, it doesn't delete any data
-    private func removeButton(_ id: String) -> some View {
-        Button(role: .destructive) { store.remove(id) } label: { Label("Remove", systemImage: "minus.circle") }
+    private func startNaming(_ n: Naming, _ text: String) {
+        nameText = text
+        naming = n
+    }
+
+    private func saveName() {
+        let name = nameText.trimmingCharacters(in: .whitespacesAndNewlines)
+        defer { naming = nil }
+        guard !name.isEmpty, let naming else { return }
+        switch naming {
+        case .new: store.createList(name)
+        case .rename(let id): store.renameList(id, to: name)
+        }
     }
 
     /// tile with the chevron inside the panel (the hidden NavigationLink does the navigation)
@@ -293,6 +361,42 @@ private struct BusyTile: View {
             top = first.map { c in
                 let s = c.summary.replacingOccurrences(of: " -> ", with: " → ")
                 return s.prefix(1).uppercased() + s.dropFirst()
+            }
+        }
+    }
+}
+
+private enum Naming: Equatable {
+    case new, rename(String)
+    var title: String { self == .new ? "New list" : "Rename list" }
+    var action: String { self == .new ? "Create" : "Save" }
+}
+
+/// one button per list, like the site's tabs; the one in use is filled
+private struct ListTabs: View {
+    let lists: [AirportList]
+    let active: String
+    let pick: (String) -> Void
+
+    var body: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 6) {
+                ForEach(lists) { l in
+                    let on = l.id == active
+                    Button { pick(l.id) } label: {
+                        HStack(spacing: 6) {
+                            Text(l.name).lineLimit(1)
+                            Text("\(l.ids.count)").foregroundStyle(on ? EFB.bg.opacity(0.75) : EFB.faint)
+                        }
+                        .font(.system(size: 13.5, weight: .semibold))
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 7)
+                        .foregroundStyle(on ? EFB.bg : EFB.dim)
+                        .background(on ? EFB.text : EFB.panelHi, in: RoundedRectangle(cornerRadius: 8))
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityAddTraits(on ? .isSelected : [])
+                }
             }
         }
     }

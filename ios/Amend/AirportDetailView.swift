@@ -6,6 +6,8 @@ struct AirportDetailView: View {
 
     enum Tab: String, CaseIterable { case latest = "This cycle", history = "History" }
     @State private var tab: Tab = .latest
+    @State private var newList = false
+    @State private var newName = ""
 
     var body: some View {
         VStack(spacing: 0) {
@@ -19,6 +21,15 @@ struct AirportDetailView: View {
         .background(EFB.bg)
         .navigationBarTitleDisplayMode(.inline)
         .toolbarBackground(EFB.bg, for: .navigationBar)
+        .alert("New list", isPresented: $newList) {
+            TextField("Name, e.g. Club SVFR or Bahamas trip", text: $newName)
+            Button("Create") {
+                let name = newName.trimmingCharacters(in: .whitespacesAndNewlines)
+                if !name.isEmpty { store.createList(name, ids: [id]) }
+                newName = ""
+            }
+            Button("Cancel", role: .cancel) { newName = "" }
+        }
         .toolbar {
             ToolbarItem(placement: .principal) {
                 Text(id).font(EFB.mono(16, .semibold)).foregroundStyle(EFB.text)
@@ -34,12 +45,7 @@ struct AirportDetailView: View {
                 }
             }
             ToolbarItem(placement: .topBarTrailing) {
-                Button {
-                    if store.isSaved(id) { store.remove(id) } else { store.add(id) }
-                } label: {
-                    Image(systemName: store.isSaved(id) ? "checkmark.circle.fill" : "plus.circle")
-                }
-                .accessibilityLabel(store.isSaved(id) ? "Remove from my airports" : "Add to my airports")
+                listMenu
             }
             ToolbarItem(placement: .topBarTrailing) {
                 Button {
@@ -50,6 +56,32 @@ struct AirportDetailView: View {
                 .accessibilityLabel(store.home == id ? "Unset home airport" : "Set as home airport")
             }
         }
+    }
+
+    /// which of your lists this airport is on, like the site's "+ Add to list" menu
+    private var listMenu: some View {
+        let on = store.listsContaining(id)
+        return Menu {
+            ForEach(store.lists) { list in
+                Button {
+                    store.setOnList(id, list.id, !list.ids.contains(id))
+                } label: {
+                    if list.ids.contains(id) {
+                        Label("\(list.name) (\(list.ids.count))", systemImage: "checkmark")
+                    } else {
+                        Text("\(list.name) (\(list.ids.count))")
+                    }
+                }
+            }
+            if store.lists.isEmpty {
+                Button { store.add(id) } label: { Label("Add to My airports", systemImage: "plus") }
+            } else {
+                Button { newList = true } label: { Label("New list with \(id)", systemImage: "plus") }
+            }
+        } label: {
+            Image(systemName: on.isEmpty ? "plus.circle" : "checkmark.circle.fill")
+        }
+        .accessibilityLabel(on.isEmpty ? "Add to a list" : "On \(on.count) list\(on.count == 1 ? "" : "s")")
     }
 
     private var header: some View {
