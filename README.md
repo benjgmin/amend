@@ -29,7 +29,8 @@ VRB  Vero Beach Rgnl
 [amend.watch/VRB](https://amend.watch/VRB/). Watchlists live under /list/, like
 [amend.watch/list/daytona-training](https://amend.watch/list/daytona-training/), and [amend.watch/about](https://amend.watch/about/)
 explains the whole thing. Every airport with changes gets its own page, styled like the app, with link previews so a
-page shared in iMessage or a group chat shows what changed.
+page shared in iMessage or a group chat shows what changed. Every airport and named watchlist also has an RSS feed
+(like [amend.watch/VRB/feed.xml](https://amend.watch/VRB/feed.xml)) with one update per FAA cycle, action items first.
 
 ## The app
 
