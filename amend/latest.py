@@ -11,7 +11,7 @@ from .cycles import CYCLE, airspace_path, forget, get_airspace_pair, get_cycle, 
 from .freshness import fingerprint
 from .output import dump, write_diff
 from .pipeline import run
-from .runlog import Run
+from .runlog import Run, built_commit
 
 SITE = "site"
 HISTORY = "history"
@@ -80,7 +80,7 @@ def _build(llm, log):
     pages = web.build(SITE, meta, apts, result["airports"], HISTORY, watchlists=lists)
     # what this build was made from, so the scheduled check can tell when a merge isn't live yet
     # run: which run log record (audit/runs/) this deploy is, so "published" can be confirmed live
-    dump({"inputs": fingerprint(), "commit": os.environ.get("GITHUB_SHA", ""), "engine": ENGINE_VERSION,
+    dump({"inputs": fingerprint(), "commit": built_commit() or "", "engine": ENGINE_VERSION,
           "run": os.environ.get("GITHUB_RUN_ID"),
           "generated": dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds")},
          os.path.join(SITE, "build.json"))
