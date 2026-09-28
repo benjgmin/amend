@@ -4,7 +4,7 @@ command line:
   python -m amend diff OLD.zip NEW.zip VRB DAB [--dtpp FILE] [--airspace OLD NEW] [--llm] [--json] [--out DIR] [--raw]
   python -m amend diff OLD.zip NEW.zip --all-airports [--dtpp FILE] [--airspace OLD NEW] [--llm] [--out DIR] [--print]
   python -m amend latest [--no-llm]      build site/ (what the GitHub Action runs)
-  python -m amend history [--llm] [--keep]   add new cycles to history/
+  python -m amend history [--llm] [--keep]   add new cycles to history/, re-check old translations
   python -m amend set-key                store your Anthropic API key in .env
   python -m amend check                  scheduled runs: is a rebuild needed? (build=true/false)
   python -m amend verify [DIR]           refuse to deploy an empty or half-built site/
@@ -112,7 +112,12 @@ def main(argv=None):
         build(llm=not a.no_llm)
     elif a.cmd == "history":
         from .history import update
+        from .remarks import scrub_history
         update(llm=a.llm, keep=a.keep)
+        n, files = scrub_history()   # past cycles too, whenever the checks get stricter
+        if n:
+            print(f"  {n} older translations in history/ break the no-guess check; showing the FAA text "
+                  f"for those ({files} airports)")
     elif a.cmd == "set-key":
         set_key()
     elif a.cmd == "check":

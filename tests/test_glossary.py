@@ -11,7 +11,7 @@ import tempfile
 import unittest
 from unittest import mock
 
-from amend import glossary, remarks
+from amend import cli, glossary, output, remarks
 
 with open(glossary.SOURCES_FILE) as f:
     SOURCES = json.load(f)
@@ -345,6 +345,61 @@ class TestTranslateStats(unittest.TestCase):
         out = remarks.translate_remarks(["-3 FT DITCH 30 FT OUBD FM THLD.", "RWY 18 NOT LGTD."], use_llm=False)
         self.assertEqual(out, {"RWY 18 NOT LGTD.": "Runway 18 is not lighted."})
         self.assertEqual(remarks.STATS["cache_retired"], 1)
+
+
+class TestScrubHistory(unittest.TestCase):
+    """past cycles get the same check as new ones; the FAA text replaces what fails, ids never move."""
+
+    def setUp(self):
+        self.root = tempfile.mkdtemp()
+        self.hist = os.path.join(self.root, "history")
+        os.mkdir(self.hist)
+        self.raw, guess = GUESSES[2][:2]      # "TRANS ALERT: ..." read as "Transition alert ..."
+        ok_raw, ok = RIGHT[2]                 # the same remark with TRANS kept as written
+        self.entries = [
+            {"cycle": "2026-09-03", "id": "aaa", "summary": f"remark updated: {guess}", "original": self.raw},
+            {"cycle": "2026-09-03", "id": "bbb", "summary": f"new remark: {ok}", "original": ok_raw},
+            {"cycle": "2026-08-06", "id": "ccc", "summary": f"remark removed: {self.raw}", "original": self.raw},
+            {"cycle": "2026-08-06", "id": "ddd", "summary": "runway 5/23 length: 5000 -> 5200 ft"},
+        ]
+        self.write("XYZ.json", {"airport": "XYZ", "entries": self.entries})
+        self.write("ABC.json", {"airport": "ABC", "entries": self.entries[1:]})
+        with open(os.path.join(self.hist, "cycles.json"), "w") as f:
+            json.dump({"cycles": ["2026-09-03"], "skipped": []}, f, indent=1)
+
+    def write(self, name, h):
+        output.dump(h, os.path.join(self.hist, name))
+
+    def read(self, name):
+        with open(os.path.join(self.hist, name), encoding="utf-8") as f:
+            return f.read()
+
+    def test_rejected_translations_go_back_to_faa_text(self):
+        before = {n: self.read(n) for n in ("ABC.json", "cycles.json")}
+        self.assertEqual(remarks.scrub_history(self.hist), (1, 1))
+        h = json.loads(self.read("XYZ.json"))
+        self.assertEqual(h["entries"][0], {**self.entries[0], "summary": f"remark updated: {self.raw}"})
+        self.assertEqual(h["entries"][1:], self.entries[1:])
+        self.assertEqual(self.read("XYZ.json"), json.dumps(h, **output.MIN))   # as history.append writes it
+        self.assertEqual({n: self.read(n) for n in before}, before)              # nothing else rewritten
+
+    def test_a_second_run_changes_nothing(self):
+        remarks.scrub_history(self.hist)
+        once = self.read("XYZ.json")
+        self.assertEqual(remarks.scrub_history(self.hist), (0, 0))
+        self.assertEqual(self.read("XYZ.json"), once)
+
+    def test_the_history_command_runs_it(self):
+        cwd = os.getcwd()
+        os.chdir(self.root)
+        try:
+            with mock.patch("amend.history.update") as update, mock.patch("sys.stdout", new=io.StringIO()) as out:
+                cli.main(["history"])
+        finally:
+            os.chdir(cwd)
+        update.assert_called_once_with(llm=False, keep=False)
+        self.assertIn("1 older translations in history/", out.getvalue())
+        self.assertEqual(json.loads(self.read("XYZ.json"))["entries"][0]["summary"], f"remark updated: {self.raw}")
 
 
 if __name__ == "__main__":
