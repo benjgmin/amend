@@ -213,7 +213,7 @@ struct AirportsView: View {
         ZStack {
             NavigationLink(value: id) { EmptyView() }.opacity(0)
             AirportTile(id: id, info: store.info(for: id), counts: store.counts(for: id),
-                        indexLoaded: store.index != nil, isHome: isHome)
+                        indexLoaded: store.index != nil, isHome: isHome, newCount: store.newCount(id))
         }
         .efbRow(top: 3, bottom: 3)
     }
@@ -289,6 +289,7 @@ private struct AirportTile: View {
     let counts: Counts?
     let indexLoaded: Bool
     let isHome: Bool
+    var newCount = 0
 
     var body: some View {
         HStack(alignment: .center, spacing: 12) {
@@ -319,6 +320,9 @@ private struct AirportTile: View {
                 }
             }
             Spacer(minLength: 8)
+            if newCount > 0 {
+                NewPill(count: newCount)
+            }
             if indexLoaded {
                 CountAnnunciators(counts: counts)
             }

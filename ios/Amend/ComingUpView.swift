@@ -44,7 +44,8 @@ struct ComingUpView: View {
                     ZStack {
                         NavigationLink(value: id) { EmptyView() }.opacity(0)
                         ComingUpRow(id: id, info: store.info(for: id), data: data,
-                                    tags: store.lists.count > 1 ? store.listsContaining(id).map(\.name) : [])
+                                    tags: store.lists.count > 1 ? store.listsContaining(id).map(\.name) : [],
+                                    fresh: store.newIDs(id, data.changes, cycle: data.toCycle))
                     }
                     .efbRow(top: 3, bottom: 3)
                 }
@@ -72,6 +73,8 @@ private struct ComingUpRow: View {
     let info: AirportInfo?
     let data: AirportChanges
     let tags: [String]
+    /// changes not there the last time you looked
+    let fresh: Set<String>
 
     var body: some View {
         VStack(alignment: .leading, spacing: 7) {
@@ -87,6 +90,7 @@ private struct ComingUpRow: View {
                     .foregroundStyle(EFB.faint)
             }
             HStack(spacing: 6) {
+                if !fresh.isEmpty { NewPill(count: fresh.count) }
                 CountAnnunciators(counts: data.counts)
                 // which of your lists it's on; with one list it would say the same everywhere
                 ForEach(tags, id: \.self) { tag in
@@ -106,7 +110,7 @@ private struct ComingUpRow: View {
                         .tracking(0.5)
                         .foregroundStyle(c.level.color)
                         .frame(width: 26, alignment: .leading)
-                    Text(sentence(c.summary))
+                    Text((fresh.contains(c.id) ? "New · " : "") + sentence(c.summary))
                         .font(.system(size: 14))
                         .foregroundStyle(EFB.text.opacity(0.9))
                         .fixedSize(horizontal: false, vertical: true)

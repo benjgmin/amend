@@ -60,6 +60,8 @@ final class AirportStore {
 
     /// this cycle's changes at the airports you keep, for "coming up at your airports" on home
     private(set) var latest: [String: AirportChanges] = [:]
+    /// what you'd seen at each airport when you last looked (Seen.swift)
+    var seen: [String: SeenRecord] = AirportStore.loadSeen()
 
     /// the airports you keep that change this cycle, most action items first; the site caps it at 60 too
     var busyKept: [String] {
@@ -80,7 +82,14 @@ final class AirportStore {
             for await (id, data) in group { if let data { out.append((id, data)) } }
             return out
         }
-        for (id, data) in got { latest[id] = data }
+        for (id, data) in got {
+            latest[id] = data
+            baseline(id, data.changes, cycle: data.toCycle)
+        }
+        // kept airports with nothing this cycle: anything that shows up there later is new
+        if let cycle = index?.toCycle {
+            for id in saved where counts(for: id) == nil { baseline(id, [], cycle: cycle) }
+        }
     }
 
     /// the airports with the most action items this cycle, as on the site's home page (most changes breaks ties)

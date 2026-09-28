@@ -6,6 +6,7 @@ enum SettingsKey {
     static let saved = "savedAirports"           // every airport kept (home + lists), for background alerts
     static let lists = "airportLists"            // [AirportList] as JSON
     static let activeList = "activeList"
+    static let seen = "seenChanges"              // [airport: SeenRecord] as JSON, for "New" labels
     static let home = "homeAirport"
     static let notifyEnabled = "notifyEnabled"
     static let notifyMode = "notifyMode"            // NotifyMode raw value
