@@ -196,7 +196,10 @@ class TestRunLog(unittest.TestCase):
                                       "url": "https://github.com/o/r/actions/runs/77"})
         self.assertEqual(rec["changes"], {"airports": 1, "action": 1, "ifr": 0, "fyi": 1, "hidden": 4,
                                           "by_category": {"remark": 1, "tower": 1}})
-        self.assertEqual(rec["remarks"], {"texts": 3, "plain_english": 2, "raw_fallback": 1, "ai": None})
+        ai = rec["remarks"].pop("ai")
+        self.assertEqual(rec["remarks"], {"texts": 3, "plain_english": 2, "raw_fallback": 1})
+        self.assertIsInstance(ai, dict)          # remarks.STATS since #28: model usage for this process
+        self.assertIn("llm_calls", ai)
         self.assertEqual(rec["checks"]["warning_count"], 1)
         self.assertEqual(rec["csv_rows"]["new"], {"APT_BASE.csv": 6})
         self.assertIsNotNone(rec["finished_at"])

@@ -8,10 +8,13 @@ If a field is added, `schema_version` stays the same. If a field is renamed or r
 
 ## Web pages (not part of the JSON contract)
 `index.html` (search), `<ID>/index.html` (one page per airport with changes or history) and
-`assets/style.css`, `about/`, `list/` (a watchlist from `?w=` or the browser) and `list/<slug>/` (named
-watchlists from `watchlists/<slug>.json` in the repo, e.g. amend.watch/list/daytona-training; slugs are
+`assets/style.css` and `assets/app.js` (shared by every page), `about/`, `list/` (one of the lists saved in the
+browser, `?l=<id>`, or a shared one, `?w=DAB,OMN&n=Club%20SVFR`) and `list/<slug>/` (named
+lists from `watchlists/<slug>.json` in the repo, e.g. amend.watch/list/daytona-training; slugs are
 3–40 lowercase letters, digits or dashes). Old links (`watch/?w=`, `watch/<slug>/`, `<slug>/`) redirect
-there. `cycles.ics` is a calendar feed of the 0901Z cycle changeovers. `build.json` records what the deploy was built from, for the pipeline's own freshness check. Airport folders are always 2–4 uppercase letters/digits, so they never collide with the JSON paths below.
+there. `404.html` is the not-found page: it sends `/kdab` to `/DAB/` and says when an airport has no changes on record. `cycles.ics` is a calendar feed of the 0901Z cycle changeovers. `build.json` records what the deploy was built from, for the pipeline's own freshness check. `<ID>/feed.xml` (every airport in `airports.json`, even ones with no page yet) and
+`list/<slug>/feed.xml` are RSS 2.0 feeds with one item per cycle with changes, newest first, about a year's worth; the
+item `guid` is `amend.watch/<ID>/<cycle>` (or `amend.watch/list/<slug>/<cycle>`) and never changes. Airport folders are always 2–4 uppercase letters/digits, so they never collide with the JSON paths below.
 
 ## `latest/meta.json`
 Which cycles `latest/` compares.
@@ -50,14 +53,14 @@ Only exists if the airport changed. **A 404 means no changes**, not an error.
 
 | field | type | always? | notes |
 |---|---|---|---|
-| `id` | string | yes | 12-char stable id (airport + cycle + summary). Use it to remember what's been seen |
+| `id` | string | yes | 12-char stable id (airport + cycle + the FAA file, kind and values behind the change, not its wording). Use it to remember what's been seen |
 | `priority` | string | yes | `action` (changes how you fly), `ifr` (procedures/charts/routes), `fyi` |
 | `category` | string | yes | `tower`, `airspace`, `frequency`, `navaid`, `runway`, `remark`, `procedure`, `route`, `chart`, `weather`, `airport`, `other` |
 | `kind` | string | yes | `added`, `removed`, `changed` |
 | `summary` | string | yes | plain-English, ready to display |
 | `source` | string | yes | FAA file it came from (`ATC_BASE`, `APT_RMK`, `d-TPP`, `CLS_ARSP_SHP` for the class airspace shapefile, ...) |
 | `original` | string | no | raw FAA remark text (show under translated remarks) |
-| `fields` | array | no | `[{"field", "old", "new"}]` raw before/after values |
+| `fields` | array | no | `[{"field", "old", "new"}]` raw before/after values. A whole row added or removed lists its columns with `old` or `new` empty. `ATTENDANCE` (source `APT_ATT`) is the airport's whole attendance schedule, its rows' MONTH DAY HOUR joined with `; ` |
 | `details` | array of string | no | route-level lines behind a "preferred IFR routes" summary |
 | `procedures` | object | no | `{"updated": [...], "removed": [...]}` STAR/DP names |
 | `chart` | object | no | `{"code", "name", "amdt", "pdf"?}`. `pdf` links the new plate; absent for removed charts |

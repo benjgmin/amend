@@ -1,6 +1,7 @@
 """The whole diff in one call: load two cycles, diff, collapse, summarize, add charts and airspace."""
 import datetime as dt
 import hashlib
+import json
 import os
 import re
 import time
@@ -10,7 +11,7 @@ from . import airspace as arsp
 from .collapse import collapse, is_frq_remark, merge_freq_uses
 from .diff import diff
 from .dtpp import load_dtpp
-from .english import summarize
+from .english import plain_values, record_values, summarize, unsupported
 from .nasr import NearIndex, airport_ids, load
 from .procedures import airports_by_procedure, load_routes
 from .remarks import translate_remarks
@@ -22,7 +23,7 @@ CATEGORY = [  # (source prefix, category) - first match wins
     ("CLS_ARSP", "airspace"), ("ATC", "tower"), ("FRQ", "frequency"), ("NAV", "navaid"),
     ("ILS", "navaid"), ("APT_RWY", "runway"), ("APT_RMK", "remark"), ("STAR/DP", "procedure"),
     ("PFR", "route"), ("D-TPP", "chart"), ("AWOS", "weather"), ("APT", "airport"),
-    ("PJA", "airspace"),
+    ("PJA", "airspace"), ("RDR", "tower"),
 ]
 
 
@@ -45,17 +46,41 @@ def cycle_label(path):
     return name
 
 
-def change_id(airport, to_cycle, summary):
+def change_key(rec):
+    """what a change is, whatever words describe it: its file, kind and FAA values. rewording a
+    summary or a better remark translation keeps the id, so 'new since you last looked' holds."""
+    k = {"source": base(rec["source"]), "kind": rec["kind"]}
+    for f in ("row", "fields", "context", "procedures", "folded", "chart", "key"):
+        if rec.get(f):
+            k[f] = rec[f]
+    if len(k) == 2:      # airspace shape changes carry nothing else: their text is the change
+        k["summary"] = rec["summary"]
+    return json.dumps(k, sort_keys=True, ensure_ascii=False)
+
+
+def change_id(airport, to_cycle, key):
     """stable id so the app can remember which changes you've already seen."""
-    return hashlib.sha1(f"{airport}|{to_cycle}|{summary}".encode()).hexdigest()[:12]
+    return hashlib.sha1(f"{airport}|{to_cycle}|{key}".encode()).hexdigest()[:12]
+
+
+def row_fields(rec):
+    """a whole row added or removed, as the fields it brought or took away: the FAA values
+    behind the summary, published with it. contact names stay in their summary only."""
+    row = rec.get("row")
+    if not row or rec.get("fields") or rec.get("original") or base(rec["source"]) == "APT_CON":
+        return None
+    old = rec["kind"] == "removed"
+    return [{"field": k, "old": v if old else "", "new": "" if old else v}
+            for k, v in row.items() if not k.startswith("_")]
 
 
 def to_change(rec, airport, to_cycle):
     """internal record -> the public JSON shape (see SCHEMA.md)."""
     out = {
-        "id": change_id(airport, to_cycle, rec["summary"]),
+        "id": change_id(airport, to_cycle, change_key(rec)),
         "priority": rec["priority"],
-        "category": "remark" if is_frq_remark(rec) else category(rec["source"]),
+        "category": ("remark" if is_frq_remark(rec)
+                     else rec.get("category") or category(rec["source"])),
         "kind": rec["kind"],
         "summary": rec["summary"],
         "source": base(rec["source"]),
@@ -63,7 +88,25 @@ def to_change(rec, airport, to_cycle):
     for k in ("original", "fields", "details", "procedures", "chart"):
         if rec.get(k):
             out[k] = rec[k]
+    if "fields" not in out and row_fields(rec):
+        out["fields"] = row_fields(rec)
     return out
+
+
+def check_summaries(recs, log):
+    """every number and identifier in a summary must be in the FAA record it came from. one
+    that isn't is a template bug: the record shows the FAA values instead, and it's counted.
+    remark text (rec['original']) is checked by remarks.problems() before it's ever used."""
+    bad = 0
+    for r in recs:
+        if r.get("original"):
+            continue
+        miss = unsupported(r["summary"], record_values(r))
+        if miss:
+            bad += 1
+            log(f"  {r['airport']}: summary has {', '.join(miss)} which the FAA record doesn't: {r['summary']!r}")
+            r["summary"] = plain_values(r)
+    return bad
 
 
 def run(old_zip, new_zip, ids=None, dtpp_path=None, llm=False, log=print, airspace=None):
@@ -102,9 +145,15 @@ def run(old_zip, new_zip, ids=None, dtpp_path=None, llm=False, log=print, airspa
 
     # summarize; drop phrases already said at that airport (tower hours live in 3 files)
     by_apt, hidden = defaultdict(list), defaultdict(int)
+    no_template = defaultdict(int)
     for r in records:
         s = summarize(r, remarks)
         r["_phrases"] = s if isinstance(s, list) else [s]
+        if r.pop("no_template", False):
+            # no English written for this file yet: FAA column names aren't an alert
+            no_template[f"{base(r['source'])} {r['kind']}"] += 1
+            if r["priority"] in ("action", "ifr"):
+                r["priority"] = "fyi"
         if r["priority"] == "hidden":
             hidden[r["airport"]] += 1
         else:
@@ -118,6 +167,9 @@ def run(old_zip, new_zip, ids=None, dtpp_path=None, llm=False, log=print, airspa
                 r["summary"] = "; ".join(phrases)
                 uniq.append(r)
         by_apt[apt] = uniq
+    for k, n in sorted(no_template.items()):
+        log(f"  no English for {k} rows ({n}), shown with FAA column names")
+    mismatched = check_summaries([r for recs in by_apt.values() for r in recs], log)
 
     if dtpp_path:
         log(f"loading d-TPP {dtpp_path} ...")
@@ -157,9 +209,19 @@ def run(old_zip, new_zip, ids=None, dtpp_path=None, llm=False, log=print, airspa
         if not recs:
             continue
         recs = sorted(recs, key=lambda r: PRIORITY_ORDER[r["priority"]])  # stable
-        airports[apt] = [to_change(r, apt, to_cycle) for r in recs]
+        out, ids_seen = [], set()
+        for r in recs:
+            c = to_change(r, apt, to_cycle)
+            n = 1
+            while c["id"] in ids_seen:    # two rows that differ only in dropped survey columns
+                n += 1
+                c["id"] = change_id(apt, to_cycle, f"{change_key(r)}#{n}")
+            ids_seen.add(c["id"])
+            out.append(c)
+        airports[apt] = out
     return {"from_cycle": from_cycle, "to_cycle": to_cycle, "airports": airports,
             "hidden": dict(hidden), "seconds": time.time() - t0,
+            "checks": {"no_english": dict(no_template), "summary_value_mismatches": mismatched},
             "csv_rows": {k: dict(sorted(v.items())) for k, v in rows.items()}, "remarks": remark_stats,
             "includes_airspace": bool(airspace) and not airspace_error, "airspace_error": airspace_error,
             "airspace_shapes": airspace_shapes}

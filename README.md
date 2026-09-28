@@ -26,10 +26,12 @@ VRB  Vero Beach Rgnl
 ## On the web
 
 **[amend.watch](https://amend.watch/)**: search any airport, or go straight to one, like
-[amend.watch/VRB](https://amend.watch/VRB/). Watchlists live under /list/, like
+[amend.watch/VRB](https://amend.watch/VRB/). Keep as many lists of airports as you like (one for your training area,
+one per trip), saved in your browser, and share any of them as one link. Named lists live under /list/, like
 [amend.watch/list/daytona-training](https://amend.watch/list/daytona-training/), and [amend.watch/about](https://amend.watch/about/)
 explains the whole thing. Every airport with changes gets its own page, styled like the app, with link previews so a
-page shared in iMessage or a group chat shows what changed.
+page shared in iMessage or a group chat shows what changed. Every airport and named list also has an RSS feed
+(like [amend.watch/VRB/feed.xml](https://amend.watch/VRB/feed.xml)) with one update per FAA cycle, action items first.
 
 ## The app
 
@@ -44,7 +46,7 @@ SwiftUI, iOS 17+, styled like an EFB.
 
 ## How it works
 
-A GitHub Action checks the FAA every 3 hours and rebuilds when there's something new (or at least daily). It downloads the FAA NASR 28-day subscription and d-TPP chart metadata, diffs every US airport (about 15 seconds, with 28 regression tests guarding the rules), and publishes static JSON to GitHub Pages. The app reads that JSON; there is no server.
+A GitHub Action checks the FAA every 3 hours and rebuilds when there's something new (or at least daily). It downloads the FAA NASR 28-day subscription and d-TPP chart metadata, diffs every US airport (about 15 seconds, with regression tests built from real FAA cases guarding the rules; they run on every pull request and before every deploy), and publishes static JSON to GitHub Pages. The app reads that JSON; there is no server.
 
 - **Airports and airspace:** tower and Class D hours, frequencies, runways (renumbering from magnetic drift, replacements, declared distances), attendance hours, contacts, new and closed airports, remarks
 - **Airspace shapes:** class B, C, D and E surface area floors, ceilings and boundaries from the FAA class airspace shapefiles, told from each airport's point of view ("Orlando class B over the field: 3,000-10,000 ft MSL -> 2,500-10,000 ft MSL"). Re-digitized boundaries are ignored; class E5 is skipped
