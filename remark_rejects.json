@@ -1,4 +1,213 @@
 {
  "engine": "1.2.0",
- "remarks": {}
+ "remarks": {
+  "+26 FT TREES, 150 FT DIST, 0-115 FT R; +10 FT BARN, 157 FT DIST, 120 FT L.": [
+   "dropped BARN",
+   "added 'building'"
+  ],
+  "100LL AND JET-A FUEL AVBL 24 HRS SELF SVC W/ CREDIT CARD.": [
+   "W is 'West or White' (CS), not what the translation says"
+  ],
+  "200 FT SWY SW END HAS BEEN REMKD AS 200 FT DTHR FOR RWY 05.": [
+   "dropped REMKD",
+   "added 'remarked'"
+  ],
+  "ACTVT REIL RWY 25; PAPI RWY 07 & 25; MIRL RWY 02/20 - CTAF. MIRL RWY 07/25 PRESET ON LOW INTST, TO INCR INTST & ACTVT - CTAF. REIL RWY 07 OPS CONSLY.": [
+   "CONSLY is 'continuous' (JO 2-1-1 (ICAO) + JO 1-2-3 suffix LY), not what the translation says"
+  ],
+  "ACVT REIL RWY 08 & 26; PAPI RWY 08 & 26; MIRL RWY 08/26 - CTAF.": [
+   "ACVT is not in the verified glossary; it must stay as written",
+   "added 'activate'",
+   "added 'click'"
+  ],
+  "CAUTION: MIL ARPT CONDUCTS HI PER JET TRNG IN A HI DENSITY ENVIRONMENT MON-FRI 1200-0200Z++ AND WHEN TWR HR EXTN BY NOTAM, OCNL SAT AND SUN.": [
+   "dropped PER",
+   "added 'performance'"
+  ],
+  "CONES FOR 2400 FT W/300 FT OF OVERUN": [
+   "W is 'West or White' (CS), not what the translation says"
+  ],
+  "CTLG OBSTN 150 FT TREE  0 FT, 170 FT RT; TREES 100 FT, ARND RWY END 19.": [
+   "CTLG is 'control' (CS + JO 1-2-3 suffix G), not what the translation says",
+   "added 'catalog'"
+  ],
+  "CTLG OBSTN EXCEEDS A 45 DEG SLP.  APCH SLP 9:1 TO DTHR OVR +55 FT TREES, 508 FT DIST, 100 FT R.": [
+   "CTLG is 'control' (CS + JO 1-2-3 suffix G), not what the translation says",
+   "added 'catalog'"
+  ],
+  "CTLG OBSTN EXCEEDS A 45 DEG SLP. APCH SLP 0:1 TO DTHR OVR +12 FT TREES, 0 FT DIST, 107 FT R.": [
+   "CTLG is 'control' (CS + JO 1-2-3 suffix G), not what the translation says",
+   "added 'catalog'"
+  ],
+  "CTLG OBSTN EXCEEDS A 45 DEG SLP. APCH SLP 0:1 TO DTHR OVR +32 FT TREES, 0 FT DIST, 89 FT R.": [
+   "CTLG is 'control' (CS + JO 1-2-3 suffix G), not what the translation says",
+   "added 'catalog'"
+  ],
+  "CTLG OBSTN EXCEEDS A 45 DEG SLP. APCH SLP 10:1 TO DTHR OVR +30 FT TREE, 309 FT DIST, 125 FT R.": [
+   "CTLG is 'control' (CS + JO 1-2-3 suffix G), not what the translation says",
+   "added 'catalog'"
+  ],
+  "CTLG OBSTN EXCEEDS A 45 DEG SLP. APCH SLP 10:1 TO DTHR OVR +74 FT TREES, 742 FT DIST, 137 FT R.": [
+   "CTLG is 'control' (CS + JO 1-2-3 suffix G), not what the translation says",
+   "added 'catalog'"
+  ],
+  "CTLG OBSTN EXCEEDS A 45 DEG SLP. APCH SLP 17:1 TO DTHR OVR +93 FT TREES, 1588 FT DIST, 0 FT B.": [
+   "CTLG is 'control' (CS + JO 1-2-3 suffix G), not what the translation says",
+   "B has no verified meaning (the FAA lists more than one meaning; copied as written until one is picked); it must stay as written",
+   "added 'catalog'"
+  ],
+  "CTLG OBSTN EXCEEDS A 45 DEG SLP. APCH SLP 18:1 TO DTHR OVR +42 FT TREES, 787 FT DIST, 50 FT R.": [
+   "CTLG is 'control' (CS + JO 1-2-3 suffix G), not what the translation says",
+   "added 'catalog'"
+  ],
+  "CTLG OBSTN EXCEEDS A 45 DEG SLP. APCH SLP 4:1 TO DTHR OVR +35 FT TREES, 160 FT DIST, 125 FT R.": [
+   "CTLG is 'control' (CS + JO 1-2-3 suffix G), not what the translation says",
+   "added 'catalog'"
+  ],
+  "HEL SELF SVC NA, FUEL 24 HR CREDIT CARD SVC AVBL.": [
+   "NA is 'Not Authorized' (CS), not what the translation says",
+   "repeated 'available'"
+  ],
+  "INDY APPCH - R, E 134.85 OR 377.1, TWR - 1200-0400Z++ EXCLD HOL. 126.2 OR 243.6 FSS-TERRE HAUTE HUF-NOTAM HUF.": [
+   "EXCLD is 'exclude' (CS), not what the translation says",
+   "added 'except'"
+  ],
+  "MILITARY: ANG: OPR 1030-2100Z++ MON-THUR EXC HOL. PPR TSNT ACFT OFFL BUS ONLY. AFLD MGR C315-233-2399, AFT DUTY HR CTC C315-233-2399. PPR REQ FOR ALL TSNT ACFT DUE LTD TSNT SVC. NTFY AFLD MGR OF ETA DLA OVR 30 MIN OR MSN CNL IS RQR.": [
+   "REQ is 'request' (CS), not what the translation says"
+  ],
+  "NOISE ABATEMENT RWY 6/24. USE FULL RWY AND AVOID INTXN DEPS. MINIMIZE /AVOID TGL OPNS. CLIMB OUT ON RWY HDG TIL 1100 FT OVR WATER THEN PROCD ON CRS. REDUCE PWR AS SOON AS PRACTICAL. REQ QUIET HRS 2200-0700 LCL. LDG FEE APPL ACFT >6,000 LBS MTOW OR COMM OPS.": [
+   "APPL is not in the verified glossary; it must stay as written",
+   "dropped COMM",
+   "added 'applicable'"
+  ],
+  "PCR VALUE: 690/F/B/X/T": [
+   "dropped VALUE"
+  ],
+  "PCR VALUE: 690/R/B/W/T": [
+   "dropped VALUE"
+  ],
+  "PCR VALUE: 696/R/D/W/T": [
+   "dropped VALUE"
+  ],
+  "PCR VALUE: 70/F/B/X/U": [
+   "dropped VALUE"
+  ],
+  "PCR VALUE: 700/F/B/X/T": [
+   "dropped VALUE"
+  ],
+  "PCR VALUE: 700/R/B/W/T": [
+   "dropped VALUE"
+  ],
+  "PCR VALUE: 702/F/B/W/T": [
+   "dropped VALUE"
+  ],
+  "PCR VALUE: 707/R/A/W/T": [
+   "dropped VALUE"
+  ],
+  "PCR VALUE: 708/R/A/W/T": [
+   "dropped VALUE"
+  ],
+  "PCR VALUE: 710/F/A/X/T": [
+   "dropped VALUE"
+  ],
+  "PCR VALUE: 710/R/D/W/T": [
+   "dropped VALUE"
+  ],
+  "PCR VALUE: 711/F/A/X/T": [
+   "dropped VALUE"
+  ],
+  "PCR VALUE: 715/F/A/X/T": [
+   "dropped VALUE"
+  ],
+  "PCR VALUE: 719/R/A/W/T": [
+   "dropped VALUE"
+  ],
+  "PCR VALUE: 72/F/C/W/T": [
+   "dropped VALUE"
+  ],
+  "POSSIBLE TURBULENCE INVOF EXHAUST STACKS 3,500 FT SW OF RWY 04, AVOID LOW ALT OVERFLT.": [
+   "dropped OVERFLT"
+  ],
+  "PPR OVR 12500 LBS, BANNER TOWING, SKYDIVING, UAV/UAS, PWR PRCHT AND GLDR OPS - AMGR.": [
+   "UAV is not in the verified glossary; it must stay as written",
+   "added a negation: the FAA text has 1, the translation 2",
+   "added 'vehicle'"
+  ],
+  "PUB RD 209 FT FM RWY END, 14 FT ABV RWY & 14 FT FM LT OF CTLN.": [
+   "RD is not in the verified glossary; it must stay as written",
+   "LT has no verified meaning (remarks use it for left ('440 FT LT OF CTLN'); JO 7340.2's 'turn left after take-off' doesn't fit); it must stay as written",
+   "added 'road'"
+  ],
+  "REIL RWY 11 & 29 OPR CONSLY; PAPI RWY 11, 16, 29 & 34 OPR CONSLY. ACTVT MALS RWY 34; REILRWY 16;  RWY 16/34 EDGE LIGHTS; TWY LGTS CTAF.": [
+   "dropped REILRWY",
+   "repeated 'end'",
+   "repeated 'identifier'"
+  ],
+  "RSTD: ALL TXY LEAD IN LINES SW OF CNTR AND EAST RAMP ARE TO BE UTILIZED FOR TOW OPS ONLY.": [
+   "TXY is not in the verified glossary; it must stay as written",
+   "added 'taxiway'"
+  ],
+  "RSTD: PPR WITH 72 HR NTC AND BILLETING CONFIRMATION NR REQ FOR ALL ACFT. EMERG DIVERT ACFT TO BUCHOLZ AAF OUTSIDE OF REG AFLD OPR HR, CTC FAA CONTROLLER AT OAKLAND CNTR TO AMG BASE OPS/TWR PERS RECALL. ALL ACFT TRNSPG XPLOS CARGO RQR A PPR. CTC BASE OPS, PACIFIC DSN 480-2131, C808-580-2131. ACFT AVOID OVER FLT E END OF ISLAND BLW 1500 FT AGL. TWY E IS WT RSTD FOR FOLLOWING ACFT B737, B757, B767, C-5, C-17, C-130. BT AND 180 DEG TURN ON RWY WILL BE RQR FOR EITHER ARR OR DEPT. EXCEPTIONS MAY BE GRANTED FOR TWY A, IN ORDER TO ACCESS XPLOS CARGO PRKG LOC.": [
+   "REQ is 'request' (CS), not what the translation says",
+   "AMG is not in the verified glossary; it must stay as written",
+   "dropped OVER"
+  ],
+  "RWY 03 CALM WIND RWY. RDC D/II/5000; APRC B/II/5000; DPRC B/II. MIDFIELD DEP & STOP & GO LNDG NA. TGL NA 2130-0600.": [
+   "NA is 'Not Authorized' (CS), not what the translation says",
+   "added 'available'"
+  ],
+  "RWY 07/25 NOT PLOWED FOR SN,  OPN TO SKI EQUIPED ACFT.": [
+   "dropped EQUIPED"
+  ],
+  "RY 04S/22S FOR SKI/TUNDRA TIRE EQUIPD ACFT.": [
+   "dropped EQUIPD"
+  ],
+  "SELF SVC FUEL H24.": [
+   "lost number 24"
+  ],
+  "SELF SVC H24 VIA CREDIT CARD.": [
+   "lost number 24"
+  ],
+  "SIMUL OPS RWY 04/22 & 04S/22S NA.": [
+   "SIMUL is 'simultaneous/ly' (JO 2-1-1 (ICAO)), not what the translation says",
+   "NA is 'Not Authorized' (CS), not what the translation says",
+   "added 'available'"
+  ],
+  "SKI OR TUNDRA TIRE ACFT ONLY. WINTER MAINT NA.": [
+   "NA is 'Not Authorized' (CS), not what the translation says",
+   "added 'available'"
+  ],
+  "SOFT & RUTTED; IREG MRKD W CONES.": [
+   "W is 'West or White' (CS), not what the translation says"
+  ],
+  "SOUTH FLD - PAD 1 LGTS STD AND IN SVC, BUT NOT IAW REG CRITERIA. NGT LDGS USE CTN. PAD 2 UNLGTD BUT EASTERN AND WESTERN WIND INDICATORS LGTD. TSNT ACFT LDGS RSTD TO PAD 1 DUE TO GND TFC HAZ ASSOC WITH PAD 2. PAD 2 OPS RQRS LOCAL SAFTEY BRIEFING. SLOPES WI EAST AND WEST CLEAR ZONE OF PAD 1 EXCEED REG CRITERIA LMTS.  NORTH FLD - PAD LGTS IN SVC. ALS AVBL BOTH DIR. WIND INDICATOR LGTD.": [
+   "dropped SAFTEY",
+   "DIR is 'director' (JO 2-1-1 (GEN)), not what the translation says",
+   "added 'safety'"
+  ],
+  "TIMBERED MOUTAIN SLOPE.": [
+   "dropped MOUTAIN",
+   "added 'mountain'"
+  ],
+  "TO AND LDG NA SS-SR.": [
+   "NA is 'Not Authorized' (CS), not what the translation says",
+   "added 'takeoff'",
+   "added 'available'"
+  ],
+  "TSNT PRKG WINGSPAN LESS THAN 79 FT E RAMP. TSNT PRKG W RAMP NA. LTD TSNT FLOAT PLANE PRKG - 907-455-4571. MEDIVAC & TSNT HEL PRKG - 907-750-0890.": [
+   "NA is 'Not Authorized' (CS), not what the translation says",
+   "added 'available'"
+  ],
+  "TURB ON HOT DAYS LNDG W IN TRSN EAST APCH.": [
+   "W is 'West or White' (CS), not what the translation says",
+   "added 'within'"
+  ],
+  "TWY A5 BTN TWY A & GEN AVN APRON LTD TO WINGSPAN LESS THAN 79 FT.": [
+   "dropped APRON",
+   "added 'airport'"
+  ],
+  "WX SVC H24 EXC AFLD/TWR CLOSURE - D317-377-1160/3140/C907-377-1160/3140; AN/FMQ-19 AUTOMATED OBS SYS AUGMENTED BY HUMAN OBSN.": [
+   "lost number 24"
+  ]
+ }
 }

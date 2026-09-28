@@ -26,7 +26,7 @@ FAA_INQUIRY = "https://www.faa.gov/air_traffic/flight_info/aeronav/aero_data/Aer
 # Cloudflare Web Analytics: cookie-free visitor counts (the about page's privacy note says so). The token is
 # public by design; "" turns the beacon off.
 CF_BEACON = "d1ab67595c784b45827953de63a28e9a"
-RESERVED = {"latest", "history", "assets", "watch", "list", "about", "guide", "docs", "changelog", "privacy", "terms",
+RESERVED = {"latest", "history", "assets", "watch", "list", "about", "guide", "docs", "changelog", "privacy", "terms", "status",
             "index.html", "airports.json", "cycles.ics"}  # never an airport page
 PRIORITY = [("action", "ACT", "Action"), ("ifr", "IFR", "IFR procedures"), ("fyi", "FYI", "FYI")]
 # what the labels mean, same words as the iOS guide (ios/Amend/GuideView.swift): css class, legend, tooltip,
@@ -50,8 +50,6 @@ NO_CHG_TIP = "Nothing changed at this airport between the two cycles"
 # "https://buttondown.com/api/emails/embed-subscribe/amend". Empty = no email form, only the RSS feed.
 # Each signup is tagged list:<slug>, so one RSS-to-email automation per list can send just to its tag.
 EMAIL_FORM = ""
-# for airports (too many for one automation each): a free service where pilots subscribe to any feed themselves
-SELF_SERVE_EMAIL = "https://feedrabbit.com/"
 
 
 # IBM Plex Sans and IBM Plex Mono (SIL OFL, amend/fonts/OFL.txt), served from amend.watch itself so a page view
@@ -829,11 +827,9 @@ def alerts_box(feed_url, what, tag=None, pop=False):
                '<button class="btn" type="submit">Email me</button></form>'
                f'<p class="foot">One email per FAA cycle when something changes at {what}. Unsubscribe anytime.</p>')
     else:
-        how = ('<ol class="steps"><li>Copy the alert link.</li><li>'
-               + (f'Paste it into a free service like <a href="{e(SELF_SERVE_EMAIL)}" target="_blank" '
-                  'rel="noopener">Feedrabbit</a> to get it by email, or into a news reader app.'
-                  if SELF_SERVE_EMAIL else 'Paste it into a news reader app.')
-               + f'</li></ol><div class="btns"><button class="btn" data-copy="{e(feed_url)}" hidden>Copy alert link'
+        how = ('<ol class="steps"><li>Copy the alert link.</li><li>Paste it into a news reader app like Feedly, '
+               'Inoreader or NetNewsWire. It shows each update when the FAA posts it.'
+               f'</li></ol><div class="btns"><button class="btn" data-copy="{e(feed_url)}" hidden>Copy alert link'
                '</button></div>')
     inner = (f'<p class="note">Hear about it when a new FAA cycle changes {what}, action items first. One update per '
              f'cycle, nothing in between.</p>{how}'
@@ -902,8 +898,9 @@ def sidebar(root, active, meta=None, now=None, on=""):
             f'{link("guide/", "Guide", "guide")}{link("docs/", "Docs", "docs")}{link("about/", "About", "about")}'
             f'<div id="sbw" data-on="{e(on)}"></div><script>SB.side()</script>{cyc}'
             f'<div class="sbfoot">Not for navigation. Independent, not affiliated with the FAA.<br>'
-            f'<a href="{root}changelog/">Changelog</a> · <a href="{root}privacy/">Privacy</a> · '
-            f'<a href="{root}terms/">Terms</a><br><a href="{REPORT_URL}">Report a problem</a> · '
+            f'<a href="{root}changelog/">Changelog</a> · <a href="{root}status/">Status</a> · '
+            f'<a href="{root}privacy/">Privacy</a> · <a href="{root}terms/">Terms</a><br>'
+            f'<a href="{REPORT_URL}">Report a problem</a> · '
             f'<a href="{REPO_URL}">Source</a></div></nav>')
     nav = lambda href, text, key: f'<a class="{"on" if key == active else ""}" href="{root}{href}">{text}</a>'
     top = (f'<header class="mtop">{logo(root)}<nav class="nav">'
@@ -943,7 +940,7 @@ f'<link rel="alternate" type="application/rss+xml" title="{e(feed[1])}" href="{e
 <main class="main{' two' if two else ''}"><div class="card banner stale full" id="stale" hidden></div>{body}
 <p class="foot full">{freshness(meta, now or dt.datetime.now(dt.timezone.utc))}{'. ' if meta else ''}Not for navigation. Always use official FAA publications, NOTAMs and a proper preflight briefing.
 Amend is independent and not affiliated with the FAA. Data: FAA NASR and d-TPP.
-<a href="{root}docs/">How it works</a> · <a href="{root}changelog/">Changelog</a> · <a href="{root}privacy/">Privacy</a> · <a href="{root}terms/">Terms</a> · <a href="{REPORT_URL}">Report a problem</a> · <a href="{REPO_URL}">Source</a></p></main></div></body></html>"""
+<a href="{root}docs/">How it works</a> · <a href="{root}status/">Status</a> · <a href="{root}changelog/">Changelog</a> · <a href="{root}privacy/">Privacy</a> · <a href="{root}terms/">Terms</a> · <a href="{REPORT_URL}">Report a problem</a> · <a href="{REPO_URL}">Source</a></p></main></div></body></html>"""
 
 
 def effective(cycle):
@@ -1261,7 +1258,10 @@ UPDATES = [
     ("Sep 2026", [
         "Moving between pages fades instead of flashing, and pages you point at load before you click. Get "
         "alerts on an airport page opens right under the button. A list's name in the sidebar opens that list, and "
-        "the sidebar always has open the list you're looking at.",
+        "the sidebar always has open the list you're looking at. Alerts no longer point at an outside email service: "
+        "the alert link goes into a news reader app.",
+        "A <a href=\"../status/\">status page</a> shows whether Amend is current and every step of each recent "
+        "run: the FAA files it downloaded, the checks it ran and whether it was published.",
         "Remark translations are held to a stricter check. They have to keep every code (like 100LL or "
         "D523-4244), every + or - on a height, every ++ after a time and the order of the numbers, and they "
         "can't add words the FAA text doesn't have, like \"the runway\" or \"is available\". About 1,000 "
@@ -1349,6 +1349,7 @@ before it takes effect.</p>
 {go("../guide/", "Guide", "What ACT, IFR and FYI mean, how to read a change, and how FAA cycles work.")}
 {go("../docs/", "Docs", "How Amend works, where the data comes from, what it doesn't cover, and the JSON files behind it.")}
 {go("../changelog/", "Changelog", "What's new on Amend, newest first.")}
+{go("../status/", "Status", "Whether Amend is current, and every check the latest runs went through.")}
 {go("../privacy/", "Privacy", "What Amend stores (almost nothing) and who else sees a visit.")}
 {go("../terms/", "Terms", "The rules for using Amend, starting with: not for navigation.")}
 </div></div>
@@ -1375,7 +1376,10 @@ def docs_page(meta, now):
             "every translation, and one that adds, drops or changes a number or gets a known contraction wrong is "
             "thrown out so the FAA text shows instead. The original is always one tap away.</li>"
             "<li><b>Tests:</b> regression tests built from real cases in FAA data run before every update. If one "
-            "fails, nothing is published and the last good version stays up.</li></ul>")),
+            "fails, nothing is published and the last good version stays up.</li></ul>"
+            '<p>The <a href="../status/">status page</a> shows every step of every recent run: the FAA files it '
+            "downloaded and their checksums, the rows it read, what it found, every check and whether it was "
+            "published.</p>")),
         ("sources", "Data sources", (
             "<ul>"
             f'<li><b><a href="{NASR_PAGE.format(cycle="")}">NASR 28-day subscription</a>:</b> airports, runways, '
@@ -1446,8 +1450,8 @@ def privacy_page(meta, now):
     email = ("<p>If you sign up for email on a shared list, your address goes to the email service that sends it, "
              "which keeps it until you unsubscribe. It's used for that list's updates and nothing else.</p>"
              if EMAIL_FORM else
-             "<p>Amend doesn't collect email addresses. If you use a service like Feedrabbit or a news reader app "
-             "to follow an alert link, that service's own privacy policy applies to what you give it.</p>")
+             "<p>Amend doesn't collect email addresses. If you use a news reader app to "
+             "follow an alert link, that app's own privacy policy applies to what you give it.</p>")
     sections = [
         ("short", "The short version", (
             "<p>No accounts, no cookies, no ads, and nothing sold. Your lists stay in your browser. Visitor counts "
@@ -1529,8 +1533,8 @@ def terms_page(meta, now):
             "how the site works.</p>"
             f'<p>The code is open source under the <a href="{REPO_URL}/blob/master/LICENSE">MIT license</a>.</p>')),
         ("links", "Other sites", (
-            "<p>Amend links to sites it doesn't run, like FAA pages and plates, GitHub, and alert services such as "
-            "Feedrabbit. Their own terms and privacy policies apply there, and Amend isn't responsible for them.</p>")),
+            "<p>Amend links to sites it doesn't run, like FAA pages and plates, GitHub, and news reader apps. "
+            "Their own terms and privacy policies apply there, and Amend isn't responsible for them.</p>")),
         ("changes", "Changes", (
             f"<p>Last changed {POLICY_DATE}. These terms can change as Amend does; changes are listed in the "
             f'<a href="../changelog/">changelog</a> and every edit is <a href="{REPO_URL}">on GitHub</a>. '
@@ -1583,8 +1587,8 @@ GUIDE_SECTIONS = [
      "<p>Every airport page and shared list has a <b>Get alerts</b> box. It gives you one update per FAA cycle: "
      "what changes there, action items first, usually within a day of the FAA posting it (about three weeks before "
      "it takes effect).</p>"
-     "<p>Copy the alert link and paste it into a free service like Feedrabbit to get it by email, or into a news "
-     "reader app like Feedly. The link is an RSS feed, the same kind podcast apps use.</p>"
+     "<p>Copy the alert link and paste it into a news reader app like Feedly, Inoreader or NetNewsWire. The link is "
+     "an RSS feed, the same kind podcast apps use.</p>"
      "<p>Lists saved in your browser don't have one alert link, since only your browser knows what's on them. "
      "Follow each airport instead, or use <b>More options</b> on the list's page to download all of its alerts as "
      "one file (OPML) a news reader can import.</p>"),
@@ -1630,7 +1634,7 @@ def not_found_page(meta, now):
 <div class="btns"><a class="btn" href="/">Search airports</a><a class="btn ghost" href="/list/">Your lists</a></div></header>
 <script>(()=>{const seg=location.pathname.split("/").filter(Boolean).map(s=>{try{return decodeURIComponent(s)}catch(e){return s}}),
   f=seg[0]||"",low=f.toLowerCase(),rest=location.search+location.hash,h=document.getElementById("nfh"),p=document.getElementById("nfp");
-if(seg.length===1&&["list","guide","about","docs","changelog","privacy","terms"].includes(low)&&f!==low)return location.replace("/"+low+"/"+rest);
+if(seg.length===1&&["list","guide","about","docs","changelog","privacy","terms","status"].includes(low)&&f!==low)return location.replace("/"+low+"/"+rest);
 if(low==="list"&&seg.length===2){const slug=seg[1].toLowerCase();if(slug!==seg[1])return location.replace("/list/"+slug+"/"+rest);
   h.textContent="No list called “"+seg[1]+"”";p.textContent="Check the link. Lists you saved yourself are under Your lists.";return}
 const id=f.toUpperCase().replace(/^K(?=[A-Z]{3}$)/,"");   // KDAB -> DAB, like the search box
@@ -1734,6 +1738,8 @@ def build(site, meta, directory, latest, history_dir, now=None, watchlists=None,
         os.makedirs(os.path.join(site, slug), exist_ok=True)
         with open(os.path.join(site, slug, "index.html"), "w", encoding="utf-8") as f:
             f.write(make(meta, now))
+    from . import statuspage   # imports web, so not at the top
+    statuspage.build(site, meta, now)
     with open(os.path.join(site, "404.html"), "w", encoding="utf-8") as f:
         f.write(not_found_page(meta, now))
     for slug, wl in (watchlists or {}).items():
