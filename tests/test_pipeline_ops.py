@@ -258,7 +258,7 @@ class TestCheck(unittest.TestCase):
     def test_check_writes_github_output_and_fails_open(self):
         out = os.path.join(tempfile.mkdtemp(), "out")
         with mock.patch("amend.freshness._get_json", side_effect=OSError("down")), \
-                mock.patch("amend.freshness.probe", return_value=None):
+                mock.patch("amend.freshness.probe_info", return_value=(None, None)):
             self.assertTrue(freshness.check(out, NOW))
         with open(out) as f:
             self.assertEqual(f.read(), "build=true\n")

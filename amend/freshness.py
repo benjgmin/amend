@@ -17,7 +17,7 @@ import os
 import re
 import urllib.request
 
-from .cycles import CYCLE, airspace_url, csv_url, dtpp_url, in_effect, probe
+from .cycles import CYCLE, airspace_url, csv_url, dtpp_url, in_effect, probe_info
 
 SITE_URL = os.environ.get("AMEND_SITE_URL", "https://amend.watch")
 MAX_AGE = dt.timedelta(hours=20)   # rebuild at least this often (the site calls 36h stale)
@@ -93,15 +93,40 @@ def check(output=None, now=None):
                 history_cycles = json.load(f)["cycles"]
         except (OSError, ValueError, KeyError):
             history_cycles = []
-        why = decide(now, meta, build, fingerprint(), history_cycles, probe)
+        seen = {}
+
+        def posted(url):
+            seen[url] = probe_info(url)
+            return seen[url][0]
+        why = decide(now, meta, build, fingerprint(), history_cycles, posted)
     except Exception as e:   # never let the check itself be the reason the site goes stale
-        why = [f"check failed ({type(e).__name__}: {e})"]
+        why, seen = [f"check failed ({type(e).__name__}: {e})"], {}
     print("build: " + ("; ".join(why) if why else "no, live site is current"))
+    for line in faa_log(seen, now):
+        print(line)
     output = output or os.environ.get("GITHUB_OUTPUT")
     if output:
         with open(output, "a") as f:
             f.write(f"build={'true' if why else 'false'}\n")
     return bool(why)
+
+
+def faa_log(seen, now):
+    """one line per FAA file this check looked at, with how long ago the FAA posted it (its Last-Modified).
+    the run that first says "FAA has <cycle>" shows the real pickup lag: posted at X, seen now."""
+    out = []
+    for url, (ok, lm) in seen.items():
+        if ok is None:
+            out.append(f"  faa: couldn't tell  {url}")
+        elif not ok:
+            out.append(f"  faa: not posted     {url}")
+        elif lm:
+            mins = int((now - lm).total_seconds() // 60)
+            out.append(f"  faa: posted {lm:%Y-%m-%d %H:%MZ} ({mins // 1440}d {mins % 1440 // 60}h {mins % 60}m "
+                       f"before this check)  {url}")
+        else:
+            out.append(f"  faa: posted (no Last-Modified)  {url}")
+    return out
 
 
 MIN_AIRPORTS = 5000    # airports.json has ~20k; anything near empty means a broken read

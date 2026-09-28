@@ -73,6 +73,7 @@ final class AirportStore {
             let newIndex = try await i
             meta = newMeta
             index = newIndex
+            CycleClock.shared.recheck(newMeta?.toCycle)
             errorMessage = nil
             if let newMeta { NotificationManager.markSeen(newMeta.toCycle) }
         } catch {
