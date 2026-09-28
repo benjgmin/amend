@@ -58,6 +58,31 @@ final class AirportStore {
 
     func listsContaining(_ id: String) -> [AirportList] { lists.filter { $0.ids.contains(id) } }
 
+    /// this cycle's changes at the airports you keep, for "coming up at your airports" on home
+    private(set) var latest: [String: AirportChanges] = [:]
+
+    /// the airports you keep that change this cycle, most action items first; the site caps it at 60 too
+    var busyKept: [String] {
+        saved.filter { counts(for: $0) != nil }
+            .sorted { a, b in
+                let x = counts(for: a)?.action ?? 0, y = counts(for: b)?.action ?? 0
+                return x != y ? x > y : a < b
+            }
+    }
+
+    /// fetches the changes behind busyKept that aren't loaded yet (URLSession caches the rest)
+    func loadKept() async {
+        let want = busyKept.prefix(60).filter { latest[$0]?.toCycle != index?.toCycle }
+        guard !want.isEmpty else { return }
+        let got = await withTaskGroup(of: (String, AirportChanges?).self) { group in
+            for id in want { group.addTask { (id, try? await API.latest(id)) } }
+            var out: [(String, AirportChanges)] = []
+            for await (id, data) in group { if let data { out.append((id, data)) } }
+            return out
+        }
+        for (id, data) in got { latest[id] = data }
+    }
+
     /// the airports with the most action items this cycle, as on the site's home page (most changes breaks ties)
     private(set) var busiest: [String] = []
 

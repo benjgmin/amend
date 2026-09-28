@@ -19,6 +19,9 @@ struct AirportsView: View {
                     if meta.isStale {
                         StaleBanner(meta: meta).efbRow(top: 0, bottom: 12)
                     }
+                    if !store.saved.isEmpty && store.index != nil {
+                        ComingUpView(meta: meta)
+                    }
                 }
 
                 // a row, not an overlay: an overlay stays put while pull-to-refresh moves the list,
@@ -220,17 +223,8 @@ private struct CycleStrip: View {
     let meta: Meta
     var onInfo: () -> Void = {}
 
-    private var days: Int? { Cycle.daysUntil(meta.toCycle) }
     /// the site says "upcoming" until its next daily run; trust the clock (changeover is 0901Z)
     private var upcoming: Bool { meta.upcoming && !Cycle.isInEffect(meta.toCycle) }
-
-    private var countdown: String {
-        switch days ?? 0 {
-        case ...0: "today 0901Z"
-        case 1: "tomorrow"
-        case let d: "in \(d) days"
-        }
-    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -251,7 +245,9 @@ private struct CycleStrip: View {
                 label("Next cycle takes effect 0901Z")
                 HStack(alignment: .firstTextBaseline, spacing: 10) {
                     Text(Cycle.efb(meta.toCycle)).font(.system(size: 28, weight: .semibold)).foregroundStyle(EFB.text)
-                    Text(countdown).font(.system(size: 15, weight: .medium)).foregroundStyle(EFB.cyan)
+                    if let t = Cycle.effectiveInstant(meta.toCycle) {
+                        Countdown(to: t).font(.system(size: 15, weight: .medium)).foregroundStyle(EFB.cyan)
+                    }
                 }
                 detail("\(meta.changedAirports) airports change on this date")
                 Text("Changes below aren't in effect yet.")
@@ -265,6 +261,14 @@ private struct CycleStrip: View {
                     .font(.system(size: 24, weight: .semibold))
                     .foregroundStyle(EFB.text)
                 detail("\(meta.changedAirports) airports changed since \(Cycle.efb(meta.fromCycle))")
+                if let next = Cycle.effectiveInstant(Cycle.shift(meta.toCycle, days: 28)) {
+                    HStack(spacing: 4) {
+                        Text("Next cycle")
+                        Countdown(to: next)
+                    }
+                    .font(.system(size: 13))
+                    .foregroundStyle(EFB.dim)
+                }
             }
         }
         .efbPanel()
