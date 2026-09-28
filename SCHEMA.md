@@ -24,6 +24,7 @@ Which cycles `latest/` compares.
 | `includes_charts` | bool | d-TPP chart changes included |
 | `includes_airspace` | bool | class airspace shape changes (floors, ceilings, boundaries) included |
 | `changed_airports` | int | |
+| `engine` | string | version of the engine that made these changes (`1.0.0`) |
 | `generated` | string | ISO timestamp, UTC |
 
 ## `latest/index.json`
@@ -79,6 +80,8 @@ Every change at an airport since Aug 2024, newest first.
 {"schema_version": 1, "airport": "VRB", "first_cycle": "2025-01-23", "last_cycle": "2025-07-10",
  "entries": [Change + {"cycle": "2025-07-10", "from_cycle": "2025-06-12"}, ...]}
 ```
+Entries added since the engine was versioned also carry `"engine": "1.0.0"`, the engine version
+that made them; older entries have no `engine`.
 "What changed since X" = entries with `cycle` after X. Chart (d-TPP) history starts Oct 2026;
 the FAA doesn't keep older metafiles online.
 
@@ -87,3 +90,9 @@ the FAA doesn't keep older metafiles online.
 {"schema_version": 1, "cycles": ["2024-09-05", ...],
  "airports": {"VRB": {"entries": 14, "last_cycle": "2025-07-10", "action": 6}}}
 ```
+## Processing log (in the repo, not served)
+`audit/runs/<cycle>.json` holds one record per engine run (the site build and each history
+cycle): the FAA source files with checksums and retrieval times, rows read per file, changes
+by priority, the input checks and release audit, and whether the run was built, blocked or
+failed. Its full shape is documented at the top of `amend/runlog.py`, and it has its own
+`runlog_version`.

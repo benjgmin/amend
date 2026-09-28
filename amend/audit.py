@@ -35,6 +35,15 @@ BUSIEST = ["ATL", "BOS", "BWI", "CLT", "DCA", "DEN", "DFW", "DTW", "EWR", "FLL",
 ACT_WARN, ACT_FAIL = 2.5, 5.0
 MIN_AIRPORTS = 100          # every cycle since 2024 changed 450+ airports
 
+# rows per FAA input file, old cycle vs new cycle. a truncated or half-read file shows up here
+# before it shows up as thousands of "removed" changes. measured on all 28 cycle pairs from
+# Aug 2024 to Oct 2026: the biggest real drop in any file the engine reads was 2.9% (ATC_RMK,
+# Aug -> Sep 2026), the biggest real rise 6.8% (PJA_CON), and no file ever went missing except
+# AWY_ALT and AWY_SEG when the FAA reorganized the airway files in Sep 2024
+DROP_FAIL, DROP_WARN = 0.10, 0.05   # share of rows lost: stop the build / flag for review
+RISE_FAIL, RISE_WARN = 0.50, 0.15   # share of rows gained (a file packed twice doubles)
+MIN_ROWS = 50               # tiny files swing by a few rows; only emptying one is judged
+
 JUNK = re.compile(r"\b(None|nan|NaN|null|undefined)\b|Traceback|\{|\}|�|\?\?")
 FREQ_FIELD = re.compile(r"^(FREQ|.*_FREQ|FREQ_.*)$")
 RWY_END = re.compile(r"^(0?[1-9]|[12]\d|3[0-6])[LRC]?[WUT]?$|^[NSEW]{1,2}$|^H\d+[A-Z]?$|^[A-Z]\d{0,2}$")
@@ -194,15 +203,55 @@ def check_counts(airports, past_actions):
     return errors, warnings
 
 
+def check_inputs(csv_rows, airspace_shapes=None):
+    """(errors, warnings) comparing data rows per FAA file, old cycle vs new cycle.
+    csv_rows: {"old": {file: rows}, "new": {file: rows}} from pipeline.run(); airspace_shapes:
+    {"old": n, "new": n} class airspace shapes read, judged the same way as a file."""
+    errors, warnings = [], []
+    old, new = dict(csv_rows.get("old") or {}), dict(csv_rows.get("new") or {})
+    if not new:
+        return ["no FAA files were read from the new cycle"], []
+    if airspace_shapes:
+        old["class airspace shapefile"] = airspace_shapes["old"]
+        new["class airspace shapefile"] = airspace_shapes["new"]
+    for f in sorted(set(old) | set(new)):
+        a, b = old.get(f), new.get(f)
+        if b is None:
+            errors.append(f"{f} was in the old cycle ({a} rows) and is missing from the new one: "
+                          f"every row would read as removed")
+            continue
+        if a is None:
+            if b:
+                warnings.append(f"{f} is new this cycle ({b} rows): every row reads as added")
+            continue
+        change = (b - a) / a if a else (1.0 if b else 0.0)
+        msg = f"{f} went from {a} to {b} rows ({change:+.0%})"
+        if a and not b:
+            errors.append(f"{msg}: the FAA file is empty")
+        elif max(a, b) < MIN_ROWS:
+            continue
+        elif change < -DROP_FAIL:
+            errors.append(f"{msg}: probably a truncated FAA file (real cycles drop at most 3%)")
+        elif change > RISE_FAIL:
+            errors.append(f"{msg}: probably a file packed twice (real cycles grow at most 7%)")
+        elif change < -DROP_WARN or change > RISE_WARN:
+            warnings.append(msg)
+    return errors, warnings
+
+
 def audit(result, history_dir="history", today=None, gap_ok=False):
     """everything above for one pipeline.run() result."""
     frm, to = result["from_cycle"], result["to_cycle"]
     errors = check_cycles(frm, to, today, gap_ok)
     if errors:      # the rest assumes real dates
         return {"errors": errors, "warnings": []}
+    e0, w0 = (check_inputs(result["csv_rows"], result.get("airspace_shapes"))
+              if "csv_rows" in result else ([], []))
+    if result.get("airspace_error"):   # published without shapes; meta.json says so
+        w0.append(f"airspace shape changes left out: {result['airspace_error']}")
     e1, w1 = check_changes(result["airports"], to)
     e2, w2 = check_counts(result["airports"], baseline(history_dir, exclude=to))
-    return {"errors": e1 + e2, "warnings": w1 + w2}
+    return {"errors": e0 + e1 + e2, "warnings": w0 + w1 + w2}
 
 
 def review_airports(watchlists):
