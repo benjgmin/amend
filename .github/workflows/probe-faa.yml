@@ -1,25 +1,33 @@
-# TEMPORARY: availability probe for the raw archive PR. removed before the PR is ready.
-name: probe FAA archive (temporary)
+# TEMPORARY: back up the two cycles whose d-TPP metafile the FAA drops next (it only keeps 4),
+# then run again to prove a second run is a no-op. removed before the PR is ready.
+name: archive at-risk cycles (temporary)
 on:
   push:
     branches: [ claude/raw-faa-archive-011adq ]
 permissions:
-  contents: read
+  contents: write
+concurrency:
+  group: archive
+  cancel-in-progress: false
 jobs:
-  probe:
+  archive:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
       - run: python -m unittest tests.test_archive
-      - name: before Aug 2024 (where does the FAA archive start?)
+      - name: archive 2026-07-09 and 2026-08-06
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -o pipefail
-          python -m amend archive --list 2022-01-27 2022-02-24 2022-03-24 2022-04-21 2022-05-19 2022-06-16 2022-07-14 2022-08-11 2022-09-08 2022-10-06 2022-11-03 2022-12-01 2022-12-29 2023-01-26 2023-02-23 2023-03-23 2023-04-20 2023-05-18 2023-06-15 2023-07-13 2023-08-10 2023-09-07 2023-10-05 2023-11-02 2023-11-30 2023-12-28 2024-01-25 2024-02-22 2024-03-21 2024-04-18 2024-05-16 2024-06-13 2024-07-11 | tee -a "$GITHUB_STEP_SUMMARY"
-      - name: Aug 2024 through next cycle
+          python -m amend archive 2026-07-09 2026-08-06 | tee -a "$GITHUB_STEP_SUMMARY"
+      - name: run again, must be a no-op
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -o pipefail
-          python -m amend archive --list --backfill | tee -a "$GITHUB_STEP_SUMMARY"
+          python -m amend archive 2026-07-09 2026-08-06 | tee -a "$GITHUB_STEP_SUMMARY"
