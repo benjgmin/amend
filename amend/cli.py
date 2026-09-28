@@ -101,6 +101,9 @@ def main(argv=None):
     v = sub.add_parser("verify", help="check a built site before it's deployed")
     v.add_argument("site", nargs="?", default="site")
 
+    st = sub.add_parser("status", help="rewrite site/status/ from the run log (after verify)")
+    st.add_argument("site", nargs="?", default="site")
+
     ar = sub.add_parser("archive", help="keep each cycle's raw FAA files as a GitHub Release")
     ar.add_argument("cycles", nargs="*", help="cycle dates, e.g. 2024-08-08 (default: in effect + next)")
     ar.add_argument("--backfill", action="store_true", help="every cycle since Aug 2024")
@@ -141,6 +144,9 @@ def main(argv=None):
         if bad:
             sys.exit(f"{a.site}/ failed {len(bad)} check(s); not deploying, the live site stays as it was")
         print(f"{a.site}/ looks complete")
+    elif a.cmd == "status":
+        from .statuspage import rebuild
+        print(f"{a.site}/status/ shows {rebuild(a.site)} runs")
     elif a.cmd == "archive":
         from .archive import main as archive
         archive(a)

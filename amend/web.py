@@ -24,7 +24,7 @@ REPORT_URL = REPO_URL + "/issues/new"    # "report a problem" until there's an e
 # Cloudflare Web Analytics: cookie-free visitor counts (the about page's privacy note says so). The token is
 # public by design; "" turns the beacon off.
 CF_BEACON = "d1ab67595c784b45827953de63a28e9a"
-RESERVED = {"latest", "history", "assets", "watch", "list", "about", "guide", "docs", "changelog", "privacy", "terms",
+RESERVED = {"latest", "history", "assets", "watch", "list", "about", "guide", "docs", "changelog", "privacy", "terms", "status",
             "index.html", "airports.json", "cycles.ics"}  # never an airport page
 PRIORITY = [("action", "ACT", "Action"), ("ifr", "IFR", "IFR procedures"), ("fyi", "FYI", "FYI")]
 # what the labels mean, same words as the iOS guide (ios/Amend/GuideView.swift): css class, legend, tooltip,
@@ -845,8 +845,9 @@ def sidebar(root, active, meta=None, now=None, on=""):
             f'{link("guide/", "Guide", "guide")}{link("docs/", "Docs", "docs")}{link("about/", "About", "about")}'
             f'<div id="sbw" data-on="{e(on)}"></div>{cyc}'
             f'<div class="sbfoot">Not for navigation. Independent, not affiliated with the FAA.<br>'
-            f'<a href="{root}changelog/">Changelog</a> · <a href="{root}privacy/">Privacy</a> · '
-            f'<a href="{root}terms/">Terms</a><br><a href="{REPORT_URL}">Report a problem</a> · '
+            f'<a href="{root}changelog/">Changelog</a> · <a href="{root}status/">Status</a> · '
+            f'<a href="{root}privacy/">Privacy</a> · <a href="{root}terms/">Terms</a><br>'
+            f'<a href="{REPORT_URL}">Report a problem</a> · '
             f'<a href="{REPO_URL}">Source</a></div></nav>')
     nav = lambda href, text, key: f'<a class="{"on" if key == active else ""}" href="{root}{href}">{text}</a>'
     top = (f'<header class="mtop">{logo(root)}<nav class="nav">'
@@ -878,7 +879,7 @@ f'<link rel="alternate" type="application/rss+xml" title="{e(feed[1])}" href="{e
 <main class="main{' two' if two else ''}"><div class="card banner stale full" id="stale" hidden></div>{body}
 <p class="foot full">{freshness(meta, now or dt.datetime.now(dt.timezone.utc))}{'. ' if meta else ''}Not for navigation. Always use official FAA publications, NOTAMs and a proper preflight briefing.
 Amend is independent and not affiliated with the FAA. Data: FAA NASR and d-TPP.
-<a href="{root}docs/">How it works</a> · <a href="{root}changelog/">Changelog</a> · <a href="{root}privacy/">Privacy</a> · <a href="{root}terms/">Terms</a> · <a href="{REPORT_URL}">Report a problem</a> · <a href="{REPO_URL}">Source</a></p></main></div></body></html>"""
+<a href="{root}docs/">How it works</a> · <a href="{root}status/">Status</a> · <a href="{root}changelog/">Changelog</a> · <a href="{root}privacy/">Privacy</a> · <a href="{root}terms/">Terms</a> · <a href="{REPORT_URL}">Report a problem</a> · <a href="{REPO_URL}">Source</a></p></main></div></body></html>"""
 
 
 def effective(cycle):
@@ -1155,6 +1156,8 @@ data-name="{e(wl['name'])}">Save to my lists</a><button class="btn ghost" id="co
 # what shipped, newest first, for /changelog/. Add a line when something people can see changes.
 UPDATES = [
     ("Sep 2026", [
+        "A <a href=\"../status/\">status page</a> shows whether Amend is current and every step of each recent "
+        "run: the FAA files it downloaded, the checks it ran and whether it was published.",
         "The sidebar looks the same on every page, search included, and each list in it folds open or shut and "
         "stays the way you left it. Alerts are explained in plain words, and the old About page is now About, "
         "Docs, Changelog, Privacy and Terms.",
@@ -1229,6 +1232,7 @@ before it takes effect.</p>
 {go("../guide/", "Guide", "What ACT, IFR and FYI mean, how to read a change, and how FAA cycles work.")}
 {go("../docs/", "Docs", "How Amend works, where the data comes from, what it doesn't cover, and the JSON files behind it.")}
 {go("../changelog/", "Changelog", "What's new on Amend, newest first.")}
+{go("../status/", "Status", "Whether Amend is current, and every check the latest runs went through.")}
 {go("../privacy/", "Privacy", "What Amend stores (almost nothing) and who else sees a visit.")}
 {go("../terms/", "Terms", "The rules for using Amend, starting with: not for navigation.")}
 </div></div>
@@ -1255,7 +1259,10 @@ def docs_page(meta, now):
             "every translation, and one that adds, drops or changes a number or gets a known contraction wrong is "
             "thrown out so the FAA text shows instead. The original is always one tap away.</li>"
             "<li><b>Tests:</b> regression tests built from real cases in FAA data run before every update. If one "
-            "fails, nothing is published and the last good version stays up.</li></ul>")),
+            "fails, nothing is published and the last good version stays up.</li></ul>"
+            '<p>The <a href="../status/">status page</a> shows every step of every recent run: the FAA files it '
+            "downloaded and their checksums, the rows it read, what it found, every check and whether it was "
+            "published.</p>")),
         ("sources", "Data sources", (
             "<ul>"
             f'<li><b><a href="{NASR_PAGE.format(cycle="")}">NASR 28-day subscription</a>:</b> airports, runways, '
@@ -1485,7 +1492,7 @@ def not_found_page(meta, now):
 <div class="btns"><a class="btn" href="/">Search airports</a><a class="btn ghost" href="/list/">Your lists</a></div></header>
 <script>(()=>{const seg=location.pathname.split("/").filter(Boolean).map(s=>{try{return decodeURIComponent(s)}catch(e){return s}}),
   f=seg[0]||"",low=f.toLowerCase(),rest=location.search+location.hash,h=document.getElementById("nfh"),p=document.getElementById("nfp");
-if(seg.length===1&&["list","guide","about","docs","changelog","privacy","terms"].includes(low)&&f!==low)return location.replace("/"+low+"/"+rest);
+if(seg.length===1&&["list","guide","about","docs","changelog","privacy","terms","status"].includes(low)&&f!==low)return location.replace("/"+low+"/"+rest);
 if(low==="list"&&seg.length===2){const slug=seg[1].toLowerCase();if(slug!==seg[1])return location.replace("/list/"+slug+"/"+rest);
   h.textContent="No list called “"+seg[1]+"”";p.textContent="Check the link. Lists you saved yourself are under Your lists.";return}
 const id=f.toUpperCase().replace(/^K(?=[A-Z]{3}$)/,"");   // KDAB -> DAB, like the search box
@@ -1589,6 +1596,8 @@ def build(site, meta, directory, latest, history_dir, now=None, watchlists=None,
         os.makedirs(os.path.join(site, slug), exist_ok=True)
         with open(os.path.join(site, slug, "index.html"), "w", encoding="utf-8") as f:
             f.write(make(meta, now))
+    from . import statuspage   # imports web, so not at the top
+    statuspage.build(site, meta, now)
     with open(os.path.join(site, "404.html"), "w", encoding="utf-8") as f:
         f.write(not_found_page(meta, now))
     for slug, wl in (watchlists or {}).items():

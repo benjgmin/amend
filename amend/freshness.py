@@ -158,6 +158,8 @@ def verify(site="site", min_airports=MIN_AIRPORTS):
     hist = load("history/index.json")
     if hist is not None and not hist.get("cycles"):
         out.append("history/index.json has no cycles")
+    if not os.path.exists(os.path.join(site, "status", "index.html")):
+        out.append("status/index.html missing")
     if not os.path.exists(os.path.join(site, "build.json")):
         out.append("build.json missing")
     return out

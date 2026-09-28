@@ -297,6 +297,7 @@ class TestVerify(unittest.TestCase):
         w("airports.json", {"airports": [{"id": str(i)} for i in range(airports)]})
         w("history/index.json", {"cycles": ["2026-09-03"]})
         w("build.json", {"inputs": "abc"})
+        w("status/index.html", "")
         return d
 
     def test_good_site(self):
@@ -318,7 +319,9 @@ class TestVerify(unittest.TestCase):
         os.remove(os.path.join(d, "latest", "meta.json"))
         os.remove(os.path.join(d, "index.html"))
         os.remove(os.path.join(d, "assets", "app.js"))
+        os.remove(os.path.join(d, "status", "index.html"))
         bad = freshness.verify(d, 5)
+        self.assertIn("status/index.html missing", bad)
         self.assertIn("index.html missing", bad)
         self.assertIn("assets/app.js missing", bad)
         self.assertTrue(any(p.startswith("latest/meta.json") for p in bad))
