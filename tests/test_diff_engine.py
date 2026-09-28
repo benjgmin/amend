@@ -58,7 +58,7 @@ def _run_with_seed(seed, old, new):
 
 
 class TestSameOutputEveryRun(unittest.TestCase):
-    """the published ids hash the summary text, so a different pairing on a rebuild of the same
+    """the published ids hash the paired FAA rows, so a different pairing on a rebuild of the same
     FAA files changes ids and 'new since your last look' for nobody's reason."""
 
     def zips(self, old, new):

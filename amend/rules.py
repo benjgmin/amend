@@ -2,6 +2,7 @@
 Every rule that decides what counts as a change, what's noise, and how important it is.
 Tuning the output almost always means editing this file.
 """
+import re
 
 # columns that change every cycle and are never real changes
 IGNORE_COLS = {"EFF_DATE", "LAST_INFO_RESPONSE", "LAST_INFO_RESPONSE_DATE"}
@@ -90,6 +91,14 @@ ROW_ACTION = {"APT_RWY": ("added", "removed"), "NAV_BASE": ("removed",), "RDR": 
 # ... and the other way: rows in act files that are fyi when they appear. a new AWOS (4MD) is a
 # new weather source, nice to know; one going away is still act.
 ROW_FYI = {"AWOS": ("added",)}
+# ... and more rows that tell you about a field without changing how you fly it: a newly listed
+# ATIS (most came from one 2025-01-23 backfill of 24-hour ATIS at towered fields), the services
+# a tower lists (LAWRS, LLWAS), military ops hours, a jump area's contact frequency.
+# a non-towered field's approach control listing is who you call for an IFR clearance: ifr.
+ROW_TIER = {("ATC_ATIS", "added"): "fyi", ("ATC_SVC", "added"): "fyi", ("ATC_SVC", "removed"): "fyi",
+            ("MIL_OPS", "added"): "fyi", ("MIL_OPS", "removed"): "fyi",
+            ("PJA_CON", "added"): "fyi", ("PJA_CON", "removed"): "fyi"}
+NON_ATCT_CONTROL = "ifr"
 
 # an ATC_BASE row for a field without a tower (FACILITY_TYPE NON-ATCT) that names no tower,
 # approach or departure service (P14): nothing about who you talk to changed
@@ -170,6 +179,11 @@ def is_noise_col(c):
 def is_hours_col(c):
     """TWR_HRS, ATIS_HRS, AIRSPACE_HRS, RADAR_HRS, OPER_HOURS, APT_ATT HOUR..."""
     return bool(set(c.upper().split("_")) & {"HRS", "HOURS", "HOUR"})
+
+
+def is_helipad(rwy_id):
+    """'H1', 'H2A': a helipad, not a runway (APT_RWY lists both)."""
+    return bool(re.fullmatch(r"H\d+[A-Z]?", rwy_id or ""))
 
 
 def is_fyi_col(c):

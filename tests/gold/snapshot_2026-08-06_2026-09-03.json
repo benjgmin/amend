@@ -16,7 +16,7 @@
      "WITTI5: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart",
      "YESKA6: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart"
     ],
-    "id": "b33be7034ccd",
+    "id": "fb30deace850",
     "kind": "changed",
     "priority": "ifr",
     "procedures": {
@@ -43,7 +43,7 @@
     "details": [
      "preferred IFR route ANC -> SEA: discontinued"
     ],
-    "id": "1ee5b0ebfcab",
+    "id": "84ba99ecbcb8",
     "kind": "changed",
     "priority": "ifr",
     "source": "PFR",
@@ -58,7 +58,7 @@
       "old": "AARON DANIELSON"
      }
     ],
-    "id": "653efe7712be",
+    "id": "ee98a149b347",
     "kind": "changed",
     "priority": "fyi",
     "source": "APT_CON",
@@ -73,7 +73,7 @@
       "old": "PIR"
      }
     ],
-    "id": "1dd6e23e5b38",
+    "id": "41c7d33be294",
     "kind": "changed",
     "priority": "fyi",
     "source": "APT_RWY_END",
@@ -83,7 +83,89 @@
   "APA": [
    {
     "category": "frequency",
-    "id": "cb2091ad1a7b",
+    "fields": [
+     {
+      "field": "FACILITY",
+      "new": "DENVER/A/",
+      "old": ""
+     },
+     {
+      "field": "FAC_NAME",
+      "new": "DENVER/A/",
+      "old": ""
+     },
+     {
+      "field": "FACILITY_TYPE",
+      "new": "RCAG",
+      "old": ""
+     },
+     {
+      "field": "ARTCC_OR_FSS_ID",
+      "new": "ZDV",
+      "old": ""
+     },
+     {
+      "field": "SERVICED_FACILITY",
+      "new": "APA",
+      "old": ""
+     },
+     {
+      "field": "SERVICED_FAC_NAME",
+      "new": "CENTENNIAL",
+      "old": ""
+     },
+     {
+      "field": "SERVICED_SITE_TYPE",
+      "new": "AIRPORT",
+      "old": ""
+     },
+     {
+      "field": "SERVICED_CITY",
+      "new": "DENVER",
+      "old": ""
+     },
+     {
+      "field": "SERVICED_STATE",
+      "new": "CO",
+      "old": ""
+     },
+     {
+      "field": "SERVICED_COUNTRY",
+      "new": "US",
+      "old": ""
+     },
+     {
+      "field": "TOWER_OR_COMM_CALL",
+      "new": "CENTENNIAL",
+      "old": ""
+     },
+     {
+      "field": "PRIMARY_APPROACH_RADIO_CALL",
+      "new": "DENVER",
+      "old": ""
+     },
+     {
+      "field": "FREQ",
+      "new": "126.5",
+      "old": ""
+     },
+     {
+      "field": "SECTORIZATION",
+      "new": "LOW/HIGH",
+      "old": ""
+     },
+     {
+      "field": "FREQ_USE",
+      "new": "DENVER/A/ RCAG",
+      "old": ""
+     },
+     {
+      "field": "REMARK",
+      "new": "DENVER ARTCC (ZDV) FREQS 126.5/371.85 (DENVER/A/ RCAG) USED FOR PINNR RNAV STAR 26000 FT AND BLW.",
+      "old": ""
+     }
+    ],
+    "id": "2edb717cd8b0",
     "kind": "added",
     "priority": "action",
     "source": "FRQ",
@@ -91,7 +173,89 @@
    },
    {
     "category": "frequency",
-    "id": "0286d67348a1",
+    "fields": [
+     {
+      "field": "FACILITY",
+      "new": "HAYDEN",
+      "old": ""
+     },
+     {
+      "field": "FAC_NAME",
+      "new": "HAYDEN",
+      "old": ""
+     },
+     {
+      "field": "FACILITY_TYPE",
+      "new": "RCAG",
+      "old": ""
+     },
+     {
+      "field": "ARTCC_OR_FSS_ID",
+      "new": "ZDV",
+      "old": ""
+     },
+     {
+      "field": "SERVICED_FACILITY",
+      "new": "APA",
+      "old": ""
+     },
+     {
+      "field": "SERVICED_FAC_NAME",
+      "new": "CENTENNIAL",
+      "old": ""
+     },
+     {
+      "field": "SERVICED_SITE_TYPE",
+      "new": "AIRPORT",
+      "old": ""
+     },
+     {
+      "field": "SERVICED_CITY",
+      "new": "DENVER",
+      "old": ""
+     },
+     {
+      "field": "SERVICED_STATE",
+      "new": "CO",
+      "old": ""
+     },
+     {
+      "field": "SERVICED_COUNTRY",
+      "new": "US",
+      "old": ""
+     },
+     {
+      "field": "TOWER_OR_COMM_CALL",
+      "new": "CENTENNIAL",
+      "old": ""
+     },
+     {
+      "field": "PRIMARY_APPROACH_RADIO_CALL",
+      "new": "DENVER",
+      "old": ""
+     },
+     {
+      "field": "FREQ",
+      "new": "128.325",
+      "old": ""
+     },
+     {
+      "field": "SECTORIZATION",
+      "new": "HIGH",
+      "old": ""
+     },
+     {
+      "field": "FREQ_USE",
+      "new": "HAYDEN RCAG",
+      "old": ""
+     },
+     {
+      "field": "REMARK",
+      "new": "DENVER ARTCC (ZDV) FREQS 128.325/377.075 (HAYDEN RCAG) USED FOR PINNR RNAV STAR 27000 FT AND ABV.",
+      "old": ""
+     }
+    ],
+    "id": "fe555c11fa5b",
     "kind": "added",
     "priority": "action",
     "source": "FRQ",
@@ -99,7 +263,89 @@
    },
    {
     "category": "frequency",
-    "id": "61a5b082ca85",
+    "fields": [
+     {
+      "field": "FACILITY",
+      "new": "DENVER/A/",
+      "old": ""
+     },
+     {
+      "field": "FAC_NAME",
+      "new": "DENVER/A/",
+      "old": ""
+     },
+     {
+      "field": "FACILITY_TYPE",
+      "new": "RCAG",
+      "old": ""
+     },
+     {
+      "field": "ARTCC_OR_FSS_ID",
+      "new": "ZDV",
+      "old": ""
+     },
+     {
+      "field": "SERVICED_FACILITY",
+      "new": "APA",
+      "old": ""
+     },
+     {
+      "field": "SERVICED_FAC_NAME",
+      "new": "CENTENNIAL",
+      "old": ""
+     },
+     {
+      "field": "SERVICED_SITE_TYPE",
+      "new": "AIRPORT",
+      "old": ""
+     },
+     {
+      "field": "SERVICED_CITY",
+      "new": "DENVER",
+      "old": ""
+     },
+     {
+      "field": "SERVICED_STATE",
+      "new": "CO",
+      "old": ""
+     },
+     {
+      "field": "SERVICED_COUNTRY",
+      "new": "US",
+      "old": ""
+     },
+     {
+      "field": "TOWER_OR_COMM_CALL",
+      "new": "CENTENNIAL",
+      "old": ""
+     },
+     {
+      "field": "PRIMARY_APPROACH_RADIO_CALL",
+      "new": "DENVER",
+      "old": ""
+     },
+     {
+      "field": "FREQ",
+      "new": "371.85",
+      "old": ""
+     },
+     {
+      "field": "SECTORIZATION",
+      "new": "LOW/HIGH",
+      "old": ""
+     },
+     {
+      "field": "FREQ_USE",
+      "new": "DENVER/A/ RCAG",
+      "old": ""
+     },
+     {
+      "field": "REMARK",
+      "new": "DENVER ARTCC (ZDV) FREQS 126.5/371.85 (DENVER/A/ RCAG) USED FOR PINNR RNAV STAR 26000 FT AND BLW.",
+      "old": ""
+     }
+    ],
+    "id": "a4a7aa7945f9",
     "kind": "added",
     "priority": "action",
     "source": "FRQ",
@@ -107,7 +353,89 @@
    },
    {
     "category": "frequency",
-    "id": "a78a52c47dcf",
+    "fields": [
+     {
+      "field": "FACILITY",
+      "new": "HAYDEN",
+      "old": ""
+     },
+     {
+      "field": "FAC_NAME",
+      "new": "HAYDEN",
+      "old": ""
+     },
+     {
+      "field": "FACILITY_TYPE",
+      "new": "RCAG",
+      "old": ""
+     },
+     {
+      "field": "ARTCC_OR_FSS_ID",
+      "new": "ZDV",
+      "old": ""
+     },
+     {
+      "field": "SERVICED_FACILITY",
+      "new": "APA",
+      "old": ""
+     },
+     {
+      "field": "SERVICED_FAC_NAME",
+      "new": "CENTENNIAL",
+      "old": ""
+     },
+     {
+      "field": "SERVICED_SITE_TYPE",
+      "new": "AIRPORT",
+      "old": ""
+     },
+     {
+      "field": "SERVICED_CITY",
+      "new": "DENVER",
+      "old": ""
+     },
+     {
+      "field": "SERVICED_STATE",
+      "new": "CO",
+      "old": ""
+     },
+     {
+      "field": "SERVICED_COUNTRY",
+      "new": "US",
+      "old": ""
+     },
+     {
+      "field": "TOWER_OR_COMM_CALL",
+      "new": "CENTENNIAL",
+      "old": ""
+     },
+     {
+      "field": "PRIMARY_APPROACH_RADIO_CALL",
+      "new": "DENVER",
+      "old": ""
+     },
+     {
+      "field": "FREQ",
+      "new": "377.075",
+      "old": ""
+     },
+     {
+      "field": "SECTORIZATION",
+      "new": "HIGH",
+      "old": ""
+     },
+     {
+      "field": "FREQ_USE",
+      "new": "HAYDEN RCAG",
+      "old": ""
+     },
+     {
+      "field": "REMARK",
+      "new": "DENVER ARTCC (ZDV) FREQS 128.325/377.075 (HAYDEN RCAG) USED FOR PINNR RNAV STAR 27000 FT AND ABV.",
+      "old": ""
+     }
+    ],
+    "id": "8b53672004ea",
     "kind": "added",
     "priority": "action",
     "source": "FRQ",
@@ -115,7 +443,7 @@
    },
    {
     "category": "remark",
-    "id": "b63feba2936d",
+    "id": "40a96e0ec5b5",
     "kind": "added",
     "original": "DENVER ARTCC (ZDV) FREQS 126.5/371.85 (DENVER/A/ RCAG) USED FOR PINNR RNAV STAR 26000 FT AND BLW.",
     "priority": "action",
@@ -124,7 +452,7 @@
    },
    {
     "category": "remark",
-    "id": "2d6538ef3678",
+    "id": "6c82cbbc9a18",
     "kind": "added",
     "original": "DENVER ARTCC (ZDV) FREQS 128.325/377.075 (HAYDEN RCAG) USED FOR PINNR RNAV STAR 27000 FT AND ABV.",
     "priority": "action",
@@ -150,7 +478,7 @@
      "WNGSS1: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart",
      "ZOMBZ6: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart"
     ],
-    "id": "1aaabaca7969",
+    "id": "49ceeea5bc0a",
     "kind": "changed",
     "priority": "ifr",
     "procedures": {
@@ -183,7 +511,7 @@
      "preferred IFR route ZOA -> APA: new routing ZOA BANNA PINNR4 APA",
      "preferred IFR route ZSE -> APA: new routing ZSE BANNA PINNR4 APA"
     ],
-    "id": "84070d5b5333",
+    "id": "1f3887e10181",
     "kind": "changed",
     "priority": "ifr",
     "source": "PFR",
@@ -191,7 +519,79 @@
    },
    {
     "category": "frequency",
-    "id": "9ca9063b5996",
+    "fields": [
+     {
+      "field": "FACILITY",
+      "new": "",
+      "old": "DEN"
+     },
+     {
+      "field": "FAC_NAME",
+      "new": "",
+      "old": "DENVER"
+     },
+     {
+      "field": "FACILITY_TYPE",
+      "new": "",
+      "old": "RCO1"
+     },
+     {
+      "field": "ARTCC_OR_FSS_ID",
+      "new": "",
+      "old": "DEN"
+     },
+     {
+      "field": "SERVICED_FACILITY",
+      "new": "",
+      "old": "APA"
+     },
+     {
+      "field": "SERVICED_FAC_NAME",
+      "new": "",
+      "old": "CENTENNIAL"
+     },
+     {
+      "field": "SERVICED_SITE_TYPE",
+      "new": "",
+      "old": "AIRPORT"
+     },
+     {
+      "field": "SERVICED_CITY",
+      "new": "",
+      "old": "DENVER"
+     },
+     {
+      "field": "SERVICED_STATE",
+      "new": "",
+      "old": "CO"
+     },
+     {
+      "field": "SERVICED_COUNTRY",
+      "new": "",
+      "old": "US"
+     },
+     {
+      "field": "TOWER_OR_COMM_CALL",
+      "new": "",
+      "old": "DENVER"
+     },
+     {
+      "field": "FREQ",
+      "new": "",
+      "old": "122.2"
+     },
+     {
+      "field": "FREQ_USE",
+      "new": "",
+      "old": "DENVER RCO"
+     },
+     {
+      "field": "REMARK",
+      "new": "",
+      "old": "COMMUNICATIONS PRVDD BY DENVER RADIO ON FREQ 122.2 (DENVER RCO)."
+     }
+    ],
+    "id": "4f38dae16576",
     "kind": "removed",
     "priority": "fyi",
     "source": "FRQ",
@@ -199,7 +599,74 @@
    },
    {
     "category": "frequency",
-    "id": "17a6674b02ae",
+    "fields": [
+     {
+      "field": "FACILITY",
+      "new": "D01",
+      "old": ""
+     },
+     {
+      "field": "FAC_NAME",
+      "new": "DENVER TRACON",
+      "old": ""
+     },
+     {
+      "field": "FACILITY_TYPE",
+      "new": "TRACON",
+      "old": ""
+     },
+     {
+      "field": "SERVICED_FACILITY",
+      "new": "APA",
+      "old": ""
+     },
+     {
+      "field": "SERVICED_FAC_NAME",
+      "new": "CENTENNIAL",
+      "old": ""
+     },
+     {
+      "field": "SERVICED_SITE_TYPE",
+      "new": "AIRPORT",
+      "old": ""
+     },
+     {
+      "field": "SERVICED_CITY",
+      "new": "DENVER",
+      "old": ""
+     },
+     {
+      "field": "SERVICED_STATE",
+      "new": "CO",
+      "old": ""
+     },
+     {
+      "field": "SERVICED_COUNTRY",
+      "new": "US",
+      "old": ""
+     },
+     {
+      "field": "TOWER_OR_COMM_CALL",
+      "new": "CENTENNIAL",
+      "old": ""
+     },
+     {
+      "field": "PRIMARY_APPROACH_RADIO_CALL",
+      "new": "DENVER",
+      "old": ""
+     },
+     {
+      "field": "FREQ",
+      "new": "127.05",
+      "old": ""
+     },
+     {
+      "field": "FREQ_USE",
+      "new": "PINNR RNAV STAR",
+      "old": ""
+     }
+    ],
+    "id": "4cdb9a747459",
     "kind": "added",
     "priority": "fyi",
     "source": "FRQ",
@@ -207,7 +674,74 @@
    },
    {
     "category": "frequency",
-    "id": "5f4fdc376fb9",
+    "fields": [
+     {
+      "field": "FACILITY",
+      "new": "D01",
+      "old": ""
+     },
+     {
+      "field": "FAC_NAME",
+      "new": "DENVER TRACON",
+      "old": ""
+     },
+     {
+      "field": "FACILITY_TYPE",
+      "new": "TRACON",
+      "old": ""
+     },
+     {
+      "field": "SERVICED_FACILITY",
+      "new": "APA",
+      "old": ""
+     },
+     {
+      "field": "SERVICED_FAC_NAME",
+      "new": "CENTENNIAL",
+      "old": ""
+     },
+     {
+      "field": "SERVICED_SITE_TYPE",
+      "new": "AIRPORT",
+      "old": ""
+     },
+     {
+      "field": "SERVICED_CITY",
+      "new": "DENVER",
+      "old": ""
+     },
+     {
+      "field": "SERVICED_STATE",
+      "new": "CO",
+      "old": ""
+     },
+     {
+      "field": "SERVICED_COUNTRY",
+      "new": "US",
+      "old": ""
+     },
+     {
+      "field": "TOWER_OR_COMM_CALL",
+      "new": "CENTENNIAL",
+      "old": ""
+     },
+     {
+      "field": "PRIMARY_APPROACH_RADIO_CALL",
+      "new": "DENVER",
+      "old": ""
+     },
+     {
+      "field": "FREQ",
+      "new": "363.25",
+      "old": ""
+     },
+     {
+      "field": "FREQ_USE",
+      "new": "PINNR RNAV STAR",
+      "old": ""
+     }
+    ],
+    "id": "7c4083483984",
     "kind": "added",
     "priority": "fyi",
     "source": "FRQ",
@@ -215,7 +749,7 @@
    },
    {
     "category": "remark",
-    "id": "20fc6185351c",
+    "id": "a4e280b8fbad",
     "kind": "removed",
     "original": "COMMUNICATIONS PRVDD BY DENVER RADIO ON FREQ 122.2 (DENVER RCO).",
     "priority": "fyi",
@@ -253,7 +787,7 @@
      "VRSTY3: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart",
      "ZELAN4: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart"
     ],
-    "id": "927598cf8d73",
+    "id": "77cdc6af3a50",
     "kind": "changed",
     "priority": "ifr",
     "procedures": {
@@ -295,7 +829,7 @@
      "preferred IFR route ATL -> CLT: new routing ATL PHIIL3 PHIIL CNTLR JONZE8 CLT",
      "preferred IFR route ATL -> CMH: new routing ATL PADGT2 SMTTH Q67 JONEN MCGNS SCRLT3 CMH"
     ],
-    "id": "655f32fb2bea",
+    "id": "337b6d50d120",
     "kind": "changed",
     "priority": "ifr",
     "source": "PFR",
@@ -320,7 +854,7 @@
      "SZAGI3: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart",
      "WLEEE7: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart"
     ],
-    "id": "bfdd71581f4c",
+    "id": "ff2d3036b565",
     "kind": "changed",
     "priority": "ifr",
     "procedures": {
@@ -350,7 +884,7 @@
      "preferred IFR route BNA -> AUS: new routing BNA DANLS5 TPEEE LITTR BROBB WINDU SEWZY6 AUS",
      "preferred IFR route CLT -> AUS: new routing CLT ESTRR8 IPTAY CHOPZ GARTS LCH WEEED WLEEE7 AUS"
     ],
-    "id": "efefb09c8681",
+    "id": "aa428fe89f4b",
     "kind": "changed",
     "priority": "ifr",
     "source": "PFR",
@@ -358,7 +892,7 @@
    },
    {
     "category": "remark",
-    "id": "5379684daa30",
+    "id": "d10eb8a1322a",
     "kind": "added",
     "original": "PILOTS CONDUCTING EFVS OPS; BE AWARE LED ALS IN USE RWY 36R.",
     "priority": "fyi",
@@ -384,7 +918,7 @@
      "TAZMO5: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart",
      "TIPPN5: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart"
     ],
-    "id": "18ea4886cd45",
+    "id": "0f81addddeda",
     "kind": "changed",
     "priority": "ifr",
     "procedures": {
@@ -423,7 +957,7 @@
      "preferred IFR route ORD -> BNA: new routing ORD BACEN BLOKR BEKKI PLESS SOKOL RYYMN4 BNA",
      "preferred IFR route RIC -> BNA: new routing RIC KALLI7 READE AIROW DANCO EDDDY SWFFT3 BNA"
     ],
-    "id": "1a27ce807144",
+    "id": "fade6087cdf3",
     "kind": "changed",
     "priority": "ifr",
     "source": "PFR",
@@ -448,7 +982,7 @@
      "WOONS2: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart",
      "WYLYY5: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart"
     ],
-    "id": "bdb33af45a81",
+    "id": "dd091ff2b6a0",
     "kind": "changed",
     "priority": "ifr",
     "procedures": {
@@ -480,7 +1014,7 @@
      "preferred IFR route BOS -> CMH: new routing BOS BLZZR6 BLZZR BAF Q480 AIR CLPRR4 CMH",
      "preferred IFR route CLT -> BOS: new routing CLT BATTA1 RDU NOWAE Q87 GEARS BBOBO Q22 RBV Q419 JFK ROBUC3 BOS"
     ],
-    "id": "2088e60d9882",
+    "id": "08610eebf52f",
     "kind": "changed",
     "priority": "ifr",
     "source": "PFR",
@@ -500,7 +1034,7 @@
       "old": "BRIDGEPORT RADIO"
      }
     ],
-    "id": "f32678a1d13e",
+    "id": "8364cdc21090",
     "kind": "changed",
     "priority": "fyi",
     "source": "NAV_BASE",
@@ -508,7 +1042,74 @@
    },
    {
     "category": "frequency",
-    "id": "196ce3b82d71",
+    "fields": [
+     {
+      "field": "FACILITY",
+      "new": "",
+      "old": "BOS"
+     },
+     {
+      "field": "FAC_NAME",
+      "new": "",
+      "old": "BOSTON"
+     },
+     {
+      "field": "FACILITY_TYPE",
+      "new": "",
+      "old": "RCO1"
+     },
+     {
+      "field": "ARTCC_OR_FSS_ID",
+      "new": "",
+      "old": "BDR"
+     },
+     {
+      "field": "SERVICED_FACILITY",
+      "new": "",
+      "old": "BOS"
+     },
+     {
+      "field": "SERVICED_FAC_NAME",
+      "new": "",
+      "old": "BOSTON"
+     },
+     {
+      "field": "SERVICED_SITE_TYPE",
+      "new": "",
+      "old": "RCO1"
+     },
+     {
+      "field": "SERVICED_CITY",
+      "new": "",
+      "old": "BOSTON"
+     },
+     {
+      "field": "SERVICED_STATE",
+      "new": "",
+      "old": "MA"
+     },
+     {
+      "field": "SERVICED_COUNTRY",
+      "new": "",
+      "old": "US"
+     },
+     {
+      "field": "TOWER_OR_COMM_CALL",
+      "new": "",
+      "old": "BOSTON"
+     },
+     {
+      "field": "FREQ",
+      "new": "",
+      "old": "122.1R"
+     },
+     {
+      "field": "FREQ_USE",
+      "new": "",
+      "old": "BOSTON RCO"
+     }
+    ],
+    "id": "faf6d8c97781",
     "kind": "removed",
     "priority": "fyi",
     "source": "FRQ",
@@ -516,7 +1117,74 @@
    },
    {
     "category": "frequency",
-    "id": "0e66014c61f3",
+    "fields": [
+     {
+      "field": "FACILITY",
+      "new": "",
+      "old": "BOS"
+     },
+     {
+      "field": "FAC_NAME",
+      "new": "",
+      "old": "BOSTON"
+     },
+     {
+      "field": "FACILITY_TYPE",
+      "new": "",
+      "old": "RCO"
+     },
+     {
+      "field": "ARTCC_OR_FSS_ID",
+      "new": "",
+      "old": "BDR"
+     },
+     {
+      "field": "SERVICED_FACILITY",
+      "new": "",
+      "old": "BOS"
+     },
+     {
+      "field": "SERVICED_FAC_NAME",
+      "new": "",
+      "old": "BOSTON"
+     },
+     {
+      "field": "SERVICED_SITE_TYPE",
+      "new": "",
+      "old": "RCO"
+     },
+     {
+      "field": "SERVICED_CITY",
+      "new": "",
+      "old": "BOSTON"
+     },
+     {
+      "field": "SERVICED_STATE",
+      "new": "",
+      "old": "MA"
+     },
+     {
+      "field": "SERVICED_COUNTRY",
+      "new": "",
+      "old": "US"
+     },
+     {
+      "field": "TOWER_OR_COMM_CALL",
+      "new": "",
+      "old": "BOSTON"
+     },
+     {
+      "field": "FREQ",
+      "new": "",
+      "old": "122.4"
+     },
+     {
+      "field": "FREQ_USE",
+      "new": "",
+      "old": "BOSTON RCO"
+     }
+    ],
+    "id": "ababe46236eb",
     "kind": "removed",
     "priority": "fyi",
     "source": "FRQ",
@@ -539,7 +1207,7 @@
      "TERPZ8: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart",
      "TRISH4: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart"
     ],
-    "id": "cc1e958fca1e",
+    "id": "f1605690e55c",
     "kind": "changed",
     "priority": "ifr",
     "procedures": {
@@ -578,7 +1246,7 @@
      "preferred IFR route BWI -> SWF: new routing BWI DUKPN1 BROSS Q419 DPK TRESA2 SWF",
      "preferred IFR route CLT -> BWI: new routing CLT DURST1 AUDII THHMP RAVNN9 BWI"
     ],
-    "id": "5452fe2c64e1",
+    "id": "8d048bc120d8",
     "kind": "changed",
     "priority": "ifr",
     "source": "PFR",
@@ -595,7 +1263,7 @@
       "old": "ALL ACFT ARE PROHIBITED FM EXITING RWY 36R SEBD AT TWY R."
      }
     ],
-    "id": "80552a918a2d",
+    "id": "90fd78e3ff1b",
     "kind": "changed",
     "original": "ALL ACFT ARE PROHIBITED FM EXITING RWY 36 SEBD AT TWY R.",
     "priority": "action",
@@ -611,7 +1279,7 @@
       "old": "GROUP IV ACFT WITH A WINGSPAN GTR THAN 118 FT ARE PROHIBITED FM EXITING RWY 18L/36R AT TWY C10."
      }
     ],
-    "id": "c290f689b991",
+    "id": "9e8d884d04a1",
     "kind": "changed",
     "original": "GROUP IV ACFT WITH A WINGSPAN GTR THAN 118 FT ARE PROHIBITED FM EXITING RWY 18/36 AT TWY C10.",
     "priority": "action",
@@ -627,7 +1295,7 @@
       "old": "TWY C10 UNUSBL FOR TXG ONTO RWY 18L/36R."
      }
     ],
-    "id": "22269bbbafc9",
+    "id": "1053257260de",
     "kind": "changed",
     "original": "TWY C10 UNUSBL FOR TXG ONTO RWY 18/36.",
     "priority": "action",
@@ -643,7 +1311,7 @@
       "old": "18L"
      }
     ],
-    "id": "3e5431ec94f2",
+    "id": "0b1a36aa05bf",
     "kind": "changed",
     "priority": "action",
     "source": "ILS_BASE",
@@ -658,7 +1326,7 @@
       "old": "18L/36R"
      }
     ],
-    "id": "6a5e8e51b82e",
+    "id": "1b4d9bd72d93",
     "kind": "changed",
     "priority": "action",
     "source": "APT_RWY",
@@ -673,7 +1341,7 @@
       "old": "36R"
      }
     ],
-    "id": "4195d240f678",
+    "id": "f78d99c7aa62",
     "kind": "changed",
     "priority": "action",
     "source": "ILS_BASE",
@@ -709,7 +1377,7 @@
      "BARMY7: removed",
      "KILNS7: removed"
     ],
-    "id": "2e70ce138953",
+    "id": "b62c673593bf",
     "kind": "changed",
     "priority": "ifr",
     "procedures": {
@@ -908,7 +1576,7 @@
      "preferred IFR route VITOL -> CLT: new routing VITOL ACK Q430 COPES Q75 GVE AIROW CHSLY9 CLT",
      "preferred IFR route WHALE -> CLT: new routing WHALE ACK Q430 COPES Q75 GVE AIROW CHSLY9 CLT"
     ],
-    "id": "d0a4783844ca",
+    "id": "3cce777f0d78",
     "kind": "changed",
     "priority": "ifr",
     "source": "PFR",
@@ -923,7 +1591,7 @@
       "old": "18L"
      }
     ],
-    "id": "3301c290aa47",
+    "id": "0e79304c45e3",
     "kind": "changed",
     "original": "ILS CLASSIFICATION CODE IB.",
     "priority": "ifr",
@@ -939,7 +1607,7 @@
       "old": "36R"
      }
     ],
-    "id": "8a1912c5fd17",
+    "id": "fd940cc4afa7",
     "kind": "changed",
     "original": "ILS CLASSIFICATION CODE IIIE.",
     "priority": "ifr",
@@ -948,7 +1616,74 @@
    },
    {
     "category": "frequency",
-    "id": "d39ad6b12857",
+    "fields": [
+     {
+      "field": "FACILITY",
+      "new": "",
+      "old": "CLT"
+     },
+     {
+      "field": "FAC_NAME",
+      "new": "",
+      "old": "CHARLOTTE"
+     },
+     {
+      "field": "FACILITY_TYPE",
+      "new": "",
+      "old": "RCO"
+     },
+     {
+      "field": "ARTCC_OR_FSS_ID",
+      "new": "",
+      "old": "RDU"
+     },
+     {
+      "field": "SERVICED_FACILITY",
+      "new": "",
+      "old": "CLT"
+     },
+     {
+      "field": "SERVICED_FAC_NAME",
+      "new": "",
+      "old": "CHARLOTTE"
+     },
+     {
+      "field": "SERVICED_SITE_TYPE",
+      "new": "",
+      "old": "RCO"
+     },
+     {
+      "field": "SERVICED_CITY",
+      "new": "",
+      "old": "CHARLOTTE"
+     },
+     {
+      "field": "SERVICED_STATE",
+      "new": "",
+      "old": "NC"
+     },
+     {
+      "field": "SERVICED_COUNTRY",
+      "new": "",
+      "old": "US"
+     },
+     {
+      "field": "TOWER_OR_COMM_CALL",
+      "new": "",
+      "old": "CHARLOTTE"
+     },
+     {
+      "field": "FREQ",
+      "new": "",
+      "old": "122.4"
+     },
+     {
+      "field": "FREQ_USE",
+      "new": "",
+      "old": "CHARLOTTE RCO"
+     }
+    ],
+    "id": "91c4804dedde",
     "kind": "removed",
     "priority": "fyi",
     "source": "FRQ",
@@ -956,7 +1691,89 @@
    },
    {
     "category": "frequency",
-    "id": "4ed9548f7c0a",
+    "fields": [
+     {
+      "field": "FACILITY",
+      "new": "CLT",
+      "old": ""
+     },
+     {
+      "field": "FAC_NAME",
+      "new": "CHARLOTTE/DOUGLAS INTL",
+      "old": ""
+     },
+     {
+      "field": "FACILITY_TYPE",
+      "new": "ATCT-TRACON",
+      "old": ""
+     },
+     {
+      "field": "CPDLC",
+      "new": "CPDLC (LOGON KUSA)",
+      "old": ""
+     },
+     {
+      "field": "TOWER_HRS",
+      "new": "24",
+      "old": ""
+     },
+     {
+      "field": "SERVICED_FACILITY",
+      "new": "CLT",
+      "old": ""
+     },
+     {
+      "field": "SERVICED_FAC_NAME",
+      "new": "CHARLOTTE/DOUGLAS INTL",
+      "old": ""
+     },
+     {
+      "field": "SERVICED_SITE_TYPE",
+      "new": "AIRPORT",
+      "old": ""
+     },
+     {
+      "field": "SERVICED_CITY",
+      "new": "CHARLOTTE",
+      "old": ""
+     },
+     {
+      "field": "SERVICED_STATE",
+      "new": "NC",
+      "old": ""
+     },
+     {
+      "field": "SERVICED_COUNTRY",
+      "new": "US",
+      "old": ""
+     },
+     {
+      "field": "TOWER_OR_COMM_CALL",
+      "new": "CHARLOTTE",
+      "old": ""
+     },
+     {
+      "field": "PRIMARY_APPROACH_RADIO_CALL",
+      "new": "CHARLOTTE",
+      "old": ""
+     },
+     {
+      "field": "FREQ",
+      "new": "120.05",
+      "old": ""
+     },
+     {
+      "field": "SECTORIZATION",
+      "new": "236-054",
+      "old": ""
+     },
+     {
+      "field": "FREQ_USE",
+      "new": "CHARLOTTE DP",
+      "old": ""
+     }
+    ],
+    "id": "9cc0a9da595f",
     "kind": "added",
     "priority": "fyi",
     "source": "FRQ",
@@ -971,7 +1788,7 @@
       "old": "KERMIT DP"
      }
     ],
-    "id": "06480f543621",
+    "id": "63ed209af9af",
     "kind": "changed",
     "priority": "fyi",
     "source": "FRQ",
@@ -991,7 +1808,7 @@
       "old": "055-235"
      }
     ],
-    "id": "c34fe8196fb5",
+    "id": "73fef7612525",
     "kind": "changed",
     "priority": "fyi",
     "source": "FRQ",
@@ -999,7 +1816,84 @@
    },
    {
     "category": "frequency",
-    "id": "107a923c7d93",
+    "fields": [
+     {
+      "field": "FACILITY",
+      "new": "CLT",
+      "old": ""
+     },
+     {
+      "field": "FAC_NAME",
+      "new": "CHARLOTTE/DOUGLAS INTL",
+      "old": ""
+     },
+     {
+      "field": "FACILITY_TYPE",
+      "new": "ATCT-TRACON",
+      "old": ""
+     },
+     {
+      "field": "CPDLC",
+      "new": "CPDLC (LOGON KUSA)",
+      "old": ""
+     },
+     {
+      "field": "TOWER_HRS",
+      "new": "24",
+      "old": ""
+     },
+     {
+      "field": "SERVICED_FACILITY",
+      "new": "CLT",
+      "old": ""
+     },
+     {
+      "field": "SERVICED_FAC_NAME",
+      "new": "CHARLOTTE/DOUGLAS INTL",
+      "old": ""
+     },
+     {
+      "field": "SERVICED_SITE_TYPE",
+      "new": "AIRPORT",
+      "old": ""
+     },
+     {
+      "field": "SERVICED_CITY",
+      "new": "CHARLOTTE",
+      "old": ""
+     },
+     {
+      "field": "SERVICED_STATE",
+      "new": "NC",
+      "old": ""
+     },
+     {
+      "field": "SERVICED_COUNTRY",
+      "new": "US",
+      "old": ""
+     },
+     {
+      "field": "TOWER_OR_COMM_CALL",
+      "new": "CHARLOTTE",
+      "old": ""
+     },
+     {
+      "field": "PRIMARY_APPROACH_RADIO_CALL",
+      "new": "CHARLOTTE",
+      "old": ""
+     },
+     {
+      "field": "FREQ",
+      "new": "124.0",
+      "old": ""
+     },
+     {
+      "field": "FREQ_USE",
+      "new": "DURST DP",
+      "old": ""
+     }
+    ],
+    "id": "fb626682a4f0",
     "kind": "added",
     "priority": "fyi",
     "source": "FRQ",
@@ -1007,7 +1901,84 @@
    },
    {
     "category": "frequency",
-    "id": "7a8dd2261d47",
+    "fields": [
+     {
+      "field": "FACILITY",
+      "new": "CLT",
+      "old": ""
+     },
+     {
+      "field": "FAC_NAME",
+      "new": "CHARLOTTE/DOUGLAS INTL",
+      "old": ""
+     },
+     {
+      "field": "FACILITY_TYPE",
+      "new": "ATCT-TRACON",
+      "old": ""
+     },
+     {
+      "field": "CPDLC",
+      "new": "CPDLC (LOGON KUSA)",
+      "old": ""
+     },
+     {
+      "field": "TOWER_HRS",
+      "new": "24",
+      "old": ""
+     },
+     {
+      "field": "SERVICED_FACILITY",
+      "new": "CLT",
+      "old": ""
+     },
+     {
+      "field": "SERVICED_FAC_NAME",
+      "new": "CHARLOTTE/DOUGLAS INTL",
+      "old": ""
+     },
+     {
+      "field": "SERVICED_SITE_TYPE",
+      "new": "AIRPORT",
+      "old": ""
+     },
+     {
+      "field": "SERVICED_CITY",
+      "new": "CHARLOTTE",
+      "old": ""
+     },
+     {
+      "field": "SERVICED_STATE",
+      "new": "NC",
+      "old": ""
+     },
+     {
+      "field": "SERVICED_COUNTRY",
+      "new": "US",
+      "old": ""
+     },
+     {
+      "field": "TOWER_OR_COMM_CALL",
+      "new": "CHARLOTTE",
+      "old": ""
+     },
+     {
+      "field": "PRIMARY_APPROACH_RADIO_CALL",
+      "new": "CHARLOTTE",
+      "old": ""
+     },
+     {
+      "field": "FREQ",
+      "new": "124.0",
+      "old": ""
+     },
+     {
+      "field": "FREQ_USE",
+      "new": "IRVVV DP",
+      "old": ""
+     }
+    ],
+    "id": "c8199dfbff47",
     "kind": "added",
     "priority": "fyi",
     "source": "FRQ",
@@ -1015,7 +1986,89 @@
    },
    {
     "category": "frequency",
-    "id": "3ee4a0156694",
+    "fields": [
+     {
+      "field": "FACILITY",
+      "new": "CLT",
+      "old": ""
+     },
+     {
+      "field": "FAC_NAME",
+      "new": "CHARLOTTE/DOUGLAS INTL",
+      "old": ""
+     },
+     {
+      "field": "FACILITY_TYPE",
+      "new": "ATCT-TRACON",
+      "old": ""
+     },
+     {
+      "field": "CPDLC",
+      "new": "CPDLC (LOGON KUSA)",
+      "old": ""
+     },
+     {
+      "field": "TOWER_HRS",
+      "new": "24",
+      "old": ""
+     },
+     {
+      "field": "SERVICED_FACILITY",
+      "new": "CLT",
+      "old": ""
+     },
+     {
+      "field": "SERVICED_FAC_NAME",
+      "new": "CHARLOTTE/DOUGLAS INTL",
+      "old": ""
+     },
+     {
+      "field": "SERVICED_SITE_TYPE",
+      "new": "AIRPORT",
+      "old": ""
+     },
+     {
+      "field": "SERVICED_CITY",
+      "new": "CHARLOTTE",
+      "old": ""
+     },
+     {
+      "field": "SERVICED_STATE",
+      "new": "NC",
+      "old": ""
+     },
+     {
+      "field": "SERVICED_COUNTRY",
+      "new": "US",
+      "old": ""
+     },
+     {
+      "field": "TOWER_OR_COMM_CALL",
+      "new": "CHARLOTTE",
+      "old": ""
+     },
+     {
+      "field": "PRIMARY_APPROACH_RADIO_CALL",
+      "new": "CHARLOTTE",
+      "old": ""
+     },
+     {
+      "field": "FREQ",
+      "new": "128.325",
+      "old": ""
+     },
+     {
+      "field": "SECTORIZATION",
+      "new": "055-235",
+      "old": ""
+     },
+     {
+      "field": "FREQ_USE",
+      "new": "CHARLOTTE DP",
+      "old": ""
+     }
+    ],
+    "id": "36a8735e0d61",
     "kind": "added",
     "priority": "fyi",
     "source": "FRQ",
@@ -1035,7 +2088,7 @@
       "old": "235-055"
      }
     ],
-    "id": "680ede9a386c",
+    "id": "5e91c8d9d765",
     "kind": "changed",
     "priority": "fyi",
     "source": "FRQ",
@@ -1055,7 +2108,7 @@
       "old": "055-235"
      }
     ],
-    "id": "f9e547d50b5c",
+    "id": "338f7d6eb993",
     "kind": "changed",
     "priority": "fyi",
     "source": "FRQ",
@@ -1063,7 +2116,84 @@
    },
    {
     "category": "frequency",
-    "id": "9bf670163ca1",
+    "fields": [
+     {
+      "field": "FACILITY",
+      "new": "CLT",
+      "old": ""
+     },
+     {
+      "field": "FAC_NAME",
+      "new": "CHARLOTTE/DOUGLAS INTL",
+      "old": ""
+     },
+     {
+      "field": "FACILITY_TYPE",
+      "new": "ATCT-TRACON",
+      "old": ""
+     },
+     {
+      "field": "CPDLC",
+      "new": "CPDLC (LOGON KUSA)",
+      "old": ""
+     },
+     {
+      "field": "TOWER_HRS",
+      "new": "24",
+      "old": ""
+     },
+     {
+      "field": "SERVICED_FACILITY",
+      "new": "CLT",
+      "old": ""
+     },
+     {
+      "field": "SERVICED_FAC_NAME",
+      "new": "CHARLOTTE/DOUGLAS INTL",
+      "old": ""
+     },
+     {
+      "field": "SERVICED_SITE_TYPE",
+      "new": "AIRPORT",
+      "old": ""
+     },
+     {
+      "field": "SERVICED_CITY",
+      "new": "CHARLOTTE",
+      "old": ""
+     },
+     {
+      "field": "SERVICED_STATE",
+      "new": "NC",
+      "old": ""
+     },
+     {
+      "field": "SERVICED_COUNTRY",
+      "new": "US",
+      "old": ""
+     },
+     {
+      "field": "TOWER_OR_COMM_CALL",
+      "new": "CHARLOTTE",
+      "old": ""
+     },
+     {
+      "field": "PRIMARY_APPROACH_RADIO_CALL",
+      "new": "CHARLOTTE",
+      "old": ""
+     },
+     {
+      "field": "FREQ",
+      "new": "307.8",
+      "old": ""
+     },
+     {
+      "field": "FREQ_USE",
+      "new": "DURST DP",
+      "old": ""
+     }
+    ],
+    "id": "a324ca178d53",
     "kind": "added",
     "priority": "fyi",
     "source": "FRQ",
@@ -1071,7 +2201,84 @@
    },
    {
     "category": "frequency",
-    "id": "793ea707a615",
+    "fields": [
+     {
+      "field": "FACILITY",
+      "new": "CLT",
+      "old": ""
+     },
+     {
+      "field": "FAC_NAME",
+      "new": "CHARLOTTE/DOUGLAS INTL",
+      "old": ""
+     },
+     {
+      "field": "FACILITY_TYPE",
+      "new": "ATCT-TRACON",
+      "old": ""
+     },
+     {
+      "field": "CPDLC",
+      "new": "CPDLC (LOGON KUSA)",
+      "old": ""
+     },
+     {
+      "field": "TOWER_HRS",
+      "new": "24",
+      "old": ""
+     },
+     {
+      "field": "SERVICED_FACILITY",
+      "new": "CLT",
+      "old": ""
+     },
+     {
+      "field": "SERVICED_FAC_NAME",
+      "new": "CHARLOTTE/DOUGLAS INTL",
+      "old": ""
+     },
+     {
+      "field": "SERVICED_SITE_TYPE",
+      "new": "AIRPORT",
+      "old": ""
+     },
+     {
+      "field": "SERVICED_CITY",
+      "new": "CHARLOTTE",
+      "old": ""
+     },
+     {
+      "field": "SERVICED_STATE",
+      "new": "NC",
+      "old": ""
+     },
+     {
+      "field": "SERVICED_COUNTRY",
+      "new": "US",
+      "old": ""
+     },
+     {
+      "field": "TOWER_OR_COMM_CALL",
+      "new": "CHARLOTTE",
+      "old": ""
+     },
+     {
+      "field": "PRIMARY_APPROACH_RADIO_CALL",
+      "new": "CHARLOTTE",
+      "old": ""
+     },
+     {
+      "field": "FREQ",
+      "new": "307.8",
+      "old": ""
+     },
+     {
+      "field": "FREQ_USE",
+      "new": "IRVVV DP",
+      "old": ""
+     }
+    ],
+    "id": "bff745e659cd",
     "kind": "added",
     "priority": "fyi",
     "source": "FRQ",
@@ -1079,7 +2286,7 @@
    },
    {
     "category": "remark",
-    "id": "a4b97b069a46",
+    "id": "89c4b03c9d1e",
     "kind": "added",
     "original": "ENGINEERED MATERIALS ARRESTING GEAR SYSTEM (EMAS) 255 FT IN LENGTH BY 170 FT IN WIDTH AT THE DEPARTURE END OF RWY 36.",
     "priority": "fyi",
@@ -1088,7 +2295,7 @@
    },
    {
     "category": "remark",
-    "id": "fb6fea7561e0",
+    "id": "51afdfc9e97d",
     "kind": "removed",
     "original": "ENGINEERED MATERIALS ARRESTING GEAR SYSTEM (EMAS) 255 FT IN LENGTH BY 170 FT IN WIDTH AT THE DEPARTURE END OF RWY 36R.",
     "priority": "fyi",
@@ -1104,7 +2311,7 @@
       "old": "ACFT WITH WINGSPAN GTR THAN 118 FT USE JUDGMENTAL OVERSTEER INSTEAD OF COCKPIT OVER CNTRLN STEERING ENTERING AND EXITING RWY 18L/36R."
      }
     ],
-    "id": "881e32cd7afe",
+    "id": "b4c4388f08c3",
     "kind": "changed",
     "original": "ACFT WITH WINGSPAN GTR THAN 118 FT USE JUDGMENTAL OVERSTEER INSTEAD OF COCKPIT OVER CNTRLN STEERING ENTERING AND EXITING RWY 18/36.",
     "priority": "fyi",
@@ -1120,7 +2327,7 @@
       "old": "SUCCESSIVE OR SIMULTANEOUS DEPARTURES FROM RWY 18L AND RWY 19L ARE APPROVED WITH COURSE DIVERGENCE BEGINNING NO FURTHER THAN 4 MILES FROM END OF RWY."
      }
     ],
-    "id": "6dc1911bda4b",
+    "id": "c829c1400bb0",
     "kind": "changed",
     "original": "SUCCESSIVE OR SIMULTANEOUS DEPARTURES FROM RWY 18 AND RWY 19L ARE APPROVED WITH COURSE DIVERGENCE BEGINNING NO FURTHER THAN 4 MILES FROM END OF RWY.",
     "priority": "fyi",
@@ -1136,7 +2343,7 @@
       "old": "TWY C FROM THE APCH OF RWY 18L TO TWY J AND TWY M FROM THE APRON TO RWY 18L/36R RSTRD TO 15 MPH OR LESS WITH WINGSPAN 171 FT AND GTR."
      }
     ],
-    "id": "f912db9dad72",
+    "id": "fd23991afd52",
     "kind": "changed",
     "original": "TWY C FROM THE APCH OF RWY 18 TO TWY J AND TWY M FROM THE APRON TO RWY 18/36 RSTRD TO 15 MPH OR LESS WITH WINGSPAN 171 FT AND GTR.",
     "priority": "fyi",
@@ -1157,7 +2364,7 @@
       "old": "18L/36R"
      }
     ],
-    "id": "e86098421694",
+    "id": "f9740219fd18",
     "kind": "changed",
     "priority": "fyi",
     "source": "APT_ARS",
@@ -1172,7 +2379,7 @@
       "old": "BUCKL TRANSITION, RWY 18L, 19L, 19R, 36R"
      }
     ],
-    "id": "333534a213b2",
+    "id": "29bdaf498106",
     "kind": "changed",
     "priority": "fyi",
     "source": "FRQ",
@@ -1187,7 +2394,7 @@
       "old": "FLYYN, CEGAL TRANSITIONS RWY 01L, 01R, 36R"
      }
     ],
-    "id": "a2f42c27f797",
+    "id": "e3aa6d46bbee",
     "kind": "changed",
     "priority": "fyi",
     "source": "FRQ",
@@ -1202,7 +2409,7 @@
       "old": "FLYYN, CEGAL TRANSITIONS, 18L, 19L, 19R"
      }
     ],
-    "id": "b6724cd81671",
+    "id": "29485ed36cd3",
     "kind": "changed",
     "priority": "fyi",
     "source": "FRQ",
@@ -1217,7 +2424,7 @@
       "old": "GANTS, LILLS & RUNIE TRANSITIONS"
      }
     ],
-    "id": "4fcc1a0bc025",
+    "id": "09bb105c4c05",
     "kind": "changed",
     "priority": "fyi",
     "source": "FRQ",
@@ -1232,7 +2439,7 @@
       "old": "HARAY, PITTY TRANSITIONS, RWY 01L, 01R"
      }
     ],
-    "id": "dce77e305e4c",
+    "id": "86497c99589c",
     "kind": "changed",
     "priority": "fyi",
     "source": "FRQ",
@@ -1247,7 +2454,7 @@
       "old": "RWY 18L, 19L, 19R, 36R"
      }
     ],
-    "id": "2348d291bf8f",
+    "id": "c88f54304b40",
     "kind": "changed",
     "priority": "fyi",
     "source": "FRQ",
@@ -1262,7 +2469,7 @@
       "old": "RWY 18L, 19L, 19R, 36R"
      }
     ],
-    "id": "d289d69ffd93",
+    "id": "bb36a9c0a3d1",
     "kind": "changed",
     "priority": "fyi",
     "source": "FRQ",
@@ -1277,7 +2484,7 @@
       "old": "RWY 18L, 19R, 19L, 36R"
      }
     ],
-    "id": "b5b3121a94d0",
+    "id": "c0df8a4e28e7",
     "kind": "changed",
     "priority": "fyi",
     "source": "FRQ",
@@ -1292,7 +2499,7 @@
       "old": "RWY 18L/36R"
      }
     ],
-    "id": "827f6711765c",
+    "id": "66eb11a11177",
     "kind": "changed",
     "priority": "fyi",
     "source": "FRQ",
@@ -1305,7 +2512,7 @@
     "details": [
      "TTHOR3: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart"
     ],
-    "id": "270c57ebe075",
+    "id": "5543cf9c76f0",
     "kind": "changed",
     "priority": "ifr",
     "procedures": {
@@ -1322,7 +2529,7 @@
     "details": [
      "preferred IFR route DAB -> CLT: new routing DAB ROYES CRG VIYAP CHECR STOCR7 CLT"
     ],
-    "id": "d8c3e63f1e1e",
+    "id": "1f94ae66c557",
     "kind": "changed",
     "priority": "ifr",
     "source": "PFR",
@@ -1357,7 +2564,7 @@
      "SWVAY4: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart",
      "YEAGR4: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart"
     ],
-    "id": "90e7d4130ae5",
+    "id": "7980eb883da4",
     "kind": "changed",
     "priority": "ifr",
     "procedures": {
@@ -1415,7 +2622,7 @@
      "TRUPS6: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart",
      "WYNGS5: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart"
     ],
-    "id": "3936484b7c52",
+    "id": "906b8b082e2a",
     "kind": "changed",
     "priority": "ifr",
     "procedures": {
@@ -1461,7 +2668,7 @@
      "preferred IFR route DCA -> POU: new routing DCA SOOKI6 SWANN BROSS Q419 DPK TRESA2 POU",
      "preferred IFR route DCA -> SWF: new routing DCA SOOKI6 SWANN BROSS Q419 DPK TRESA2 SWF"
     ],
-    "id": "6a20b4ed28cd",
+    "id": "9101b84a4ea7",
     "kind": "changed",
     "priority": "ifr",
     "source": "PFR",
@@ -1474,7 +2681,7 @@
     "details": [
      "TTHOR3: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart"
     ],
-    "id": "82b1eb303278",
+    "id": "fd3aee90c34a",
     "kind": "changed",
     "priority": "ifr",
     "procedures": {
@@ -1523,7 +2730,7 @@
      "XXWNG1: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart",
      "ZIMMR4: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart"
     ],
-    "id": "7276efa62f1a",
+    "id": "df349ac7ca4b",
     "kind": "changed",
     "priority": "ifr",
     "procedures": {
@@ -1570,7 +2777,7 @@
     "details": [
      "preferred IFR route CLT -> DEN: new routing CLT BOBZY8 BNA FAM J112 BUM J110 GCK KIISS CLASH5 DEN"
     ],
-    "id": "25ec817e6460",
+    "id": "e270397f6023",
     "kind": "changed",
     "priority": "ifr",
     "source": "PFR",
@@ -1578,7 +2785,74 @@
    },
    {
     "category": "frequency",
-    "id": "53e417b1b828",
+    "fields": [
+     {
+      "field": "FACILITY",
+      "new": "",
+      "old": "DEN"
+     },
+     {
+      "field": "FAC_NAME",
+      "new": "",
+      "old": "DENVER"
+     },
+     {
+      "field": "FACILITY_TYPE",
+      "new": "",
+      "old": "RCO"
+     },
+     {
+      "field": "ARTCC_OR_FSS_ID",
+      "new": "",
+      "old": "DEN"
+     },
+     {
+      "field": "SERVICED_FACILITY",
+      "new": "",
+      "old": "DEN"
+     },
+     {
+      "field": "SERVICED_FAC_NAME",
+      "new": "",
+      "old": "DENVER"
+     },
+     {
+      "field": "SERVICED_SITE_TYPE",
+      "new": "",
+      "old": "RCO"
+     },
+     {
+      "field": "SERVICED_CITY",
+      "new": "",
+      "old": "DENVER"
+     },
+     {
+      "field": "SERVICED_STATE",
+      "new": "",
+      "old": "CO"
+     },
+     {
+      "field": "SERVICED_COUNTRY",
+      "new": "",
+      "old": "US"
+     },
+     {
+      "field": "TOWER_OR_COMM_CALL",
+      "new": "",
+      "old": "DENVER"
+     },
+     {
+      "field": "FREQ",
+      "new": "",
+      "old": "122.4"
+     },
+     {
+      "field": "FREQ_USE",
+      "new": "",
+      "old": "DENVER RCO"
+     }
+    ],
+    "id": "456f743e563b",
     "kind": "removed",
     "priority": "fyi",
     "source": "FRQ",
@@ -1593,7 +2867,7 @@
       "old": "PINNR STAR"
      }
     ],
-    "id": "8e0ad8c64ca5",
+    "id": "aafd8f1ddcc3",
     "kind": "changed",
     "priority": "fyi",
     "source": "FRQ",
@@ -1608,7 +2882,7 @@
       "old": "PINNR STAR"
      }
     ],
-    "id": "02130d9b2b83",
+    "id": "3933f5a3e252",
     "kind": "changed",
     "priority": "fyi",
     "source": "FRQ",
@@ -1625,7 +2899,7 @@
       "old": "MALSR"
      }
     ],
-    "id": "b8446e5a2a42",
+    "id": "fcc33173d891",
     "kind": "changed",
     "priority": "action",
     "source": "APT_RWY_END",
@@ -1677,7 +2951,7 @@
      "ZACHH4: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart",
      "ZROBA1: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart"
     ],
-    "id": "4cca599c50c0",
+    "id": "46eeaecf79b0",
     "kind": "changed",
     "priority": "ifr",
     "procedures": {
@@ -1743,7 +3017,7 @@
      "preferred IFR route DFW -> SFO: new routing DFW HRPER4 HULZE TXO J74 SJN J18 PXR J65 DECAS PMD J6 AVE MAKRS SERFR SERFR4 SFO",
      "preferred IFR route DFW -> SJC: new routing DFW HRPER4 HULZE TXO J74 SJN J18 PXR J65 DECAS PMD J6 AVE MAKRS TROXX SILCN6 SJC"
     ],
-    "id": "12964ac2df03",
+    "id": "8287723a408b",
     "kind": "changed",
     "priority": "ifr",
     "source": "PFR",
@@ -1783,7 +3057,7 @@
      "WNGNT2: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart",
      "ZETTR4: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart"
     ],
-    "id": "46635c6a4185",
+    "id": "3667306d0c93",
     "kind": "changed",
     "priority": "ifr",
     "procedures": {
@@ -1830,7 +3104,7 @@
      "preferred IFR route DTW -> CLT: new routing DTW CLVIN3 STAZE FLM TAFTT PARQR7 CLT",
      "preferred IFR route DTW -> CMH: new routing DTW CLVIN3 CLVIN ESSIE DUBLN1 CMH"
     ],
-    "id": "05bccf81d270",
+    "id": "0223010b880c",
     "kind": "changed",
     "priority": "ifr",
     "source": "PFR",
@@ -1855,7 +3129,7 @@
      "SUNSS8: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart",
      "YOTES6: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart"
     ],
-    "id": "9207e0fb8cf5",
+    "id": "bd9e8a6e911a",
     "kind": "changed",
     "priority": "ifr",
     "procedures": {
@@ -1886,7 +3160,7 @@
     "details": [
      "TTHOR3: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart"
     ],
-    "id": "853ebb769694",
+    "id": "e7a135a33b26",
     "kind": "changed",
     "priority": "ifr",
     "procedures": {
@@ -1911,7 +3185,7 @@
      "PORTT4: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart",
      "SHAFF7: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart"
     ],
-    "id": "9b04f51da632",
+    "id": "f0c62a60a2dd",
     "kind": "changed",
     "priority": "ifr",
     "procedures": {
@@ -1939,7 +3213,7 @@
      "preferred IFR route EWR -> CMH: new routing EWR ZIMMZ Q42 MIKYG Q480 AIR CLPRR4 CMH",
      "preferred IFR route MEM -> EWR: new routing MEM GOETZ7 DIYAB WAKOL Q34 GVE PHLBO4 EWR"
     ],
-    "id": "dd75e81c9007",
+    "id": "513b60938e33",
     "kind": "changed",
     "priority": "ifr",
     "source": "PFR",
@@ -1947,7 +3221,74 @@
    },
    {
     "category": "frequency",
-    "id": "91d4d23da114",
+    "fields": [
+     {
+      "field": "FACILITY",
+      "new": "PHL",
+      "old": ""
+     },
+     {
+      "field": "FAC_NAME",
+      "new": "PHILADELPHIA INTL",
+      "old": ""
+     },
+     {
+      "field": "FACILITY_TYPE",
+      "new": "ATCT-TRACON",
+      "old": ""
+     },
+     {
+      "field": "SERVICED_FACILITY",
+      "new": "EWR",
+      "old": ""
+     },
+     {
+      "field": "SERVICED_FAC_NAME",
+      "new": "NEWARK LIBERTY INTL",
+      "old": ""
+     },
+     {
+      "field": "SERVICED_SITE_TYPE",
+      "new": "AIRPORT",
+      "old": ""
+     },
+     {
+      "field": "SERVICED_CITY",
+      "new": "NEWARK",
+      "old": ""
+     },
+     {
+      "field": "SERVICED_STATE",
+      "new": "NJ",
+      "old": ""
+     },
+     {
+      "field": "SERVICED_COUNTRY",
+      "new": "US",
+      "old": ""
+     },
+     {
+      "field": "TOWER_OR_COMM_CALL",
+      "new": "NEWARK",
+      "old": ""
+     },
+     {
+      "field": "PRIMARY_APPROACH_RADIO_CALL",
+      "new": "NEWARK",
+      "old": ""
+     },
+     {
+      "field": "FREQ",
+      "new": "120.15",
+      "old": ""
+     },
+     {
+      "field": "FREQ_USE",
+      "new": "SHAFF STAR",
+      "old": ""
+     }
+    ],
+    "id": "bd64e8fcbb7c",
     "kind": "added",
     "priority": "fyi",
     "source": "FRQ",
@@ -1955,7 +3296,74 @@
    },
    {
     "category": "frequency",
-    "id": "bc2cb4a3fc8e",
+    "fields": [
+     {
+      "field": "FACILITY",
+      "new": "",
+      "old": "PHL"
+     },
+     {
+      "field": "FAC_NAME",
+      "new": "",
+      "old": "PHILADELPHIA INTL"
+     },
+     {
+      "field": "FACILITY_TYPE",
+      "new": "",
+      "old": "ATCT-TRACON"
+     },
+     {
+      "field": "SERVICED_FACILITY",
+      "new": "",
+      "old": "EWR"
+     },
+     {
+      "field": "SERVICED_FAC_NAME",
+      "new": "",
+      "old": "NEWARK LIBERTY INTL"
+     },
+     {
+      "field": "SERVICED_SITE_TYPE",
+      "new": "",
+      "old": "AIRPORT"
+     },
+     {
+      "field": "SERVICED_CITY",
+      "new": "",
+      "old": "NEWARK"
+     },
+     {
+      "field": "SERVICED_STATE",
+      "new": "",
+      "old": "NJ"
+     },
+     {
+      "field": "SERVICED_COUNTRY",
+      "new": "",
+      "old": "US"
+     },
+     {
+      "field": "TOWER_OR_COMM_CALL",
+      "new": "",
+      "old": "NEWARK"
+     },
+     {
+      "field": "PRIMARY_APPROACH_RADIO_CALL",
+      "new": "",
+      "old": "NEWARK"
+     },
+     {
+      "field": "FREQ",
+      "new": "",
+      "old": "121.15"
+     },
+     {
+      "field": "FREQ_USE",
+      "new": "",
+      "old": "SHAFF STAR"
+     }
+    ],
+    "id": "7fe9fc762bdc",
     "kind": "removed",
     "priority": "fyi",
     "source": "FRQ",
@@ -1973,7 +3381,7 @@
      "SACAT4: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart",
      "SUNSS8: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart"
     ],
-    "id": "f0412e5a6837",
+    "id": "f218ca1f639b",
     "kind": "changed",
     "priority": "ifr",
     "procedures": {
@@ -1992,7 +3400,7 @@
    },
    {
     "category": "remark",
-    "id": "d402e4343370",
+    "id": "cb86f27ba56a",
     "kind": "added",
     "original": "AIRPORT CONDITIONS ARE NOT MONITORED OUTSIDE HOURS OF ATTENDANCE.",
     "priority": "fyi",
@@ -2027,7 +3435,7 @@
      "TOREZ1: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart",
      "ZAPPA4: removed"
     ],
-    "id": "deb448b033cc",
+    "id": "45051ced5a15",
     "kind": "changed",
     "priority": "ifr",
     "procedures": {
@@ -2073,7 +3481,7 @@
      "preferred IFR route FLL -> SWF: new routing FLL FEALX2 ETECK GRUBR Y299 SEELO WAALT Q131 EARZZ JAMIE Q481 DPK TRESA2 SWF",
      "preferred IFR route MEM -> FLL: new routing MEM PIEPE6 IBUFY DEFUN TEEKY4 FLL"
     ],
-    "id": "b967e738bd70",
+    "id": "a49db17e4832",
     "kind": "changed",
     "priority": "ifr",
     "source": "PFR",
@@ -2081,7 +3489,74 @@
    },
    {
     "category": "frequency",
-    "id": "6cb4fef16be4",
+    "fields": [
+     {
+      "field": "FACILITY",
+      "new": "",
+      "old": "FLL"
+     },
+     {
+      "field": "FAC_NAME",
+      "new": "",
+      "old": "FORT LAUDERDALE"
+     },
+     {
+      "field": "FACILITY_TYPE",
+      "new": "",
+      "old": "RCO"
+     },
+     {
+      "field": "ARTCC_OR_FSS_ID",
+      "new": "",
+      "old": "MIA"
+     },
+     {
+      "field": "SERVICED_FACILITY",
+      "new": "",
+      "old": "FLL"
+     },
+     {
+      "field": "SERVICED_FAC_NAME",
+      "new": "",
+      "old": "FORT LAUDERDALE"
+     },
+     {
+      "field": "SERVICED_SITE_TYPE",
+      "new": "",
+      "old": "RCO"
+     },
+     {
+      "field": "SERVICED_CITY",
+      "new": "",
+      "old": "FORT LAUDERDALE"
+     },
+     {
+      "field": "SERVICED_STATE",
+      "new": "",
+      "old": "FL"
+     },
+     {
+      "field": "SERVICED_COUNTRY",
+      "new": "",
+      "old": "US"
+     },
+     {
+      "field": "TOWER_OR_COMM_CALL",
+      "new": "",
+      "old": "FORT LAUDERDALE"
+     },
+     {
+      "field": "FREQ",
+      "new": "",
+      "old": "122.2"
+     },
+     {
+      "field": "FREQ_USE",
+      "new": "",
+      "old": "FORT LAUDERDALE RCO"
+     }
+    ],
+    "id": "37f6b82073c3",
     "kind": "removed",
     "priority": "fyi",
     "source": "FRQ",
@@ -2111,7 +3586,7 @@
      "SHLAE1: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart",
      "SYMIN1: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart"
     ],
-    "id": "b93edd149d5a",
+    "id": "461238cbba21",
     "kind": "changed",
     "priority": "ifr",
     "procedures": {
@@ -2154,7 +3629,7 @@
       "old": "HONOLULU RADIO"
      }
     ],
-    "id": "5fddf6e80125",
+    "id": "b301d361d6ff",
     "kind": "changed",
     "priority": "fyi",
     "source": "NAV_BASE",
@@ -2162,7 +3637,74 @@
    },
    {
     "category": "frequency",
-    "id": "d47341003547",
+    "fields": [
+     {
+      "field": "FACILITY",
+      "new": "",
+      "old": "HNL"
+     },
+     {
+      "field": "FAC_NAME",
+      "new": "",
+      "old": "HONOLULU"
+     },
+     {
+      "field": "FACILITY_TYPE",
+      "new": "",
+      "old": "RCO"
+     },
+     {
+      "field": "ARTCC_OR_FSS_ID",
+      "new": "",
+      "old": "HNL"
+     },
+     {
+      "field": "SERVICED_FACILITY",
+      "new": "",
+      "old": "HNL"
+     },
+     {
+      "field": "SERVICED_FAC_NAME",
+      "new": "",
+      "old": "HONOLULU"
+     },
+     {
+      "field": "SERVICED_SITE_TYPE",
+      "new": "",
+      "old": "RCO"
+     },
+     {
+      "field": "SERVICED_CITY",
+      "new": "",
+      "old": "HONOLULU"
+     },
+     {
+      "field": "SERVICED_STATE",
+      "new": "",
+      "old": "HI"
+     },
+     {
+      "field": "SERVICED_COUNTRY",
+      "new": "",
+      "old": "US"
+     },
+     {
+      "field": "TOWER_OR_COMM_CALL",
+      "new": "",
+      "old": "HONOLULU"
+     },
+     {
+      "field": "FREQ",
+      "new": "",
+      "old": "122.1R"
+     },
+     {
+      "field": "FREQ_USE",
+      "new": "",
+      "old": "HONOLULU RCO"
+     }
+    ],
+    "id": "418488e12b35",
     "kind": "removed",
     "priority": "fyi",
     "source": "FRQ",
@@ -2202,7 +3744,7 @@
      "WAPPL7: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart",
      "WYLSN8: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart"
     ],
-    "id": "eb9c666a27cf",
+    "id": "14abff43ea0f",
     "kind": "changed",
     "priority": "ifr",
     "procedures": {
@@ -2254,7 +3796,7 @@
      "preferred IFR route HOU -> MDW: new routing HOU INDIE8 TPAKK LIT J101 STL SPI PHEEB ENDEE8 MDW",
      "preferred IFR route HOU -> ORD: discontinued"
     ],
-    "id": "f0d5958dc17f",
+    "id": "931d5f96f183",
     "kind": "changed",
     "priority": "ifr",
     "source": "PFR",
@@ -2262,7 +3804,7 @@
    },
    {
     "category": "remark",
-    "id": "0df1f1c19139",
+    "id": "2836d5b44a4d",
     "kind": "added",
     "original": "PILOTS CONDUCTING EFVS OPS; BE AWARE LED ALS IN USE RWY 22.",
     "priority": "fyi",
@@ -2294,7 +3836,7 @@
      "WIGOL3: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart",
      "WOOLY2: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart"
     ],
-    "id": "acfa8af5cbcf",
+    "id": "d6b2807bf803",
     "kind": "changed",
     "priority": "ifr",
     "procedures": {
@@ -2336,7 +3878,7 @@
      "preferred IFR route IAD -> POU: new routing IAD WOOLY2 SWANN BROSS Q419 DPK TRESA2 POU",
      "preferred IFR route IAD -> SWF: new routing IAD WOOLY2 SWANN BROSS Q419 DPK TRESA2 SWF"
     ],
-    "id": "ec04d8011542",
+    "id": "3faef5198e19",
     "kind": "changed",
     "priority": "ifr",
     "source": "PFR",
@@ -2351,7 +3893,7 @@
       "old": "WAYNE STAR"
      }
     ],
-    "id": "4ba3e0e4c2a8",
+    "id": "9cb86609fe84",
     "kind": "changed",
     "priority": "fyi",
     "source": "FRQ",
@@ -2359,7 +3901,79 @@
    },
    {
     "category": "frequency",
-    "id": "039cf8c9c073",
+    "fields": [
+     {
+      "field": "FACILITY",
+      "new": "PCT",
+      "old": ""
+     },
+     {
+      "field": "FAC_NAME",
+      "new": "POTOMAC TRACON",
+      "old": ""
+     },
+     {
+      "field": "FACILITY_TYPE",
+      "new": "TRACON",
+      "old": ""
+     },
+     {
+      "field": "SERVICED_FACILITY",
+      "new": "IAD",
+      "old": ""
+     },
+     {
+      "field": "SERVICED_FAC_NAME",
+      "new": "WASHINGTON DULLES INTL",
+      "old": ""
+     },
+     {
+      "field": "SERVICED_SITE_TYPE",
+      "new": "AIRPORT",
+      "old": ""
+     },
+     {
+      "field": "SERVICED_CITY",
+      "new": "WASHINGTON",
+      "old": ""
+     },
+     {
+      "field": "SERVICED_STATE",
+      "new": "DC",
+      "old": ""
+     },
+     {
+      "field": "SERVICED_COUNTRY",
+      "new": "US",
+      "old": ""
+     },
+     {
+      "field": "TOWER_OR_COMM_CALL",
+      "new": "DULLES",
+      "old": ""
+     },
+     {
+      "field": "PRIMARY_APPROACH_RADIO_CALL",
+      "new": "POTOMAC",
+      "old": ""
+     },
+     {
+      "field": "FREQ",
+      "new": "126.1",
+      "old": ""
+     },
+     {
+      "field": "SECTORIZATION",
+      "new": "331-090",
+      "old": ""
+     },
+     {
+      "field": "FREQ_USE",
+      "new": "WAYNZ STAR",
+      "old": ""
+     }
+    ],
+    "id": "16b0935cc339",
     "kind": "added",
     "priority": "fyi",
     "source": "FRQ",
@@ -2374,7 +3988,7 @@
       "old": "HYPER STAR"
      }
     ],
-    "id": "3594a03f9e80",
+    "id": "bdeba66fd07d",
     "kind": "changed",
     "priority": "fyi",
     "source": "FRQ",
@@ -2389,7 +4003,7 @@
       "old": "HYPER STAR"
      }
     ],
-    "id": "fa9b403a0139",
+    "id": "a890e0aae87e",
     "kind": "changed",
     "priority": "fyi",
     "source": "FRQ",
@@ -2404,7 +4018,7 @@
       "old": "WAYNE STAR"
      }
     ],
-    "id": "c1f7c1c2f8a5",
+    "id": "e0c1283134d9",
     "kind": "changed",
     "priority": "fyi",
     "source": "FRQ",
@@ -2412,7 +4026,79 @@
    },
    {
     "category": "frequency",
-    "id": "d62720385d86",
+    "fields": [
+     {
+      "field": "FACILITY",
+      "new": "PCT",
+      "old": ""
+     },
+     {
+      "field": "FAC_NAME",
+      "new": "POTOMAC TRACON",
+      "old": ""
+     },
+     {
+      "field": "FACILITY_TYPE",
+      "new": "TRACON",
+      "old": ""
+     },
+     {
+      "field": "SERVICED_FACILITY",
+      "new": "IAD",
+      "old": ""
+     },
+     {
+      "field": "SERVICED_FAC_NAME",
+      "new": "WASHINGTON DULLES INTL",
+      "old": ""
+     },
+     {
+      "field": "SERVICED_SITE_TYPE",
+      "new": "AIRPORT",
+      "old": ""
+     },
+     {
+      "field": "SERVICED_CITY",
+      "new": "WASHINGTON",
+      "old": ""
+     },
+     {
+      "field": "SERVICED_STATE",
+      "new": "DC",
+      "old": ""
+     },
+     {
+      "field": "SERVICED_COUNTRY",
+      "new": "US",
+      "old": ""
+     },
+     {
+      "field": "TOWER_OR_COMM_CALL",
+      "new": "DULLES",
+      "old": ""
+     },
+     {
+      "field": "PRIMARY_APPROACH_RADIO_CALL",
+      "new": "POTOMAC",
+      "old": ""
+     },
+     {
+      "field": "FREQ",
+      "new": "338.25",
+      "old": ""
+     },
+     {
+      "field": "SECTORIZATION",
+      "new": "331-090",
+      "old": ""
+     },
+     {
+      "field": "FREQ_USE",
+      "new": "WAYNZ STAR",
+      "old": ""
+     }
+    ],
+    "id": "d0f6d9f67cae",
     "kind": "added",
     "priority": "fyi",
     "source": "FRQ",
@@ -2422,7 +4108,7 @@
   "IAH": [
    {
     "category": "remark",
-    "id": "ce3eb6247ec1",
+    "id": "195d8572ede4",
     "kind": "removed",
     "original": "APRON TERMINAL ALPHA NORTH RAMP EAST-WEST TXL CLSD TO ACFT WINGSPAN MORE THAN 118 FT.",
     "priority": "action",
@@ -2431,7 +4117,7 @@
    },
    {
     "category": "remark",
-    "id": "ee718d771a5d",
+    "id": "c014c728b95c",
     "kind": "removed",
     "original": "TWY RC CLSD TO ACFT WITH WINGSPAN GTR THAN 118 FT.",
     "priority": "action",
@@ -2447,7 +4133,7 @@
       "old": "APRON TERMINAL ALPHA NORTH RAMP SPOT 6 CLSD TO ACFT WINGSPAN MORE THAN 125 FT."
      }
     ],
-    "id": "c785592c51c2",
+    "id": "fa28f3acad95",
     "kind": "changed",
     "original": "APRON TERMINAL ALPHA NORTH RAMP SPOT 6 CLSD TO ACFT WINGSPAN MORE THAN 135 FT.",
     "priority": "action",
@@ -2463,7 +4149,7 @@
       "old": "TWY WD BTN TWY NR AND TWY WB CLSD TO ACFT WINGSPAN MORE THAN 171 FT."
      }
     ],
-    "id": "68fa929d7150",
+    "id": "da73520d9923",
     "kind": "changed",
     "original": "TWY WD BTN TWY WB AND TXLN NR CLSD TO ACFT WINGSPAN MORE THAN 214 FT.",
     "priority": "action",
@@ -2479,7 +4165,7 @@
       "old": "TWY 'NR' CLSD TO ACFT WITH WING SPANS GREATER THAN 125 FT BTN TWY 'WD' & TWY 'WB'."
      }
     ],
-    "id": "632260f9f40d",
+    "id": "a047cb77e7c5",
     "kind": "changed",
     "original": "TXLN 'NR' CLSD TO ACFT WITH WING SPANS GREATER THAN 135 FT BTN TWY 'WD' & TWY 'WB'.",
     "priority": "action",
@@ -2530,7 +4216,7 @@
      "WYLSN8: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart",
      "ZEEKK3: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart"
     ],
-    "id": "b72cc035738f",
+    "id": "929ecd58c9f6",
     "kind": "changed",
     "priority": "ifr",
     "procedures": {
@@ -2594,7 +4280,7 @@
      "preferred IFR route IAH -> MDW: new routing IAH INDIE8 TPAKK LIT J101 STL SPI PHEEB ENDEE8 MDW",
      "preferred IFR route IAH -> ORD: discontinued"
     ],
-    "id": "f0f5782f426b",
+    "id": "cbcb06360a87",
     "kind": "changed",
     "priority": "ifr",
     "source": "PFR",
@@ -2602,7 +4288,74 @@
    },
    {
     "category": "frequency",
-    "id": "35427cbab2cc",
+    "fields": [
+     {
+      "field": "FACILITY",
+      "new": "",
+      "old": "IAH"
+     },
+     {
+      "field": "FAC_NAME",
+      "new": "",
+      "old": "HOUSTON"
+     },
+     {
+      "field": "FACILITY_TYPE",
+      "new": "",
+      "old": "RCO"
+     },
+     {
+      "field": "ARTCC_OR_FSS_ID",
+      "new": "",
+      "old": "CXO"
+     },
+     {
+      "field": "SERVICED_FACILITY",
+      "new": "",
+      "old": "IAH"
+     },
+     {
+      "field": "SERVICED_FAC_NAME",
+      "new": "",
+      "old": "HOUSTON"
+     },
+     {
+      "field": "SERVICED_SITE_TYPE",
+      "new": "",
+      "old": "RCO"
+     },
+     {
+      "field": "SERVICED_CITY",
+      "new": "",
+      "old": "HOUSTON"
+     },
+     {
+      "field": "SERVICED_STATE",
+      "new": "",
+      "old": "TX"
+     },
+     {
+      "field": "SERVICED_COUNTRY",
+      "new": "",
+      "old": "US"
+     },
+     {
+      "field": "TOWER_OR_COMM_CALL",
+      "new": "",
+      "old": "HOUSTON"
+     },
+     {
+      "field": "FREQ",
+      "new": "",
+      "old": "122.4"
+     },
+     {
+      "field": "FREQ_USE",
+      "new": "",
+      "old": "HOUSTON RCO"
+     }
+    ],
+    "id": "ec7d3dfecab6",
     "kind": "removed",
     "priority": "fyi",
     "source": "FRQ",
@@ -2617,7 +4370,7 @@
       "old": "PILOTS CONDUCTING EFVS OPS; BE AWARE LED ALS IN USE RWY 09 & 33R."
      }
     ],
-    "id": "e9ba58bd3056",
+    "id": "53466369867d",
     "kind": "changed",
     "original": "PILOTS CONDUCTING EFVS OPS; BE AWARE LED ALS IN USE RWY 09, RWY 15R & RWY 33R.",
     "priority": "fyi",
@@ -2633,7 +4386,7 @@
       "old": "TWY NR BTN WW AND TWY WB DSGND NON-MOVEMENT AREA."
      }
     ],
-    "id": "1d718357c01f",
+    "id": "f2b0c8933acf",
     "kind": "changed",
     "original": "TXLN NR BTN TWY NB AND TWY WB DSGND NON-MOVEMENT AREA.",
     "priority": "fyi",
@@ -2649,7 +4402,7 @@
       "old": "TWY NR BTN TWY NC AND TWY WW CLSD TO ACFT WINGSPAN MORE THAN 214 FT."
      }
     ],
-    "id": "3957f27975f4",
+    "id": "19655b20042b",
     "kind": "changed",
     "original": "TXLN NR BTN TWY NB AND TWY WD CLSD TO ACFT WINGSPAN MORE THAN 214 FT.",
     "priority": "fyi",
@@ -2673,7 +4426,7 @@
      "SLOAO1: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart",
      "SNFLD3: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart"
     ],
-    "id": "01bb493db02b",
+    "id": "1696f5ccadae",
     "kind": "changed",
     "priority": "ifr",
     "procedures": {
@@ -2707,7 +4460,7 @@
      "PUCKY1: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart",
      "SKORR6: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart"
     ],
-    "id": "e490bd83ea78",
+    "id": "09de4b0277ff",
     "kind": "changed",
     "priority": "ifr",
     "procedures": {
@@ -2732,7 +4485,7 @@
      "preferred IFR route JFK -> CLT: new routing JFK RBV Q430 COPES Q75 GVE AIROW CHSLY9 CLT",
      "preferred IFR route JFK -> CMH: new routing JFK RBV Q430 AIR CLPRR4 CMH"
     ],
-    "id": "719fe8a38c21",
+    "id": "cc312b652d88",
     "kind": "changed",
     "priority": "ifr",
     "source": "PFR",
@@ -2752,7 +4505,7 @@
       "old": "NEW YORK RADIO"
      }
     ],
-    "id": "ae2434ef7423",
+    "id": "cefa9db6261a",
     "kind": "changed",
     "priority": "fyi",
     "source": "NAV_BASE",
@@ -2760,7 +4513,74 @@
    },
    {
     "category": "frequency",
-    "id": "a8107acbc365",
+    "fields": [
+     {
+      "field": "FACILITY",
+      "new": "",
+      "old": "JFK"
+     },
+     {
+      "field": "FAC_NAME",
+      "new": "",
+      "old": "KENNEDY"
+     },
+     {
+      "field": "FACILITY_TYPE",
+      "new": "",
+      "old": "RCO"
+     },
+     {
+      "field": "ARTCC_OR_FSS_ID",
+      "new": "",
+      "old": "ISP"
+     },
+     {
+      "field": "SERVICED_FACILITY",
+      "new": "",
+      "old": "JFK"
+     },
+     {
+      "field": "SERVICED_FAC_NAME",
+      "new": "",
+      "old": "KENNEDY"
+     },
+     {
+      "field": "SERVICED_SITE_TYPE",
+      "new": "",
+      "old": "RCO"
+     },
+     {
+      "field": "SERVICED_CITY",
+      "new": "",
+      "old": "NEW YORK"
+     },
+     {
+      "field": "SERVICED_STATE",
+      "new": "",
+      "old": "NY"
+     },
+     {
+      "field": "SERVICED_COUNTRY",
+      "new": "",
+      "old": "US"
+     },
+     {
+      "field": "TOWER_OR_COMM_CALL",
+      "new": "",
+      "old": "KENNEDY"
+     },
+     {
+      "field": "FREQ",
+      "new": "",
+      "old": "122.1R"
+     },
+     {
+      "field": "FREQ_USE",
+      "new": "",
+      "old": "KENNEDY RCO"
+     }
+    ],
+    "id": "0efa47b65a3a",
     "kind": "removed",
     "priority": "fyi",
     "source": "FRQ",
@@ -2791,7 +4611,7 @@
      "RKSTR4: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart",
      "RNDRZ4: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart"
     ],
-    "id": "f436a823dc47",
+    "id": "7006d2c1edb1",
     "kind": "changed",
     "priority": "ifr",
     "procedures": {
@@ -2823,7 +4643,74 @@
    },
    {
     "category": "frequency",
-    "id": "5c156c2ec33c",
+    "fields": [
+     {
+      "field": "FACILITY",
+      "new": "",
+      "old": "LAS"
+     },
+     {
+      "field": "FAC_NAME",
+      "new": "",
+      "old": "LAS VEGAS"
+     },
+     {
+      "field": "FACILITY_TYPE",
+      "new": "",
+      "old": "RCO"
+     },
+     {
+      "field": "ARTCC_OR_FSS_ID",
+      "new": "",
+      "old": "RNO"
+     },
+     {
+      "field": "SERVICED_FACILITY",
+      "new": "",
+      "old": "LAS"
+     },
+     {
+      "field": "SERVICED_FAC_NAME",
+      "new": "",
+      "old": "LAS VEGAS"
+     },
+     {
+      "field": "SERVICED_SITE_TYPE",
+      "new": "",
+      "old": "RCO"
+     },
+     {
+      "field": "SERVICED_CITY",
+      "new": "",
+      "old": "LAS VEGAS"
+     },
+     {
+      "field": "SERVICED_STATE",
+      "new": "",
+      "old": "NV"
+     },
+     {
+      "field": "SERVICED_COUNTRY",
+      "new": "",
+      "old": "US"
+     },
+     {
+      "field": "TOWER_OR_COMM_CALL",
+      "new": "",
+      "old": "LAS VEGAS"
+     },
+     {
+      "field": "FREQ",
+      "new": "",
+      "old": "122.4"
+     },
+     {
+      "field": "FREQ_USE",
+      "new": "",
+      "old": "LAS VEGAS RCO"
+     }
+    ],
+    "id": "e19369eb3c4b",
     "kind": "removed",
     "priority": "fyi",
     "source": "FRQ",
@@ -2831,7 +4718,7 @@
    },
    {
     "category": "remark",
-    "id": "0688fafc9dde",
+    "id": "e4013f9f8fe9",
     "kind": "added",
     "original": "PILOTS CONDUCTING EFVS OPS; BE AWARE LED ALS IN USE RWY 26L.",
     "priority": "fyi",
@@ -2840,7 +4727,7 @@
    },
    {
     "category": "remark",
-    "id": "f3f8bdd87724",
+    "id": "0e3b18cfe40e",
     "kind": "removed",
     "original": "ACFT TAX WB ON TWY B NEAR TWY E USE CARE NOT TO ENTER THE RWY ON TWY Y, ACFT TAX WB ON TWY W NEAR TWY E USE CARE NOT TO ENTER THE RWY ON TWY U.",
     "priority": "fyi",
@@ -2858,7 +4745,7 @@
       "old": "ACFT WITH LEN GTR THAN 240 FT ARE PROHIBITED ON TXLS C7, C8 AND C9 BTN TXL C AND TWY B."
      }
     ],
-    "id": "c57fe60366ba",
+    "id": "0f773f267c65",
     "kind": "changed",
     "original": "ACFT WITH LEN GTR THAN 240 FT ARE PROHIBITED ON TXLS C7 AND C9 BTN TXL C AND TWY B.",
     "priority": "action",
@@ -2914,7 +4801,7 @@
      "ZILLI5: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart",
      "ZUUMA4: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart"
     ],
-    "id": "168740df84c3",
+    "id": "84f5571868db",
     "kind": "changed",
     "priority": "ifr",
     "procedures": {
@@ -3014,7 +4901,7 @@
      "preferred IFR route LAX -> WHP: new routing LAX CANOG WHP",
      "preferred IFR route SFO -> LAX: discontinued"
     ],
-    "id": "1c3c5f8bdf02",
+    "id": "3338d9113cfd",
     "kind": "changed",
     "priority": "ifr",
     "source": "PFR",
@@ -3036,7 +4923,7 @@
      "TNNIS6: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart",
      "VADDR1: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart"
     ],
-    "id": "649a1c87b459",
+    "id": "4e60dacac08f",
     "kind": "changed",
     "priority": "ifr",
     "procedures": {
@@ -3066,7 +4953,7 @@
      "preferred IFR route LGA -> CLT: new routing LGA BIGGY Q75 GVE AIROW CHSLY9 CLT",
      "preferred IFR route LGA -> CMH: new routing LGA ZIMMZ Q42 MIKYG Q480 AIR CLPRR4 CMH"
     ],
-    "id": "7f08e262e3d6",
+    "id": "1a718b147958",
     "kind": "changed",
     "priority": "ifr",
     "source": "PFR",
@@ -3090,7 +4977,7 @@
      "TOPMM5: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart",
      "ZOOMM3: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart"
     ],
-    "id": "a1e1e2730b74",
+    "id": "d2e8a9fadb10",
     "kind": "changed",
     "priority": "ifr",
     "procedures": {
@@ -3136,7 +5023,7 @@
      "preferred IFR route LGB -> SEE: new routing LGB SLI V64 WOKRO V363 DANAH V23 MZB SEE",
      "preferred IFR route LGB -> SMO: new routing LGB SLI ELMOO V186 DARTS SMO"
     ],
-    "id": "d4f419d3994d",
+    "id": "841ac63ffce7",
     "kind": "changed",
     "priority": "ifr",
     "source": "PFR",
@@ -3168,7 +5055,7 @@
      "SLOAO1: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart",
      "SNFLD3: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart"
     ],
-    "id": "8274b0cb9c63",
+    "id": "fbeeb02ce59c",
     "kind": "changed",
     "priority": "ifr",
     "procedures": {
@@ -3201,7 +5088,7 @@
    },
    {
     "category": "remark",
-    "id": "a26ec0a09d17",
+    "id": "9a043706800e",
     "kind": "added",
     "original": "ILS CLASSIFICATION CODE IE.",
     "priority": "ifr",
@@ -3217,7 +5104,7 @@
      "preferred IFR route MCO -> CMH: new routing MCO JEEMY4 PAINN SHRKS Q77 WIGVO IRQ BURGG MCGNS SCRLT3 CMH",
      "preferred IFR route MCO -> SWF: new routing MCO MZULO3 LENDS GRUBR Y299 SEELO WAALT Q131 EARZZ JAMIE Q481 DPK TRESA2 SWF"
     ],
-    "id": "94a10a337aa8",
+    "id": "590c1bcb35ab",
     "kind": "changed",
     "priority": "ifr",
     "source": "PFR",
@@ -3232,7 +5119,7 @@
      "FISSK7: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart",
      "PANGG7: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart"
     ],
-    "id": "4c01486c03e1",
+    "id": "c1dcfa86d7b2",
     "kind": "changed",
     "priority": "ifr",
     "procedures": {
@@ -3260,7 +5147,7 @@
      "preferred IFR route MEM -> MDW: discontinued",
      "preferred IFR route SAT -> MDW: new routing SAT YODUH2 KLNGR FUZ JONEZ RZC STL SPI PHEEB ENDEE8 MDW"
     ],
-    "id": "d57516f65360",
+    "id": "0a275493466a",
     "kind": "changed",
     "priority": "ifr",
     "source": "PFR",
@@ -3300,7 +5187,7 @@
      "WLDER1: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart",
      "ZUMIT5: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart"
     ],
-    "id": "980e13bafdbc",
+    "id": "844ff468bee6",
     "kind": "changed",
     "priority": "ifr",
     "procedures": {
@@ -3352,7 +5239,7 @@
      "preferred IFR route MEM -> PIT: new routing MEM CRSON7 HUMMS PXV IIU HNN FEWGA7 PIT",
      "preferred IFR route MEM -> SDF: new routing MEM SELPH7 OHULO BUMPY MBELL5 SDF"
     ],
-    "id": "f216d4f69ae5",
+    "id": "3d4930c78dde",
     "kind": "changed",
     "priority": "ifr",
     "source": "PFR",
@@ -3360,7 +5247,74 @@
    },
    {
     "category": "frequency",
-    "id": "de7f874f5bbd",
+    "fields": [
+     {
+      "field": "FACILITY",
+      "new": "",
+      "old": "MEM"
+     },
+     {
+      "field": "FAC_NAME",
+      "new": "",
+      "old": "MEMPHIS"
+     },
+     {
+      "field": "FACILITY_TYPE",
+      "new": "",
+      "old": "RCO"
+     },
+     {
+      "field": "ARTCC_OR_FSS_ID",
+      "new": "",
+      "old": "MKL"
+     },
+     {
+      "field": "SERVICED_FACILITY",
+      "new": "",
+      "old": "MEM"
+     },
+     {
+      "field": "SERVICED_FAC_NAME",
+      "new": "",
+      "old": "MEMPHIS"
+     },
+     {
+      "field": "SERVICED_SITE_TYPE",
+      "new": "",
+      "old": "RCO"
+     },
+     {
+      "field": "SERVICED_CITY",
+      "new": "",
+      "old": "MEMPHIS"
+     },
+     {
+      "field": "SERVICED_STATE",
+      "new": "",
+      "old": "TN"
+     },
+     {
+      "field": "SERVICED_COUNTRY",
+      "new": "",
+      "old": "US"
+     },
+     {
+      "field": "TOWER_OR_COMM_CALL",
+      "new": "",
+      "old": "MEMPHIS"
+     },
+     {
+      "field": "FREQ",
+      "new": "",
+      "old": "122.2"
+     },
+     {
+      "field": "FREQ_USE",
+      "new": "",
+      "old": "MEMPHIS RCO"
+     }
+    ],
+    "id": "a82c3cf7ea83",
     "kind": "removed",
     "priority": "fyi",
     "source": "FRQ",
@@ -3393,7 +5347,7 @@
      "TARPN3: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart",
      "VIICE2: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart"
     ],
-    "id": "4e1a98b145cf",
+    "id": "07fd4746e8a3",
     "kind": "changed",
     "priority": "ifr",
     "procedures": {
@@ -3434,7 +5388,7 @@
      "preferred IFR route MIA -> POU: new routing MIA FOLZZ3 ALYRA GRUBR Y299 SEELO WAALT Q131 EARZZ JAMIE Q481 DPK TRESA2 POU",
      "preferred IFR route MIA -> SWF: new routing MIA FOLZZ3 ALYRA GRUBR Y299 SEELO WAALT Q131 EARZZ JAMIE Q481 DPK TRESA2 SWF"
     ],
-    "id": "017c59769fd7",
+    "id": "278185348ade",
     "kind": "changed",
     "priority": "ifr",
     "source": "PFR",
@@ -3454,7 +5408,7 @@
       "old": "MIAMI RADIO"
      }
     ],
-    "id": "993d78a3bbda",
+    "id": "46ad7eecb0d8",
     "kind": "changed",
     "priority": "fyi",
     "source": "NAV_BASE",
@@ -3485,7 +5439,7 @@
      "WLSTN7: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart",
      "ZMBRO7: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart"
     ],
-    "id": "b7933f2b8a80",
+    "id": "dbd019a7752f",
     "kind": "changed",
     "priority": "ifr",
     "procedures": {
@@ -3520,7 +5474,7 @@
     "details": [
      "preferred IFR route MSP -> BNA: new routing MSP ZMBRO7 ODI J30 BRIBE EDENS ENL SOKOL RYYMN4 BNA"
     ],
-    "id": "86ac1b4f0917",
+    "id": "d6aa6d705b84",
     "kind": "changed",
     "priority": "ifr",
     "source": "PFR",
@@ -3536,7 +5490,7 @@
      "OLEDD4: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart",
      "TRSSH2: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart"
     ],
-    "id": "5dc8bb288459",
+    "id": "e9736b3f4155",
     "kind": "changed",
     "priority": "ifr",
     "procedures": {
@@ -3556,7 +5510,7 @@
     "details": [
      "preferred IFR route MSY -> CLT: new routing MSY CATLN BESTT JONZE8 CLT"
     ],
-    "id": "aa69c190f994",
+    "id": "2b245e230956",
     "kind": "changed",
     "priority": "ifr",
     "source": "PFR",
@@ -3582,7 +5536,7 @@
      "SLNT3: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart",
      "WNDSR2: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart"
     ],
-    "id": "63eba43738d7",
+    "id": "a6d6f59f7280",
     "kind": "changed",
     "priority": "ifr",
     "procedures": {
@@ -3609,7 +5563,74 @@
    },
    {
     "category": "frequency",
-    "id": "e5caabf2a4bd",
+    "fields": [
+     {
+      "field": "FACILITY",
+      "new": "",
+      "old": "OAK"
+     },
+     {
+      "field": "FAC_NAME",
+      "new": "",
+      "old": "OAKLAND"
+     },
+     {
+      "field": "FACILITY_TYPE",
+      "new": "",
+      "old": "RCO"
+     },
+     {
+      "field": "ARTCC_OR_FSS_ID",
+      "new": "",
+      "old": "OAK"
+     },
+     {
+      "field": "SERVICED_FACILITY",
+      "new": "",
+      "old": "OAK"
+     },
+     {
+      "field": "SERVICED_FAC_NAME",
+      "new": "",
+      "old": "OAKLAND"
+     },
+     {
+      "field": "SERVICED_SITE_TYPE",
+      "new": "",
+      "old": "RCO"
+     },
+     {
+      "field": "SERVICED_CITY",
+      "new": "",
+      "old": "OAKLAND"
+     },
+     {
+      "field": "SERVICED_STATE",
+      "new": "",
+      "old": "CA"
+     },
+     {
+      "field": "SERVICED_COUNTRY",
+      "new": "",
+      "old": "US"
+     },
+     {
+      "field": "TOWER_OR_COMM_CALL",
+      "new": "",
+      "old": "OAKLAND"
+     },
+     {
+      "field": "FREQ",
+      "new": "",
+      "old": "122.5"
+     },
+     {
+      "field": "FREQ_USE",
+      "new": "",
+      "old": "OAKLAND RCO"
+     }
+    ],
+    "id": "9f414ffe9ec2",
     "kind": "removed",
     "priority": "fyi",
     "source": "FRQ",
@@ -3622,7 +5643,7 @@
     "details": [
      "TTHOR3: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart"
     ],
-    "id": "00859319e4a1",
+    "id": "0f455530f86e",
     "kind": "changed",
     "priority": "ifr",
     "procedures": {
@@ -3648,7 +5669,7 @@
       "old": "SAINT PETERSBURG RADIO"
      }
     ],
-    "id": "8804568f6d64",
+    "id": "157ea533335e",
     "kind": "changed",
     "priority": "fyi",
     "source": "NAV_BASE",
@@ -3668,7 +5689,7 @@
       "old": "386-676-3266"
      }
     ],
-    "id": "5600b06dc5d0",
+    "id": "514d70d0cb50",
     "kind": "changed",
     "priority": "fyi",
     "source": "APT_CON",
@@ -3676,7 +5697,74 @@
    },
    {
     "category": "frequency",
-    "id": "731df541fc60",
+    "fields": [
+     {
+      "field": "FACILITY",
+      "new": "",
+      "old": "OMN"
+     },
+     {
+      "field": "FAC_NAME",
+      "new": "",
+      "old": "ORMOND BEACH"
+     },
+     {
+      "field": "FACILITY_TYPE",
+      "new": "",
+      "old": "RCO"
+     },
+     {
+      "field": "ARTCC_OR_FSS_ID",
+      "new": "",
+      "old": "PIE"
+     },
+     {
+      "field": "SERVICED_FACILITY",
+      "new": "",
+      "old": "OMN"
+     },
+     {
+      "field": "SERVICED_FAC_NAME",
+      "new": "",
+      "old": "ORMOND BEACH"
+     },
+     {
+      "field": "SERVICED_SITE_TYPE",
+      "new": "",
+      "old": "RCO"
+     },
+     {
+      "field": "SERVICED_CITY",
+      "new": "",
+      "old": "ORMOND BEACH"
+     },
+     {
+      "field": "SERVICED_STATE",
+      "new": "",
+      "old": "FL"
+     },
+     {
+      "field": "SERVICED_COUNTRY",
+      "new": "",
+      "old": "US"
+     },
+     {
+      "field": "TOWER_OR_COMM_CALL",
+      "new": "",
+      "old": "ORMOND BEACH"
+     },
+     {
+      "field": "FREQ",
+      "new": "",
+      "old": "122.1R"
+     },
+     {
+      "field": "FREQ_USE",
+      "new": "",
+      "old": "ORMOND BEACH RCO"
+     }
+    ],
+    "id": "c2855e970f79",
     "kind": "removed",
     "priority": "fyi",
     "source": "FRQ",
@@ -3684,7 +5772,74 @@
    },
    {
     "category": "frequency",
-    "id": "c6b7d37325e6",
+    "fields": [
+     {
+      "field": "FACILITY",
+      "new": "",
+      "old": "OMN"
+     },
+     {
+      "field": "FAC_NAME",
+      "new": "",
+      "old": "ORMOND BEACH"
+     },
+     {
+      "field": "FACILITY_TYPE",
+      "new": "",
+      "old": "RCO"
+     },
+     {
+      "field": "ARTCC_OR_FSS_ID",
+      "new": "",
+      "old": "PIE"
+     },
+     {
+      "field": "SERVICED_FACILITY",
+      "new": "",
+      "old": "OMN"
+     },
+     {
+      "field": "SERVICED_FAC_NAME",
+      "new": "",
+      "old": "ORMOND BEACH"
+     },
+     {
+      "field": "SERVICED_SITE_TYPE",
+      "new": "",
+      "old": "RCO"
+     },
+     {
+      "field": "SERVICED_CITY",
+      "new": "",
+      "old": "ORMOND BEACH"
+     },
+     {
+      "field": "SERVICED_STATE",
+      "new": "",
+      "old": "FL"
+     },
+     {
+      "field": "SERVICED_COUNTRY",
+      "new": "",
+      "old": "US"
+     },
+     {
+      "field": "TOWER_OR_COMM_CALL",
+      "new": "",
+      "old": "ORMOND BEACH"
+     },
+     {
+      "field": "FREQ",
+      "new": "",
+      "old": "122.4"
+     },
+     {
+      "field": "FREQ_USE",
+      "new": "",
+      "old": "ORMOND BEACH RCO"
+     }
+    ],
+    "id": "43a558b52529",
     "kind": "removed",
     "priority": "fyi",
     "source": "FRQ",
@@ -3707,7 +5862,7 @@
      "WATSN4: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart",
      "WYNDE3: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart"
     ],
-    "id": "bfad9c8cbc83",
+    "id": "d557a5d11816",
     "kind": "changed",
     "priority": "ifr",
     "procedures": {
@@ -3741,7 +5896,7 @@
      "preferred IFR route ORD -> CLT: new routing ORD EARND ELANR EMMLY ERECO IIU SKYWA FILPZ7 CLT",
      "preferred IFR route ORD -> CMH: new routing ORD MOBLE ADIME SEWTO FWA BRYEN DUBLN1 CMH"
     ],
-    "id": "a752a1736a83",
+    "id": "9d88e0443a99",
     "kind": "changed",
     "priority": "ifr",
     "source": "PFR",
@@ -3764,7 +5919,7 @@
      "TOLLZ2: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart",
      "TTHOR3: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart"
     ],
-    "id": "ecc35d4ceeec",
+    "id": "3640b2a0244d",
     "kind": "changed",
     "priority": "ifr",
     "procedures": {
@@ -3794,7 +5949,7 @@
      "preferred IFR route ORL -> CMH: new routing ORL NYTES2 NYTES JEEMY ACCHE PAINN SHRKS Q77 WIGVO IRQ BURGG MCGNS SCRLT3 CMH",
      "preferred IFR route ORL -> CMH: new routing ORL TOLLZ2 TOLLZ JEEMY ACCHE PAINN SHRKS Q77 WIGVO IRQ BURGG MCGNS SCRLT3 CMH"
     ],
-    "id": "11b16849e5d0",
+    "id": "f2d8687b04a3",
     "kind": "changed",
     "priority": "ifr",
     "source": "PFR",
@@ -3802,7 +5957,74 @@
    },
    {
     "category": "frequency",
-    "id": "491c91d5c104",
+    "fields": [
+     {
+      "field": "FACILITY",
+      "new": "",
+      "old": "ORL"
+     },
+     {
+      "field": "FAC_NAME",
+      "new": "",
+      "old": "ORLANDO"
+     },
+     {
+      "field": "FACILITY_TYPE",
+      "new": "",
+      "old": "RCO"
+     },
+     {
+      "field": "ARTCC_OR_FSS_ID",
+      "new": "",
+      "old": "PIE"
+     },
+     {
+      "field": "SERVICED_FACILITY",
+      "new": "",
+      "old": "ORL"
+     },
+     {
+      "field": "SERVICED_FAC_NAME",
+      "new": "",
+      "old": "ORLANDO"
+     },
+     {
+      "field": "SERVICED_SITE_TYPE",
+      "new": "",
+      "old": "RCO"
+     },
+     {
+      "field": "SERVICED_CITY",
+      "new": "",
+      "old": "ORLANDO"
+     },
+     {
+      "field": "SERVICED_STATE",
+      "new": "",
+      "old": "FL"
+     },
+     {
+      "field": "SERVICED_COUNTRY",
+      "new": "",
+      "old": "US"
+     },
+     {
+      "field": "TOWER_OR_COMM_CALL",
+      "new": "",
+      "old": "ORLANDO"
+     },
+     {
+      "field": "FREQ",
+      "new": "",
+      "old": "122.3"
+     },
+     {
+      "field": "FREQ_USE",
+      "new": "",
+      "old": "ORLANDO RCO"
+     }
+    ],
+    "id": "bc2736aec5fb",
     "kind": "removed",
     "priority": "fyi",
     "source": "FRQ",
@@ -3824,7 +6046,7 @@
      "TMBRS4: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart",
      "WHAMY5: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart"
     ],
-    "id": "9bc1d8553857",
+    "id": "6296bd50966b",
     "kind": "changed",
     "priority": "ifr",
     "procedures": {
@@ -3857,7 +6079,7 @@
      "SLATT6: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart",
      "SPUDS7: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart"
     ],
-    "id": "e1ed88c5be24",
+    "id": "04c645e7f703",
     "kind": "changed",
     "priority": "ifr",
     "procedures": {
@@ -3884,28 +6106,45 @@
      "preferred IFR route PHL -> CMH: new routing PHL MXE PENSY J110 AIR CLPRR4 CMH",
      "preferred IFR route PHL -> DET: new routing PHL PTW SARAA RAV PSB WWSHR FOREY3 DET"
     ],
-    "id": "896a3ff4e5ec",
+    "id": "2fe2f2ea9287",
     "kind": "changed",
     "priority": "ifr",
     "source": "PFR",
     "summary": "preferred IFR routes: 1 added, 5 changed"
    },
    {
-    "category": "airport",
-    "id": "826f9bfa6e99",
-    "kind": "added",
-    "priority": "fyi",
-    "source": "APT_ARS",
-    "summary": "added (apt_ars): rwy id=08/26, rwy end id=08, arrest device code=EMAS"
-   },
-   {
     "category": "remark",
-    "id": "68330070bf8e",
+    "id": "16693336e97c",
     "kind": "added",
     "original": "ENGINEERED MATERIAL ARRESTING SYSTEM (EMAS) WITH 389 FT SETBACK 211 FT IN LENGTH BY 170 FT IN WIDTH LCTD AT THE DER 08.",
     "priority": "fyi",
     "source": "APT_RMK",
     "summary": "new remark: ENGINEERED MATERIAL ARRESTING SYSTEM (EMAS) WITH 389 FT SETBACK 211 FT IN LENGTH BY 170 FT IN WIDTH LCTD AT THE DER 08."
+   },
+   {
+    "category": "airport",
+    "fields": [
+     {
+      "field": "RWY_ID",
+      "new": "08/26",
+      "old": ""
+     },
+     {
+      "field": "RWY_END_ID",
+      "new": "08",
+      "old": ""
+     },
+     {
+      "field": "ARREST_DEVICE_CODE",
+      "new": "EMAS",
+      "old": ""
+     }
+    ],
+    "id": "e991200066b1",
+    "kind": "added",
+    "priority": "fyi",
+    "source": "APT_ARS",
+    "summary": "runway 08: new arresting system (EMAS)"
    }
   ],
   "PHX": [
@@ -3939,7 +6178,7 @@
      "TFD4: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart",
      "ZEPER2: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart"
     ],
-    "id": "3c750c90ec45",
+    "id": "c96b9cfd6e32",
     "kind": "changed",
     "priority": "ifr",
     "procedures": {
@@ -3983,7 +6222,7 @@
     "details": [
      "WNSKI2: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart"
     ],
-    "id": "c1c34eb35bf6",
+    "id": "efb0ca797279",
     "kind": "changed",
     "priority": "ifr",
     "procedures": {
@@ -4018,7 +6257,7 @@
      "TOPGN2: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart",
      "ZZOOO4: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart"
     ],
-    "id": "95d0b63ee4fe",
+    "id": "58022925280a",
     "kind": "changed",
     "priority": "ifr",
     "procedures": {
@@ -4065,7 +6304,7 @@
      "preferred IFR route VNY -> SAN: new routing VNY DARTS V186 BAYJY POXKU PACIF V25 REDIN V165 SARGS SAN",
      "preferred IFR route WHP -> SAN: new routing WHP DARTS V186 BAYJY POXKU PACIF V25 REDIN V165 SARGS SAN"
     ],
-    "id": "5e3fa2583095",
+    "id": "72e23e0cab85",
     "kind": "changed",
     "priority": "ifr",
     "source": "PFR",
@@ -4080,7 +6319,7 @@
       "old": "KIMBERLY BECKER"
      }
     ],
-    "id": "13e2324a2e58",
+    "id": "7e2503a78d9a",
     "kind": "changed",
     "priority": "fyi",
     "source": "APT_CON",
@@ -4106,7 +6345,7 @@
      "SKYKO1: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart",
      "SUMMA2: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart"
     ],
-    "id": "ef85c4b13af2",
+    "id": "f5bb8e29a065",
     "kind": "changed",
     "priority": "ifr",
     "procedures": {
@@ -4137,7 +6376,7 @@
      "preferred IFR route ANC -> SEA: discontinued",
      "preferred IFR route SEA -> SEA: discontinued"
     ],
-    "id": "33f56053abd7",
+    "id": "9e7b70634afa",
     "kind": "changed",
     "priority": "ifr",
     "source": "PFR",
@@ -4157,7 +6396,7 @@
      "SLOAO1: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart",
      "TTHOR3: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart"
     ],
-    "id": "40aedac81dd5",
+    "id": "2cc4ccf64583",
     "kind": "changed",
     "priority": "ifr",
     "procedures": {
@@ -4178,7 +6417,7 @@
    },
    {
     "category": "remark",
-    "id": "1d8267b95b7e",
+    "id": "12eada93091f",
     "kind": "added",
     "original": "DUE TO LTD CBP FAC, SFB UNA TO ACCOMODATE INTL DVRSN EXC IN CASE OF A DECLARED IN-FLT EMERG.",
     "priority": "fyi",
@@ -4214,7 +6453,7 @@
      "WWAVS2: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart",
      "YOSEM3: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart"
     ],
-    "id": "4bec6bdf5ee4",
+    "id": "7ff82a4d0a75",
     "kind": "changed",
     "priority": "ifr",
     "procedures": {
@@ -4255,7 +6494,7 @@
      "preferred IFR route DFW -> SFO: new routing DFW HRPER4 HULZE TXO J74 SJN J18 PXR J65 DECAS PMD J6 AVE MAKRS SERFR SERFR4 SFO",
      "preferred IFR route SFO -> LAX: discontinued"
     ],
-    "id": "2cec4327351d",
+    "id": "92be8337f70a",
     "kind": "changed",
     "priority": "ifr",
     "source": "PFR",
@@ -4282,7 +6521,7 @@
      "SUNOL1: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart",
      "TECKY4: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart"
     ],
-    "id": "c837d0a6ada5",
+    "id": "a7b87daff38d",
     "kind": "changed",
     "priority": "ifr",
     "procedures": {
@@ -4313,7 +6552,7 @@
     "details": [
      "preferred IFR route DFW -> SJC: new routing DFW HRPER4 HULZE TXO J74 SJN J18 PXR J65 DECAS PMD J6 AVE MAKRS TROXX SILCN6 SJC"
     ],
-    "id": "44d08e1a86d5",
+    "id": "fd9abc4bb67b",
     "kind": "changed",
     "priority": "ifr",
     "source": "PFR",
@@ -4328,7 +6567,7 @@
       "old": "NORMAN Y MINETA SAN JOSE INTL"
      }
     ],
-    "id": "cb9882963c3c",
+    "id": "c2fbee02aced",
     "kind": "changed",
     "priority": "fyi",
     "source": "APT_BASE",
@@ -4343,7 +6582,7 @@
       "old": "NORMAN Y MINETA SAN JOSE INTL"
      }
     ],
-    "id": "198f8d736684",
+    "id": "0f1060b2be58",
     "kind": "changed",
     "priority": "fyi",
     "source": "ATC_BASE",
@@ -4358,7 +6597,7 @@
       "old": "NORMAN Y MINETA SAN JOSE INTL"
      }
     ],
-    "id": "7b4e091969f8",
+    "id": "8d03444db9db",
     "kind": "changed",
     "priority": "fyi",
     "source": "FRQ",
@@ -4387,7 +6626,7 @@
      "YUTES2: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart",
      "ZIONZ1: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart"
     ],
-    "id": "12e316027311",
+    "id": "1ca7200c90be",
     "kind": "changed",
     "priority": "ifr",
     "procedures": {
@@ -4417,7 +6656,74 @@
    },
    {
     "category": "frequency",
-    "id": "023018cac06a",
+    "fields": [
+     {
+      "field": "FACILITY",
+      "new": "",
+      "old": "SLC"
+     },
+     {
+      "field": "FAC_NAME",
+      "new": "",
+      "old": "SALT LAKE CITY"
+     },
+     {
+      "field": "FACILITY_TYPE",
+      "new": "",
+      "old": "RCO"
+     },
+     {
+      "field": "ARTCC_OR_FSS_ID",
+      "new": "",
+      "old": "CDC"
+     },
+     {
+      "field": "SERVICED_FACILITY",
+      "new": "",
+      "old": "SLC"
+     },
+     {
+      "field": "SERVICED_FAC_NAME",
+      "new": "",
+      "old": "SALT LAKE CITY"
+     },
+     {
+      "field": "SERVICED_SITE_TYPE",
+      "new": "",
+      "old": "RCO"
+     },
+     {
+      "field": "SERVICED_CITY",
+      "new": "",
+      "old": "SALT LAKE CITY"
+     },
+     {
+      "field": "SERVICED_STATE",
+      "new": "",
+      "old": "UT"
+     },
+     {
+      "field": "SERVICED_COUNTRY",
+      "new": "",
+      "old": "US"
+     },
+     {
+      "field": "TOWER_OR_COMM_CALL",
+      "new": "",
+      "old": "SALT LAKE CITY"
+     },
+     {
+      "field": "FREQ",
+      "new": "",
+      "old": "122.4"
+     },
+     {
+      "field": "FREQ_USE",
+      "new": "",
+      "old": "SALT LAKE CITY RCO"
+     }
+    ],
+    "id": "c374003e1eef",
     "kind": "removed",
     "priority": "fyi",
     "source": "FRQ",
@@ -4448,7 +6754,7 @@
      "STAYY4: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart",
      "TANDY6: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart"
     ],
-    "id": "5a03c3dff2bf",
+    "id": "7fa13c44b47e",
     "kind": "changed",
     "priority": "ifr",
     "procedures": {
@@ -4489,7 +6795,7 @@
      "preferred IFR route SNA -> RNM: new routing SNA SLI PACIF V208 JLI RNM",
      "preferred IFR route SNA -> SMO: new routing SNA SLI ELMOO V186 DARTS SMO"
     ],
-    "id": "26d9d8a4798f",
+    "id": "0c53a5fb140c",
     "kind": "changed",
     "priority": "ifr",
     "source": "PFR",
@@ -4521,7 +6827,7 @@
      "TEDDD5: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart",
      "WHRLI7: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart"
     ],
-    "id": "64d1573ad3f0",
+    "id": "f78922319cdf",
     "kind": "changed",
     "priority": "ifr",
     "procedures": {
@@ -4558,7 +6864,7 @@
      "preferred IFR route STL -> CMH: discontinued",
      "preferred IFR route STL -> CMH: new routing STL JHART7 KELLY JADUB DUBLN1 CMH"
     ],
-    "id": "3614cfd90212",
+    "id": "1347443e0361",
     "kind": "changed",
     "priority": "ifr",
     "source": "PFR",
@@ -4566,7 +6872,74 @@
    },
    {
     "category": "frequency",
-    "id": "2bb48e836d90",
+    "fields": [
+     {
+      "field": "FACILITY",
+      "new": "",
+      "old": "STL"
+     },
+     {
+      "field": "FAC_NAME",
+      "new": "",
+      "old": "ST LOUIS"
+     },
+     {
+      "field": "FACILITY_TYPE",
+      "new": "",
+      "old": "RCO"
+     },
+     {
+      "field": "ARTCC_OR_FSS_ID",
+      "new": "",
+      "old": "STL"
+     },
+     {
+      "field": "SERVICED_FACILITY",
+      "new": "",
+      "old": "STL"
+     },
+     {
+      "field": "SERVICED_FAC_NAME",
+      "new": "",
+      "old": "ST LOUIS"
+     },
+     {
+      "field": "SERVICED_SITE_TYPE",
+      "new": "",
+      "old": "RCO"
+     },
+     {
+      "field": "SERVICED_CITY",
+      "new": "",
+      "old": "ST LOUIS"
+     },
+     {
+      "field": "SERVICED_STATE",
+      "new": "",
+      "old": "MO"
+     },
+     {
+      "field": "SERVICED_COUNTRY",
+      "new": "",
+      "old": "US"
+     },
+     {
+      "field": "TOWER_OR_COMM_CALL",
+      "new": "",
+      "old": "ST LOUIS"
+     },
+     {
+      "field": "FREQ",
+      "new": "",
+      "old": "122.6"
+     },
+     {
+      "field": "FREQ_USE",
+      "new": "",
+      "old": "ST LOUIS RCO"
+     }
+    ],
+    "id": "ecfacfd9d082",
     "kind": "removed",
     "priority": "fyi",
     "source": "FRQ",
@@ -4588,7 +6961,7 @@
      "MAATY6: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart",
      "RAYZZ3: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart"
     ],
-    "id": "774f81f29d7c",
+    "id": "358fc5b8d925",
     "kind": "changed",
     "priority": "ifr",
     "procedures": {
@@ -4615,7 +6988,7 @@
      "preferred IFR route CLT -> TPA: new routing CLT BEAVY9 JENDO MAVRC TEUFL BAAMF DADES2 TPA",
      "preferred IFR route TPA -> CLT: new routing TPA BAYPO2 CAMJO TWINS PONZE BANKR8 CLT"
     ],
-    "id": "aa9e72a14080",
+    "id": "4d114d4f4b46",
     "kind": "changed",
     "priority": "ifr",
     "source": "PFR",
@@ -4640,7 +7013,7 @@
      "WEESL1: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart",
      "WLKKR5: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart"
     ],
-    "id": "0d5245354276",
+    "id": "ddb9e8fd0576",
     "kind": "changed",
     "priority": "ifr",
     "procedures": {
@@ -4680,7 +7053,7 @@
      "preferred IFR route VNY -> SAN: new routing VNY DARTS V186 BAYJY POXKU PACIF V25 REDIN V165 SARGS SAN",
      "preferred IFR route VNY -> SBA: new routing VNY FIM V186 DEANO KWANG SBA"
     ],
-    "id": "583ed4f2f9a1",
+    "id": "c21966fce9d5",
     "kind": "changed",
     "priority": "ifr",
     "source": "PFR",
@@ -4695,7 +7068,7 @@
       "old": "100LL,A"
      }
     ],
-    "id": "e766a0b3bc78",
+    "id": "913ef52106d9",
     "kind": "changed",
     "priority": "fyi",
     "source": "APT_BASE",
@@ -4703,7 +7076,7 @@
    },
    {
     "category": "remark",
-    "id": "092027414027",
+    "id": "9a7e744de386",
     "kind": "added",
     "original": "SUSTAINABLE AVIATION FUEL (SAF) AVBL.",
     "priority": "fyi",
