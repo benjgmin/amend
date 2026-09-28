@@ -1275,12 +1275,14 @@ data-name="{e(wl['name'])}">Save to my lists</a><button class="btn ghost" id="co
 # what shipped, newest first, for /changelog/. Add a line when something people can see changes.
 UPDATES = [
     ("Sep 2026", [
-        "A remark shown in the FAA's words now says why under it, like which contraction Amend has no verified "
-        "meaning for. NA and N/A stay as the FAA wrote them, with a line saying what they can mean: the FAA's "
-        "lists say not authorized and not applicable, but remarks also use them for not available. Runways are "
-        "written the FAA's way, like runway 33C or 15C/33C, instead of four different ways. HI PER, HIGH PER "
-        "and LOW PER now read \"high performance\" and \"low performance\": every remark in the FAA's data "
-        "that writes them means that. Past cycles' remarks follow the same rules.",
+        "In this cycle's and the next cycle's changes, a remark kept in the FAA's words because of a "
+        "contraction Amend can't verify, or a translation that failed its checks, now says why under it. NA "
+        "and N/A stay as the FAA wrote them, with a line saying what they can mean: the FAA's lists say not "
+        "authorized and not applicable, but remarks also use them for not available. Runways are written the "
+        "FAA's way, like runway 33C or 15C/33C, instead of four different ways. HI PER, HIGH PER and LOW PER "
+        "now read \"high performance\" and \"low performance\", and TRANS ALERT reads \"transient alert\": "
+        "every remark in the FAA's data that writes them means that. Past cycles' translated remarks follow "
+        "the same rules.",
         "The status page is shorter: whether Amend is up to date, one line for each part of the service, the "
         "last 30 runs at a glance and any problems, with every step of the latest build folded underneath. The "
         "docs now walk through the whole process, from the FAA posting a cycle to a change on your screen.",

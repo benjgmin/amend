@@ -22,6 +22,10 @@ glossary.json holds one entry per term:
   parts      for a pair like SS-SR: the terms it joins, which have to come out in that order
   english    an everyday English word in remarks (END, MUST), never expanded as a contraction
   spelling_of for a remark's own spelling (APRCH): the FAA contraction whose meaning it takes
+  after      a meaning the term takes only right after certain words (AFTER: HI PER is performance)
+  before     one it takes only right before certain words, from the FAA contraction it spells there
+             (BEFORE: TRANS ALERT is transient alert, the FAA's TRAN)
+  remarks_use for a term copied as written: the meanings remarks give it, for the reader's line
 
 refresh the FAA lists and rebuild (needs faa.gov access and pypdf):
     python -m amend.glossary --refresh
@@ -110,6 +114,17 @@ AFTER = {
             "only keep those as the word"),
 }
 
+# a term that spells an FAA contraction right before certain words, where every NASR remark with it
+# there means that (2026-10-01 cycle, all remark fields): {term: (the words after it, the FAA
+# contraction, what was read)}. it takes that contraction's verified meaning there, and stays as
+# written anywhere else. a translation may still copy it as written
+BEFORE = {
+    "TRANS": (("ALERT",), "TRAN",
+              "all 26 of NASR's TRANS ALERT remarks on 2026-10-01 (23 texts) mean the military transient alert "
+              "service ('TRANS ALERT SVC AVBL H24', 'PRIOR TO TRANS ALERT CLOSING'); 158 others write it the "
+              "FAA's way, TRAN ALERT"),
+}
+
 
 # ---------------------------------------------------------------- curated choices
 # where the FAA lists more than one meaning, where its only meaning doesn't fit remarks, or where
@@ -185,7 +200,10 @@ CURATED = {
     "EMS": {"expansion": None, "note": "not an FAA contraction: EM + S would read as 'emission', but "
                                        "remarks use EMS for emergency medical services"},
     "ARNG": {"expansion": None, "note": "the FAA lists 'arrange'; military remarks use ARNG for Army National Guard"},
-    "TRANS": {"expansion": None, "note": "the FAA lists 'transmit'; remarks use TRANS ALERT for transient alert"},
+    "TRANS": {"expansion": None,
+              "note": "the FAA lists 'transmit', and remarks use TRANS for transmit ('TRANS INTENTIONS'), "
+                      "transition ('TRANS SFC') and transient ('TRANS ACFT'). right before ALERT it's the "
+                      "FAA's TRAN (BEFORE)"},
     "DECR": {"expansion": None, "note": "not an FAA contraction (JO 7340.2 has DCR); DEC + R would read as December"},
     "FRM": {"expansion": None, "note": "the FAA lists 'form'; remarks use FRM for from"},
     "MTUS": {"expansion": None, "note": "MTU + S would read as 'metric units'; remarks use MTUS for mountains"},
@@ -601,6 +619,13 @@ def build(sources=None):
             raise ValueError(f"{term}: an AFTER rule is for a word remarks otherwise use as English")
         terms[term]["after"] = {"words": list(before), "meaning": meaning,
                                 "source": _source_of(term, meaning, found), "note": seen}
+    for term, (after, form, seen) in BEFORE.items():
+        base, entry = terms.get(form), terms.get(term)
+        if not (base and base["verified"]) or base.get("parts") or not entry or entry["verified"] \
+                or entry.get("english"):
+            raise ValueError(f"{term}: a BEFORE rule gives a term copied as written a verified contraction's meaning")
+        entry["before"] = {"words": list(after), "meaning": base["expansion"], "spelling_of": form,
+                           "source": f"{base['source']}, spelled {form}", "note": seen}
     return {"about": ("Contractions a remark translation may expand, each traced to an FAA list. "
                       "Built by amend/glossary.py from faa_abbreviations.json; edit CURATED there, "
                       "not this file."),

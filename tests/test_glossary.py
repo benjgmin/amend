@@ -194,7 +194,7 @@ GUESSES = [
      "R/W is 'Rotary/Wing'"),
     ("TRANS ALERT: 1500Z-0700Z++ MON-SAT; 1600Z-0000Z++ SAT-SUN; CLSD FED HOL.",
      "Transition alert active 1500Z-0700Z Monday through Saturday; 1600Z-0000Z Saturday through Sunday; "
-     "closed federal holidays.", "TRANS has no verified meaning"),
+     "closed federal holidays.", "TRANS is 'transient'"),
     ("FATO LENGTH 70 FT, FATO WIDTH 70 FT, SAFETY AREA LENGTH 93 FT, SAFETY AREA WIDTH 93 FT.",
      "Landing area is 70 feet long by 70 feet wide with 93-foot-long by 93-foot-wide safety area.", "dropped FATO"),
     ("OT CALL (515) 291-5094 OR (515) 460-3892.", "Contact (515) 291-5094 or (515) 460-3892 for other information.",
@@ -579,7 +579,7 @@ class TestWhatTheRemarkSays(unittest.TestCase):
                          "Kept in the FAA's words: Amend has no verified meaning for RT.")
         self.assertEqual(why("SOFT & RUTTED; IREG MRKD W CONES.", None,
                              remarks.problems("SOFT & RUTTED; IREG MRKD W CONES.", "Soft and rutted; irregular marked with cones.")[:3]),
-                         "Kept in the FAA's words: the plain-English version didn't use the FAA's meaning for W "
+                         "Kept in the FAA's words: the plain-English version didn't use the verified meaning for W "
                          "(west or white).")
         self.assertEqual(why("SELF SVC FUEL H24.", None, ["lost number 24"]),
                          "Kept in the FAA's words: the plain-English version didn't pass Amend's checks.")
@@ -663,9 +663,53 @@ class TestWhatTheRemarkSays(unittest.TestCase):
             self.assertEqual(remarks.problems(raw, plain), ["dropped PER", "added 'performance'"], plain)
         self.assertIn("\nPER right after HI, HIGH or LOW = performance\n", remarks.prompt_for(["CTN: HI PER MIL OPS R4809A."]))
         self.assertNotIn("PER right after", remarks.prompt_for(["LDG FEE $15 PER NIGHT."]))
+        self.assertEqual(remarks.readable(raw, plain.replace("high performance", "high PER")), plain)
         bad = {"PER": (("HI",), "permission", "")}          # not an FAA meaning of PER
         with mock.patch.dict(glossary.AFTER, bad), self.assertRaises(ValueError):
             glossary.build()
+
+    def test_trans_right_before_alert_is_transient(self):
+        """all 26 TRANS ALERT remarks in NASR (2026-10-01) are the military transient alert service,
+        the FAA's TRAN ALERT, and the site showed 'TRANS alert closing'. anywhere else TRANS is
+        transmit, transition or transient, so it stays as written (okayed 2026-09-28)"""
+        rule = glossary.lookup("TRANS")["before"]
+        self.assertEqual((rule["words"], rule["meaning"], rule["spelling_of"], rule["source"]),
+                         (["ALERT"], "transient", "TRAN", "CS, spelled TRAN"))
+        self.assertFalse(glossary.lookup("TRANS")["verified"])
+        raw = "RSTD: ALL TRAN ACFT MUST BE CHOCKED 30 MIN PRIOR TO TRANS ALERT CLOSING."
+        plain = "Restricted: all transient aircraft must be chocked 30 minutes prior to transient alert closing."
+        self.assertEqual(remarks.problems(raw, plain), [])
+        copied = plain.replace("transient alert", "TRANS alert")
+        self.assertEqual(remarks.problems(raw, copied), [])
+        self.assertEqual(remarks.readable(raw, copied), plain)
+        self.assertEqual(remarks.readable("TRANS ALERT: DE-ICING AVBL.", "TRANS alert: de-icing available."),
+                         "Transient alert: de-icing available.")
+        self.assertEqual(remarks.problems("TRANS ALERT SVC NOT AVBL.", "Transmit alert service not available."),
+                         ["TRANS is 'transient' (CS, spelled TRAN, right before ALERT), not what the translation says"])
+        # a remark that also uses TRANS elsewhere: only the TRANS right before ALERT reads transient
+        raw = "ACFT SVC/TRANS ALERT WILL NOT SUPPORT LCL, ROUND ROBIN OR OUT AND BACK FOR TRANS ACFT."
+        right = "Aircraft service/transient alert will not support local, round robin or out and back for TRANS aircraft."
+        self.assertEqual(remarks.problems(raw, right), [])
+        self.assertEqual(remarks.readable(raw, right.replace("transient alert", "TRANS alert")), right)
+        self.assertTrue(remarks.problems(raw, right.replace("TRANS aircraft", "transient aircraft"))[0]
+                        .startswith("TRANS has no verified meaning"))
+        swapped = right.replace("transient alert", "TRANS alert").replace("TRANS aircraft", "transient aircraft")
+        self.assertEqual(remarks.problems(raw, swapped),
+                         ["TRANS is 'transient' (CS, spelled TRAN, right before ALERT), not what the translation says"])
+        self.assertTrue(remarks.problems("TRANS ACFT RQR PPR.", "Transient aircraft require PPR.")[0]
+                        .startswith("TRANS has no verified meaning"))
+        # the model is told, and a remark that only has it there has nothing to copy
+        self.assertEqual(remarks.unverified("TRANS ALERT SVC AVBL H24."), [])
+        self.assertIn("TRANS", remarks.unverified(raw))
+        p = remarks.prompt_for(["TRANS ALERT SVC AVBL H24.", raw])
+        self.assertIn("\nTRANS right before ALERT = transient\n", p)
+        self.assertIn("copy them exactly as written: TRANS (anywhere but right before ALERT)\n", p)
+        self.assertNotIn("copy them exactly", remarks.prompt_for(["TRANS ALERT SVC AVBL H24."]))
+        for bad in ({"TRANS": (("ALERT",), "TRNSX", "")},       # not an FAA contraction
+                    {"TRAN": (("ALERT",), "TRAN", "")},         # a term that has its own meaning
+                    {"PER": (("ALERT",), "PERF", "")}):          # an English word
+            with self.subTest(bad=bad), mock.patch.dict(glossary.BEFORE, bad), self.assertRaises(ValueError):
+                glossary.build()
 
     def test_signs_and_ranges(self):
         self.assertEqual(remarks.problems("10 FT TREES 125 -150 FT W OF RWY.",
@@ -697,7 +741,8 @@ class TestPrompt(unittest.TestCase):
                      "CNTRLN = centerline"):
             self.assertIn(f"\n{line}\n", p)
         copy = re.search(r"copy them exactly as written: (.*)\n", p).group(1).split(", ")
-        self.assertEqual(sorted(copy), ["NA", "TRANS", "UNMKD"])
+        self.assertEqual(sorted(copy), ["NA", "UNMKD"])
+        self.assertIn("\nTRANS right before ALERT = transient\n", p)
         # plain words, single letters and terms remarks use two ways get no meaning
         for t in ("TO", "L", "ALT", "PER", "NA"):
             self.assertNotIn(f"\n{t} = ", p)
@@ -923,7 +968,7 @@ class TestScrubHistory(unittest.TestCase):
         os.mkdir(self.hist)
         self.raw, guess = GUESSES[2][:2]      # "TRANS ALERT: ..." read as "Transition alert ..."
         ok_raw, ok = RIGHT[2]                 # the same remark with TRANS kept as written
-        ok = remarks.readable(ok_raw, ok)     # ... said the way translations are said now
+        ok = remarks.readable(ok_raw, ok)     # ... said the way translations are said now: transient alert
         self.entries = [
             {"cycle": "2026-09-03", "id": "aaa", "source": "APT_RMK", "summary": f"remark updated: {guess}",
              "original": self.raw},
@@ -951,7 +996,8 @@ class TestScrubHistory(unittest.TestCase):
         h = json.loads(self.read("XYZ.json"))
         self.assertEqual(h["entries"][0], {**self.entries[0], "summary": f"remark updated: {self.raw}",
                                            "untranslated": "Kept in the FAA's words: Amend has no verified "
-                                                           "meaning for TRANS and FED."})
+                                                           "meaning for FED; the plain-English version didn't "
+                                                           "use the verified meaning for TRANS (transient)."})
         self.assertEqual(h["entries"][1:], self.entries[1:])
         self.assertEqual(self.read("XYZ.json"), json.dumps(h, **output.MIN))   # as history.append writes it
         self.assertEqual({n: self.read(n) for n in before}, before)              # nothing else rewritten

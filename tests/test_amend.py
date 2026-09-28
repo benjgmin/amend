@@ -242,7 +242,7 @@ class TestWhyFaaWords(Case):
             "66 FT RT.": ("new remark: 66 FT RT.", "Kept in the FAA's words: Amend has no verified meaning for RT."),
             "SOFT & RUTTED; IREG MRKD W CONES.": (
                 "new remark: SOFT & RUTTED; IREG MRKD W CONES.",
-                "Kept in the FAA's words: the plain-English version didn't use the FAA's meaning for W (west or white)."),
+                "Kept in the FAA's words: the plain-English version didn't use the verified meaning for W (west or white)."),
             "RWY 03 CLSD.": ("new remark: RWY 03 CLSD.", "Kept in the FAA's words until it's translated.")})
 
     def test_the_page_shows_it(self):

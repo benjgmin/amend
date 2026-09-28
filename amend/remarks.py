@@ -71,7 +71,7 @@ PROMPT = (
 def prompt_for(batch):
     """PROMPT plus the verified meanings of the contractions in this batch, and the ones that
     have none and must be copied."""
-    meanings, copy = {}, set()
+    meanings, copy, where = {}, set(), {}
     for raw in batch:
         for term in terms(raw):
             if term in PLAIN_WORDS or term in NEGATIONS:
@@ -79,16 +79,18 @@ def prompt_for(batch):
             entry = glossary.lookup(term)
             if entry and entry["verified"] and entry["prompt"]:
                 meanings[term] = entry["expansion"]
-            n, rule = _after(term, raw)
+            n, side, rule = _context(term, raw)
             if n:
-                meanings[f"{term} right after {_either(rule['words'])}"] = rule["meaning"]
+                where[term] = _where(side, rule)
+                meanings[f"{term} {where[term]}"] = rule["meaning"]
         copy.update(unverified(raw))
     text = PROMPT
     if meanings:
         text += ("Meanings (from the FAA Chart Supplement and FAA Order JO 7340.2):\n"
                  + "\n".join(f"{t} = {m}" for t, m in sorted(meanings.items())) + "\n")
     if copy:
-        text += "These have no verified meaning; copy them exactly as written: " + ", ".join(sorted(copy)) + "\n"
+        text += "These have no verified meaning; copy them exactly as written: " + ", ".join(
+            f"{t} (anywhere but {where[t]})" if t in where else t for t in sorted(copy)) + "\n"
     return text + "\nRemarks:\n" + json.dumps(batch, indent=1)
 
 
@@ -202,7 +204,7 @@ def untranslated(raw, plain=None, why=(), ids=frozenset(), states=frozenset()):
         parts.append(f"Amend has no verified meaning for {_either(other, 'and')}")
     if misread:
         said = _either([f"{t} ({m})" for t, m in dict.fromkeys(misread[:3])], "and")
-        parts.append(f"the plain-English version didn't use the FAA's meaning for {said}")
+        parts.append(f"the plain-English version didn't use the verified meaning for {said}")
     return "Kept in the FAA's words: " + ("; ".join(parts) or "the plain-English version didn't pass Amend's checks") + "."
 
 
@@ -321,12 +323,31 @@ def faithful(raw, plain):
 
 def readable(raw, plain):
     """a checked translation said the same way every time: each ++ after a UTC time the way the Chart
-    Supplement's legend explains it (see DAYLIGHT), and a runway side the way the FAA writes it (see
-    runway_sides). the model copies ++; code says what it means. an answer that is the FAA text
-    itself stays the FAA text"""
+    Supplement's legend explains it (see DAYLIGHT), a runway side the way the FAA writes it (see
+    runway_sides), and a term copied where a glossary rule gives it a meaning with that meaning (see
+    in_context). the model copies ++; code says what it means. an answer that is the FAA text itself
+    stays the FAA text"""
     if plain == raw:
         return plain
-    return runway_sides(raw, ZPLUS.sub(lambda m: DAYLIGHT + (" " if m[1] else ""), plain))
+    return in_context(raw, runway_sides(raw, ZPLUS.sub(lambda m: DAYLIGHT + (" " if m[1] else ""), plain)))
+
+
+def in_context(raw, plain):
+    """a term the translation copied where a glossary rule gives it a meaning, said with it: 'TRANS
+    alert' is 'transient alert' where the remark writes TRANS ALERT (glossary.BEFORE), 'high PER' is
+    'high performance' (glossary.AFTER). only while the translation has the term and its meaning
+    there no more often than the remark has the term there"""
+    for term in dict.fromkeys(terms(raw)):
+        n, side, rule = _context(term, raw)
+        copied = n and _context_re(term, side, rule, copied=True)
+        if not copied or not 0 < len(copied.findall(plain)) + len(_context_re(term, side, rule).findall(plain)) <= n:
+            continue
+        def said(m):       # 'TRANS ALERT: ...' copied in capitals is 'Transient alert: ...'
+            start = m.start() == 0 or re.search(r"[.!?]\s+$", plain[:m.start()])
+            meaning = rule["meaning"][0].upper() + rule["meaning"][1:] if start else rule["meaning"]
+            return m[1] + meaning if side == "after" else meaning + (m[2].lower() if m[2].isupper() else m[2])
+        plain = copied.sub(said, plain)
+    return plain
 
 
 # a runway's side the way the FAA writes it, "runway 33C" and "runway 15C/33C": translations said
@@ -374,11 +395,19 @@ def problems(raw, plain):
         joined.setdefault(b, set()).add((a + b).lower())
     out = []
     for term in dict.fromkeys(ts):
-        if term in PLAIN_WORDS or _kept(term, plain) or _inflected(term, words):
+        if term in PLAIN_WORDS:
             continue
-        n, rule = _after(term, raw)
-        if n and n == ts.count(term) and _says_sense(rule["meaning"], low, words, pairs):
-            continue    # HI PER said as 'high performance'
+        n, side, rule = _context(term, raw)
+        if n:       # each time the remark has it there, copied or said with the rule's meaning; elsewhere copied
+            total, copied = ts.count(term), len(_kept_re(term).findall(plain))
+            if copied + min(len(_context_re(term, side, rule).findall(plain)), n) >= total:
+                continue    # HI PER said as 'high performance', TRANS ALERT as 'transient alert'
+            if copied >= total - n:
+                out.append(f"{term} is {rule['meaning']!r} ({rule['source']}, {_where(side, rule)}), "
+                           "not what the translation says")
+                continue
+        elif _kept(term, plain) or _inflected(term, words):
+            continue
         if term in NEGATIONS:       # counted below; a case NO. has to stay a number
             numbered = term == "NO" and not re.search(r"\bNO\b", NUMBER_NO.sub(" ", raw.upper()))
             if numbered and "number" not in words:
@@ -435,26 +464,51 @@ def terms(raw):
 def unverified(raw):
     """contractions in a remark that a translation must leave as written: the review queue.
     single letters and roman numerals are names here (TWY C, PHASE II), not contractions."""
-    out = []
-    for t in terms(raw):
+    out, ts = [], terms(raw)
+    for t in ts:
         if t in PLAIN_WORDS or t in NEGATIONS or len(t) == 1 or re.fullmatch(r"[IVX]+", t):
             continue
         entry = glossary.lookup(t)
         if entry and entry.get("english"):
             continue
         if (entry and not entry["verified"]) or (not entry and _looks_contracted(t)):
-            out.append(t)
+            if _context(t, raw)[0] < ts.count(t):      # every TRANS a TRANS ALERT: it has a meaning
+                out.append(t)
     return out
 
 
-def _after(term, raw):
-    """(how many times, the rule) the remark has a word right after one of the words its glossary
-    'after' rule names: PER after HI, HIGH or LOW is performance (glossary.AFTER)"""
-    rule = (glossary.lookup(term) or {}).get("after")
-    if not rule:
-        return 0, None
-    before = "|".join(map(re.escape, rule["words"]))
-    return len(re.findall(rf"\b(?:{before})\s+{re.escape(term)}\b", raw.upper())), rule
+def _context(term, raw):
+    """(how many times, 'after' or 'before', the rule): the remark has the term right after or right
+    before the words its glossary rule names, where the term takes the rule's meaning. PER right after
+    HI, HIGH or LOW is performance (glossary.AFTER), TRANS right before ALERT transient (glossary.BEFORE)"""
+    entry = glossary.lookup(term) or {}
+    side = next((s for s in ("after", "before") if s in entry), None)
+    if not side:
+        return 0, None, None
+    near, t = "|".join(map(re.escape, entry[side]["words"])), re.escape(term)
+    pat = rf"\b(?:{near})\s+{t}\b" if side == "after" else rf"\b{t}\s+(?:{near})\b"
+    return len(re.findall(pat, raw.upper())), side, entry[side]
+
+
+def _where(side, rule):
+    return f"right {side} {_either(rule['words'])}"
+
+
+def _context_re(term, side, rule, copied=False):
+    """the rule's place in a translation: the words next to the term as a translation says them
+    ('high' for HI), with the rule's meaning ('high performance', 'transient alert') or the term
+    copied as written ('high PER', 'TRANS alert'). groups: (near words, term) for a rule on the
+    'after' side, (term, near words) for one on the 'before' side"""
+    near = {w.lower() for w in rule["words"]}
+    for w in rule["words"]:
+        e = glossary.lookup(w)
+        if e and e["verified"] and not e.get("english"):
+            near.update(m.lower() for m in e.get("meanings") or [e["expansion"]])
+    near = "(?:" + "|".join(map(re.escape, sorted(near, key=len, reverse=True))) + ")"
+    word = re.escape(term) if copied else r"[\s-]+".join(map(re.escape, rule["meaning"].split()))
+    if side == "after":
+        return re.compile(rf"(?<![A-Za-z])({near}[\s-]+)({word})(?![A-Za-z])", re.I)
+    return re.compile(rf"(?<![A-Za-z])({word})([\s-]+{near}s?)(?![A-Za-z])", re.I)
 
 
 def _either(words, conj="or"):
@@ -789,8 +843,7 @@ def _added(raw, plain):
     """words the translation adds, and FAA words it says more times than the remark does ("require
     prior permission required"): the remark doesn't account for them."""
     src = _sources(raw)
-    said = [rule["meaning"] for n, rule in (_after(t, raw) for t in set(terms(raw))) if n]   # HI PER: performance
-    free = GLUE.union(*(ws for pat, ws in IN_CONTEXT if pat.search(raw.upper())), *map(glossary.words, said))
+    free = GLUE.union(*(ws for pat, ws in IN_CONTEXT if pat.search(raw.upper())))
     used, out = Counter(), []
     for w in _split(_words(plain), src):
         if w in free or _negative(w.upper()):
@@ -875,6 +928,10 @@ def _sources(raw):
         for t in texts:
             most |= Counter(_vocab(t))      # 'south-south west' has two souths
         src.update(most)
+    for term in set(terms(raw)):    # HI PER: 'performance', TRANS ALERT: 'transient', once each time
+        n, side, rule = _context(term, raw)
+        for _ in range(n):
+            src.update(_vocab(rule["meaning"]))
     return src
 
 
