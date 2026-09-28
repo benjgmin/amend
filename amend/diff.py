@@ -27,6 +27,28 @@ def keyed(fname, a):
     return bool(keys) and all(k in a for k in keys)
 
 
+def pair_rows(fname, removed, added):
+    """[(old row, new row), ...]: removed and added rows that are one row edited.
+    best match first across all rows, so an old row can't claim a new row another old row
+    matches better; ties go to the earlier row in the (sorted) lists, never to set order.
+    a pair needs half its values equal, or a matching pair key (rules.PAIR_KEYS)."""
+    cands = []
+    for i, r in enumerate(removed):
+        for j, a in enumerate(added):
+            if not can_pair(fname, r, a):
+                continue
+            s = similarity(r, a)
+            if s >= 0.5 or keyed(fname, r):
+                cands.append((-s, i, j))
+    used_r, used_a, pairs = set(), set(), []
+    for _, i, j in sorted(cands):
+        if i not in used_r and j not in used_a:
+            used_r.add(i)
+            used_a.add(j)
+            pairs.append((i, j))
+    return [(removed[i], added[j]) for i, j in sorted(pairs)]
+
+
 def priority(fname, kind, cols, values, soft=()):
     """'action', 'fyi' or 'hidden' for a change touching these columns / values.
     soft: columns whose change was too small to matter (see rules.SMALL_CHANGE)."""
@@ -155,20 +177,13 @@ def diff(old, new):
             n[apt][tuple(sorted(r.items()))] = r
 
         for apt in sorted(set(o) | set(n)):
-            removed = [o[apt][k] for k in o[apt].keys() - n[apt].keys()]
-            added = [n[apt][k] for k in n[apt].keys() - o[apt].keys()]
+            # sorted, never set order: the output must not depend on Python's hash seed or on
+            # the order the FAA happened to write the rows in
+            removed = [o[apt][k] for k in sorted(o[apt].keys() - n[apt].keys())]
+            added = [n[apt][k] for k in sorted(n[apt].keys() - o[apt].keys())]
 
             # pair removed/added rows that are really the same thing edited
-            for r in list(removed):
-                best, score = None, 0.0
-                for a in added:
-                    if not can_pair(fname, r, a):
-                        continue
-                    s = similarity(r, a)
-                    if best is None or s > score:
-                        best, score = a, s
-                if best is None or (score < 0.5 and not keyed(fname, r)):
-                    continue
+            for r, best in pair_rows(fname, removed, added):
                 removed.remove(r)
                 added.remove(best)
                 cols = sorted(c for c in set(r) | set(best)
