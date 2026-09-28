@@ -138,6 +138,9 @@ def _routes(apt, routes):
 
 RANK = {"fyi": 0, "ifr": 1, "action": 2}
 
+# columns that repeat the airport's own name on its tower and frequency rows
+SAME_NAME_COLS = ("FACILITY_NAME", "FAC_NAME", "SERVICED_FAC_NAME")
+
 
 def _top(rs):
     return max((r["priority"] for r in rs), key=lambda p: RANK.get(p, 0))
@@ -319,6 +322,18 @@ def collapse(records, route_tables=None):
             if t and {r["kind"] for r in group} == {"added", "removed"}:
                 drop |= {id(r) for r in group}
 
+        # 3f. an airport renamed: the tower and frequency rows carrying the same name say it again
+        renamed = {(f["old"], f["new"]) for r in rs if src(r) == "APT_BASE" and r["kind"] == "changed"
+                   for f in r.get("fields", []) if f["field"] == "ARPT_NAME"}
+        for r in rs:
+            if renamed and r["kind"] == "changed" and src(r) != "APT_BASE" and id(r) not in drop:
+                keep = [f for f in r.get("fields", []) if not (
+                    f["field"] in SAME_NAME_COLS and (f["old"], f["new"]) in renamed)]
+                if not keep:
+                    drop.add(id(r))
+                elif len(keep) < len(r["fields"]):
+                    r["fields"] = keep
+
         # 3b. the CTAF row in FRQ carries the same lighting remark as APT_RMK: say it once
         said = {r["row"].get("REMARK") for r in rs if src(r) in REMARK_FILES and r.get("row")}
         said |= {f["new"] for r in rs if src(r) in REMARK_FILES
@@ -331,6 +346,14 @@ def collapse(records, route_tables=None):
                 # both carrying the same CTAF lighting remark)
                 if t in said:
                     drop.add(id(r))
+                    # the line that stays keeps the higher rank: a CTAF lighting change can be
+                    # act on the frequency row and fyi on the airport remark
+                    for x in rs:
+                        if (x is not r and id(x) not in drop and RANK.get(r["priority"], 0) > RANK.get(x["priority"], 0)
+                                and (src(x) in REMARK_FILES or is_frq_remark(x))
+                                and t in {_norm(v) for v in [(x.get("row") or {}).get("REMARK", "")]
+                                          + [f["new"] for f in x.get("fields", []) if f["field"] == "REMARK"] if v}):
+                            x["priority"] = r["priority"]
                 elif t:
                     said.add(t)
 

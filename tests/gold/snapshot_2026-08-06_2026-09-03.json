@@ -5389,36 +5389,6 @@
     "priority": "fyi",
     "source": "APT_BASE",
     "summary": "airport name: Norman Y Mineta San Jose Intl -> Mineta San Jose Intl"
-   },
-   {
-    "category": "tower",
-    "fields": [
-     {
-      "field": "FACILITY_NAME",
-      "new": "MINETA SAN JOSE INTL",
-      "old": "NORMAN Y MINETA SAN JOSE INTL"
-     }
-    ],
-    "id": "0f1060b2be58",
-    "kind": "changed",
-    "priority": "fyi",
-    "source": "ATC_BASE",
-    "summary": "facility name: Norman Y Mineta San Jose Intl -> Mineta San Jose Intl"
-   },
-   {
-    "category": "frequency",
-    "fields": [
-     {
-      "field": "SERVICED_FAC_NAME",
-      "new": "MINETA SAN JOSE INTL",
-      "old": "NORMAN Y MINETA SAN JOSE INTL"
-     }
-    ],
-    "id": "8d03444db9db",
-    "kind": "changed",
-    "priority": "fyi",
-    "source": "FRQ",
-    "summary": "served facility name: Norman Y Mineta San Jose Intl -> Mineta San Jose Intl"
    }
   ],
   "SLC": [
@@ -5953,7 +5923,7 @@
   "SEA": 3,
   "SFB": 4,
   "SFO": 4,
-  "SJC": 2,
+  "SJC": 0,
   "SLC": 6,
   "SNA": 3,
   "STL": 4,
