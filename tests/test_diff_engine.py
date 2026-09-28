@@ -114,6 +114,20 @@ class TestRewordedOrNot(unittest.TestCase):
         self.assertTrue(d.just_reworded("MIL ARPT CONDUCTS HI PER JET TRNG MON-FRI 1200-0200Z++.",
                                         "MIL ARPT CONDUCTS HI PERFORMANCE JET TRNG MON-FRI 1200-0200Z++."))
 
+    def test_a_when_closed_condition_is_not_a_closure(self):
+        """2026-09-03: the FAA rewrote the clearance-delivery remark at 53 airports (ABY, ACK,
+        ADM...). gaining 'WHEN ATCT CLSD' says when it applies; nothing closed."""
+        self.assertTrue(d.just_reworded(
+            "FOR CD IF UNA TO CTC ON FSS FREQ, CTC JACKSONVILLE ARTCC AT 904-845-1592.",
+            "FOR CD WHEN ATCT CLSD CTC JACKSONVILLE ARTCC AT 904-845-1592."))
+        self.assertTrue(d.just_reworded(   # ENV
+            "APCH/DEP CTL SVC PRVDD BY SALT LAKE ARTCC (ZLC) ON 128.55/269.175 GRASSY MOUNTAIN RCAG).",
+            "APCH/DEP SVC PRVDD BY SALT LAKE ARTCC (ZLC) ON FREQS 128.55/269.175 (GRASSY MOUNTAIN RCAG) "
+            "WHEN CLOVER APCH CLSD."))
+        # a real closure still isn't a rewording
+        self.assertFalse(d.just_reworded("RWY 11/29 CLSD FOR NIGHT OPS.", "RWY 11/29 CLSD."))
+        self.assertFalse(d.just_reworded("TWY A OPEN.", "TWY A CLSD."))
+
 
 class TestHours(unittest.TestCase):
     """hours text rewritten with the same schedule (LUF, MTC) is not an hours change."""
@@ -141,7 +155,8 @@ class TestHours(unittest.TestCase):
                 ("0700-2100 MON-FRI, CLSD HOL", "0700-2100 MON-FRI, OPR HOL"),
                 ("0700-2100 MON-FRI, CLSD SAT", "0700-2100 MON-FRI, CLSD SUN"),
                 ("0700-2100", "0700-2100Z"),                                    # local -> zulu
-                ("1200-0200Z", "1200-0200Z++")]:                                # DST shift
+                ("1200-0200Z", "1200-0200Z++"),                                 # DST shift
+                ("SEE RMK", "ON REQUEST"), ("UNATNDD", "")]:                     # no times at all
             with self.subTest(old=old, new=new):
                 self.assertFalse(d.same_hours(old, new))
 
@@ -170,6 +185,9 @@ class TestLighting(unittest.TestCase):
         # renumbered, but a REIL was dropped along the way
         self.assertEqual(d.pcl_priority("ACTVT MIRL RWY 07/25; REIL RWY 07 - CTAF.",
                                          "ACTVT MIRL RWY 08/26 - CTAF."), "action")
+        # on all night before, now you have to key it
+        self.assertEqual(d.pcl_priority("ACTVT HIRL RWY 02/20 - CTAF. PAPI RWY 02 OPER CONT.",
+                                        "ACTVT HIRL RWY 02/20; PAPI RWY 02 - CTAF."), "action")
         # all day continuous, no pilot control left for the PAPI
         self.assertEqual(d.pcl_priority("ACTVT HIRL RWY 02/20; PAPI RWY 02 - CTAF.",
                                          "ACTVT HIRL RWY 02/20 - CTAF. PAPI RWY 02 OPER CONT."), "fyi")

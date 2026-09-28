@@ -234,10 +234,10 @@ def snapshot_inputs(meta, data=DATA):
     return tuple(paths)
 
 
-# the engine's output depends on Python's string hash seed today (diff.py pairs removed and
-# added rows in set order), so two runs on the same zips can pair FAA rows differently. until
-# that's fixed, the snapshot always runs in a child process with a fixed seed.
-HASH_SEED = "0"
+# the engine's output used to depend on Python's string hash seed (diff.py paired rows in set
+# order). it doesn't anymore, so the snapshot runs under a random seed: every run on the real
+# zips is also a check that the same FAA files give the same output.
+HASH_SEED = "random"
 MARK = "\n@@snapshot@@"
 
 

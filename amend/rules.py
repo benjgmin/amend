@@ -63,12 +63,47 @@ ACTION_PREFIXES = ("ATC", "CLS_ARSP", "FRQ", "ILS", "APT_ATT", "AWOS")
 ACTION_COL_WORDS = {"NAV", "PROVIDER", "HRS", "HOURS", "FREQ", "CLASS", "AIRSPACE", "CLOSED",
                     "STATUS", "LGT", "LIGHT", "LIGHTS", "LEN", "WIDTH", "TPA", "ATTEND"}
 ACTION_TEXT_WORDS = ("CLSD", "CLOSED", "TWR", "PPR", "NOT AVBL", "UNAVBL", "UNUSBL", "CTAF", "TPA",
-                     "PROHIBITED", "RSTD", "NOISE", "TRANSPONDER")
+                     "PROHIBITED", "RSTD", "NOISE", "TRANSPONDER",
+                     # DFW: "MUST OBTAIN APVL FM RAMP 129.825 PRIOR TO ENTERING RAMP"
+                     "APVL")
+
+# a remark that only got reworded is fyi (diff.just_reworded). these words change what it
+# means, so a remark that gains or loses one was not just reworded: OKM "ILS UNMONITORED" ->
+# "ILS MONITORED AT MOCC", EVY "RWY 11/29 CLSD FOR NIGHT OPS" -> "...; DAYTIME VFR USE ONLY".
+# spellings in REWORD_ALIASES count as the same word first (EXCP -> EXC).
+REWORD_BLOCKERS = {w for p in ACTION_TEXT_WORDS for w in p.split()} | {
+    "NOT", "NO", "NON", "ONLY", "EXC", "UNMON", "MONITORED", "UNLGTD", "LGTD", "UNLIT", "LIT",
+    "DAY", "DAYTIME", "NIGHT", "NGT", "VFR", "IFR", "AVBL", "OTS", "USBL", "RQRD", "REQD",
+    "MANDATORY", "UNATNDD", "ATNDD", "PERMITTED", "AUTH", "UNAUTH"}
+REWORD_ALIASES = {"EXCP": "EXC", "EXCEPT": "EXC", "CLOSED": "CLSD", "UNMONITORED": "UNMON",
+                  "TOWER": "TWR", "REQUIRED": "REQD", "RQRD": "REQD", "UNAVAILABLE": "UNAVBL",
+                  "AVAILABLE": "AVBL", "UNUSABLE": "UNUSBL", "OPNS": "OPS"}
 
 # a whole row appearing or disappearing in these files is act even though no column name or
 # value says so: a runway, a decommissioned navaid, approach radar. other files' rows carry
 # column names like NAV_ID or RADAR_HRS on every row, so column words only rank "changed" rows.
 ROW_ACTION = {"APT_RWY": ("added", "removed"), "NAV_BASE": ("removed",), "RDR": ("added", "removed")}
+# ... and the other way: rows in act files that are fyi when they appear. a new AWOS (4MD) is a
+# new weather source, nice to know; one going away is still act.
+ROW_FYI = {"AWOS": ("added",)}
+
+# an ATC_BASE row for a field without a tower (FACILITY_TYPE NON-ATCT) that names no tower,
+# approach or departure service (P14): nothing about who you talk to changed
+ATC_SERVICE_WORDS = {"TWR", "APCH", "DEP", "CTL", "PROVIDER", "HRS", "CALLS"}
+
+# an FSS outlet note in a tower/ATC remark (T03 "COMMUNICATIONS PRVDD BY PRESCOTT RADIO ON
+# FREQS 122.05R/113.5T (TUBA CITY RCO)") is fyi like any FSS outlet, unless its text has an act
+# word (AVL "COMM UNAVBL BLO 6000 FT ... WHEN AVL APCH CTL CLSD")
+FSS_OUTLET = r"\bRCO\b|\bFSS\b|\b[A-Z]+ RADIO\b"
+
+# VOR-family navaids are aligned to a magnetic variation: when it changes (OTZ 15E -> 9E, epoch
+# 2010 -> 2025) every radial moves, so it's act. on other navaids it's the area's variation.
+DECLINATION_COLS = ("MAG_VARN", "MAG_VARN_HEMIS")
+DECLINATION_NAV_TYPES = {"VOR", "VORTAC", "VOR/DME", "TACAN"}
+
+# changed columns that belong to another category than their file's: tower hours on a
+# frequency row (MTC) are about the tower
+COL_CATEGORY = {"TOWER_HRS": "tower"}
 
 # navaid/ILS remarks (unusable sectors, monitoring) matter to IFR flying: ifr, not act
 IFR_REMARK_FILES = ("NAV_RMK", "ILS_RMK")
@@ -77,7 +112,9 @@ IFR_REMARK_FILES = ("NAV_RMK", "ILS_RMK")
 #   5801 -> 5800 ft runway, 1525.7 -> 1525.6 ft elevation, 40.01 -> 40 deg localizer bearing
 SMALL_CHANGE = {"RWY_LEN": (10, 50), "RWY_WIDTH": (1, 10), "APCH_BEAR": (1, 1),
                 "RWY_END_ELEV": (1, 1), "TDZ_ELEV": (1, 1), "ARPT_ELEV": (1, 1),
-                "DISPLACED_THR_ELEV": (1, 1), "THR_CROSSING_HGT": (1, 1)}
+                "DISPLACED_THR_ELEV": (1, 1), "THR_CROSSING_HGT": (1, 1),
+                # BNA 800 -> 801 ft with a new survey
+                "DISPLACED_THR_LEN": (10, 50)}
 
 # columns kept on a changed record so the summary can describe it ("runway 15: ...")
 CONTEXT_COLS = ("Orig", "Dest", "Route String", "FREQ", "FREQ_USE", "NAV_ID", "NAV_TYPE",
@@ -122,6 +159,11 @@ def is_noise_col(c):
             c.endswith(("_DATE", "_SOURCE", "_SRC", "_METHOD_CODE")) or
             c in {"LEGACY_ELEMENT_NUMBER", "REF_COL_SEQ_NO", "SEQ", "ALT_CODE", "ELEV", "DME_SSV",
                   "SITE_ELEVATION", "INSPECTOR_CODE", "NASP_CODE"})
+
+
+def is_hours_col(c):
+    """TWR_HRS, ATIS_HRS, AIRSPACE_HRS, RADAR_HRS, OPER_HOURS, APT_ATT HOUR..."""
+    return bool(set(c.upper().split("_")) & {"HRS", "HOURS", "HOUR"})
 
 
 def is_fyi_col(c):

@@ -38,6 +38,7 @@ it can show rows about other airports (see the PR that added this).
 | `evidence` | where the rows came from |
 | `known_failure` | `true` when the engine gets it wrong today (a candidate engine bug) |
 | `why_engine_is_wrong`, `engine_says` | with `known_failure`: the rule that gets it wrong, and what the engine says today |
+| `engine_was_wrong_because`, `engine_said_before_fix` | a known failure that got fixed: the same two notes, kept on record |
 
 The test fails when a case fails, unless it's a `known_failure`. A known failure that starts
 passing fails too, so whoever fixed the engine drops the flag and the fix is on record.
@@ -66,13 +67,15 @@ them yet. `python -m amend.gold` prints how many a person has checked.
 What the engine says today about one real cycle pair for every airport on the watchlists plus
 the busiest airports (the list is frozen in `snapshot.json`, so adding a watchlist doesn't
 change it). No remark translations, no charts, no airspace shapes: NASR only. It runs in
-all-airports mode like the site, in a child process with `PYTHONHASHSEED=0`: today the
-engine's output depends on Python's hash seed (rows get paired in set order), so without a
-fixed seed two runs on the same zips can disagree.
+all-airports mode like the site, in a child process with a random `PYTHONHASHSEED`: the same
+FAA files must give the same output on every run (the engine used to pair rows in set order,
+so it didn't).
 
 The test needs the two NASR zips named in `snapshot.json` in `data/`, checked by sha256, and
 skips without them. The FAA URLs are in `snapshot.json`; they roll off the FAA site after a
-while, so the raw archive (GitHub releases, once that's merged) is the long-term source.
+while. The raw archive keeps them as GitHub releases (tag `faa-<cycle>`, e.g.
+`https://github.com/benjgmin/amend/releases/download/faa-2026-08-06/06_Aug_2026_CSV.zip`),
+which is also how to get them where faa.gov can't be reached.
 
 After a change you meant to make, `python -m amend.gold --update-snapshot` rewrites the file.
 Review its diff like code: every line that moved is a change in what pilots see.
