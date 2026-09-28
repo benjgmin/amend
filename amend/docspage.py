@@ -69,10 +69,12 @@ border:1px solid var(--ln);border-radius:8px;background:var(--p);font-size:14.5p
 
 # the table of contents follows the section you're reading
 TOC_JS = """<script>(()=>{const a=[...document.querySelectorAll(".dx-toc .dx-s a")];if(!a.length||!("IntersectionObserver" in window))return;
-const on=id=>a.forEach(x=>x.classList.toggle("on",x.getAttribute("href")==="#"+id));const seen=new Map();
-const io=new IntersectionObserver(es=>{es.forEach(e=>seen.set(e.target.id,e.isIntersecting));
-const first=a.map(x=>x.getAttribute("href").slice(1)).find(id=>seen.get(id));if(first)on(first)},{rootMargin:"-70px 0px -60% 0px"});
-document.querySelectorAll(".dx section[id]").forEach(s=>io.observe(s))})()</script>"""
+const on=id=>a.forEach(x=>x.classList.toggle("on",x.getAttribute("href")==="#"+id));const seen=new Map(),ids=a.map(x=>x.getAttribute("href").slice(1));
+// at the bottom of the page the last sections can't scroll up to the top, so the last one wins there
+const end=()=>innerHeight+scrollY>=document.documentElement.scrollHeight-4;
+const pick=()=>{if(end())return on(ids[ids.length-1]);const first=ids.find(id=>seen.get(id));if(first)on(first)};
+const io=new IntersectionObserver(es=>{es.forEach(e=>seen.set(e.target.id,e.isIntersecting));pick()},{rootMargin:"-70px 0px -60% 0px"});
+document.querySelectorAll(".dx section[id]").forEach(s=>io.observe(s));addEventListener("scroll",pick,{passive:true})})()</script>"""
 
 
 def tag(text):
@@ -85,6 +87,7 @@ def step(title, kind, text):
 
 def sections():
     guide, status = f"{SITE_URL}guide/", web.sub_url("status")
+    using = web.sub_url("docs", None, "using/")
     how = "".join([
         step("Check the FAA", "every 10 minutes", (
             "A timer asks GitHub to run Amend's check every 10 minutes. The check reads only the first few bytes "
@@ -122,10 +125,10 @@ def sections():
             "One real event is one line: a renumbered runway instead of a dozen runway-end rows, a new STAR "
             "version with the waypoints that moved, a remark repeated on two frequencies said once.")),
         step("Sort by how it affects you", "code", (
-            f'Each change gets ACT, IFR or FYI from fixed rules, not AI. <a href="#labels">More below</a>.')),
-        step("Write it in plain English", "code + AI", (
-            "Code writes every summary line from the FAA's own values. The only AI step is decoding the "
-            'contractions in FAA remarks, under a no-guess check. <a href="#remarks">More below</a>.')),
+            f'Each change gets ACT, IFR or FYI from fixed rules. <a href="{using}#labels">How the labels work</a>.')),
+        step("Write it in plain English", "code", (
+            "Every summary line is written from the FAA's own values. Contractions in FAA remarks are decoded "
+            f'under a no-guess check. <a href="{using}#remarks">How remarks work</a>.')),
         step("Add charts and airspace", "code", (
             "Approach, STAR and departure charts added, amended or removed in the new cycle, each linked to its "
             "plate, and changes to Class B, C, D and E surface airspace over each airport.")),
@@ -156,9 +159,7 @@ def sections():
             "<p>Amend compares every cycle with the one before for every US airport, hides the bookkeeping, and "
             "explains what's left in plain English, sorted by whether it changes how you fly. The FAA posts each "
             "cycle before it takes effect, so Amend shows changes before they happen.</p>"
-            "<p>Everything that decides what changed and how much it matters is plain code anyone can read on "
-            f'<a href="{REPO_URL}">GitHub</a>. AI only decodes FAA remark contractions, and code checks every '
-            "answer it gives.</p>")),
+            "<p>What changed and how much it matters are decided by fixed rules, the same way every cycle.</p>")),
         ("cycle", "FAA cycles", (
             "<p>The FAA's aeronautical data runs on a fixed 28-day schedule. Each cycle takes effect at 0901Z on its "
             "effective date, and the FAA posts its files ahead of time: the chart index says 20 days ahead.</p>"
@@ -223,13 +224,11 @@ def sections():
             "<dt>Checks for new FAA data</dt><dd>When Amend last checked the FAA, and the recent checks, one every "
             "10 minutes. Most find nothing new and stop after a few seconds, so they build nothing.</dd>"
             "<dt>Recent builds</dt><dd>The last 30 builds, oldest on the left: green published, blue waiting, "
-            "magenta blocked or crashed, grey skipped. Hover one for its exact time; each opens its record.</dd>"
+            "magenta blocked or crashed, grey skipped. Hover or tap one for its exact time.</dd>"
             "<dt>Problems</dt><dd>Every blocked or crashed run in the last three cycles, with the reason.</dd>"
             "</dl>"
             "<p>The status page is published with the site, so a blocked run appears there after the next run that "
-            "passes. Its record is on GitHub as soon as it ends: every run is in "
-            f'<a href="{REPO_URL}/tree/master/audit/runs">audit/runs</a>. If any page is more than a day and a '
-            "half old, a banner at the top says so.</p>"
+            "passes. If any page is more than a day and a half old, a banner at the top says so.</p>"
             "<p>Under <b>Every step of the latest build</b>, <b>Done</b> means a step ran and its numbers are shown, "
             "<b>Passed</b> means a check ran and found nothing wrong, <b>Not recorded</b> means the run didn't log "
             "that value, and <b>Not run</b> means the run stopped before that step.</p>")),
