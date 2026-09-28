@@ -22,7 +22,7 @@ CATEGORY = [  # (source prefix, category) - first match wins
     ("CLS_ARSP", "airspace"), ("ATC", "tower"), ("FRQ", "frequency"), ("NAV", "navaid"),
     ("ILS", "navaid"), ("APT_RWY", "runway"), ("APT_RMK", "remark"), ("STAR/DP", "procedure"),
     ("PFR", "route"), ("D-TPP", "chart"), ("AWOS", "weather"), ("APT", "airport"),
-    ("PJA", "airspace"),
+    ("PJA", "airspace"), ("RDR", "tower"),
 ]
 
 
@@ -55,7 +55,8 @@ def to_change(rec, airport, to_cycle):
     out = {
         "id": change_id(airport, to_cycle, rec["summary"]),
         "priority": rec["priority"],
-        "category": "remark" if is_frq_remark(rec) else category(rec["source"]),
+        "category": ("remark" if is_frq_remark(rec)
+                     else rec.get("category") or category(rec["source"])),
         "kind": rec["kind"],
         "summary": rec["summary"],
         "source": base(rec["source"]),
@@ -141,6 +142,10 @@ def run(old_zip, new_zip, ids=None, dtpp_path=None, llm=False, log=print, airspa
 
     airports = {}
     for apt, recs in by_apt.items():
+        # charts and airspace skip the phrase dedup above; an E3 and E4 extension changed
+        # together read the same, and one line twice is noise (and one id twice)
+        seen = set()
+        recs = [r for r in recs if not (r["summary"] in seen or seen.add(r["summary"]))]
         if not recs:
             continue
         recs = sorted(recs, key=lambda r: PRIORITY_ORDER[r["priority"]])  # stable

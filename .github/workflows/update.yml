@@ -79,23 +79,31 @@ jobs:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: python -m amend history --llm
 
+      # also runs the audit (amend/audit.py): a failed check stops here, so the last good
+      # site stays up and the failure alert fires
       - name: build site (latest + history)
+        id: build
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: python -m amend latest
 
-      # any step failing stops here: nothing is committed or deployed, and the last good
-      # site stays live until a later run succeeds
+      # any step failing stops here: nothing is deployed, and the last good site stays live
+      # until a later run succeeds (the commit step below still records history and the audit)
       - name: check the site before it goes live
         run: python -m amend verify site
 
       # remark_cache.json is committed, not kept in the Actions cache: translations are paid for
-      # once, never lost to cache eviction, and change ids (which hash the summary) stay stable
-      - name: commit history and remark translations
+      # once, never lost to cache eviction, and change ids (which hash the summary) stay stable.
+      # also commits the audit packet the daily review reads (audit/<cycle>.json), and runs when
+      # the build's audit failed too, so a blocked cycle's reasons are on record. one step, so
+      # no file is left modified and unstaged when git pull --rebase runs
+      - name: commit history, remark translations and audit packet
+        if: ${{ !cancelled() && steps.build.outcome != 'skipped' }}
         run: |
           git config user.name "amend-bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add history remark_cache.json
+          if [ -d audit ]; then git add audit; fi
           git diff --cached --quiet && exit 0
           git commit -m "data: new history / remark translations"
           for i in 1 2 3; do     # a merge landing mid-run makes the first push bounce

@@ -1,0 +1,47 @@
+{
+ "from_cycle": "2026-09-03",
+ "to_cycle": "2026-10-01",
+ "errors": [],
+ "warnings": [],
+ "watchlists": {
+  "daytona-training": [
+   "DAB",
+   "OMN",
+   "DED",
+   "EVB",
+   "SFB",
+   "ORL",
+   "ISM",
+   "VRB"
+  ]
+ },
+ "airports": {
+  "SLC": [
+   {
+    "id": "218336a51279",
+    "priority": "action",
+    "category": "frequency",
+    "kind": "added",
+    "summary": "new frequency 128.55 (GRASSY MOUNTAIN RCAG)",
+    "source": "FRQ"
+   },
+   {
+    "id": "5d1463045848",
+    "priority": "action",
+    "category": "frequency",
+    "kind": "added",
+    "summary": "new frequency 269.175 (GRASSY MOUNTAIN RCAG)",
+    "source": "FRQ"
+   },
+   {
+    "id": "feaf7b467f0a",
+    "priority": "action",
+    "category": "remark",
+    "kind": "added",
+    "summary": "new tower/ATC remark: Salt Lake ARTCC (ZLC) frequencies 128.55/269.175 (Grassy Mountain RCAG) are used for SKEES RNAV STAR and YUTES RNAV STAR.",
+    "source": "ATC_RMK",
+    "original": "SALT LAKE ARTCC (ZLC) FREQS 128.55/269.175 (GRASSY MOUNTAIN RCAG) USED FOR SKEES RNAV STAR AND YUTES RNAV STAR."
+   }
+  ]
+ }
+}
