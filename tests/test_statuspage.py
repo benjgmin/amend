@@ -113,7 +113,9 @@ class TestStatusPage(unittest.TestCase):
     def test_blocked_run_after_last_good_build(self):
         r = good()
         b = copy.deepcopy(r)
-        b.update(mode="history", started_at="2026-09-28T23:00:00+00:00", outcome="blocked", published=False,
+        # an hour after the good one: a fixed time broke once the repo's own newest record was later than it
+        later = (dt.datetime.fromisoformat(r["started_at"]) + dt.timedelta(hours=1)).isoformat()
+        b.update(mode="history", started_at=later, outcome="blocked", published=False,
                  error="audit failed for 2026-09-03 -> 2026-10-01 <b>", verified=None,
                  checks={"errors": ["APT_RMK.csv went from 90009 to 100 rows (-100%)"], "warnings": [],
                          "error_count": 1, "warning_count": 0})
