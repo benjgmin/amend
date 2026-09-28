@@ -660,7 +660,9 @@ class TestWeb(unittest.TestCase):
         self.assertIn(web.UPDATES[0][1][0][:40], log)
         for p in (about, docs, privacy, terms, log):
             self.assertNotIn("coming soon", p.lower())
+        for p in (about, privacy, terms, log):
             self.assertIn('href="../privacy/">Privacy</a>', p)
+        self.assertIn(f'href="{web.SITE_URL}privacy/">Privacy</a>', docs)   # docs has its own name (subsite.py)
         missing = open(os.path.join(site, "404.html")).read()
         self.assertIn('href="/assets/style.css?v=', missing)              # served at any depth
         self.assertIn('replace(/^K(?=[A-Z]{3}$)/,"")', missing)          # /kvrb goes on to /VRB/

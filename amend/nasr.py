@@ -7,7 +7,7 @@ import re
 import zipfile
 from collections import defaultdict
 
-from .rules import ATTRIB_COLS, HIDDEN_FILES, IGNORE_COLS, STRICT_FILES, base
+from .rules import ATTRIB_COLS, HIDDEN_FILES, IGNORE_COLS, RWY_ID_COLS, STRICT_FILES, base, rwy_id
 
 
 class InputError(ValueError):
@@ -183,6 +183,9 @@ def load(zip_path, ids, strict=False, near=None, proc_airports=None, rows=None):
                         continue
                     clean = {k.strip(): (v or "").strip() for k, v in row.items()
                              if k and k.strip() not in IGNORE_COLS}
+                    for k in RWY_ID_COLS:
+                        if clean.get(k):
+                            clean[k] = rwy_id(clean[k])
                     apts = attribute(clean, ids, fname, strict)
                     if is_route:
                         # route points never name the airport; use the procedure's airport list
