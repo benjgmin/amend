@@ -5,6 +5,7 @@ may expand a contraction only to its meaning in the verified glossary (glossary.
 the FAA's own lists). Any other contraction has to appear exactly as written, or problems()
 rejects the translation and the FAA text is shown instead.
 """
+import functools
 import glob
 import json
 import os
@@ -340,10 +341,15 @@ def _looks_contracted(term):
 def _kept(term, plain):
     """copied as written, maybe made plural or joined to its number: 'MIRL' -> 'MIRLs', 'E-MAIL' ->
     'email', 'US' -> 'U.S.', '100 LL' -> '100LL'"""
+    return _kept_re(term).search(plain) is not None
+
+
+@functools.lru_cache(maxsize=None)
+def _kept_re(term):
     spelled = re.escape(term).replace(r"\-", "[- ]?")
     if term.isalpha() and len(term) <= 3:
         spelled = r"\.?".join(term)
-    return re.search(r"(?<![A-Za-z])" + spelled + r"(?:'?s|es)?(?![A-Za-z0-9])", plain, re.I) is not None
+    return re.compile(r"(?<![A-Za-z])" + spelled + r"(?:'?s|es)?(?![A-Za-z0-9])", re.I)
 
 
 def _inflected(term, words):
@@ -687,6 +693,8 @@ def _from(src, word):
         return True
     if min(len(src), len(word)) < 3:
         return False
+    if src[:3] != word[:3] and not word.endswith(src) and not src.endswith(word):
+        return False        # every match below shares the first 3 letters or is the end of the other word
     return _one_word(src, word) or _one_word(word, src) or (len(src) >= 5 and _same(src, word))
 
 
