@@ -460,16 +460,25 @@ def record_values(rec):
     return vals + [str(v) for v in rec.get("values", [])]
 
 
+def _num(t):
+    """a plain decimal number ('193.5', '045'), else None ('28Y', '1E5', 'NAN' aren't)."""
+    return float(t) if re.fullmatch(r"\d+(?:\.\d+)?", t) else None
+
+
 def unsupported(summary, values):
     """tokens with a digit in the summary that none of the values has. [] means it checks out.
-    '2546x60 ft' is two values, '1,234 ft' is one, '3°' is 3, a '34:1' slope is 34."""
-    s = re.sub(r"(\d)x(\d)", r"\1 \2", summary)
-    s = re.sub(r"(\d),(\d{3})\b", r"\1\2", s)
+    '2546x60 ft' is two values, '1,234 ft' is one, '3°' is 3, a '34:1' slope is 34, and a
+    bearing may be the value rounded to a whole number (193.5 -> 194, 45 -> 045)."""
+    commas = lambda t: re.sub(r"(\d),(\d{3})\b", r"\1\2", t)
+    s = re.sub(r"(\d)x(\d)", r"\1 \2", commas(summary))
     s = re.sub(r":1\b", "", s.replace("°", " "))
     have = set()
     for v in values:
-        have |= _tokens(v, split=True)
-    return sorted(_tokens(s) - have)
+        have |= _tokens(commas(v), split=True)
+    nums = {_num(t) for t in have} - {None}
+    rounded = {float(round(n)) for n in nums}
+    return sorted(t for t in _tokens(s) - have
+                  if _num(t) is None or not (_num(t) in nums or (_num(t).is_integer() and _num(t) in rounded)))
 
 
 def plain_values(rec):

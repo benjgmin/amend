@@ -5,17 +5,19 @@ the 2026-07-09 .. 2026-10-01 cycles, trimmed to the columns that matter. Also: e
 a summary must be in the FAA record it describes, and ids don't depend on the wording.
 run:  python -m unittest tests.test_summaries -v
 """
+import json
 import os
 import re
 import tempfile
 import unittest
 
-from amend import english, gold, remarks
+from amend import backfill, english, gold, remarks
 from amend.diff import schedule_text
 from amend.english import unsupported
 from amend.pipeline import run
 from tests.test_amend import Case
 
+HISTORY = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "history")
 RAW_DUMP = r"^(added|removed|changed) \(|^[a-z_]+ (added|removed|changed): "
 
 
@@ -268,6 +270,62 @@ class TestIds(Case):
                "APT_ARS.csv": [h, "DAB,07/25,07,BAK-12,29.1", "DAB,07/25,07,BAK-12,29.2"]}
         ch = self.diff({"APT_BASE.csv": ["ARPT_ID", "DAB"], "APT_ARS.csv": [h]}, new)["DAB"]
         self.assertEqual(len({c["id"] for c in ch}), len(ch))
+
+
+class TestBackfill(unittest.TestCase):
+    """history/ entries older code wrote as raw dumps (real ones from history/, 2024-2026)."""
+
+    def e(self, summary, source, kind, i):
+        return {"cycle": "2026-08-06", "from_cycle": "2026-07-09", "id": i, "priority": "action",
+                "category": "navaid", "kind": kind, "source": source, "summary": summary}
+
+    def test_parse(self):
+        self.assertEqual(backfill.parse("removed (apt_att): sked seq no=1, month=ALL, day=MON-WED, FRI, "
+                                        "hour=0930-1530"),
+                         ("removed", "APT_ATT", {"SKED_SEQ_NO": "1", "MONTH": "ALL", "DAY": "MON-WED, FRI",
+                                                 "HOUR": "0930-1530"}))
+        self.assertIsNone(backfill.parse("new ILS/DME RWY 28 (NIP, 109.15)"))
+
+    def test_ils_folds_and_ids_stay(self):
+        """NIP 2026-08-06, as the old code wrote it: 3 dumps -> 1 line with the ILS entry's id."""
+        es = [self.e("added (ils_base): rwy end id=28, ils loc id=NIP, system type code=LD, "
+                     "state name=FLORIDA, region code=ASO, rwy len=9003", "ILS_BASE", "added", "a1"),
+              self.e("added (ils_gs): rwy end id=28, ils loc id=NIP, system type code=LD, component "
+                     "status=OPERATIONAL IFR, component status date=2026/06/30, g s type code=GS",
+                     "ILS_GS", "added", "a2"),
+              self.e("added (ils_dme): rwy end id=28, ils loc id=NIP, system type code=LD, component "
+                     "status=OPERATIONAL IFR, component status date=2026/06/30, site elevation=15",
+                     "ILS_DME", "added", "a3")]
+        out = backfill._cycle(es)
+        self.assertEqual([(x["id"], x["summary"]) for x in out],
+                         [("a1", "new ILS/DME RWY 28 (NIP) with glideslope, DME")])
+        self.assertEqual(backfill._cycle(out), out)     # a second run changes nothing
+
+    def test_hidden_files_and_runway_ends_go(self):
+        es = [self.e("removed (hpf_base): hp name=MTH NDB, ...", "HPF_BASE", "removed", "h1"),
+              self.e("removed (apt_rwy): rwy id=07/25, rwy len=4000, rwy width=40, surface type code=DIRT",
+                     "APT_RWY", "removed", "r1"),
+              self.e("removed (apt_rwy_end): rwy id=07/25, rwy end id=07", "APT_RWY_END", "removed", "r2")]
+        self.assertEqual([(x["id"], x["summary"]) for x in backfill._cycle(es)],
+                         [("r1", "runway 07/25 (4000x40 ft dirt): removed")])
+
+    def test_attendance_says_what_the_dump_kept(self):
+        es = [self.e("removed (apt_att): sked seq no=2, month=ALL, day=SAT- SUN, hour=0700-1900",
+                     "APT_ATT", "removed", "t1")]
+        self.assertEqual([x["summary"] for x in backfill._cycle(es)],
+                         ["airport attendance schedule: dropped SAT- SUN 0700-1900"])
+
+
+class TestHistory(unittest.TestCase):
+    def test_no_raw_dumps_in_history(self):
+        """after python -m amend.backfill. a merge that brings old history back: run it again."""
+        dumps = []
+        for name in sorted(os.listdir(HISTORY)):
+            if name.endswith(".json") and name not in ("index.json", "cycles.json"):
+                with open(os.path.join(HISTORY, name), encoding="utf-8") as f:
+                    dumps += [(name, e["summary"]) for e in json.load(f)["entries"]
+                              if backfill.RAW.match(e["summary"])]
+        self.assertEqual(dumps[:5], [], f"{len(dumps)} raw dumps in history/: run python -m amend.backfill")
 
 
 META = gold.snapshot_meta()

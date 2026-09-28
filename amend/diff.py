@@ -6,9 +6,10 @@ from collections import defaultdict
 from .rules import (ACTION_COL_WORDS, ACTION_PREFIXES, ACTION_TEXT_WORDS, ATC_SERVICE_WORDS,
                     COL_CATEGORY, CONTEXT_COLS, DECLARED_ACTION_FT, DECLARED_ACTION_PCT,
                     DECLARED_DISTANCES, DECLINATION_COLS, DECLINATION_NAV_TYPES, FSS_OUTLET,
-                    FSS_OUTLET_NOT, HIDDEN_FILES, HIDDEN_ONLY_COLS, ID_COLS, IFR_REMARK_FILES, PAIR_KEYS,
-                    NON_ATCT_CONTROL, REWORD_ALIASES, REWORD_BLOCKERS, REWORD_PHRASES, ROW_ACTION, ROW_FYI,
-                    ROW_TIER, base, is_fyi_col, is_helipad, is_hours_col, is_noise_col, small_change)
+                    FSS_OUTLET_NOT, HIDDEN_FILES, HIDDEN_ONLY_COLS, ID_COLS, IFR_REMARK_FILES,
+                    NON_ATCT_CONTROL, PAIR_KEYS, REWORD_ALIASES, REWORD_BLOCKERS, REWORD_PHRASES,
+                    ROW_ACTION, ROW_FYI, ROW_TIER, SURVEY_REMARK_FILES, base, is_fyi_col,
+                    is_helipad, is_hours_col, is_noise_col, small_change)
 
 
 def keyed(fname, a):
@@ -360,6 +361,8 @@ def row_priority(fname, kind, r, pri):
     b = base(fname)
     if pri == "hidden":
         return pri
+    if b in SURVEY_REMARK_FILES and r.get("REF_COL_NAME", "").endswith("_SOURCE_CODE"):
+        return "hidden"
     if b in ("APT_RWY", "APT_RWY_END") and is_helipad(r.get("RWY_ID")):
         return "fyi"     # a helipad at a hospital or ranch: not a runway you'd plan around
     if b == "ATC_BASE" and r.get("FACILITY_TYPE", "").upper() == "NON-ATCT" and not empty_non_atct(fname, r):

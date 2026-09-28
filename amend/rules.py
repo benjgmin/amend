@@ -99,6 +99,11 @@ ROW_TIER = {("ATC_ATIS", "added"): "fyi", ("ATC_SVC", "added"): "fyi", ("ATC_SVC
             ("MIL_OPS", "added"): "fyi", ("MIL_OPS", "removed"): "fyi",
             ("PJA_CON", "added"): "fyi", ("PJA_CON", "removed"): "fyi"}
 NON_ATCT_CONTROL = "ifr"
+# navaid/ILS remarks filed against a survey-source column (REF_COL_NAME LAT_LONG_SOURCE_CODE,
+# DIST_DIR_SOURCE_CODE): "3RD PARTY SURVEY." says who surveyed a part, not how it works.
+# not APT_RMK: its remarks get filed against any column ("WIND SOCK ... UNICOM 122.9" on
+# INFO_REQ_DATE)
+SURVEY_REMARK_FILES = ("ILS_RMK", "NAV_RMK")
 
 # an ATC_BASE row for a field without a tower (FACILITY_TYPE NON-ATCT) that names no tower,
 # approach or departure service (P14): nothing about who you talk to changed
