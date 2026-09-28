@@ -481,6 +481,16 @@ class TestDirectory(unittest.TestCase):
                                 "lat": 29.1799, "lon": -81.0581})
         self.assertNotIn("icao", d[0])
 
+    def test_name_lists(self):
+        """the ids and states the remark review queue doesn't count, from NASR's own files"""
+        from amend.nasr import name_lists
+        d = tempfile.mkdtemp()
+        old, new = os.path.join(d, "old.zip"), os.path.join(d, "new.zip")
+        make_zip(old, {"APT_BASE.csv": ["ARPT_ID,ICAO_ID,STATE_CODE", "SPS,KSPS,TX", "1T7,,TX"]})
+        make_zip(new, {"APT_BASE.csv": ["ARPT_ID,ICAO_ID,STATE_CODE", "ADK,PADK,AK"],
+                       "ARB_BASE.csv": ["LOCATION_ID,LOCATION_NAME", "ZOA,OAKLAND", "ZAN,ANCHORAGE"]})
+        self.assertEqual(name_lists(old, new), ({"KSPS", "PADK", "ZOA", "ZAN"}, {"TX", "AK"}))
+
 
 class TestWeb(unittest.TestCase):
     def build(self):

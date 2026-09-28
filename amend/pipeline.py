@@ -12,7 +12,7 @@ from .collapse import collapse, is_frq_remark, merge_freq_uses
 from .diff import diff
 from .dtpp import load_dtpp
 from .english import plain_values, record_values, summarize, unsupported
-from .nasr import NearIndex, airport_ids, load
+from .nasr import NearIndex, airport_ids, load, name_lists
 from .procedures import airports_by_procedure, load_routes
 from .remarks import translate_remarks
 from .rules import REMARK_FILES, base
@@ -137,7 +137,7 @@ def run(old_zip, new_zip, ids=None, dtpp_path=None, llm=False, log=print, airspa
             texts += [f["new"] for f in r.get("fields", []) if f["field"] == "REMARK"]
         elif is_frq_remark(r):
             texts.append(r["fields"][0]["new"])
-    remarks = translate_remarks(texts, llm)
+    remarks = translate_remarks(texts, llm, *name_lists(old_zip, new_zip))
     wanted = {t for t in texts if t}
     remark_stats = {"texts": len(wanted), "plain_english": sum(remarks.get(t, t) != t for t in wanted)}
     routes = (load_routes(old_zip), load_routes(new_zip))

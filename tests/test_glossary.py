@@ -736,6 +736,84 @@ class TestTranslateStats(unittest.TestCase):
         self.assertEqual(self.run_with([], None), out)
         self.assertEqual(remarks.STATS["cache_retired"], 0)
 
+    def test_the_review_queue_leaves_out_names(self):
+        remarks.translate_remarks(["46 FT UNMKD POLE.", "APCH/DEP SVC PRVDD BY OAKLAND ARTCC (ZOA) ON 132.2/350.3.",
+                                   "ARPT PHYS ADS: 2382 AIRPORT RD, JEFFERSON, OH 44047-9491."],
+                                  use_llm=False, ids={"ZOA"}, states={"OH"})
+        self.assertEqual(remarks.STATS["unknown_terms"], {"UNMKD": 1})
+
+
+class TestReviewQueue(unittest.TestCase):
+    """the status page's list of contractions with no verified meaning is the glossary's to-do list,
+    so it holds only real gaps: not ids NASR lists, addresses, names or plain words. the cases are
+    cut from real NASR remarks (2026-10-01)."""
+    IDS, STATES = {"ZOA", "KSPS"}, {"AK", "CO", "IL", "OH", "TX"}
+
+    def gone(self, raw):
+        return set(remarks.unverified(raw)) - set(remarks.review_terms(raw, self.IDS, self.STATES))
+
+    def test_ids_and_addresses_leave_the_list(self):
+        for raw, gone in [
+            ("APCH/DEP SVC PRVDD BY OAKLAND ARTCC (ZOA) ON FREQS 127.8/353.5 (UKIAH RCAG).", {"ZOA"}),
+            ("WITHIN 95 NM OF KSPS, 1200-0200Z++ MON-FRI TO FL390", {"KSPS"}),
+            ("ARPT PHYS ADS: 38550 JET CENTER DR, WILLOUGHBY, OH 44094-8174.", {"DR", "OH"}),
+            ("CONTACT: MARK NEGELY 5409 N KNOXVILLE AVE PEORIA, IL 61614309-672-5622", {"AVE", "IL"}),
+            ("1508 INDUS BLVD.", {"BLVD"}),
+            ("PHYS ARPT LOCATION: N1405 LINDSEY RD, LODI, WI 53555", {"RD"}),
+            ("AIRPORT LOCATION: 19100 FM 1155 E, WASHINGTON, TX", {"TX"}),
+            ("AMGR P.O. BOX 1500 ANTON LARSON ROAD KODIAK AK 99615.", {"AK"}),
+            ("STUDENT TRNG ACT INVOF COLORADO SPRINGS & PUEBLO, CO.", {"CO"}),
+        ]:
+            self.assertEqual(self.gone(raw), gone, raw)
+
+    def test_the_same_letters_as_contractions_stay(self):
+        for raw in ["PUB RD 209 FT FM RWY END, 14 FT ABV RWY & 14 FT FM LT OF CTLN.",     # road
+                    "+15 FT COUNTY RD & +15 ARPT ACCESS RD.",
+                    "17:1 OBSTN CLNC SLOPE OVR 18 F RD, 310 FT DSTC.",
+                    "CHAIRMAN OF THOMAS CO ARPT AUTH CELL 308-645-7303.",             # county
+                    # three-letter ids stay: BAK is also an arresting gear ("BAK 15 (175 FT OVRN)")
+                    "COLUMBUS MUNI, BAK, CLASS D AIRSPACE 3 NM SE EFF 1130-0300Z++, 118.6 OT."]:
+            self.assertEqual(self.gone(raw), set(), raw)
+        # an id the glossary knows as a contraction stays on the list
+        self.assertEqual(remarks.review_terms("HELIPAD TEMP CLSD.", {"TEMP"}), ["TEMP"])
+
+    def test_a_translation_still_copies_them(self):
+        raw = "ARPT PHYS ADS: 38550 JET CENTER DR, WILLOUGHBY, OH 44094-8174."
+        self.assertEqual(remarks.problems(raw, "Airport physical address: 38550 Jet Center DR, Willoughby, OH "
+                                               "44094-8174."), [])
+        found = remarks.problems(raw, "Airport physical address: 38550 Jet Center Drive, Willoughby, Ohio 44094-8174.")
+        self.assertTrue(any(p.startswith("DR ") for p in found) and any(p.startswith("OH ") for p in found), found)
+
+    def test_plain_words_and_names_arent_contractions(self):
+        cases = [("COURTESY CAR AVBL.", "CAR", "Courtesy car available.", "Courtesy vehicle available."),
+                 ("GRAIN BIN", "BIN", "Grain bin", "Grain silo"),
+                 ("MIX OF WHITE & ORANGE 5-GALLON BUCKETS.", "MIX", "Mix of white and orange 5-gallon buckets.",
+                  "Blend of white and orange 5-gallon buckets."),
+                 ("GLIDER TOW AVBL.", "TOW", "Glider tow available.", "Glider launch available."),
+                 ("CTN: SMALL ARMS RANGE.", "ARMS", "Caution: small arms range.", "Caution: small weapons range."),
+                 ("PPR FOR ARMY RAMP.", "ARMY", "Prior permission required for Army ramp.",
+                  "Prior permission required for military ramp."),
+                 ("CO-OWNERS: DON TATE, LEE COWIE AND LELAND COWIE.", "DON",
+                  "Co-owners: Don Tate, Lee Cowie and Leland Cowie.", "Co-owners: Tate, Lee Cowie and Leland Cowie."),
+                 ("FOR CD CTC SAN ANTONIO APCH AT 210-805-5516.", "SAN",
+                  "For clearance delivery contact San Antonio approach at 210-805-5516.",
+                  "For clearance delivery contact sanitary Antonio approach at 210-805-5516."),
+                 ("USE MID-FLD RUN-UP PAD FOR ALL RUN-UPS.", "UPS", "Use the midfield run-up pad for all run-ups.",
+                  "Use the midfield run-up pad for all engine checks."),
+                 ("HEL INSTRUCTION BY PRE-ARRANGEMENT ONLY.", "PRE", "Helicopter instruction by pre-arrangement only.",
+                  "Helicopter instruction by arrangement only.")]
+        for raw, word, right, wrong in cases:
+            self.assertTrue(glossary.lookup(word)["english"], word)
+            self.assertNotIn(word, remarks.unverified(raw))
+            self.assertEqual(remarks.problems(raw, right), [], right)
+            self.assertIn(f"dropped {word}", remarks.problems(raw, wrong), wrong)
+        # the model isn't told a meaning for them, or to copy them as codes
+        p = remarks.prompt_for([c[0] for c in cases])
+        copy = re.search(r"copy them exactly as written: (.*)\n", p)
+        for word in (c[1] for c in cases):
+            self.assertNotIn(f"\n{word} = ", p)
+            self.assertNotIn(word, copy.group(1).split(", ") if copy else [])
+
 
 class TestScrubHistory(unittest.TestCase):
     """past cycles get the same check as new ones; the FAA text replaces what fails, ids never move."""

@@ -1256,6 +1256,10 @@ data-name="{e(wl['name'])}">Save to my lists</a><button class="btn ghost" id="co
 # what shipped, newest first, for /changelog/. Add a line when something people can see changes.
 UPDATES = [
     ("Sep 2026", [
+        "The status page's list of contractions with no verified meaning no longer counts words that aren't "
+        "contractions: addresses, four-letter airport codes like KSPS, center codes like ZOA, names like DON "
+        "and LEE, and plain words like CAR and TOW. The rules were checked against every remark in the FAA's "
+        "October data.",
         "Remarks that write approach as APRCH or APPCH, or extended as EXTNDD, now read \"approach\" and "
         "\"extended\". The FAA's own contractions are APCH and EXTD, and every remark in the FAA's data that "
         "spells them this way means that. TEMP stays as written: the FAA's list says it means temperature, "
