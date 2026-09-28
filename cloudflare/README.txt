@@ -1,6 +1,6 @@
 status.amend.watch and docs.amend.watch: a Cloudflare Pages project that serves amend.watch/status/ and
 amend.watch/docs/ under their own names (_worker.js), plus the docs' other pages (/using/, /how-it-works/,
-/api/) and status.amend.watch/checks.json, GitHub's public list of recent workflow runs, cached for 2 minutes.
+/api/) and status.amend.watch/checks.json, GitHub's public list of recent workflow runs, cached for 5 minutes.
 Nothing to build, no token.
 
 1. Cloudflare dashboard > Workers & Pages > Create > Pages > Connect to Git > benjgmin/amend.

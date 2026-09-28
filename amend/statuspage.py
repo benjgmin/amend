@@ -93,7 +93,7 @@ box-shadow:0 0 0 5px color-mix(in srgb,var(--c) 18%,transparent)}
 .sx-tip{position:absolute;z-index:6;pointer-events:none;background:var(--tx);color:var(--bg);font-size:12.5px;line-height:1.45;
 padding:8px 10px;border-radius:6px;box-shadow:0 4px 14px rgba(0,0,0,.25);white-space:nowrap;transform:translate(-50%,-100%);margin-top:-8px}
 .sx-tip b{font-weight:600;font-variant-numeric:tabular-nums}.sx-tip .sx-sub{opacity:.75}
-.sx-tip::after{content:"";position:absolute;left:50%;top:100%;margin-left:-5px;border:5px solid transparent;border-top-color:var(--tx)}
+.sx-tip::after{content:"";position:absolute;left:calc(50% + var(--ax,0px));top:100%;margin-left:-5px;border:5px solid transparent;border-top-color:var(--tx)}
 .sx-none{color:var(--dm);margin:0;font-size:14px}
 .sx-live:not(:empty){margin-bottom:14px}.sx-live:not(:empty)+.sx-none{font-size:13px;color:var(--fn)}
 .sx-last{display:flex;flex-wrap:wrap;align-items:center;gap:0 6px;margin:0 0 12px;font-size:14.5px;color:var(--dm)}
@@ -618,8 +618,10 @@ function show(b){hide();const d=b.dataset,a=ago(d.t);tip=el("div","sx-tip");tip.
   if(a)tip.append(" ",el("span","sx-sub","("+a+")"));tip.append(el("br"),d.w+" · "+d.l);
   if(d.c)tip.append(el("br"),el("span","sx-sub",d.c));
   w.appendChild(tip);const r=b.getBoundingClientRect(),p=w.getBoundingClientRect();
-  let x=r.left-p.left+r.width/2;const half=tip.offsetWidth/2;x=Math.max(half,Math.min(p.width-half,x));
-  tip.style.left=x+"px";tip.style.top="0";cur=b}
+  // centred over the box, kept on screen; at the ends the arrow moves instead, so it still points at the box
+  const c=r.left-p.left+r.width/2,half=tip.offsetWidth/2,vw=document.documentElement.clientWidth;
+  const x=Math.max(half+8-p.left,Math.min(vw-8-half-p.left,c));
+  tip.style.left=x+"px";tip.style.top="0";tip.style.setProperty("--ax",Math.max(10-half,Math.min(half-10,c-x))+"px");cur=b}
 function hide(){if(tip)tip.remove();tip=null;cur=null}
 w.querySelectorAll("[data-x]").forEach(b=>{b.addEventListener("mouseenter",()=>show(b));b.addEventListener("mouseleave",hide);
   b.addEventListener("focus",()=>show(b));b.addEventListener("blur",hide);

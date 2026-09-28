@@ -20,7 +20,7 @@ const SHARED = /^\/(assets\/[\w./-]+|favicon\.ico|site\.webmanifest|latest\/meta
 // Most are checks that found nothing new and built nothing, so the run log never sees them. Cached at the edge so
 // GitHub gets a few calls an hour whoever visits, and a visitor's browser never talks to GitHub itself
 const RUNS = "https://api.github.com/repos/benjgmin/amend/actions/workflows/update.yml/runs?per_page=40";
-const CHECKS_TTL = 120;
+const CHECKS_TTL = 300;   // GitHub allows 60 calls an hour per IP without a token: this is 12 per edge location
 
 async function checks(ctx) {
   const key = new Request("https://status.amend.watch/checks.json");
@@ -37,7 +37,7 @@ async function checks(ctx) {
       started: x.run_started_at || x.created_at, updated: x.updated_at, url: x.html_url })) };
   } catch (e) {
     body = { runs: [], error: "GitHub didn't answer" };   // the page keeps its link to GitHub instead
-    ttl = 300;
+    ttl = 600;
   }
   const res = new Response(JSON.stringify(body), { headers: {
     "Content-Type": "application/json; charset=utf-8", "Cache-Control": "public, max-age=" + ttl } });

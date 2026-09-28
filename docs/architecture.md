@@ -121,7 +121,7 @@ engine that produced a given history entry.
   and docs.amend.watch by a Cloudflare Pages proxy (`cloudflare/_worker.js`, setup in `cloudflare/README.txt`).
   `web.SUBDOMAINS` turns the names on for every link. The docs are four pages (`docspage.PAGES`); the API page
   is rendered from `SCHEMA.md` at build time. The proxy also serves `status.amend.watch/checks.json`, GitHub's
-  public list of recent `update.yml` runs (cached 2 min), so the status page can show the 10-minute checks that
+  public list of recent `update.yml` runs (cached 5 min), so the status page can show the 10-minute checks that
   build nothing and never reach the run log.
 - **Concurrency:** one deploy at a time (`update.yml:24-26`).
 - **Pull requests:** `.github/workflows/tests.yml` runs the unit tests on every PR. It has read-only
