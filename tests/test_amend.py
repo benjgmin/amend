@@ -697,7 +697,7 @@ function load(store, broken) {
               setItem: (k, v) => { if (broken) throw new Error("denied"); store[k] = String(v) }};
   const ctx = {localStorage: st, sessionStorage: st, navigator: {}, URL, setInterval() {}, addEventListener() {},
                location: {href: "https://amend.watch/VRB/"},
-               document: {body: {dataset: {root: "../"}}, querySelectorAll: () => [], getElementById: () => null}};
+               document: {body: {dataset: {root: "../"}}, querySelectorAll: () => [], getElementById: () => null, addEventListener() {}}};
   vm.createContext(ctx);
   vm.runInContext(src + ";this.LS=LS", ctx);
   return ctx.LS;
@@ -761,7 +761,10 @@ class TestFeeds(unittest.TestCase):
         self.assertIn('<link rel="alternate" type="application/rss+xml" title="VRB changes each FAA cycle" '
                       'href="https://amend.watch/VRB/feed.xml">', page)
         self.assertIn('id="alerts"', page)
-        self.assertIn('href="#alerts">Get alerts', page)
+        self.assertIn('<details class="addw pop" id="alerts"><summary class="btn ghost dd">Get alerts</summary>', page)
+        self.assertEqual(page.count('id="alerts"'), 1)                    # opens under the button, not a rail card
+        self.assertIn('<script type="speculationrules">', page)          # hover prefetch between pages
+        self.assertIn('<div id="sbw" data-on="VRB"></div><script>SB.side()</script>', page)   # lists on first paint
         quiet = ET.parse(os.path.join(site, "DAB", "feed.xml")).getroot().find("channel")   # no page, still a feed
         self.assertEqual(quiet.findall("item"), [])
         self.assertEqual(quiet.findtext("link"), "https://amend.watch/")
