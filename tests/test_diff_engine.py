@@ -289,6 +289,64 @@ class TestPriorityRules(Case):
         self.assertEqual([c["priority"] for c in self.one("AWOS.csv", h, ["4MD,AWOS-3PT"], [], "4MD")], ["action"])
 
 
+class TestFillInsAndFormatting(TestPriorityRules):
+    """2026-10-01: changes that only rewrite how the FAA writes a value, not the value."""
+
+    def test_a_blank_written_as_none_is_not_a_change(self):   # 36H, D99, 3FL
+        h = "ARPT_ID,AIRFRAME_REPAIR_SER_CODE,BOTTLED_OXY_TYPE,SEG_CIRCLE_MKR_FLAG,TRNS_STRG_TIE_FLAG"
+        base = lambda old, new: self.diff({"APT_BASE.csv": [h, old]}, {"APT_BASE.csv": [h, new]}).get("36H", [])
+        self.assertEqual(base("36H,NONE,NONE,,Y", "36H,,,N,Y"), [])
+        # a real yes -> no still shows (OUL transient tie-down storage)
+        ch = base("36H,NONE,NONE,,Y", "36H,,,N,N")
+        self.assertEqual([f["field"] for c in ch for f in c["fields"]], ["TRNS_STRG_TIE_FLAG"])
+        # N only equals blank on a yes/no column: a direction of N is north
+        self.assertFalse(d.blank_fill("ARPT_DIR", "", "N"))
+
+    def test_runway_nine_is_runway_zero_nine(self):   # 58KY, IL97
+        h = "ARPT_ID,RWY_ID,RWY_LEN,RWY_WIDTH,SURFACE_TYPE_CODE"
+        ch = self.one("APT_RWY.csv", h, ["58KY,09/27,1300,65,TURF", "58KY,11/29,2500,100,TURF"],
+                      ["58KY,11/29,2500,100,TURF", "58KY,9/27,1350,60,TURF"], "58KY")
+        self.assertEqual(self.summaries(ch), ["runway 09/27: length: 1300 -> 1350 ft; width: 65 -> 60 ft"])
+        # a new one reads the way every other runway does (MN46)
+        ch = self.one("APT_RWY.csv", h, [], ["58KY,9/27,2992,75,TURF"], "58KY")
+        self.assertEqual(self.summaries(ch), ["new runway 09/27: 2992x75 ft turf"])
+
+
+class TestPhoneOnlyEdits(TestPriorityRules):
+    """a remark whose only edit is a phone number is fyi, like APT_CON phone changes."""
+    h = "ARPT_ID,LEGACY_ELEMENT_NUMBER,REMARK"
+
+    def pri(self, old, new):
+        ch = self.one("APT_RMK.csv", self.h, [f'A34,A110-1,"{old}"'], [f'A34,A110-1,"{new}"'], "A34")
+        return [c["priority"] for c in ch]
+
+    def test_phone_only(self):
+        self.assertEqual(self.pri("FICON & PPR - AMGR OR 575-644-2549.", "FICON AND PPR - AMGR."), ["fyi"])  # A34
+        self.assertEqual(self.pri(   # SYR
+            "PPR TSNT ACFT OFFL BUS ONLY. AFLD MGR DSN 243-2399, C315-233-2399.",
+            "PPR TSNT ACFT OFFL BUS ONLY. AFLD MGR C315-233-2399."), ["fyi"])
+        self.assertEqual(self.pri(   # 0Q4
+            "ARPT CLSD TO HELS EXC PPR 559-287-4900 OR 539-314-4900.",
+            "ARPT CLSD TO HELS EXC PPR; CALL 559-903-5372 TO MAKE REQ."), ["fyi"])
+
+    def test_more_than_a_phone(self):
+        self.assertEqual(self.pri(   # HSA: a new facility to call for a clearance
+            "WHEN ATCT CLSD, FOR CD CTC HOUSTON ARTCC AT 281-230-5622.",
+            "FOR CD WHEN ATCT CLSD CTC GULFPORT APCH AT 228-265-6151, WHEN APCH CLSD CTC HOUSTON ARTCC "
+            "AT 281-230-5622."), ["action"])
+        self.assertEqual(self.pri(   # OQU: parking pad 3 reopened along with the new number
+            "PPR CTC DSN 247-4539, C401-275-4539. LTD PRKG, FUEL & MAINT AVBL, PRKG PAD 3 CLSD UFN.",
+            "PPR CTC DSN 332-557-6584, C-401-557-6584. LTD PRKG, FUEL & MAINT AVBL."), ["action"])
+        self.assertEqual(self.pri(   # NQA: new ARFF hours
+            "ARFF NOT AVBL MON 1130-0300Z EXC PPR - 901-873-5792.",
+            "ARFF NOT AVBL MON-SAT 0200-0700++ EXC PPR 901-573-0775."), ["action"])
+        # a height band is not a phone number
+        self.assertEqual(self.pri("PPR. BIRDS 500-1000 FT AGL.", "PPR. BIRDS 500-1500 FT AGL."), ["action"])
+
+    def summaries(self, changes):
+        return [c["summary"] for c in changes]
+
+
 class TestCategories(Case):
     def test_radar_hours_are_tower(self):   # g093 NGF
         self.assertEqual(category("RDR.csv"), "tower")

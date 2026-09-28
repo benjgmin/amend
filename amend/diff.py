@@ -7,9 +7,9 @@ from .rules import (ACTION_COL_WORDS, ACTION_PREFIXES, ACTION_TEXT_WORDS, ATC_SE
                     COL_CATEGORY, CONTEXT_COLS, DECLARED_ACTION_FT, DECLARED_ACTION_PCT,
                     DECLARED_DISTANCES, DECLINATION_COLS, DECLINATION_NAV_TYPES, FSS_OUTLET,
                     FSS_OUTLET_NOT, HIDDEN_FILES, HIDDEN_ONLY_COLS, ID_COLS, IFR_REMARK_FILES,
-                    NON_ATCT_CONTROL, PAIR_KEYS, REWORD_ALIASES, REWORD_BLOCKERS, REWORD_PHRASES,
-                    ROW_ACTION, ROW_FYI, ROW_TIER, SURVEY_REMARK_FILES, base, is_fyi_col,
-                    is_helipad, is_hours_col, is_noise_col, small_change)
+                    NON_ATCT_CONTROL, PAIR_KEYS, PHONE, PHONE_FILLER, REWORD_ALIASES,
+                    REWORD_BLOCKERS, REWORD_PHRASES, ROW_ACTION, ROW_FYI, ROW_TIER,
+                    SURVEY_REMARK_FILES, base, blank_fill, is_fyi_col, is_helipad, is_hours_col, is_noise_col, small_change)
 
 
 def keyed(fname, a):
@@ -158,6 +158,18 @@ def just_reworded(old, new):
     if (_words(old) ^ _words(new)) & REWORD_BLOCKERS:
         return False
     return difflib.SequenceMatcher(None, old, new).ratio() >= 0.6
+
+
+def only_phones_changed(old, new):
+    """the remark says the same thing once its phone numbers are taken out (rules.PHONE)."""
+    flat = lambda s: " ".join(s.upper().split())
+    strip = lambda s: " ".join(re.sub(PHONE, " ", s.upper()).split())
+    o, n = strip(old), strip(new)
+    if (o, n) == (flat(old), flat(new)):
+        return False     # no phone number in either: just_reworded decides
+    if (_words(o) ^ _words(n)) - PHONE_FILLER:
+        return False
+    return o == n or just_reworded(o, n)
 
 
 # hours text: "OPR 1330Z-0530Z MON-THU, 1330Z-0130Z FRI, CLSD WEEKENDS, HOL" and
@@ -400,11 +412,13 @@ def diff(old, new):
                               if r.get(c, "") != best.get(c, "")
                               and (not is_noise_col(c) or c in keep)
                               and not c.startswith("_")
+                              and not blank_fill(c, r.get(c), best.get(c))
                               and small_change(c, r.get(c), best.get(c)) != "drop")
                 soft = {c for c in cols if small_change(c, r.get(c), best.get(c)) == "fyi"}
                 vals = [r.get(c, "") for c in cols] + [best.get(c, "") for c in cols]
                 pri = priority(fname, "changed", cols, vals, soft)
-                if cols == ["REMARK"] and just_reworded(r["REMARK"], best["REMARK"]):
+                if cols == ["REMARK"] and (just_reworded(r["REMARK"], best["REMARK"])
+                                           or only_phones_changed(r["REMARK"], best["REMARK"])):
                     pri = "fyi"
                 if cols == ["REMARK"]:
                     pri = pcl_priority(r["REMARK"], best["REMARK"]) or pri
