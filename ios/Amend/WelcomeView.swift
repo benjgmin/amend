@@ -65,6 +65,7 @@ struct WelcomeView: View {
     private var setup: some View {
         pageLayout(icon: "house", title: "Set up") {
             Text("Add your home field first. You'll be notified about any change there, and about action items at your other airports.")
+            Text("Then search for the other airports you fly to and tap + to put them on a list. Make one for each area or trip, and share any of them as one link with your flight school or club.")
 
             Button { showingAdd = true } label: {
                 setupRow(done: store.home != nil,
