@@ -95,16 +95,27 @@ class TestGlossary(unittest.TestCase):
             self.assertFalse(g[t]["verified"], t)
 
     def test_the_model_is_told_only_reviewed_meanings(self):
-        """a JO 7340.2-only meaning is accepted but not suggested until it's in CURATED: plenty are
-        from other fields. the Chart Supplement's own list is what remarks are written with."""
+        """a JO 7340.2-only meaning is accepted, but suggested only once it's been checked against
+        real remarks (REVIEWED, CURATED): plenty are from other fields. the Chart Supplement's own
+        list is what remarks are written with."""
         for term, e in glossary.load().items():
             if e["prompt"]:
-                self.assertTrue(e["source"].startswith("CS") or term in glossary.CURATED, term)
-        self.assertFalse(glossary.lookup("PRVD")["prompt"])        # provide: JO 7340.2 only
-        self.assertTrue(glossary.lookup("OUBD")["prompt"])         # read against real remarks
+                self.assertTrue(e["source"].startswith("CS") or term in glossary.CURATED
+                                or term in glossary.REVIEWED, term)
+        for t in ("THR", "MKD", "STWY", "OUBD"):                  # read against real remarks
+            self.assertTrue(glossary.lookup(t)["prompt"], t)
+        for t in ("DEPT", "OBS", "RLS", "NB", "MDT"):             # remarks use them two ways
+            self.assertTrue(glossary.lookup(t)["verified"], t)
+            self.assertFalse(glossary.lookup(t)["prompt"], t)
+
+    def test_reviewed_terms_are_verified_jo_meanings(self):
+        for t in glossary.REVIEWED:
+            e = glossary.lookup(t)
+            self.assertTrue(e and e["verified"] and e["source"].startswith("JO"), t)
+            self.assertNotIn(t, glossary.CURATED)
 
     def test_meanings_from_other_fields_are_not_verified(self):
-        for t in ("LL", "GOV", "LT", "PTS", "OB", "DP", "CC", "NC", "CTR", "RTG", "POC"):
+        for t in ("LL", "GOV", "LT", "PTS", "OB", "OG", "DP", "CC", "NC", "CTR", "RTG", "POC"):
             e = glossary.lookup(t)
             self.assertFalse(e["verified"], t)
             self.assertIn("doesn't fit", e["note"], t)
@@ -352,10 +363,11 @@ class TestPrompt(unittest.TestCase):
         # plain words, single letters and terms remarks use two ways get no meaning
         for t in ("TO", "L", "ALT", "PER", "NA"):
             self.assertNotIn(f"\n{t} = ", p)
-        # nor do JO 7340.2-only meanings nobody has read against remarks, or ones that don't fit
-        p = remarks.prompt_for(["100 LL AVBL.", "GOV ACFT ONLY.", "FUEL PRVD BY FBO."])
-        for t in ("LL", "GOV", "PRVD"):
+        # nor do JO 7340.2-only meanings that don't fit remarks, or that remarks use two ways
+        p = remarks.prompt_for(["100 LL AVBL.", "GOV ACFT ONLY.", "CALL FIRE DEPT.", "RWY 18 THR DSPLCD."])
+        for t in ("LL", "GOV", "DEPT"):
             self.assertNotIn(f"\n{t} = ", p)
+        self.assertIn("\nTHR = threshold\n", p)
 
 
 class TestTranslateStats(unittest.TestCase):

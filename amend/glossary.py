@@ -187,7 +187,7 @@ CURATED = {
            "DC": ("the DC-10", "direct current"),
            "DE": ("de- ('DE-ICE', 'DE-RIGGED')", "From (before a call sign)"),
            "DEF": ("defined ('DEF BY FAR PART 77')", "defense"),
-           "DP": ("departure procedure", "dew point temperature"),
+           "DP": ("departure procedure, as on the d-TPP's DP charts", "dew point temperature"),
            "DPTS": ("departures ('PPR OR DPTS')", "depth (DPT + S)"),
            "DST": ("distance and daylight saving time", "distort"),
            "DZ": ("drop zone", "drizzle"),
@@ -204,6 +204,7 @@ CURATED = {
            "MOC": ("a maintenance office ('AIRFIELD MGMT, MOC & POL')", "minimum obstacle clearance"),
            "NC": ("North Carolina", "no change"),
            "OB": ("'+5 FT FENCE OB OF CNTRLN', not on board", "on board"),
+           "OG": ("the operations group ('OG/CC APVL RQR')", "on ground"),
            "OWS": ("Operational Weather Squadron ('CTC 15 OWS')", "one way (OW + S)"),
            "PIT": ("hot pit refueling ('HOT PIT AVBL')", "pilot instructor training"),
            "POC": ("point of contact ('BASE OPS POC')", "proceed or proceeding on course"),
@@ -265,6 +266,38 @@ CURATED = {
     # SS-SR is one period, sunset to sunrise: the meanings have to come out in that order
     "SS-SR": {"parts": ["SS", "SR"], "accept": [r"\bsunset\b.{0,40}\bsunrise\b"]},
     "SR-SS": {"parts": ["SR", "SS"], "accept": [r"\bsunrise\b.{0,40}\bsunset\b"]},
+}
+
+# JO 7340.2-only meanings checked against the 4,458 translated remarks in remark_cache.json
+# (2026-09-28): the model, which wasn't told them, read them the FAA's way, and where it
+# didn't, the FAA meaning was the right one (STWY is stopway, not taxiway; EUO is emergency
+# use only). the model is told these. any other JO 7340.2 meaning is still
+# accepted in a translation but isn't suggested, since remarks may use the letters for
+# something else: DEPT for department and departure, OBS for observation and obstacle, RLS
+# for release and reduced level of service, NB and WB for taxiway names
+REVIEWED = {
+    "AATM", "ACDNT", "ACES", "ACTV", "AD", "ADNL", "ADQT", "ADVN", "ADVZY", "ADZY", "AFT",
+    "AHD", "ALG", "ANG", "ANNC", "ARND", "ASPH", "ASSOC", "ASST", "ATMT", "ATND", "AUZ", "BDR",
+    "BFR", "BGN", "BHND", "BLN", "BNTH", "BT", "BUR", "CAPT", "CDN", "CERT", "CFM", "CHNL",
+    "CHTR", "CLB", "CLKWS", "CLR", "CMB", "CMPLX", "CMPSN", "CMSN", "CONFIG", "CONS", "CONTR",
+    "CPBL", "CPTY", "CSDRBL", "CUST", "DBA", "DBL", "DER", "DFCLT", "DIAM", "DISC", "DLA",
+    "DLVY", "DNWND", "DPT", "DRCTN", "DRG", "DSCNT", "DSGND", "DSNT", "DSPL", "DURG", "EFCT",
+    "ELEC", "ENR", "ENRT", "ENTR", "EQUIP", "ERY", "EUO", "EXCP", "EXEC", "EXPC", "EXTSV",
+    "FAM", "FICON", "FIRG", "FNA", "FQT", "FRQ", "FSDO", "FSL", "FST", "FTHR", "GEN", "GENOT",
+    "GLD", "GNTR", "GRVL", "GTR", "HEL", "HLDG", "HNGR", "HYR", "ID", "IMT", "INDC", "INSP",
+    "INTNS", "INTST", "INTXN", "IR", "IREG", "ITNRNT", "LCT", "LN", "LND", "LNDG", "LOA",
+    "LONGL", "LST", "LVE", "LVL", "LWR", "MECH", "MEML", "MIDPT", "MISG", "MKD", "MNM", "MNTN",
+    "MNVR", "MOV", "MPH", "MRKG", "MTR", "MTRL", "MULT", "NLT", "NMRS", "NNE", "NTFY", "OBND",
+    "OBSC", "OCR", "OCS", "OFC", "OPER", "OTR", "OTRW", "OVHD", "OVNGT", "OVR", "OXY", "PCD",
+    "PCT", "PERI", "PHYS", "PLINE", "PMSN", "PMT", "POSS", "PRI", "PRKG", "PROC", "PROCD",
+    "PROG", "PROP", "PRVD", "PSBL", "PSGR", "PSN", "PSNL", "PUP", "RCMD", "REF", "RESP", "RFL",
+    "RGLR", "RITE", "RLRD", "RMN", "ROT", "ROTG", "RPR", "RPRT", "RQMNTS", "RSCD", "RSTR",
+    "RSVN", "RTNE", "RY", "SB", "SCTY", "SECT", "SENS", "SEPN", "SGFNT", "SHTDN", "SI", "SIMUL",
+    "SLCT", "SML", "SMT", "SNGL", "SPCLY", "SPD", "SRY", "SSW", "STNR", "STS", "STWY", "SUF",
+    "SUPT", "SUPVR", "SVR", "SWY", "TAX", "TBJT", "TEMPO", "THR", "THRUT", "TMT", "TRG",
+    "TRNSP", "TRRN", "TRSN", "TSFR", "TSNT", "TURB", "TWD", "TXG", "TXL", "UNATNDD", "UNKN",
+    "UNRELBL", "USBL", "VCY", "VFY", "VOL", "VR", "VRBL", "VSB", "VTOL", "WDI", "WI", "WID",
+    "WKDAY", "WKEND", "XNG", "XPLOS"
 }
 
 
@@ -385,11 +418,11 @@ def default_entry(term, found):
     if not _one_sense(base):
         entry["note"] = "the FAA lists more than one meaning; copied as written until one is picked"
         return entry
-    # the model is only told Chart Supplement meanings. a JO 7340.2-only meaning is still accepted,
-    # but it's suggested only once it's in CURATED: many are from other fields (LL = landline,
-    # GOV = governor) and would push the model to a wrong reading
+    # the model is told Chart Supplement meanings, and JO 7340.2 ones checked against real remarks
+    # (REVIEWED, CURATED). others are accepted but not suggested: many are from other fields
+    # (LL = landline, GOV = governor) and would push the model to a wrong reading
     entry.update(expansion=base[0], meanings=_dedup(base + also), verified=True, source=source,
-                 prompt=len(term) > 1 and source == "CS")
+                 prompt=len(term) > 1 and (source == "CS" or term in REVIEWED))
     return entry
 
 
