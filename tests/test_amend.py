@@ -533,8 +533,8 @@ class TestWeb(unittest.TestCase):
         self.assertIn('NASR_Subscription/2026-10-01" target="_blank"', page)   # every change links its FAA source
         self.assertIn('title="Official FAA plate (d-TPP)">View plate', page)
         self.assertIn('NASR_Subscription/2025-07-10"', page)          # history links its own cycle
-        self.assertIn('FAA cycle 01 Oct 2026 (upcoming) · updated <time datetime="2026-09-24T00:00:00Z" '
-                      'data-ago="2026-09-24T00:00:00Z">24 Sep 0000Z</time>', page)
+        self.assertIn('FAA cycle 01 Oct 2026<span class="flip" data-after=""> (upcoming)</span> · updated '
+                      '<time datetime="2026-09-24T00:00:00Z" data-ago="2026-09-24T00:00:00Z">24 Sep 0000Z</time>', page)
         self.assertIn('data-built="2026-09-24T00:00:00Z"', page)      # the page says when it's stale
         self.assertIn('id="stale" hidden', page)
 
@@ -552,7 +552,7 @@ class TestWeb(unittest.TestCase):
         self.assertEqual(ics.count("BEGIN:VEVENT"), 15)
         index = open(os.path.join(site, "index.html")).read()
         self.assertIn('id="next"', index)                           # coming up at your airports
-        self.assertIn('"when": "2026-10-01T09:01:00Z"', index)
+        self.assertIn('"eff": "2026-10-01T09:01:00Z", "after": "2026-10-29T09:01:00Z"', index)
 
     def test_guide_and_welcome(self):
         site, _ = self.build()

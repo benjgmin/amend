@@ -2,12 +2,19 @@ name: update FAA changes
 
 on:
   schedule:
-    # every 3 hours, off the hour (GitHub drops and delays runs on the hour). each run starts
-    # with a seconds-long check and only rebuilds when the FAA posted something new, a merge
-    # isn't live yet, or the last build is 20h old. one run can be late or dropped; eight a day
-    # means new FAA data shows up within hours instead of the next day
-    - cron: "17 */3 * * *"
+    # every 10 minutes, off the hour (GitHub drops and delays scheduled runs, worst on the hour:
+    # it fired 1 of 3 overnight at every-3-hours). each run starts with a ~2s check and only
+    # rebuilds when the FAA posted something new, a merge isn't live yet, the cycle changed over,
+    # or the last build is 20h old, so most runs end after the check. the site doesn't need a run
+    # at 0901Z to switch cycles (the pages and app flip by the clock); the run after it catches
+    # history up
+    - cron: "3-59/10 * * * *"
   workflow_dispatch:           # "Run workflow" button in the Actions tab
+    inputs:
+      check_only:              # an outside scheduler can dispatch with check_only=true to get the
+        description: "Only rebuild if the check says so (what scheduled runs do)"
+        type: boolean          # same "anything new?" check as the cron, if GitHub's cron lags
+        default: false
   push:                        # any merge that can change the site goes live right away.
     branches: [ master ]       # the bot's own data commits use GITHUB_TOKEN, which never
     paths-ignore:              # triggers a workflow, so this can't loop
@@ -41,7 +48,7 @@ jobs:
       # merges and the Run workflow button always build; scheduled runs build only when needed
       - id: check
         run: |
-          if [ "${{ github.event_name }}" = "schedule" ]; then
+          if [ "${{ github.event_name }}" = "schedule" ] || [ "${{ inputs.check_only }}" = "true" ]; then
             python -m amend check
           else
             echo "build: ${{ github.event_name }}"

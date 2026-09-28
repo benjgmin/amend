@@ -119,6 +119,7 @@ h1 .icao{font:500 15px var(--mono);color:var(--fn);letter-spacing:.02em}
 .it.new{box-shadow:inset 3px 0 0 var(--tx)}
 .sbi .ann.new{font-size:10px;padding:0 5px}
 time[data-until],time[data-ago]{font-variant-numeric:tabular-nums;white-space:nowrap}
+.flip{display:contents}
 .pfresh{padding:7px 16px;font-size:12.5px;color:var(--dm);border-bottom:1px solid var(--ln);background:var(--p)}
 .is-stale .fresh{color:var(--am)}.stale{border-color:var(--am)}
 a.src{color:var(--dm)}a.src:hover{color:var(--cy)}
@@ -418,13 +419,15 @@ async function renderNext(){const el=document.getElementById("next"),l=LS.union(
       chipsHtml([d.counts.action,d.counts.ifr,d.counts.fyi]).replace('<span class="chips">','<span class="chips">'+(nw.size?AM.pill(nw.size):""))+'</span>'+
       top.map(c=>'<span class="nxi"><span class="ann '+PRI[c.priority][0]+' plain">'+PRI[c.priority][1]+'</span><span>'+(nw.has(c.id)?AM.pill()+" ":"")+esc(cap(c.summary)).replace(/ -&gt; /g," → ")+'</span></span>').join("")+
       (d.changes.length>3?'<span class="nxm">'+(d.changes.length-3)+' more ›</span>':'')+'</a>'};
-  el.innerHTML='<div class="sec"><span class="hdr">'+(NX.up?'Coming up at your airports':'This cycle at your airports')+'</span><span class="note" style="margin:0">'+
-    (NX.up?'Takes effect ':'Next cycle ')+'<time datetime="'+NX.when+'" data-until="'+NX.when+'"></time></span></div>'+
-    '<div class="rows">'+(rows.length?rows.map(row).join(""):'<div class="nxq">Nothing '+(NX.up?'changes':'changed')+' at your '+l.length+' airport'+(l.length==1?'':'s')+' this cycle.</div>')+
+  const up=NX.up&&AM.now()<Date.parse(NX.eff),when=up?NX.eff:NX.after;
+  el.innerHTML='<div class="sec"><span class="hdr">'+(up?'Coming up at your airports':'This cycle at your airports')+'</span><span class="note" style="margin:0">'+
+    (up?'Takes effect ':'Next cycle ')+'<time datetime="'+when+'" data-until="'+when+'"></time></span></div>'+
+    '<div class="rows">'+(rows.length?rows.map(row).join(""):'<div class="nxq">Nothing '+(up?'changes':'changed')+' at your '+l.length+' airport'+(l.length==1?'':'s')+' this cycle.</div>')+
     (busy.length>ch.length?'<div class="nxq">Showing the '+ch.length+' busiest of '+busy.length+' airports with changes. Each list’s page has all of them.</div>':'')+
     (rows.length&&quiet.length?'<div class="nxq">No change at '+quiet.map(esc).join(", ")+'</div>':'')+'</div>';
   AM.tick();renderLists();renderSearch();if(window.AMside)AMside()}
 function update(){renderLists();renderSearch();if(window.AMside)AMside();renderNext()}
+document.addEventListener("amend:flip",()=>renderNext());
 document.addEventListener("click",ev=>{const b=ev.target.closest("button");if(!b||b.closest("form,#welcome"))return;const l=LS.active();
   if(b.dataset.add)LS.set((l||LS.create("My airports",[])).id,[b.dataset.add],true);
   else if(b.dataset.rm&&l)LS.set(l.id,[b.dataset.rm],false);
@@ -559,15 +562,29 @@ function mark(root,apt,cyc){const els=[...root.querySelectorAll(".it[data-id]")]
   for(const el of els)if(r.nw.has(el.dataset.id)){el.classList.add("new");const s=el.querySelector(".s");if(s)s.insertAdjacentHTML("afterbegin",pill()+" ")}
   root.querySelectorAll("details.cycle").forEach(d=>{const n=d.querySelectorAll(".it.new").length,c=d.querySelector("summary .chips");if(n&&c)c.insertAdjacentHTML("afterbegin",pill(n))});
   return{n:r.nw.size,prev:r.prev}}
+// the clock the changeover runs on: this device's, unless it's more than 2s off the server's (its Date header,
+// read once per page). a phone set 10 minutes fast must not show the new cycle as in effect at 0851Z
+let SKEW=0;const now=()=>Date.now()+SKEW;
+// nothing flips until the server has answered (or 1.5s passed without it), so a fast clock never flips early
+function sync(){const t0=Date.now();Promise.race([fetch((document.body.dataset.root||"")+"latest/meta.json",{method:"HEAD",cache:"no-store"})
+  .then(r=>{const d=Date.parse(r.headers.get("Date")||"");if(!d)return;const s=d+500-(t0+Date.now())/2;SKEW=Math.abs(s)>2000?s:0}),
+  new Promise(ok=>setTimeout(ok,1500))]).catch(()=>{}).then(()=>{flip();arm()})}
+// pages built before 0901Z carry the in-effect version of every "upcoming" bit (.flip[data-after]); swap it in
+// at the changeover, to the second, whether the page was opened before it or after
+function flip(){const f=document.body.dataset.eff;if(!f||now()<Date.parse(f))return false;
+  document.querySelectorAll(".flip[data-after]").forEach(x=>{x.innerHTML=x.dataset.after;x.removeAttribute("data-after")});
+  delete document.body.dataset.eff;tick();document.dispatchEvent(new Event("amend:flip"));return true}
+function arm(){clearTimeout(arm.t);const f=document.body.dataset.eff,ms=f?Date.parse(f)-now():NaN;
+  if(ms>0&&ms<2e9)arm.t=setTimeout(()=>{if(!flip())arm()},ms+25)}
 const fmt=ms=>{const m=Math.floor(ms/6e4),d=Math.floor(m/1440),h=Math.floor(m%1440/60),mm=m%60;return(d?d+"d ":"")+(d||h?h+"h ":"")+mm+"m"};
-function tick(){document.querySelectorAll("time[data-until]").forEach(t=>{const ms=Date.parse(t.dataset.until)-Date.now();
-  t.textContent=ms>0?"in "+fmt(ms):"now";t.title=t.getAttribute("datetime").slice(0,16).replace("T"," ")+"Z"})}
+function tick(){document.querySelectorAll("time[data-until]").forEach(t=>{const ms=Date.parse(t.dataset.until)-now();
+  t.textContent=ms>=6e4?"in "+fmt(ms):ms>0?"in under 1m":"now";t.title=t.getAttribute("datetime").slice(0,16).replace("T"," ")+"Z"})}
 const ago=ms=>{const m=Math.floor(ms/6e4),h=Math.floor(m/60),d=Math.floor(h/24);return m<2?"just now":m<60?m+"m ago":h<48?h+"h ago":d+" days ago"};
-function fresh(){document.querySelectorAll("time[data-ago]").forEach(t=>{t.textContent=ago(Date.now()-Date.parse(t.dataset.ago))});
-  const b=document.body.dataset.built,age=b?Date.now()-Date.parse(b):0,st=document.getElementById("stale");
+function fresh(){document.querySelectorAll("time[data-ago]").forEach(t=>{t.textContent=ago(now()-Date.parse(t.dataset.ago))});
+  const b=document.body.dataset.built,age=b?now()-Date.parse(b):0,st=document.getElementById("stale");
   if(age>STALE*36e5){document.body.classList.add("is-stale");if(st){st.innerHTML='<span class="ann act">Out of date</span><span>This data was last updated '+
     ago(age)+'. Amend’s daily update may have stopped, so newer FAA changes might be missing. Check the official FAA sources before you fly.</span>';st.hidden=false}}}
-function tick2(){tick();fresh()}
+function tick2(){flip();tick();fresh()}
 setInterval(tick2,15000);
 function copy(u,b){(navigator.clipboard?navigator.clipboard.writeText(u):Promise.reject()).then(()=>{if(!b)return;const t=b.textContent;
   b.textContent="Copied";setTimeout(()=>{b.textContent=t},1500)},()=>prompt("Copy this link:",u))}
@@ -578,7 +595,7 @@ function form(el,o,done,back){el.innerHTML='<form class="nf"><input maxlength="'
   i.value=o.value||"";i.focus();i.select();
   f.addEventListener("submit",ev=>{ev.preventDefault();const v=i.value.trim();if(v){shut();done(v)}});
   f.lastChild.addEventListener("click",x);i.addEventListener("keydown",ev=>{if(ev.key==="Escape"){ev.stopPropagation();x()}})}
-return{look,base,mark,pill,tick:tick2,newc:()=>rd(NC),setNewc:m=>wr(NC,m),copy,form}})();
+return{look,base,mark,pill,tick:tick2,newc:()=>rd(NC),setNewc:m=>wr(NC,m),copy,form,now,flip,sync}})();
 // the lists saved in this browser: amend.lists = [{id, name, ids}], the one in use in amend.list.on. amend.watch was
 // the single watchlist before there were lists; the first visit turns it (and its name) into the first list, and it
 // keeps every saved airport after that, so nothing still reading it comes up empty
@@ -609,7 +626,7 @@ const union=()=>[...new Set(all().flatMap(l=>l.ids))];
 function same(ids,name){const s=new Set(ids),m=all().filter(l=>l.ids.length===s.size&&l.ids.every(x=>s.has(x)));return m.find(l=>l.name===name)||m[0]||null}
 const link=l=>new URL((document.body.dataset.root||"")+"list/?w="+l.ids.join(",")+"&n="+encodeURIComponent(l.name),location.href).href;
 return{all,active,use,create,rename,set,remove,union,same,link}})();
-addEventListener("DOMContentLoaded",()=>{const R=document.body.dataset.root||"",B=document.body.dataset,el=document.getElementById("sbw");
+addEventListener("DOMContentLoaded",()=>{AM.sync();const R=document.body.dataset.root||"",B=document.body.dataset,el=document.getElementById("sbw");
 const short=(s,n)=>s.length>n?s.slice(0,n-1)+"…":s;
 // airport pages and named lists: label what's new since the last visit, then remember this visit
 document.querySelectorAll("[data-look]").forEach(x=>{const r=AM.mark(x,x.dataset.look,B.cyc);
@@ -832,14 +849,17 @@ def sidebar(root, active, meta=None, now=None, on=""):
         f'<input type="hidden" name="go" value="1"></form>')   # go: an exact ID opens that airport
     cyc = ""
     if meta:
-        upcoming, _ = status(meta, now or dt.datetime.now(dt.timezone.utc))
-        cur = meta["from_cycle"] if upcoming else meta["to_cycle"]
-        cyc = (f'<div class="sbh">FAA cycle</div><div class="sbi"><span>{nice(cur, False)}</span>'
-               f'<span class="ann ok">In effect</span></div>')
-        if upcoming:
-            cyc += (f'<div class="sbi"><span>{nice(meta["to_cycle"], False)}</span>'
-                    f'<span class="ann ifr">Upcoming</span></div>')
-        cyc += f'<div class="sbi sub fresh">Updated {built_at(now or dt.datetime.now(dt.timezone.utc))}</div>'
+        t = now or dt.datetime.now(dt.timezone.utc)
+
+        def rows(up):
+            out = (f'<div class="sbi"><span>{nice(meta["from_cycle"] if up else meta["to_cycle"], False)}</span>'
+                   f'<span class="ann ok">In effect</span></div>')
+            if up:
+                out += (f'<div class="sbi"><span>{nice(meta["to_cycle"], False)}</span>'
+                        f'<span class="ann ifr">Upcoming</span></div>')
+            return out
+        cyc = (f'<div class="sbh">FAA cycle</div>{flip(meta, t, rows)}'
+               f'<div class="sbi sub fresh">Updated {built_at(t)}</div>')
     side = (f'<nav class="sb" aria-label="Site">{logo(root)}{search}'
             f'<div class="sbh">Browse</div>{link("", "Airports", "home")}{link("list/", "Lists", "list")}'
             f'{link("guide/", "Guide", "guide")}{link("docs/", "Docs", "docs")}{link("about/", "About", "about")}'
@@ -874,7 +894,7 @@ def page(title, description, url, body, root, og_title=None, image=None, active=
 {head_links(root, url)}
 <link rel="stylesheet" href="{root}assets/style.css?v={CSS_VERSION}">{
 f'<link rel="alternate" type="application/rss+xml" title="{e(feed[1])}" href="{e(feed[0])}">' if feed else ""}{head}
-</head><body data-root="{root}" data-cyc="{e(meta['to_cycle'] if meta else '')}" data-built="{(now or dt.datetime.now(dt.timezone.utc)):%Y-%m-%dT%H:%M:%SZ}"><script src="{root}assets/app.js?v={APP_VERSION}"></script><div class="app">{sidebar(root, active, meta, now, on)}
+</head><body data-root="{root}" data-cyc="{e(meta['to_cycle'] if meta else '')}"{eff_attr(meta, now)} data-built="{(now or dt.datetime.now(dt.timezone.utc)):%Y-%m-%dT%H:%M:%SZ}"><script src="{root}assets/app.js?v={APP_VERSION}"></script><div class="app">{sidebar(root, active, meta, now, on)}
 <main class="main{' two' if two else ''}"><div class="card banner stale full" id="stale" hidden></div>{body}
 <p class="foot full">{freshness(meta, now or dt.datetime.now(dt.timezone.utc))}{'. ' if meta else ''}Not for navigation. Always use official FAA publications, NOTAMs and a proper preflight briefing.
 Amend is independent and not affiliated with the FAA. Data: FAA NASR and d-TPP.
@@ -909,22 +929,61 @@ def freshness(meta, now):
     """'FAA cycle 01 Oct 2026 (upcoming) · updated 2h ago', for every page."""
     if not meta:
         return ""
-    upcoming, _ = status(meta, now)
-    return (f'FAA cycle {nice(meta["to_cycle"])}{" (upcoming)" if upcoming else ""} · '
+    return (f'FAA cycle {nice(meta["to_cycle"])}{flip(meta, now, lambda up: " (upcoming)" if up else "")} · '
             f'updated {built_at(now)}')
 
 
 def status(meta, now):
     """(upcoming?, note) using the 0901Z changeover."""
-    eff = effective(meta["to_cycle"])
-    upcoming = bool(meta.get("upcoming")) and now < eff
-    if upcoming:
-        days = (eff.date() - now.date()).days
+    upcoming = bool(meta.get("upcoming")) and now < effective(meta["to_cycle"])
+    return upcoming, state_note(meta, now, upcoming)
+
+
+def state_note(meta, now, up):
+    """the banner under the changes: before the changeover (up) or after it."""
+    if up:
+        days = (effective(meta["to_cycle"]).date() - now.date()).days
         when = "today" if days <= 0 else "tomorrow" if days == 1 else f"in {days} days"
-        return True, (f"These changes take effect {nice(meta['to_cycle'])} 0901Z ({when}). "
-                      f"Until then, the current value applies: it's the one before the →.")
-    return False, (f"In effect since {nice(meta['to_cycle'])} 0901Z, compared to the previous cycle "
-                   f"({nice(meta['from_cycle'])}).")
+        return (f"These changes take effect {nice(meta['to_cycle'])} 0901Z ({when}). "
+                f"Until then, the current value applies: it's the one before the →.")
+    return (f"In effect since {nice(meta['to_cycle'])} 0901Z, compared to the previous cycle "
+            f"({nice(meta['from_cycle'])}).")
+
+
+# the upcoming cycle is published weeks early, so the changeover must not wait for a build: every
+# "upcoming / in effect" bit of a page carries both versions, and app.js swaps in the in-effect one at
+# 0901Z by a clock checked against the server's (see AM.flip). a page built after 0901Z has only that one
+def flip(meta, now, render):
+    """render(up) as of the build; while the upcoming cycle isn't in effect, render(False) rides along."""
+    up, _ = status(meta, now)
+    if not up:
+        return render(False)
+    return f'<span class="flip" data-after="{e(render(False))}">{render(True)}</span>'
+
+
+def eff_attr(meta, now):
+    """body data-eff: when the page's flips happen (only on pages built before the changeover)."""
+    now = now or dt.datetime.now(dt.timezone.utc)
+    if not meta or not status(meta, now)[0]:
+        return ""
+    return f' data-eff="{effective(meta["to_cycle"]):%Y-%m-%dT%H:%M:%SZ}"'
+
+
+def state_ann(up):
+    return f'<span class="ann {"ifr" if up else "ok"}">{"Not in effect yet" if up else "In effect"}</span>'
+
+
+def next_kv(meta, now):
+    """'Takes effect: in 3d 4h' before the changeover, 'Next cycle: in 27d 23h' after."""
+    eff = effective(meta["to_cycle"])
+    return flip(meta, now, lambda up: f'<div class="kv"><span>{"Takes effect" if up else "Next cycle"}</span>'
+                f'<span>{countdown(eff if up else eff + dt.timedelta(days=28))}</span></div>')
+
+
+def status_box(meta, now):
+    """the rail box on list pages: in effect or not, what applies until then, and the countdown."""
+    return (flip(meta, now, lambda up: f'{state_ann(up)}<p class="note">{e(landing_note(meta, now, up))}</p>')
+            + next_kv(meta, now))
 
 
 def airport_page(apt, info, latest, hist, meta, now, has_card=False):
@@ -957,25 +1016,28 @@ def airport_page(apt, info, latest, hist, meta, now, has_card=False):
     cycles = sorted((c for c in by_cycle if c != meta["to_cycle"]), reverse=True)
 
     icao = f' <span class="icao">{e(info["icao"])}</span>' if info.get("icao") and info.get("icao") != apt else ""
-    eyebrow = " · ".join(x for x in (loc, f"{'Upcoming ' if upcoming else ''}{nice(meta['to_cycle'])} cycle") if x)
-    body = [f'<header class="full"><div class="eyebrow">{e(eyebrow)}</div><h1>{e(apt)}{icao}</h1>'
+    eyebrow = ((e(loc) + " · " if loc else "") + flip(meta, now, lambda up: "Upcoming " if up else "")
+               + e(f"{nice(meta['to_cycle'])} cycle"))
+    body = [f'<header class="full"><div class="eyebrow">{eyebrow}</div><h1>{e(apt)}{icao}</h1>'
             + (f'<div class="aname">{e(name)}</div>' if name else "")
             + f'<div class="btns"><span class="addw"><button class="btn" id="wbtn" data-apt="{e(apt)}" hidden '
             'aria-haspopup="true" aria-expanded="false">+ Add to list</button><div class="menu card" id="wmenu" hidden></div></span>'
             '<button class="btn ghost" id="sharebtn" hidden>Share</button>'
             '<a class="btn ghost" href="#alerts">Get alerts</a></div></header>']
-    state = (f'<span class="ann {"ifr" if upcoming else "ok"}">{"Not in effect yet" if upcoming else "In effect"}</span>')
     if changes:
         seg = [f'<a class="on" href="#action" data-f="all">All<b>{len(changes)}</b></a>'] + \
               [f'<a href="#{p}" data-f="{p}">{title_}<b>{c[p]}</b></a>' for p, _, title_ in PRIORITY if c[p]]
         body.append(f'<div class="full toolbar"><nav class="seg" aria-label="Filter changes">{"".join(seg)}</nav></div>')
     col = ['<div class="card banner" id="newnote" hidden></div>']
     if changes:
-        col.append(f'<div class="card banner">{state}<span>{e(note)}</span></div>')
+        col.append('<div class="card banner">' + flip(
+            meta, now, lambda up: f'{state_ann(up)}<span>{e(state_note(meta, now, up))}</span>') + '</div>')
         col.append(grouped(changes, anchors=True, cycle=meta["to_cycle"]))
     else:
-        col.append(f'<div class="card none"><b>{"No upcoming changes" if upcoming else "Nothing changed"} at {e(apt)}</b>'
-                   f'{"On" if upcoming else "In the"} {nice(meta["to_cycle"])} {"· current data stays the same" if upcoming else "cycle"}</div>')
+        col.append('<div class="card none">' + flip(meta, now, lambda up: (
+            f'<b>{"No upcoming changes" if up else "Nothing changed"} at {e(apt)}</b>'
+            f'{"On" if up else "In the"} {nice(meta["to_cycle"])} {"· current data stays the same" if up else "cycle"}'))
+            + '</div>')
     if cycles:
         col.append('<h2 class="h2">History since Aug 2024</h2><div class="hlist">')
         for i, cyc in enumerate(cycles):
@@ -988,11 +1050,10 @@ def airport_page(apt, info, latest, hist, meta, now, has_card=False):
                f'<a href="../history/{e(apt)}.json">history</a> · built {now:%d %b %Y %H%MZ}</p>')
     body.append(f'<div class="col" data-look="{e(apt)}">{"".join(col)}</div>')
 
-    rail = [f'<div class="card box"><h3>{"Upcoming cycle" if upcoming else "This cycle"}</h3>'
+    rail = [f'<div class="card box"><h3>{flip(meta, now, lambda up: "Upcoming cycle" if up else "This cycle")}</h3>'
             f'<div class="kv"><span>Effective</span><span>{nice(meta["to_cycle"])} 0901Z</span></div>'
             f'<div class="kv"><span>Compared to</span><span>{nice(meta["from_cycle"])}</span></div>'
-            f'<div class="kv"><span>{"Takes effect" if upcoming else "Next cycle"}</span>'
-            f'<span>{countdown(next_changeover(meta, now)[0])}</span></div>'
+            f'{next_kv(meta, now)}'
             f'<div class="kv"><span>Updated</span><span class="fresh">{built_at(now)}</span></div></div>',
             alerts_box(f"{SITE_URL}{apt}/feed.xml", apt)]
     src = lambda href, text: f'<a class="hrow" href="{href}" target="_blank" rel="noopener"><span>{text}</span><span>↗</span></a>'
@@ -1041,8 +1102,11 @@ def index_page(meta, directory, latest, pages, now):
              1 if a["id"] in pages else 0,
              [lc[a["id"]]["action"], lc[a["id"]]["ifr"], lc[a["id"]]["fyi"]] if a["id"] in lc else None]
             for a in directory]
-    when, _ = next_changeover(meta, now)
-    nxt = {"to": meta["to_cycle"], "up": upcoming, "when": when.strftime("%Y-%m-%dT%H:%M:00Z")}
+    eff = effective(meta["to_cycle"])
+    iso = lambda t: t.strftime("%Y-%m-%dT%H:%M:00Z")
+    # the script flips "coming up" to "this cycle" at eff, like the rest of the page (AM.now: server-checked clock)
+    nxt = {"to": meta["to_cycle"], "up": upcoming, "eff": iso(eff), "after": iso(eff + dt.timedelta(days=28))}
+    F = lambda render: flip(meta, now, render)
     js = COMMON_JS + LANDING_JS.replace("__ROWS__", json.dumps(rows, separators=(",", ":"))).replace(
         "__NEXT__", json.dumps(nxt)) + WELCOME_JS
     step = lambda title, inner: f'<div class="step" hidden><h2>{title}</h2>{inner}</div>'
@@ -1071,15 +1135,15 @@ approach plates. Keep lists of the airports you fly to, and share one link for a
 <div class="full"><label class="search"><span aria-hidden="true">⌕</span><input id="q" placeholder="Search by ID, ICAO, name or city" aria-label="Search airports" autocomplete="off"><kbd>/</kbd></label>
 <div id="res" style="margin-top:10px"></div></div>
 <div class="col"><div id="next"></div><div id="watch"></div>
-<div><div class="sec"><span class="hdr">Most action items this cycle</span><span class="note" style="margin:0">{n:,} airports {'change' if upcoming else 'changed'}</span></div>
+<div><div class="sec"><span class="hdr">Most action items this cycle</span><span class="note" style="margin:0">{n:,} airports {F(lambda up: 'change' if up else 'changed')}</span></div>
 <div class="cards">{top}</div></div></div>
 <aside class="rail"><div class="card box"><h3>FAA cycle</h3><div class="big">{nice(meta['to_cycle'])}</div>
-<div class="note" style="margin:2px 0 10px">{'Takes effect 0901Z' if upcoming else 'In effect since 0901Z'}</div>
-<div class="kv"><span>Status</span><span class="ann {'ifr' if upcoming else 'ok'}">{'Upcoming' if upcoming else 'In effect'}</span></div>
-<div class="kv"><span>Airports {'changing' if upcoming else 'changed'}</span><span>{n:,}</span></div>
+<div class="note" style="margin:2px 0 10px">{F(lambda up: 'Takes effect 0901Z' if up else 'In effect since 0901Z')}</div>
+<div class="kv"><span>Status</span><span>{F(lambda up: f'<span class="ann {"ifr" if up else "ok"}">{"Upcoming" if up else "In effect"}</span>')}</span></div>
+<div class="kv"><span>Airports {F(lambda up: 'changing' if up else 'changed')}</span><span>{n:,}</span></div>
 <div class="kv"><span>Compared to</span><span>{nice(meta['from_cycle'])}</span></div>
-<div class="kv"><span>{'Takes effect' if upcoming else 'Next cycle'}</span><span>{countdown(when)}</span></div>
-<p class="note">{e(landing_note(meta, now, upcoming))}</p>
+{next_kv(meta, now)}
+<p class="note">{F(lambda up: e(landing_note(meta, now, up)))}</p>
 <p class="note"><a href="webcal://amend.watch/cycles.ics">Add cycle dates to your calendar</a> (<a href="cycles.ics">.ics</a>)</p></div>
 <div class="card box"><h3>What the labels mean</h3>{legend("")}</div>
 </aside>
@@ -1102,9 +1166,7 @@ def watch_page(meta, directory, now):
 <h1 id="title">Your lists</h1><div class="aname" id="count"></div><div id="ltabs"></div><div class="btns" id="actions"></div>
 <div class="manage" id="manage"></div><div id="nf" hidden></div><p class="note" id="lnote" role="status" hidden></p></header>
 <div class="col" id="list"><div class="note">Loading…</div></div>
-<aside class="rail"><div class="card box"><span class="ann {'ifr' if upcoming else 'ok'}">{'Not in effect yet' if upcoming else 'In effect'}</span>
-<p class="note">{e(landing_note(meta, now, upcoming))}</p>
-<div class="kv"><span>{'Takes effect' if upcoming else 'Next cycle'}</span><span>{countdown(next_changeover(meta, now)[0])}</span></div></div>
+<aside class="rail"><div class="card box">{status_box(meta, now)}</div>
 <div class="card box alerts" id="alerts" hidden><h3>Get alerts</h3><p class="note">Lists saved in this browser
 don't have their own alert link, but every airport does. Open an airport and use <b>Get alerts</b> on its page.</p>
 <details class="more"><summary>More options</summary><p class="foot">Using a news reader app like Feedly, Inoreader or
@@ -1141,9 +1203,7 @@ def named_watch_page(slug, wl, meta, info, latest, now, has_card):
 <div class="btns"><a class="btn" id="savenamed" href="{e('../?w=' + ','.join(wl['airports']) + '&n=' + quote(wl['name']))}" data-ids="{e(','.join(wl['airports']))}"
 data-name="{e(wl['name'])}">Save to my lists</a><button class="btn ghost" id="copynamed" hidden>Copy link</button></div></header>
 <div class="col">{''.join(blocks)}</div>
-<aside class="rail"><div class="card box"><span class="ann {'ifr' if upcoming else 'ok'}">{'Not in effect yet' if upcoming else 'In effect'}</span>
-<p class="note">{e(landing_note(meta, now, upcoming))}</p>
-<div class="kv"><span>{'Takes effect' if upcoming else 'Next cycle'}</span><span>{countdown(next_changeover(meta, now)[0])}</span></div></div>
+<aside class="rail"><div class="card box">{status_box(meta, now)}</div>
 {alerts_box(f"{SITE_URL}list/{slug}/feed.xml", wl["name"], f"list:{slug}")}
 <div class="card box"><h3>What the labels mean</h3>{legend("../../")}</div></aside><script>{NAMED_JS}</script>"""
     image = f"{SITE_URL}list/{slug}/card.png" if has_card else f"{SITE_URL}assets/card.png"
@@ -1155,6 +1215,8 @@ data-name="{e(wl['name'])}">Save to my lists</a><button class="btn ghost" id="co
 # what shipped, newest first, for /changelog/. Add a line when something people can see changes.
 UPDATES = [
     ("Sep 2026", [
+        "Pages switch from upcoming to in effect at exactly 0901Z on cycle day, even if you have the page open, "
+        "using the server's clock if your device's is off. Amend also checks the FAA for new data every 10 minutes.",
         "The sidebar looks the same on every page, search included, and each list in it folds open or shut and "
         "stays the way you left it. Alerts are explained in plain words, and the old About page is now About, "
         "Docs, Changelog, Privacy and Terms.",
