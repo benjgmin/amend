@@ -5,6 +5,9 @@ Bring history/ up to today's engine where older code wrote something no pilot sh
   - the parts of a whole ILS that came or went (glideslope, DME, markers) fold into its line,
     and so do the runway-end rows of a runway that came or went
   - holding patterns and military route points (hidden since PR #14) go
+  - FAA column names on a changed entry ("apch p prov type cd: (none) -> C") get the name and
+    code meaning from the FAA's data layout (fields.py); survey columns today's engine drops
+    ("rwy end psn date: ...") go, and an entry that was only those goes
 Everything else stays as it was, and every entry keeps its id, so nobody's "seen" list moves.
 Safe to run again (it only touches entries it can still parse as a dump):
   python -m amend.backfill
@@ -16,10 +19,11 @@ import re
 from collections import defaultdict
 
 from .diff import empty_non_atct, priority, row_priority, schedule_text
-from .english import ils, ils_part, summarize, unsupported
+from . import fields as fl
+from .english import ils, ils_part, label, summarize, unsupported
 from .history import HIST, STATE, write_index
 from .output import dump
-from .rules import HIDDEN_FILES, ID_COLS, IFR_REMARK_FILES, REMARK_FILES, is_noise_col
+from .rules import HIDDEN_FILES, ID_COLS, IFR_REMARK_FILES, IGNORE_COLS, REMARK_FILES, is_noise_col
 
 RAW = re.compile(r"^(added|removed) \(([a-z0-9_]+)\): (.*)$", re.S)
 ITEM = re.compile(r", (?=[a-z][a-z0-9 ]*=)")     # 'rwy id=18/36, rwy len=2546'
@@ -72,6 +76,68 @@ def _entry(e, fname, kind, row):
         old = kind == "removed"
         out["fields"] = [{"field": k, "old": v if old else "", "new": "" if old else v} for k, v in row.items()]
     return out
+
+
+OLD_CONTROL = re.compile(r"approach/departure control: [^;]*")
+
+
+def _at(s, phrase):
+    """where phrase starts a phrase of s ('city: A -> B' isn't in 'associated city: A -> B'), or -1."""
+    m = re.search(r"(?:^|; |: )(" + re.escape(phrase) + ")", s)
+    return m.start(1) if m else -1
+
+
+def _cut(s, phrase):
+    """s without one '; '-separated phrase."""
+    i = _at(s, phrase)
+    if i < 0:
+        return s
+    j = i + len(phrase)
+    if s.startswith("; ", j):
+        return s[:i] + s[j + 2:]
+    if s[:i].endswith("; "):
+        return s[:i - 2] + s[j:]
+    return s[:i] + s[j:]
+
+
+def fix_fields(e):
+    """a changed entry the old engine wrote with FAA column names, as today's engine words it:
+    the same FAA values, the layout's English. None if only survey bookkeeping changed."""
+    if e.get("kind") != "changed" or not e.get("fields"):
+        return e
+    src, s = e["source"], e["summary"]
+    who = "airport contact " if src == "APT_CON" else ""
+    # 'visual glide path angle: 4 -> 3.5' is how today's '... 4 -> 3.5°' starts: already done
+    leaked = [f for f in e["fields"] if _at(s, fl.generic(f["field"], f["old"], f["new"])) >= 0
+              and _at(s, fl.phrase(f["field"], src, f["old"], f["new"], who)) < 0]
+    if not leaked:
+        return e
+    noise = [f for f in leaked if is_noise_col(f["field"]) or f["field"] in IGNORE_COLS]
+    for f in noise:
+        s = _cut(s, fl.generic(f["field"], f["old"], f["new"]))
+    ctl = [f for f in leaked if f["field"] in fl.CONTROL_COLS]
+    if ctl:
+        # the old line named only the primary provider; say the whole change once, where it was
+        by = {f["field"]: f for f in e["fields"] if f["field"] in fl.CONTROL_COLS}
+        gens = sorted((fl.generic(f["field"], f["old"], f["new"]) for f in ctl), key=lambda g: _at(s, g))
+        m = OLD_CONTROL.search(s)
+        anchor = m.group(0) if m else gens.pop(0)
+        i = _at(s, anchor)
+        s = s[:i] + "\0" + s[i + len(anchor):]
+        for g in gens:
+            s = _cut(s, g)
+        s = s.replace("\0", "; ".join(fl.control_phrases(by)))
+    for f in leaked:
+        if f in noise or f in ctl:
+            continue
+        g = fl.generic(f["field"], f["old"], f["new"])
+        i = _at(s, g)
+        s = s[:i] + fl.phrase(f["field"], src, f["old"], f["new"], who) + s[i + len(g):]
+    s = s.strip().rstrip(";").strip()
+    if not s or s.endswith(":"):      # nothing but a 'runway 16:' left
+        return None
+    kept = [f for f in e["fields"] if f not in noise]
+    return {**e, "summary": s, "fields": kept}
 
 
 def _cycle(entries):
@@ -129,6 +195,8 @@ def _cycle(entries):
         if id(e) not in out and parsed[id(e)]:
             kind, f, r = parsed[id(e)]
             new = _entry(e, f + ".csv", kind, r)
+        if new is not None:
+            new = fix_fields(new)
         if new is not None and new["summary"] not in seen:
             seen.add(new["summary"])
             result.append(new)
@@ -145,12 +213,22 @@ def rewrite(h):
     return entries
 
 
+def leaks(e):
+    """FAA column names a changed entry still shows ('far part 77 code: PIR -> C')."""
+    return [f["field"] for f in e.get("fields") or []
+            if e.get("kind") == "changed" and fl.name(f["field"], e["source"]) != label(f["field"])
+            and _at(e["summary"], fl.generic(f["field"], f["old"], f["new"])) >= 0]
+
+
 def count(paths):
-    n = 0
+    """(raw dumps, FAA column names shown) across history files."""
+    n = k = 0
     for p in paths:
         with open(p, encoding="utf-8") as f:
-            n += sum(bool(RAW.match(e["summary"])) for e in json.load(f)["entries"])
-    return n
+            for e in json.load(f)["entries"]:
+                n += bool(RAW.match(e["summary"]))
+                k += bool(leaks(e))
+    return n, k
 
 
 def main():
@@ -175,8 +253,9 @@ def main():
     with open(STATE, encoding="utf-8") as f:
         write_index(json.load(f))
     left = [p for p in paths if os.path.exists(p)]
-    print(f"raw dumps in history: {before} -> {count(left)}; "
-          f"{changed} airport files rewritten, {removed} left empty and removed")
+    after = count(left)
+    print(f"raw dumps in history: {before[0]} -> {after[0]}; entries showing FAA column names: "
+          f"{before[1]} -> {after[1]}; {changed} airport files rewritten, {removed} left empty and removed")
 
 
 if __name__ == "__main__":

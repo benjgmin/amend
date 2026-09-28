@@ -1,6 +1,7 @@
 """Turning raw change records into plain-English summaries."""
 import re
 
+from . import fields as fl
 from .rules import DECLARED_DISTANCES, NAME_COLS, NAV_NAMES, REMARK_FILES, base, is_helipad
 
 
@@ -25,9 +26,7 @@ def field_phrases(fields, source, ctx=None):
     if "AIRSPACE_HRS" in by:
         f = by["AIRSPACE_HRS"]
         phrases.append(f"airspace: {f['old']} -> {f['new']}")   # keep FAA casing: 0700Z, CLASS D
-    prov = [by[k] for k in ("APCH_P_PROVIDER", "DEP_P_PROVIDER") if k in by]
-    if prov:
-        phrases.append(f"approach/departure control: {prov[0]['old']} -> {prov[0]['new']}")
+    phrases += fl.control_phrases(by)
     if "PHONE_NO" in by:
         what = ("AWOS/ASOS " if base(source).startswith("AWOS")
                 else "airport " if base(source).startswith("APT") else "")
@@ -91,16 +90,21 @@ def field_phrases(fields, source, ctx=None):
         f = by["FACILITY"]
         phrases.append(f"frequency provided by: {f['old']} -> {f['new']}")
 
-    handled = {"TWR_HRS", "TOWER_HRS", "AIRSPACE_HRS", "APCH_P_PROVIDER", "DEP_P_PROVIDER",
-               "PHONE_NO", "NAV_TYPE", "FREQ", "FACILITY", "FAC_NAME", "LNDG_FEE_FLAG", "FREQ_USE",
-               "RWY_MARKING_COND", "COND", "TACAN_DME_STATUS"} | obst | set(DECLARED_DISTANCES)
+    handled = {"TWR_HRS", "TOWER_HRS", "AIRSPACE_HRS", "PHONE_NO", "NAV_TYPE", "FREQ", "FACILITY",
+               "FAC_NAME", "LNDG_FEE_FLAG", "FREQ_USE", "RWY_MARKING_COND", "COND",
+               "TACAN_DME_STATUS"} | obst | set(DECLARED_DISTANCES) | fl.CONTROL_COLS
+    # whose column it is: 'airport manager address', 'frequency 124.5 sector'
+    who = (f"airport {ctx.get('TITLE', 'contact').lower()} " if base(source) == "APT_CON"
+           else f"frequency {ctx['FREQ']} " if base(source) == "FRQ" and ctx.get("FREQ") else "")
     for k, f in by.items():
         if k in handled:
             continue
         if k in NAME_COLS:
             phrases.append(f"{name_label(k, source, ctx)}: {f['old'].title()} -> {f['new'].title()}")
         else:
-            phrases.append(f"{label(k)}: {f['old'] or '(none)'} -> {f['new'] or '(none)'}")
+            # every column has the FAA layout's English (fields.py); one that doesn't is
+            # flagged by summarize() and never reaches act
+            phrases.append(fl.phrase(k, source, f["old"], f["new"], who))
     return phrases
 
 
@@ -227,6 +231,8 @@ def summarize(rec, remarks):
         return ROW_SUMMARIES[b](kind, row)
 
     if kind == "changed":
+        if any(not fl.known(f["field"], rec["source"]) for f in rec["fields"]):
+            rec["no_template"] = True     # a column the FAA layouts we read don't name
         where = ""
         if ctx.get("RWY_END_ID"):
             where = f"runway {ctx['RWY_END_ID']}: "
@@ -345,7 +351,7 @@ def atc_facility(kind, row):
                     else "new ATC facility entry, non-towered (it names no tower or approach control)")
         return (f"approach/departure control no longer listed (was {ctl})" if ctl
                 else "ATC facility entry removed, non-towered (it named no tower or approach control)")
-    what = row.get("FACILITY_TYPE", "") or "tower"
+    what = fl.say("FACILITY_TYPE", "ATC_BASE", row.get("FACILITY_TYPE", "")) if row.get("FACILITY_TYPE") else "tower"
     bits = [b for b in (row.get("TWR_CALL", "") and f"call {row['TWR_CALL']}",
                         row.get("TWR_HRS", "") and f"hours {row['TWR_HRS']}",
                         ctl and f"approach {ctl}") if b]
@@ -384,7 +390,7 @@ def airspace_row(kind, row):
 
 
 def radar(kind, row):
-    t = row.get("RADAR_TYPE", "") or "radar"
+    t = fl.say("RADAR_TYPE", "RDR", row.get("RADAR_TYPE", "")) if row.get("RADAR_TYPE") else "radar"
     hrs = row.get("RADAR_HRS", "")
     if kind == "added":
         return f"new radar: {t}{', hours ' + hrs if hrs else ''}"
@@ -451,10 +457,15 @@ def _tokens(text, split=False):
 def record_values(rec):
     """every FAA value a record carries: its row, context, changed fields, folded rows."""
     vals = []
+    src = rec.get("source", "")
     for d in [rec.get("row") or {}, rec.get("context") or {}] + [x["row"] for x in rec.get("folded", [])]:
         vals += [str(v) for v in d.values()]
+        # a code's meaning from the FAA layout: '4-light PAPI on left side of runway (P4L)'
+        vals += [fl.say(k, src, str(v)) for k, v in d.items() if fl.known(k, src)]
+        vals += [fl.name(k, src) for k in d if fl.known(k, src)]
     for f in rec.get("fields", []):
         vals += [f["old"], f["new"], label(f["field"])]   # 'address1', 'far part 77 code'
+        vals += fl.values(f["field"], src, f["old"], f["new"])
     for names in (rec.get("procedures") or {}).values():
         vals += names
     return vals + [str(v) for v in rec.get("values", [])]
@@ -484,9 +495,11 @@ def unsupported(summary, values):
 def plain_values(rec):
     """the FAA values themselves, for a record whose summary didn't check out."""
     b = base(rec["source"])
+    src = rec["source"]
     if rec.get("fields"):
-        body = "; ".join(f"{label(f['field'])}: {f['old'] or 'none'} -> {f['new'] or 'none'}"
+        body = "; ".join(f"{fl.name(f['field'], src)}: {f['old'] or 'none'} -> {f['new'] or 'none'}"
                          for f in rec["fields"])
     else:
-        body = ", ".join(f"{label(k)} {v}" for k, v in (rec.get("row") or {}).items() if not k.startswith("_"))
+        body = ", ".join(f"{fl.name(k, src)} {v}" for k, v in (rec.get("row") or {}).items()
+                         if not k.startswith("_"))
     return f"{b.lower()} {rec['kind']}: {body}"
