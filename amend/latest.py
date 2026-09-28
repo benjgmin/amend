@@ -5,7 +5,7 @@ import os
 import shutil
 
 from . import SCHEMA_VERSION
-from . import watchlists, web
+from . import audit, watchlists, web
 from .airports import directory
 from .cycles import CYCLE, get_airspace_pair, get_cycle, get_dtpp, in_effect, zip_path
 from .freshness import fingerprint
@@ -36,6 +36,12 @@ def build(llm=True):
     out = os.path.join(SITE, "latest")
     result = run(zip_path(old), zip_path(new), None, dtpp, llm and bool(os.environ.get("ANTHROPIC_API_KEY")),
                  airspace=airspace)
+    lists = watchlists.load_all()
+    report = audit.audit(result, HISTORY)
+    audit.write_packet(audit.packet(result, report, lists))
+    audit.report_to_actions(report, f"{old} -> {new}")
+    if report["errors"]:     # keep the last good site up; the failed run is the alarm
+        raise SystemExit(f"audit failed for {old} -> {new}, not publishing (see audit/{new}.json)")
     n = write_diff(result, out)
     dump({"schema_version": SCHEMA_VERSION, "from_cycle": old.isoformat(), "to_cycle": new.isoformat(),
           "upcoming": upcoming, "includes_charts": bool(dtpp),
@@ -50,7 +56,6 @@ def build(llm=True):
                         ignore=shutil.ignore_patterns("cycles.json"))
     meta = {"from_cycle": old.isoformat(), "to_cycle": new.isoformat(), "upcoming": upcoming,
             "changed_airports": n}
-    lists = watchlists.load_all()
     pages = web.build(SITE, meta, apts, result["airports"], HISTORY, watchlists=lists)
     # what this build was made from, so the scheduled check can tell when a merge isn't live yet
     dump({"inputs": fingerprint(), "commit": os.environ.get("GITHUB_SHA", ""),

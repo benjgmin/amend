@@ -1,0 +1,58 @@
+name: archive raw FAA files
+
+# keeps each cycle's raw FAA files, unchanged, as a GitHub Release tagged faa-<cycle> (see
+# amend/archive.py). separate from "update FAA changes": it never touches history/ or the site,
+# and a failure here can't block a deploy. published releases are never changed; a mismatch
+# fails the run instead of overwriting anything
+
+on:
+  schedule:
+    # weekly catches every 28-day cycle a few times: once posted ahead, again once in effect
+    - cron: "41 6 * * 2"
+  workflow_dispatch:
+    inputs:
+      backfill:
+        description: "every cycle since Aug 2024 (the first run)"
+        type: boolean
+        default: false
+      cycles:
+        description: "or only these cycles, e.g. 2026-07-09 2026-08-06 (blank: in effect + next)"
+        type: string
+        default: ""
+      list_only:
+        description: "only show what the FAA still serves and how big; archive nothing"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write              # to create releases and upload assets
+
+concurrency:
+  group: archive
+  cancel-in-progress: false
+
+jobs:
+  archive:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: tests
+        run: python -m unittest tests.test_archive
+
+      # inputs go through env, never pasted into the script; the command rejects anything that
+      # isn't a cycle date
+      - name: archive
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BACKFILL: ${{ inputs.backfill && '--backfill' || '' }}
+          LIST: ${{ inputs.list_only && '--list' || '' }}
+          CYCLES: ${{ inputs.cycles }}
+        run: |
+          set -o pipefail
+          python -m amend archive $BACKFILL $LIST $CYCLES | tee -a "$GITHUB_STEP_SUMMARY"
