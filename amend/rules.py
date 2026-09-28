@@ -84,6 +84,26 @@ REWORD_ALIASES = {"EXCP": "EXC", "EXCEPT": "EXC", "CLOSED": "CLSD", "UNMONITORED
 # ... and phrases, before the words are split: AKN "APPROACH NOT AUTHORIZED" = "APCH NA"
 REWORD_PHRASES = {"NOT AUTHORIZED": "NA", "NOT AUTH": "NA"}
 
+# phone numbers in remark text. a remark whose only edit is a phone number (A34 "PPR ... - AMGR
+# OR 575-644-2549" -> "... - AMGR", SYR dropping "DSN 243-2399", KWA "DSN 480-2131" -> "DSN
+# 315-480-2131") is fyi, like a phone change in APT_CON: what you need to do there didn't change.
+# forms seen: 559-903-5372, (559) 896-1001, C940-676-2180/6474, D576-9755, DSN 736-2180/6474
+# a bare 736-1843 only counts after DSN, C or D: "500-1500 FT" is a height band, not a phone
+PHONE = (r"(?:(?:\bDSN\s+|\b[CD]-?)?(?:\(\d{3}\)\s?\d{3}-\d{4}|(?<!\d)(?<!\d-)\d{3}-\d{3}-\d{4})"
+         r"|(?:\bDSN\s+|\b[CD]-?)\d{3}-\d{4})(?:/\d{4})*\b")
+
+# ... and once the numbers are out, these are the only words that edit may add or drop. any other
+# word is news: HSA "FOR CD CTC HOUSTON ARTCC" gaining "CTC GULFPORT APCH AT 228-265-6151" is a
+# new facility to call for a clearance, not a new number
+PHONE_FILLER = {"OR", "AT", "CALL", "CTC", "CONTACT", "PH", "PHONE", "TEL", "AND", "TO", "MAKE",
+                "REQ", "REQUEST", "DURING", "DURG", "HOURS", "HRS", "THE"}
+
+# empty and an explicit "none" say the same thing: the FAA filling in a blank (airframe repair
+# "" -> NONE at dozens of fields, 36H, 3FL, D99 in 2026-10-01) isn't a change. on a yes/no
+# column (*_FLAG) a blank that becomes N reads "none -> no" and is the same kind of fill-in.
+BLANK_VALUES = {"", "NONE"}
+BLANK_FLAG_VALUES = {"", "NONE", "N"}
+
 # a whole row appearing or disappearing in these files is act even though no column name or
 # value says so: a runway, a decommissioned navaid, approach radar. other files' rows carry
 # column names like NAV_ID or RADAR_HRS on every row, so column words only rank "changed" rows.
@@ -179,6 +199,22 @@ def is_noise_col(c):
             c.endswith(("_DATE", "_SOURCE", "_SRC", "_METHOD_CODE")) or
             c in {"LEGACY_ELEMENT_NUMBER", "REF_COL_SEQ_NO", "SEQ", "ALT_CODE", "ELEV", "DME_SSV",
                   "SITE_ELEVATION", "INSPECTOR_CODE", "NASP_CODE"})
+
+
+def blank_fill(c, old, new):
+    """true if old -> new is only a blank written as NONE (or N on a *_FLAG column)."""
+    blanks = BLANK_FLAG_VALUES if c.upper().endswith("_FLAG") else BLANK_VALUES
+    return (old or "").strip().upper() in blanks and (new or "").strip().upper() in blanks
+
+
+def rwy_id(v):
+    """'9/27' -> '09/27', '9' -> '09', '9L/27R' -> '09L/27R'. every runway in NASR is written
+    with two digits except four new ones in 2026-10-01 (58KY, IL97, MN46, 39MN '9/27'); unpadded,
+    58KY's resurveyed 09/27 read as a new runway."""
+    return re.sub(r"(?<![\dA-Z])(\d)(?=[LRCW]?(?:/|$))", r"0\1", v or "")
+
+
+RWY_ID_COLS = ("RWY_ID", "RWY_END_ID")
 
 
 def is_hours_col(c):
