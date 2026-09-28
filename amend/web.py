@@ -20,6 +20,21 @@ from . import feeds
 
 SITE_URL = "https://amend.watch/"
 REPO_URL = "https://github.com/benjgmin/amend"
+# the status page and the docs have their own names (amend/subsite.py). They're still built here, at site/status/
+# and site/docs/; a Cloudflare proxy (cloudflare/_worker.js) serves them under these names. SUBDOMAINS turns the
+# names on for every link and forwards the old pages: keep it False until both names open in a browser
+SUBDOMAINS = False
+SUB_URLS = {"status": "https://status.amend.watch/", "docs": "https://docs.amend.watch/"}
+
+
+def sub_url(kind, root=None):
+    """where links to the status page or the docs go: their own name once SUBDOMAINS is on, else the page here
+    (relative to root, or in full with no root)."""
+    if SUBDOMAINS:
+        return SUB_URLS[kind]
+    return f"{SITE_URL if root is None else root}{kind}/"
+
+
 REPORT_URL = REPO_URL + "/issues/new"    # "report a problem" until there's an email address
 # the FAA's own form for a mistake in its data (charts, procedures, airport and navaid data). Amend can't fix those
 FAA_INQUIRY = "https://www.faa.gov/air_traffic/flight_info/aeronav/aero_data/Aeronautical_Inquiries/"
@@ -895,10 +910,10 @@ def sidebar(root, active, meta=None, now=None, on=""):
                '<script>AM.tick()</script>')   # "1h ago" from the first paint, so it doesn't flicker between pages
     side = (f'<nav class="sb" aria-label="Site">{logo(root)}{search}'
             f'<div class="sbh">Browse</div>{link("", "Airports", "home")}{link("list/", "Lists", "list")}'
-            f'{link("guide/", "Guide", "guide")}{link("docs/", "Docs", "docs")}{link("about/", "About", "about")}'
+            f'{link("guide/", "Guide", "guide")}<a class="sbi{" on" if active == "docs" else ""}" href="{sub_url("docs", root)}">Docs</a>{link("about/", "About", "about")}'
             f'<div id="sbw" data-on="{e(on)}"></div><script>SB.side()</script>{cyc}'
             f'<div class="sbfoot">Not for navigation. Independent, not affiliated with the FAA.<br>'
-            f'<a href="{root}changelog/">Changelog</a> · <a href="{root}status/">Status</a> · '
+            f'<a href="{root}changelog/">Changelog</a> · <a href="{sub_url("status", root)}">Status</a> · '
             f'<a href="{root}privacy/">Privacy</a> · <a href="{root}terms/">Terms</a><br>'
             f'<a href="{REPORT_URL}">Report a problem</a> · '
             f'<a href="{REPO_URL}">Source</a></div></nav>')
@@ -940,7 +955,7 @@ f'<link rel="alternate" type="application/rss+xml" title="{e(feed[1])}" href="{e
 <main class="main{' two' if two else ''}"><div class="card banner stale full" id="stale" hidden></div>{body}
 <p class="foot full">{freshness(meta, now or dt.datetime.now(dt.timezone.utc))}{'. ' if meta else ''}Not for navigation. Always use official FAA publications, NOTAMs and a proper preflight briefing.
 Amend is independent and not affiliated with the FAA. Data: FAA NASR and d-TPP.
-<a href="{root}docs/">How it works</a> · <a href="{root}status/">Status</a> · <a href="{root}changelog/">Changelog</a> · <a href="{root}privacy/">Privacy</a> · <a href="{root}terms/">Terms</a> · <a href="{REPORT_URL}">Report a problem</a> · <a href="{REPO_URL}">Source</a></p></main></div></body></html>"""
+<a href="{sub_url('docs', root)}">How it works</a> · <a href="{sub_url('status', root)}">Status</a> · <a href="{root}changelog/">Changelog</a> · <a href="{root}privacy/">Privacy</a> · <a href="{root}terms/">Terms</a> · <a href="{REPORT_URL}">Report a problem</a> · <a href="{REPO_URL}">Source</a></p></main></div></body></html>"""
 
 
 def effective(cycle):
@@ -1256,6 +1271,9 @@ data-name="{e(wl['name'])}">Save to my lists</a><button class="btn ghost" id="co
 # what shipped, newest first, for /changelog/. Add a line when something people can see changes.
 UPDATES = [
     ("Sep 2026", [
+        "The status page is shorter: whether Amend is up to date, one line for each part of the service, the "
+        "last 30 runs at a glance and any problems, with every step of the latest build folded underneath. The "
+        "docs now walk through the whole process, from the FAA posting a cycle to a change on your screen.",
         "The status page's list of contractions with no verified meaning no longer counts words that aren't "
         "contractions: addresses, four-letter airport codes like KSPS, center codes like ZOA, names like DON "
         "and LEE, and plain words like CAR and TOW. The rules were checked against every remark in the FAA's "
@@ -1275,7 +1293,7 @@ UPDATES = [
         "FOD in remarks now reads \"foreign object debris\", the meaning in the FAA's contractions list, "
         "since remarks use it for loose material on the pavement. The translator is also told to write in "
         "normal capitalization instead of leaving plain words in capitals.",
-        "A <a href=\"../status/\">status page</a> shows whether Amend is current and every step of each recent "
+        f"A <a href=\"{sub_url('status', '../')}\">status page</a> shows whether Amend is current and every step of each recent "
         "run: the FAA files it downloaded, the checks it ran and whether it was published.",
         "Remark translations are held to a stricter check. They have to keep every code (like 100LL or "
         "D523-4244), every + or - on a height, every ++ after a time and the order of the numbers, and they "
@@ -1309,7 +1327,9 @@ UPDATES = [
 POLICY_DATE = "28 Sep 2026"   # when privacy/ or terms/ last changed in substance; bump it with them
 
 # the about page used to hold everything. Old links to its sections go on to where each one lives now
-ABOUT_MOVED = {"how": "../docs/#how", "limits": "../docs/#limits", "privacy": "../privacy/", "updates": "../changelog/"}
+def about_moved():
+    return {"how": sub_url("docs", "../") + "#how", "limits": sub_url("docs", "../") + "#limits",
+            "privacy": "../privacy/", "updates": "../changelog/"}
 
 
 def doc_page(slug, title, lede, sections, description, meta, now, extra=""):
@@ -1344,7 +1364,7 @@ def about_page(meta, latest, screenshots, now, example="VRB"):
         "<p>If Amend matches the FAA and it's the FAA's data that looks wrong, like a frequency or a chart that "
         f'doesn\'t match the real airport, Amend can\'t fix it. Tell the FAA through its <a href="{FAA_INQUIRY}">'
         "Aeronautical Inquiries</a> page.</p>"))
-    moved = json.dumps(ABOUT_MOVED)
+    moved = json.dumps(about_moved())
     body = f"""<script>(()=>{{const m={moved},h=location.hash.slice(1);if(m[h])location.replace(m[h])}})()</script>
 <header class="full" style="padding:12px 0 4px"><h1 class="hero">Know what changed at your airport.</h1>
 <p class="lede">Every 28 days the FAA changes tower hours, frequencies, runways, navaids and approach
@@ -1362,9 +1382,9 @@ before it takes effect.</p>
 </div></div>
 <div class="full"><h2 class="h2" style="margin-bottom:12px">Read more</h2><div class="feats">
 {go("../guide/", "Guide", "What ACT, IFR and FYI mean, how to read a change, and how FAA cycles work.")}
-{go("../docs/", "Docs", "How Amend works, where the data comes from, what it doesn't cover, and the JSON files behind it.")}
+{go(sub_url("docs", "../"), "Docs", "How Amend works, where the data comes from, what it doesn't cover, and the JSON files behind it.")}
 {go("../changelog/", "Changelog", "What's new on Amend, newest first.")}
-{go("../status/", "Status", "Whether Amend is current, and every check the latest runs went through.")}
+{go(sub_url("status", "../"), "Status", "Whether Amend is up to date, and how its latest runs went.")}
 {go("../privacy/", "Privacy", "What Amend stores (almost nothing) and who else sees a visit.")}
 {go("../terms/", "Terms", "The rules for using Amend, starting with: not for navigation.")}
 </div></div>
@@ -1372,81 +1392,6 @@ before it takes effect.</p>
     return page("About Amend · what changed at your airport", "What Amend is, what you get, and where to read "
                 "more.", f"{SITE_URL}about/", body, "../",
                 image=f"{SITE_URL}assets/card.png", active="about", meta=meta, now=now)
-
-
-def docs_page(meta, now):
-    """site/docs/: how it works, the sources, what it doesn't cover, and the public JSON, for readers who want the
-    detail. #how and #limits used to be on the about page."""
-    sections = [
-        ("how", "How it works", (
-            "<p>Amend checks the FAA for new data every 3 hours. When a new cycle is posted, it compares every US "
-            "airport with the cycle before, sorts each change with fixed rules and publishes the result here. AI only "
-            "rewords remarks; everything else is plain code you can read on GitHub.</p><ul>"
-            "<li><b>Noise:</b> survey dates, pavement codes, coordinate rounding, re-digitized airspace boundaries "
-            "and duplicate rows are hidden. One real event, like a renumbered runway or a new STAR version, is one "
-            "line instead of dozens of rows.</li>"
-            '<li><b>Priority:</b> ACT, IFR and FYI come from fixed rules, not AI. <a href="../guide/">The guide</a> '
-            "explains each one.</li>"
-            "<li><b>Remarks:</b> AI turns FAA contractions into plain English using a fixed glossary. Code checks "
-            "every translation, and one that adds, drops or changes a number or gets a known contraction wrong is "
-            "thrown out so the FAA text shows instead. The original is always one tap away.</li>"
-            "<li><b>Tests:</b> regression tests built from real cases in FAA data run before every update. If one "
-            "fails, nothing is published and the last good version stays up.</li></ul>"
-            '<p>The <a href="../status/">status page</a> shows every step of every recent run: the FAA files it '
-            "downloaded and their checksums, the rows it read, what it found, every check and whether it was "
-            "published.</p>")),
-        ("sources", "Data sources", (
-            "<ul>"
-            f'<li><b><a href="{NASR_PAGE.format(cycle="")}">NASR 28-day subscription</a>:</b> airports, runways, '
-            "frequencies, tower hours, navaids and the Chart Supplement remarks. Airport history here goes back to "
-            "Aug 2024.</li>"
-            f'<li><b><a href="{DTPP_SEARCH}">d-TPP</a>:</b> the chart index for approaches, STARs and departures, '
-            "with a link to each plate.</li>"
-            "<li><b>FAA class airspace shapefiles:</b> Class B, C, D and E surface area floors, ceilings and "
-            "boundaries.</li></ul>"
-            "<p>The FAA posts each cycle's files before they take effect (the d-TPP page says 20 days ahead), which "
-            "is how Amend can show a change before it happens.</p>"
-            "<p>Every change links the FAA source it came from, so you can check it against the original in one "
-            "tap.</p>")),
-        ("limits", "What it doesn't cover", (
-            "<ul><li><b>NOTAMs.</b> Temporary changes are published as NOTAMs and never show up here.</li>"
-            "<li><b>Corrections between cycles.</b> The FAA sometimes fixes data mid-cycle, usually by NOTAM. Amend "
-            "only reads the 28-day files, so a fix like that shows up here in a later cycle, if at all.</li>"
-            "<li><b>Chart Supplement pages that aren't in the FAA data files</b>, like its special notices. Airport "
-            "remarks are covered.</li>"
-            "<li><b>Class E airspace above the surface</b> (E5). Surface areas are covered.</li>"
-            "<li><b>Chart history before fall 2026</b>, because the FAA doesn't keep old chart indexes online. "
-            "Airport data goes back to Aug 2024.</li>"
-            "<li><b>A plain-English version of every remark.</b> When a translation doesn't pass the checks, you "
-            "get the FAA text instead.</li>"
-            "<li><b>What the FAA hasn't posted yet.</b> A new cycle can take a few hours to show up here after the "
-            "FAA posts it.</li></ul>"
-            "<p>Amend doesn't publish an accuracy percentage. It would need a large set of changes checked by hand "
-            "against the FAA source, and that set is still being built.</p>")),
-        ("api", "Data files", (
-            "<p>Everything on the site is built from plain JSON files anyone can download. No key and no sign-up, "
-            "and you're welcome to build on them.</p><ul>"
-            "<li><code>latest/meta.json</code>: which two cycles are being compared, and whether the newer one is in "
-            "effect yet.</li>"
-            "<li><code>latest/index.json</code>: every airport with changes, with its ACT, IFR and FYI counts.</li>"
-            "<li><code>latest/&lt;ID&gt;.json</code>: every change at one airport. A 404 means nothing changed "
-            "there.</li>"
-            "<li><code>history/&lt;ID&gt;.json</code>: earlier cycles at one airport.</li>"
-            "<li><code>airports.json</code>: every airport ID with its name and location.</li>"
-            "<li><code>&lt;ID&gt;/feed.xml</code> and <code>list/&lt;name&gt;/feed.xml</code>: the alert feeds "
-            "(RSS), and <code>cycles.ics</code>, the cycle dates as a calendar.</li></ul>"
-            f'<p>The fields are described in <a href="{REPO_URL}/blob/master/SCHEMA.md">SCHEMA.md</a>. '
-            "Airport IDs are FAA IDs (VRB, not KVRB) and dates are the FAA effective date. The data carries the same "
-            'warning as the site: <a href="../terms/">not for navigation</a>.</p>')),
-        ("open", "Open source", (
-            f'<p>The engine, the rules and this site are <a href="{REPO_URL}">on GitHub</a> under the MIT license. '
-            f'Found something wrong? <a href="{REPORT_URL}">Open an issue</a> with the airport, the cycle and what '
-            "the FAA source says. If the FAA's own data is wrong, only the FAA can fix it: "
-            f'use its <a href="{FAA_INQUIRY}">Aeronautical Inquiries</a> page.</p>')),
-    ]
-    return doc_page("docs", "Docs", "How Amend works, where the data comes from, what it doesn't cover, and the "
-                    "files behind it.", sections, "How Amend compares FAA cycles, its data sources, what it doesn't "
-                    "cover, and its public JSON files.", meta, now)
 
 
 def changelog_page(meta, now):
@@ -1748,12 +1693,12 @@ def build(site, meta, directory, latest, history_dir, now=None, watchlists=None,
     example = next((a for a in ranked if info.get(a, {}).get("icao")), ranked[0] if ranked else "VRB")
     with open(os.path.join(about, "index.html"), "w", encoding="utf-8") as f:
         f.write(about_page(meta, latest, shots, now, example))
-    for slug, make in (("guide", guide_page), ("docs", docs_page), ("changelog", changelog_page),
+    from . import docspage, statuspage   # they import web, so not at the top
+    for slug, make in (("guide", guide_page), ("docs", docspage.page), ("changelog", changelog_page),
                        ("privacy", privacy_page), ("terms", terms_page)):
         os.makedirs(os.path.join(site, slug), exist_ok=True)
         with open(os.path.join(site, slug, "index.html"), "w", encoding="utf-8") as f:
             f.write(make(meta, now))
-    from . import statuspage   # imports web, so not at the top
     statuspage.build(site, meta, now)
     with open(os.path.join(site, "404.html"), "w", encoding="utf-8") as f:
         f.write(not_found_page(meta, now))

@@ -116,7 +116,10 @@ engine that produced a given history entry.
   works.
 - **Secrets:** `ANTHROPIC_API_KEY` for remark translation (`update.yml:78-85`). Without it, remarks
   show as raw FAA text (`latest.py:37`, `remarks.py:99-101`).
-- **Hosting:** GitHub Pages, custom domain amend.watch.
+- **Hosting:** GitHub Pages, custom domain amend.watch. The status page and the docs are built with the site
+  (`amend/statuspage.py`, `amend/docspage.py`, layout in `amend/subsite.py`) and served at status.amend.watch
+  and docs.amend.watch by a Cloudflare Pages proxy (`cloudflare/_worker.js`, setup in `cloudflare/README.txt`).
+  `web.SUBDOMAINS` turns the names on for every link.
 - **Concurrency:** one deploy at a time (`update.yml:24-26`).
 - **Pull requests:** `.github/workflows/tests.yml` runs the unit tests on every PR. It has read-only
   permissions, no secrets and never downloads FAA data or deploys.
