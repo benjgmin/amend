@@ -1256,6 +1256,10 @@ data-name="{e(wl['name'])}">Save to my lists</a><button class="btn ghost" id="co
 # what shipped, newest first, for /changelog/. Add a line when something people can see changes.
 UPDATES = [
     ("Sep 2026", [
+        "A ++ after a time in a remark now reads \"(one hour earlier during daylight saving time)\". The FAA's "
+        "data writes ++ where the Chart Supplement prints ‡, and the Chart Supplement's legend says those "
+        "hours are one hour earlier during daylight saving time. Translations may also change a word's form "
+        "to read as English: \"WHEN TWR HR EXTN\" can read \"when tower hours are extended\".",
         "Moving between pages fades instead of flashing, and pages you point at load before you click. Get "
         "alerts on an airport page opens right under the button. A list's name in the sidebar opens that list, and "
         "the sidebar always has open the list you're looking at. Alerts no longer point at an outside email service: "

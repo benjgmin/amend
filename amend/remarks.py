@@ -32,9 +32,11 @@ STATS = {}
 PROMPT = (
     "Decode each FAA airport/ATC remark below into plain English a student pilot can read. Stay close "
     "to the FAA text: keep its order, spell out each contraction with its listed meaning, and add "
-    "nothing. A short phrase is fine; it doesn't have to be a full sentence. Write it in normal "
-    "sentence case: the FAA writes everything in capitals, but only codes, identifiers and the "
-    "contractions you copy stay in capitals.\n"
+    "nothing. A short phrase is fine; it doesn't have to be a full sentence, but it has to read as "
+    "English: a listed meaning may change its form to fit, and small grammar words (is, are, the, on) "
+    "may be added: 'WHEN TWR HR EXTN' is 'when tower hours are extended', not 'when tower hour "
+    "extension'. Write it in normal sentence case: the FAA writes everything in capitals, but only "
+    "codes, identifiers and the contractions you copy stay in capitals.\n"
     "Rules:\n"
     "- Expand a contraction ONLY to the meaning listed for it under Meanings. Copy every other "
     "contraction, abbreviation, code and name exactly as written, even if you think you know "
@@ -51,7 +53,7 @@ PROMPT = (
     "- Copy codes of letters and digits exactly, with their letters: D523-4244, C850-283-4244, "
     "100LL, H1, 24U, BAK-12B.\n"
     "- Keep a + or - in front of a height: '+22 FT FENCE' is '+22 foot fence', never '22-foot fence', "
-    "'plus 22' or '22 feet high'. Keep '++' after a time exactly as written.\n"
+    "'plus 22' or '22 feet high'. Keep '++' after a time exactly as written; it's decoded for you.\n"
     "- FT is 'foot' only right before the thing it measures ('+22 foot fence'); anywhere else it's "
     "'feet': 'BLW 3200 FT' is 'below 3200 feet', '1225 FT DIST' is '1225 feet distance'.\n"
     "- Keep OR as 'or'. Keep every regulatory reference (Part 121, Part 135, Part 380, FAR, etc.) "
@@ -100,7 +102,7 @@ def translate_remarks(texts, use_llm):
                  llm_errors=0, llm_error=None, llm_stopped=False, unanswered=0, unknown_terms={})
     cache = _load(CACHE_FILE, {})
     # re-check old entries too, so tightening faithful() retires translations made before it
-    kept = {t: o for t, o in cache.items() if faithful(t, o)}
+    kept = {t: readable(t, o) for t, o in cache.items() if faithful(t, o)}
     STATS["cache_retired"] = len(cache) - len(kept)
     cache = kept
     STATS["unknown_terms"] = dict(Counter(t for raw in {x for x in texts if x} for t in set(unverified(raw))).most_common())
@@ -143,7 +145,7 @@ def translate_remarks(texts, use_llm):
             print("  warning: llm returned the wrong shape, skipping batch")
             continue
         STATS["sent"] += len(batch)
-        good = {t: o for t, o in zip(batch, out) if faithful(t, o)}
+        good = {t: readable(t, o) for t, o in zip(batch, out) if faithful(t, o)}
         STATS["translated"] += len(good)
         STATS["rejected"] += len(batch) - len(good)
         cache.update(good)
@@ -249,10 +251,18 @@ def faithful(raw, plain):
     return isinstance(plain, str) and not problems(raw, plain)
 
 
+def readable(raw, plain):
+    """a checked translation with each ++ after a UTC time said the way the Chart Supplement's legend
+    explains it (see DAYLIGHT). the model copies ++; code says what it means, the same way every time.
+    an answer that is the FAA text itself stays the FAA text"""
+    return plain if plain == raw else ZPLUS.sub(lambda m: DAYLIGHT + (" " if m[1] else ""), plain)
+
+
 def problems(raw, plain):
     """what's wrong with a translation, as short strings. empty means it's fine."""
     if not isinstance(plain, str):
         return ["translation is not text"]
+    plain = SAID_DAYLIGHT.sub("++", plain)      # readable()'s words for ++ are the ++ itself
     if plain == raw:
         return []
     low = plain.lower()
@@ -407,7 +417,27 @@ def _same(want, have):
     """a word of an FAA meaning, give or take its ending. not 'transient' said as 'transition',
     'expect' as 'experimental', or 'heliport' as 'helipad'."""
     k = len(os.path.commonprefix([want, have]))
-    return k == len(want) or (_close(want, have) and want[k:] in ENDINGS)
+    return k == len(want) or (_close(want, have) and want[k:] in ENDINGS) or _family(want, have)
+
+
+# a noun in -sion and the verb it's made from, so a translation can read as English: EXTN
+# ('extension') in 'WHEN TWR HR EXTN' said as 'when tower hours are extended', PERMISSION as
+# 'permitted', DIVISION as 'divided'. at least 3 letters before the ending, so not 'tension' and 'tend'
+SION = (("nsion", "nd"), ("ssion", "t"), ("rsion", "rt"), ("sion", "de"), ("sion", "se"))
+
+
+def _family(a, b):
+    return (a.endswith("sion") and _verb_of(a, b)) or (b.endswith("sion") and _verb_of(b, a))
+
+
+def _verb_of(noun, word):
+    """is word the verb noun is made from, in any form: 'extension' and 'extends', 'extended'"""
+    for end, verb in SION:
+        if noun.endswith(end) and len(noun) - len(end) >= 3:
+            stem = noun[:-len(end)] + verb
+            if word == stem or _inflected(stem, [word]):
+                return True
+    return False
 
 
 def _close(want, have):
@@ -436,7 +466,7 @@ def _one_word(a, b):
     side), or the end of a longer one: PHONE in 'telephone', STRIP in 'airstrip'."""
     k = len(os.path.commonprefix([a, b]))
     return (any(a[i:] in WORD_ENDINGS and b[i:] in WORD_ENDINGS for i in range(max(k - 2, 3), k + 1))
-            or (len(a) >= 5 and b.endswith(a)))
+            or (len(a) >= 5 and b.endswith(a)) or _family(a, b))
 
 
 def _negations(raw, plain):
@@ -534,11 +564,19 @@ def _said(term, low, words, pairs):
 # obstruction heights "above runway"), and the # and * of a gate code. a dash after a number may be
 # a range instead: "125 -150 FT" can be said as 125 to 150 feet, but "RY 17 -3 FT DITCH" keeps -3
 SIGNED = re.compile(r"(?:^|(?<=[\s(;,:]))(\+\s?|-)(\d+)(?!\d*-\d{3})")
+# NASR writes the Chart Supplement's ‡ as ++: the CS prints "Navy Cabaniss Tower 119.65 299.6
+# (Mon–Thu 1400–0500Z‡, Fri 1400–0100Z‡)" and "Shell Tower 139.125 244.5 (1230–0000Z‡ Mon–Fri, exc
+# hol)" where NASR has "1400-0500Z++ MON-THU; 1400-0100Z++ FRI; (DT 1300-0400Z MON-THU; 1300-0000Z
+# FRI)" and "1230-0000Z++MON-FRI EXC HOL". only after a UTC time: "0200-0700++" has no Z and stays
+DAYLIGHT = " (one hour earlier during daylight saving time)"
+ZPLUS = re.compile(r"(?<=\d{4}Z)\+\+(?=([A-Za-z0-9])?)")
+SAID_DAYLIGHT = re.compile(r"(?<=\d{4}Z)" + re.escape(DAYLIGHT), re.I)
 
 
 def _mark_problems(raw, plain):
     r, p = ADDRESS.sub(" ", raw), ADDRESS.sub(" ", plain)
     out = ["dropped ++"] if r.count("++") > p.count("++") else []
+    out += ["added ++"] if p.count("++") > r.count("++") else []
     text = r.replace("++", " ")
     for m in SIGNED.finditer(text):
         sign, num = m[1].strip(), m[2]

@@ -484,6 +484,51 @@ class TestWhatTheRemarkSays(unittest.TestCase):
         self.assertEqual(remarks.problems("CRACKS THROUGHOUT RWY, FOD PRESENT.",
                                           "Cracks throughout runway, foreign object debris present."), [])
 
+    SPS = ("CAUTION: MIL ARPT CONDUCTS HI PERFORMANCE JET TRNG IN A HI DENSITY ENVIRONMENT WITHIN 95 NM OF "
+           "KSPS, 1200-0200Z++ MON-FRI TO FL390, AND WHEN TWR HR EXTN BY NOTAM, OCCASIONALLY SAT AND SUN.")
+
+    def test_plus_plus_is_daylight_saving_time(self):
+        """NASR writes the Chart Supplement's ‡ as ++, and the legend says that during daylight saving
+        time "effective hours will be one hour earlier than shown". the model copies ++ and
+        readable() says it; 'plus plus' is what the site showed at SPS before #41"""
+        said = ("Caution: military airport conducts high performance jet training in a high density "
+                "environment within 95 nautical miles of KSPS, 1200-0200Z plus plus Monday-Friday to FL390, "
+                "and when tower hour extension by Notice to Airmen, occasionally Saturday and Sunday.")
+        self.assertEqual(remarks.problems(self.SPS, said), ["dropped ++", "added 'plus'"])
+        kept = said.replace("Z plus plus", "Z++")
+        self.assertEqual(remarks.problems(self.SPS, kept), [])
+        shown = remarks.readable(self.SPS, kept)
+        self.assertIn("1200-0200Z (one hour earlier during daylight saving time) Monday-Friday", shown)
+        self.assertEqual(remarks.problems(self.SPS, shown), [])
+        # said anywhere else, or more times than the remark has ++, it's an added fact
+        self.assertIn("added ++", remarks.problems("TWR 1200-0200Z MON-FRI.",
+                                                   "Tower 1200-0200Z (one hour earlier during daylight saving time) Monday-Friday."))
+        self.assertIn("added 'later'", remarks.problems(
+            self.SPS, shown.replace("one hour earlier", "one hour later")))
+        # only after a UTC time: a fuel grade and a time without Z keep their ++
+        for raw, plain, want in [
+                ("A++1300-0400Z++TUES-FRI WITH 24HR PN.", "A++1300-0400Z++TUES-FRI with 24 hour prior notice.",
+                 "A++1300-0400Z (one hour earlier during daylight saving time) TUES-FRI with 24 hour prior notice."),
+                ("ARFF NOT AVBL 0200-0700++.", "ARFF not available 0200-0700++.", "ARFF not available 0200-0700++."),
+                ("ILS UNMON DLY 0700-1500Z++.", "ILS UNMON DLY 0700-1500Z++.", "ILS UNMON DLY 0700-1500Z++.")]:
+            self.assertEqual(remarks.readable(raw, plain), want)
+            self.assertEqual(remarks.problems(raw, want), [], want)
+
+    def test_a_meaning_may_change_form_to_read_as_english(self):
+        """EXTN is 'extension': 'when tower hours are extended' says it, and the grammar words
+        around it add nothing"""
+        plain = ("Caution: military airport conducts high performance jet training in a high density "
+                 "environment within 95 nautical miles of KSPS, 1200-0200Z++ Monday-Friday to FL390, and when "
+                 "tower hours are extended by NOTAM, and occasionally on Saturday and Sunday.")
+        self.assertEqual(remarks.problems(self.SPS, plain), [])
+        self.assertEqual(remarks.problems(self.SPS, plain.replace("by NOTAM", "by a Notice to Airmen")), [])
+        self.assertIn("WHEN TWR HR EXTN' is 'when tower hours are extended'", remarks.PROMPT)
+        for noun, verb in [("extension", "extended"), ("extension", "extends"), ("permission", "permitted"),
+                           ("division", "divided"), ("conversion", "converted"), ("revision", "revised")]:
+            self.assertTrue(remarks._family(noun, verb) and remarks._family(verb, noun), (noun, verb))
+        for noun, word in [("tension", "tend"), ("session", "set"), ("version", "vert"), ("extension", "extent")]:
+            self.assertFalse(remarks._family(noun, word), (noun, word))
+
     def test_signs_and_ranges(self):
         self.assertEqual(remarks.problems("10 FT TREES 125 -150 FT W OF RWY.",
                                           "10 foot trees 125 to 150 feet west of runway."), [])
@@ -639,6 +684,18 @@ class TestTranslateStats(unittest.TestCase):
         out = remarks.translate_remarks(["-3 FT DITCH 30 FT OUBD FM THLD.", "RWY 18 NOT LGTD."], use_llm=False)
         self.assertEqual(out, {"RWY 18 NOT LGTD.": "Runway 18 is not lighted."})
         self.assertEqual(remarks.STATS["cache_retired"], 1)
+
+    def test_plus_plus_is_said_in_every_translation(self):
+        """cached and new translations alike, and the cache keeps passing its own check"""
+        with open(remarks.CACHE_FILE, "w") as f:
+            json.dump({"ILS UNMON DLY 0700-1500Z++.": "ILS is unmonitored daily from 0700-1500Z++."}, f)
+        answers = {"TWR 1200-0200Z++ MON-FRI.": "Tower 1200-0200Z++ Monday-Friday."}
+        out = self.run_with(list(answers) + ["ILS UNMON DLY 0700-1500Z++."], lambda batch: [answers[r] for r in batch])
+        self.assertEqual(out, {
+            "ILS UNMON DLY 0700-1500Z++.": "ILS is unmonitored daily from 0700-1500Z (one hour earlier during daylight saving time).",
+            "TWR 1200-0200Z++ MON-FRI.": "Tower 1200-0200Z (one hour earlier during daylight saving time) Monday-Friday."})
+        self.assertEqual(self.run_with([], None), out)
+        self.assertEqual(remarks.STATS["cache_retired"], 0)
 
 
 class TestScrubHistory(unittest.TestCase):
