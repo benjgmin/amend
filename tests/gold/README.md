@@ -39,6 +39,7 @@ it can show rows about other airports (see the PR that added this).
 | `known_failure` | `true` when the engine gets it wrong today (a candidate engine bug) |
 | `why_engine_is_wrong`, `engine_says` | with `known_failure`: the rule that gets it wrong, and what the engine says today |
 | `engine_was_wrong_because`, `engine_said_before_fix` | a known failure that got fixed: the same two notes, kept on record |
+| `expected_was` | a gold expectation that was changed after the case was written: the old `priority` and `changed_because`. a person should confirm these |
 
 The test fails when a case fails, unless it's a `known_failure`. A known failure that starts
 passing fails too, so whoever fixed the engine drops the flag and the fix is on record.

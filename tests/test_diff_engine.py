@@ -144,17 +144,32 @@ class TestHours(unittest.TestCase):
     """hours text rewritten with the same schedule (LUF, MTC) is not an hours change."""
 
     def test_same_schedule_new_format(self):
-        self.assertTrue(d.same_hours(      # g083 LUF ATIS
-            "OPR 1330Z-0530Z MON-THU, 1330Z-0130Z FRI, CLSD WEEKENDS, HOL, AND AETC FAMILY DAYS.",
-            "1330-0530Z MON-THU; 1330-0130Z FRI; CLSD WKENDS, HOLS, & ACC FAMILY DAYS"))
-        self.assertTrue(d.same_hours(      # g084 LUF class D
-            "CLASS D SVC MON-THU 1330Z-0530Z, FRI 1330Z-0130Z, CLSD WEEKENDS, HOL, AND AETC FAMILY "
-            "DAYS, OTHER TIMES CLASS G.",
-            "CLASS D SVC 1330-0530Z MON-THU, 1330-0130Z FRI, CLSD WKENDS, HOLS, & ACC FAMILY DAYS; "
-            "OTHER TIMES CLASS G"))
-        self.assertTrue(d.same_hours(      # g091 MTC tower
-            "1230-0400Z++, CLSD HOL.  OT UNCONTROLLED FOR DHS, ARNG, USCG OR EMERGENCY OPS.",
-            "1230-0400Z++ EXC HOLS"))
+        """the parts of LUF's rewrite that are only format: Z moved, order, WEEKENDS/WKENDS,
+        HOL/HOLS, commas/semicolons, OPR, DAILY."""
+        self.assertTrue(d.same_hours(
+            "OPR 1330Z-0530Z MON-THU, 1330Z-0130Z FRI, CLSD WEEKENDS, HOL.",
+            "1330-0530Z MON-THU; 1330-0130Z FRI; CLSD WKENDS, HOLS"))
+        self.assertTrue(d.same_hours(
+            "CLASS D SVC MON-THU 1330Z-0530Z, FRI 1330Z-0130Z, CLSD WEEKENDS, HOL, OTHER TIMES CLASS G.",
+            "CLASS D SVC 1330-0530Z MON-THU, 1330-0130Z FRI, CLSD WKENDS, HOLS; OTHER TIMES CLASS G"))
+        self.assertTrue(d.same_hours("0700-2100 DAILY", "0700-2100"))
+
+    def test_a_word_that_comes_or_goes_is_a_change(self):
+        """review of #27: words outside time ranges were thrown away, so a tower closing or a
+        season moving read as a reformat."""
+        for old, new in [
+                ("0700-2100", "0700-2100 CLSD"),
+                ("0700-2100 DLY", "0700-2100 DLY, TEMPORARILY CLSD"),
+                ("0700-2100, MAY-SEP", "0700-2100, JUN-AUG"),
+                ("0600-2200; OT UNMONITORED", "0600-2200; OT BY APPOINTMENT"),
+                # g083/g084 LUF: closed on AETC family days -> ACC family days (another calendar)
+                ("OPR 1330Z-0530Z MON-THU, 1330Z-0130Z FRI, CLSD WEEKENDS, HOL, AND AETC FAMILY DAYS.",
+                 "1330-0530Z MON-THU; 1330-0130Z FRI; CLSD WKENDS, HOLS, & ACC FAMILY DAYS"),
+                # g091 MTC: the "other times uncontrolled for DHS, ARNG, USCG" note went away
+                ("1230-0400Z++, CLSD HOL.  OT UNCONTROLLED FOR DHS, ARNG, USCG OR EMERGENCY OPS.",
+                 "1230-0400Z++ EXC HOLS")]:
+            with self.subTest(old=old, new=new):
+                self.assertFalse(d.same_hours(old, new))
 
     def test_real_hours_changes(self):
         for old, new in [
@@ -231,6 +246,9 @@ class TestPriorityRules(Case):
         self.assertEqual(self.one("APT_RWY_END.csv", h, ["BNA,13/31,13,800"], ["BNA,13/31,13,801"], "BNA"), [])
         ch = self.one("APT_RWY_END.csv", h, ["BNA,13/31,13,800"], ["BNA,13/31,13,1200"], "BNA")
         self.assertEqual([c["priority"] for c in ch], ["action"])
+        # review of #27, 4IL9 140 -> 115 ft: 25 ft more runway to land on is not rounding
+        ch = self.one("APT_RWY_END.csv", h, ["BNA,13/31,13,140"], ["BNA,13/31,13,115"], "BNA")
+        self.assertEqual([c["priority"] for c in ch], ["action"])
 
     def test_vor_declination(self):   # g098 OTZ
         h = "NAV_ID,NAV_TYPE,MAG_VARN,MAG_VARN_HEMIS,MAG_VARN_YEAR"
@@ -253,6 +271,13 @@ class TestPriorityRules(Case):
         ch = self.one("ATC_RMK.csv", h, ['T03,1,1,"COMMUNICATIONS PRVDD BY PRESCOTT RADIO ON FREQS '
                                          '122.05R/113.5T (TUBA CITY RCO)."'], [], "T03")
         self.assertEqual([c["priority"] for c in ch], ["fyi"])
+        # review of #27: "TWO WAY RADIO" is equipment, not an FSS outlet; clearance delivery
+        # through an FSS outlet is how you get an IFR clearance there, so it stays act
+        ch = self.one("ATC_RMK.csv", h, ['T03,1,1,"ALL ACFT MUST HAVE TWO WAY RADIO."'], [], "T03")
+        self.assertEqual([c["priority"] for c in ch], ["action"])
+        self.assertFalse(d.fss_outlet_note("ATC_RMK.csv", {"REMARK": "ALL ACFT MUST HAVE TWO WAY RADIO."}))
+        self.assertFalse(d.fss_outlet_note("ATC_RMK.csv", {
+            "REMARK": "CLNC DEL THRU BANGOR RADIO ON FREQ 122.2 (GREENVILLE RCO)."}))
         # g050 AVL: an outlet note that says communications are unavailable is still act
         ch = self.one("ATC_RMK.csv", h, ['AVL,1,1,"COMM UNAVBL BLO 6000 FT EXCP BY RDU RADIO ON FREQ 122.3 '
                                          '(SUGARLOAF MOUNTAIN RCO) WHEN AVL APCH CTL CLSD."'], [], "AVL")
