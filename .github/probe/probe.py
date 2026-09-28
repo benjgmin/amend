@@ -1,5 +1,7 @@
 """temporary: which FAA cycles are still served, and how big. HEAD / tiny Range reads only."""
 import datetime as dt
+import sys
+sys.path.insert(0, ".")
 import urllib.error
 import urllib.request
 

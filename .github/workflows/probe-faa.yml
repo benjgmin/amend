@@ -14,4 +14,11 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: python .github/probe/probe.py | tee -a "$GITHUB_STEP_SUMMARY"
+      - name: raw probe, 2022 onward
+        run: |
+          set -o pipefail
+          python .github/probe/probe.py | tee -a "$GITHUB_STEP_SUMMARY"
+      - name: the real archive --list
+        run: |
+          set -o pipefail
+          python -m amend archive --list --backfill | tee -a "$GITHUB_STEP_SUMMARY"
