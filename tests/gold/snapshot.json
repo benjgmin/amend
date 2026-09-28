@@ -5,12 +5,14 @@
   "from": {
    "file": "2026-08-06_CSV.zip",
    "url": "https://nfdc.faa.gov/webContent/28DaySub/extra/06_Aug_2026_CSV.zip",
+   "archive": "https://github.com/benjgmin/amend/releases/download/faa-2026-08-06/06_Aug_2026_CSV.zip",
    "sha256": "8638adc7626da84788b457cc4ad104b0869624e10f1faefeb43fe2fd4d30f0bb",
    "bytes": 21761656
   },
   "to": {
    "file": "2026-09-03_CSV.zip",
    "url": "https://nfdc.faa.gov/webContent/28DaySub/extra/03_Sep_2026_CSV.zip",
+   "archive": "https://github.com/benjgmin/amend/releases/download/faa-2026-09-03/03_Sep_2026_CSV.zip",
    "sha256": "1ebfc60110a5ac0b3462d7b0957498187ca72e4e74f017a127e3dafc5109131b",
    "bytes": 23097812
   }

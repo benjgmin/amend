@@ -72,10 +72,17 @@ FAA files must give the same output on every run (the engine used to pair rows i
 so it didn't).
 
 The test needs the two NASR zips named in `snapshot.json` in `data/`, checked by sha256, and
-skips without them. The FAA URLs are in `snapshot.json`; they roll off the FAA site after a
-while. The raw archive keeps them as GitHub releases (tag `faa-<cycle>`, e.g.
-`https://github.com/benjgmin/amend/releases/download/faa-2026-08-06/06_Aug_2026_CSV.zip`),
-which is also how to get them where faa.gov can't be reached.
+skips without them. The FAA's links roll off its site after a while, but both files are kept
+byte for byte on this repo's releases:
+
+```
+curl -L --create-dirs -o data/2026-08-06_CSV.zip https://github.com/benjgmin/amend/releases/download/faa-2026-08-06/06_Aug_2026_CSV.zip
+curl -L --create-dirs -o data/2026-09-03_CSV.zip https://github.com/benjgmin/amend/releases/download/faa-2026-09-03/03_Sep_2026_CSV.zip
+python -m unittest tests.test_snapshot -v     # about a minute
+```
+
+Output no longer depends on Python's string hashing at all, so it gives the same file on any
+seed and any Python version (checked on 3.10, which hashes strings differently from 3.11+).
 
 After a change you meant to make, `python -m amend.gold --update-snapshot` rewrites the file.
 Review its diff like code: every line that moved is a change in what pilots see.
