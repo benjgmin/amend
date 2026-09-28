@@ -1282,6 +1282,10 @@ data-name="{e(wl['name'])}">Save to my lists</a><button class="btn ghost" id="co
 # what shipped, newest first, for /changelog/. Add a line when something people can see changes.
 UPDATES = [
     ("Sep 2026", [
+        "W stays as the FAA wrote it in remark translations. The FAA's lists give W two meanings, west and "
+        "white, and remarks also write W/ for with, so the check couldn't tell a wrong pick from a right one: "
+        "\"W RWY MRKG CONES EV 300 FT\", on both ends of one runway, read \"West runway markings\". Where the "
+        "translator still spells W out, the remark shows the FAA's words, with a line saying what W can mean.",
         "On the home page, each airport in “Coming up at your airports” shows which of your lists it's on, "
         "and each list's name opens that list. It shows once you have more than one list.",
         "A remark the translator sent back untranslated, like \"4 IN LOOSE GRVL, RUTS & DIPS FULL LEN.\", is "

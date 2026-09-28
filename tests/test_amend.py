@@ -224,7 +224,7 @@ class TestWhyFaaWords(Case):
                  "46 FT POLE 200 FT FM THLD.": "46 FT POLE 200 FT FM THLD.",       # sent back: asked again
                  "WMRICHARDSON@COPPER.NET": "WMRICHARDSON@COPPER.NET"}              # nothing to translate
         rejects = {"engine": ENGINE_VERSION, "remarks": {
-            "SOFT & RUTTED; IREG MRKD W CONES.": ["W is 'West or White' (CS), not what the translation says"],
+            "SOFT & RUTTED; IREG MRKD W CONES.": ["W has no verified meaning (see glossary); it must stay as written"],
             "66 FT RT.": [remarks.SENT_BACK]}}
         with open(remarks.CACHE_FILE, "w") as f:
             json.dump(cache, f)
@@ -245,7 +245,7 @@ class TestWhyFaaWords(Case):
             "66 FT RT.": ("new remark: 66 FT RT.", "Kept in the FAA's words: Amend has no verified meaning for RT."),
             "SOFT & RUTTED; IREG MRKD W CONES.": (
                 "new remark: SOFT & RUTTED; IREG MRKD W CONES.",
-                "Kept in the FAA's words: the plain-English version didn't use the verified meaning for W (west or white)."),
+                "Kept in the FAA's words: W can mean west, white or with, and Amend doesn't guess which."),
             "RWY 03 CLSD.": ("new remark: RWY 03 CLSD.", "Kept in the FAA's words until it's translated."),
             "46 FT POLE 200 FT FM THLD.": ("new remark: 46 FT POLE 200 FT FM THLD.",
                                            "Kept in the FAA's words until it's translated."),
