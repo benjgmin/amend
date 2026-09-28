@@ -69,9 +69,10 @@ CS_RUN_TOGETHER = {
 # the word; nothing is expanded, and the model isn't asked to copy them as codes
 ENGLISH = {
     # the FAA lists these as contractions, but remarks mean the word: "RWY END", "BASE OPS",
-    # "NEW CONCRETE", "PER FAR 91", "WA STATE" (END = stop-end of an RVR, PER = performance)
-    "BASE", "CAN", "DO", "END", "FEW", "GRASS", "NEW", "PER", "SELF", "SET", "SPOT", "STATE", "TOP", "UP",
-    "VIA",
+    # "NEW CONCRETE", "PER FAR 91", "WA STATE", "SAN ANTONIO APCH" (END = stop-end of an RVR,
+    # PER = performance, SAN = sanitary)
+    "BASE", "CAN", "DO", "END", "FEW", "GRASS", "NEW", "PER", "SAN", "SELF", "SET", "SPOT", "STATE", "TOP",
+    "UP", "VIA",
     # the same for function words: A is Amber, AS Air Station, IS island to the FAA. remarks.py
     # never reads these as contractions. IN (inch: '6 IN') and NO (number: 'CASE NO. 2024-...') stay
     "A", "AS", "BY", "IF", "IS",
@@ -85,6 +86,11 @@ ENGLISH = {
     "GET", "GO", "HOT", "ICE", "JET", "KEY", "LEG", "LOT", "LOW", "MAY", "NOW", "OFF", "OIL", "OLD",
     "ONE", "ONLY", "OUR", "OUT", "OWN", "PAD", "PAY", "RED", "ROW", "RUN", "SEA", "SEE", "SIX", "SKI",
     "TEN", "TIE", "TOO", "TWO", "US", "USE", "WAY", "WET", "YOU",
+    # read against every remark in NASR (2026-10-01), each one the word or a name, never a
+    # contraction: "COURTESY CAR", "GRAIN BIN", "MIX OF WHITE & ORANGE", "BANNER TOW", "SMALL ARMS
+    # RANGE", "US ARMY" (no vowel after the A, so they looked contracted), "DON TATE", "LEE COUNTY",
+    # and halves of hyphenated words: "RUN-UPS", "PRE-COORD"
+    "ARMS", "ARMY", "BIN", "CAR", "DON", "LEE", "MIX", "PRE", "TOW", "UPS",
     # words and names JO 7340.2 happens to list, or the suffix rule would build: "STRONG DOWNDRAFTS"
     # isn't stereo routes, "WING SPAN" isn't a stored program, "EVERY MON" isn't evening
     "AMAR", "ARC", "BALL", "CACTUS", "DISCS", "ELBA", "EVEN", "EVERY", "FILL", "HANG", "HEAD", "HEADS",
@@ -228,7 +234,6 @@ CURATED = {
            "RPA": ("remotely piloted aircraft", "request present altitude"),
            "RQ": ("required ('24-HR PPR RQ')", "Indication of a request"),
            "RTG": ("rotating ('ACTVT RTG BCN')", "radiotelegraph"),
-           "SAN": ("San Antonio and San Juan", "sanitary"),
            "SP": ("names and specs ('TXL SP', 'SP PRESAIR')", "standard holding pattern"),
            "SUB": ("substandard ('RWY MARKINGS ARE SUB')", "substitute"),
            "VA": ("Virginia and taxiway names ('TWY VA')", "victor airways"),

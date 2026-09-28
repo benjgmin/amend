@@ -54,7 +54,8 @@ Run:
                            message), llm_stopped (gave up after 3 failures in a row),
                            unanswered (left as FAA text because a call failed or its answer
                            was unreadable; asked again next build),
-                           unknown_terms {contraction: count} with no verified meaning}
+                           unknown_terms {contraction: count} with no verified meaning;
+                           addresses and the ICAO and ARTCC ids NASR lists aren't counted}
   summary_checks  object  {"no_english": {"<file> <kind>": n}, "summary_value_mismatches": n}:
                           changes shown as FAA column names because no English template covers
                           them, and summaries that named a number or identifier the FAA record

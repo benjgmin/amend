@@ -70,6 +70,7 @@ class TestStatusPage(unittest.TestCase):
             self.assertIn(f" {step} ", t)
         self.assertIn("Translator cost $", t)
         self.assertIn("contractions with no verified meaning", t)
+        self.assertIn("Not counted: addresses, and the four-letter airport codes (KSPS) and center codes (ZOA)", t)
 
     def test_translator_failures_show_as_counts_not_api_text(self):
         r = good()

@@ -270,8 +270,9 @@ def s_remarks(r):
         inner = f'<div class="tw"><table class="tb">{"".join(parts)}</table></div>'
     if isinstance(ai, dict) and ai.get("unknown_terms"):
         terms = ", ".join(f"{e(k)} ({v})" for k, v in sorted(ai["unknown_terms"].items(), key=lambda kv: (-kv[1], kv[0])))
-        inner += (f'<p class="note">Remarks using these stay in the FAA\'s words until the glossary has a verified '
-                  f"meaning: {terms}.</p>")
+        inner += (f'<p class="note">These stay exactly as the FAA wrote them until the glossary has a verified '
+                  f"meaning: {terms}. Not counted: addresses, and the four-letter airport codes (KSPS) and "
+                  f"center codes (ZOA) in the FAA's own lists.</p>")
     elif ai is None:
         inner += '<p class="note">The translator didn\'t report numbers for this run (it may not have run).</p>'
     return stage("done", "Remarks in plain English", detail, more("Translator details", inner) if inner else "")

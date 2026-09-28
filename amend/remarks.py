@@ -27,6 +27,7 @@ PRICE_PER_MTOK = (1.00, 5.00)   # LLM_MODEL's list price in dollars: input, outp
 
 # what the last translate_remarks() did, for the processing log. unknown_terms is the review
 # queue: contractions in this run's remarks that have no verified meaning and stay as written
+# (review_terms: names from NASR's own lists and addresses aren't counted)
 STATS = {}
 
 PROMPT = (
@@ -86,8 +87,9 @@ def prompt_for(batch):
     return text + "\nRemarks:\n" + json.dumps(batch, indent=1)
 
 
-def translate_remarks(texts, use_llm):
-    """map raw FAA remark -> plain English. cached on disk; falls back to raw text.
+def translate_remarks(texts, use_llm, ids=frozenset(), states=frozenset()):
+    """map raw FAA remark -> plain English. cached on disk; falls back to raw text. ids and
+    states are the names NASR lists, which the review queue doesn't count (review_terms).
 
     the model never decides whether a build ships: a failed call (no credit, a bad key, the API
     down, a timeout) leaves that batch as FAA text, counts in STATS for the run log and shows as
@@ -105,7 +107,8 @@ def translate_remarks(texts, use_llm):
     kept = {t: readable(t, o) for t, o in cache.items() if faithful(t, o)}
     STATS["cache_retired"] = len(cache) - len(kept)
     cache = kept
-    STATS["unknown_terms"] = dict(Counter(t for raw in {x for x in texts if x} for t in set(unverified(raw))).most_common())
+    STATS["unknown_terms"] = dict(Counter(t for raw in {x for x in texts if x}
+                                          for t in set(review_terms(raw, ids, states))).most_common())
     rejects = _load(_rejects_file(), {})
     rejects = rejects.get("remarks", {}) if rejects.get("engine") == ENGINE_VERSION else {}
     todo = sorted({t for t in texts if t and t not in cache})
@@ -345,6 +348,41 @@ def unverified(raw):
         if (entry and not entry["verified"]) or (not entry and _looks_contracted(t)):
             out.append(t)
     return out
+
+
+# the review queue leaves out the parts of a postal address: they're names, not contractions.
+# "ARPT PHYS ADS: 38550 JET CENTER DR, WILLOUGHBY, OH 44094-8174." a translation still copies them
+STREET_WORDS = "AVE|BLVD|CIR|CT|DR|HWY|LN|PKWY|PL|RD|ST|TER|TRL|WAY"
+# a house number starts a street, a measurement or a runway doesn't: "25 FT RD", "RWY 18 ACCESS RD"
+NOT_A_STREET = r"FT|FEET|FOOT|NM|SM|MI|MILES?|IN|LBS?|KTS?|DEGS?|MINS?|HRS?|M|YDS?|AGL|MSL|X|OF|AND|TO|FM|FROM|ON|AT"
+
+
+@functools.lru_cache(maxsize=None)
+def _address_rules(states):
+    st = "|".join(sorted(states))
+    return (
+        # "WILLOUGHBY, OH 44094", "WASHINGTON, TX" at the end: a state after a city
+        re.compile(r"(?<=[A-Z.]),\s*(" + st + r")\.?(?=\s+\d{5}|\s*\.?\s*$)"),
+        # "KODIAK AK 99615": a state before a ZIP code
+        re.compile(r"(?<=[A-Z])\s+(" + st + r")\s+\d{5}(?:-\d{4})?(?!\d)"),
+        # "7400 E OSBORN RD SCOTTSDALE, AZ", "1508 INDUS BLVD.": a house number, a name, a street
+        # word, then a comma, the end, or a city and state
+        re.compile(r"(?<![A-Z0-9/.+-])(?<!RWY )(?<!RY )(?<!TWY )[NSEW]?\d{1,6}[A-Z]?\s+(?:[NSEW]\.?\s+)?"
+                   r"(?:(?!(?:" + NOT_A_STREET + r")\b)(?:[A-Z][A-Z'.-]+|\d+(?:ST|ND|RD|TH))\s+){1,3}?"
+                   r"(" + STREET_WORDS + r")\b\.?(?=\s*[,;]|\s*$|\s+[A-Z]+(?:\s+[A-Z]+){0,2},?\s+(?:" + st + r")\b)"),
+    )
+
+
+def review_terms(raw, ids=frozenset(), states=frozenset()):
+    """unverified(raw) less the names in it, for the review queue: an ARTCC or ICAO airport id
+    NASR lists (ids: 'OAKLAND ARTCC (ZOA)', 'WITHIN 95 NM OF KSPS') and the street word and state
+    of a postal address (states: the state codes NASR lists). a translation still has to copy
+    them as written; they just aren't gaps in the glossary."""
+    text = raw.upper()
+    if states:
+        for a, b in [m.span(1) for rule in _address_rules(frozenset(states)) for m in rule.finditer(text)]:
+            text = text[:a] + " " * (b - a) + text[b:]
+    return [t for t in unverified(text) if t not in ids or glossary.lookup(t)]
 
 
 def _looks_contracted(term):

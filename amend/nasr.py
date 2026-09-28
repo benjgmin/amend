@@ -3,6 +3,7 @@ import csv
 import hashlib
 import io
 import math
+import re
 import zipfile
 from collections import defaultdict
 
@@ -62,6 +63,32 @@ def airport_ids(zip_path):
                         out.add(a)
                 break
     return out
+
+
+def name_lists(*zip_paths):
+    """(ids, states) NASR lists across these cycles: every ICAO airport id (APT_BASE) and ARTCC id
+    (ARB_BASE: ZOA, ZLC), and every state code an airport is in. names, not contractions: the
+    remark review queue doesn't count them (remarks.review_terms)."""
+    ids, states = set(), set()
+    for zip_path in zip_paths:
+        with zipfile.ZipFile(zip_path) as zf:
+            left = {"APT_BASE.CSV", "ARB_BASE.CSV"}
+            for fname, raw in iter_csvs(zf):
+                up = fname.upper()
+                if up not in left:
+                    continue
+                left.discard(up)
+                for row in csv.DictReader(io.StringIO(decode(raw), newline="")):
+                    g = lambda k: (row.get(k) or "").strip().upper()
+                    if up == "ARB_BASE.CSV":
+                        ids.add(g("LOCATION_ID"))
+                    else:
+                        ids.add(g("ICAO_ID"))
+                        states.add(g("STATE_CODE"))
+                if not left:
+                    break
+    return ({i for i in ids if re.fullmatch(r"[A-Z]{3,4}", i)},
+            {s for s in states if re.fullmatch(r"[A-Z]{2}", s)})
 
 
 # navaids have no airport column. in all-airports mode they're matched to the public
