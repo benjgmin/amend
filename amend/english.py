@@ -86,26 +86,29 @@ def field_phrases(fields, source, ctx=None):
     if "FREQ_USE" in by:
         f = by["FREQ_USE"]
         phrases.append(f"frequency {ctx.get('FREQ', '')} use: {say_use(f['old'])} -> {say_use(f['new'])}")
-    obst = {"OBSTN_HGT", "DIST_FROM_THR", "CNTRLN_OFFSET", "CNTRLN_DIR_CODE", "OBSTN_CLNC_SLOPE"}
+    obst = {"OBSTN_TYPE", "OBSTN_HGT", "DIST_FROM_THR", "CNTRLN_OFFSET", "CNTRLN_DIR_CODE",
+            "OBSTN_CLNC_SLOPE"}
     if obst & set(by):
-        side = {"L": "left of", "R": "right of", "B": "either side of"}.get(
-            ctx.get("CNTRLN_DIR_CODE", ""), "off")
-        def val(col, fmt="{}"):
-            """'53 -> 25' if the field changed, else just the current value"""
-            if col in by and by[col]["old"] and by[col]["new"]:
-                return f"{fmt.format(by[col]['old'])} -> {fmt.format(by[col]['new'])}"
-            v = ctx.get(col) or (by[col]["new"] if col in by else "")
-            return fmt.format(v) if v else ""
-        bits = []
-        if val("OBSTN_HGT"):
-            bits.append(f"{val('OBSTN_HGT')} ft tall")
-        if val("DIST_FROM_THR"):
-            bits.append(f"{val('DIST_FROM_THR')} ft from threshold")
-        if val("CNTRLN_OFFSET"):
-            bits.append(f"{val('CNTRLN_OFFSET')} ft {side} centerline")
-        if val("OBSTN_CLNC_SLOPE"):
-            bits.append(f"clearance slope {val('OBSTN_CLNC_SLOPE', '{}:1')}")
-        phrases.append(f"controlling obstacle: {', '.join(bits)}")
+        # the controlling obstacle as it was and as it is: every value on each side, so a new,
+        # moved or dropped obstacle reads whole. ctx holds the new row, which is the old one
+        # too for any column that didn't change.
+        cur = lambda col, which: (by[col][which] if col in by else ctx.get(col, "")).strip()
+        def obstacle(which):
+            t, h, d, o = (cur(c, which) for c in ("OBSTN_TYPE", "OBSTN_HGT", "DIST_FROM_THR", "CNTRLN_OFFSET"))
+            side = {"L": "left of", "R": "right of", "B": "either side of"}.get(
+                cur("CNTRLN_DIR_CODE", which), "off")
+            bits = [" ".join(x for x in (fl.say("OBSTN_TYPE", source, t) if t else "",
+                                         f"{h} ft tall" if h else "") if x),
+                    f"{d} ft from threshold" if d else "", f"{o} ft {side} centerline" if o else ""]
+            return ", ".join(b for b in bits if b) or "none listed"
+        said = []
+        if (obst - {"OBSTN_CLNC_SLOPE"}) & set(by):
+            said.append(f"controlling obstacle: {obstacle('old')} -> {obstacle('new')}")
+        if "OBSTN_CLNC_SLOPE" in by:
+            slope = lambda v: f"{v}:1" if v else "none"
+            f = by["OBSTN_CLNC_SLOPE"]
+            said.append(f"obstacle clearance slope: {slope(f['old'])} -> {slope(f['new'])}")
+        phrases.append("; ".join(said))
     declared = [c for c in DECLARED_DISTANCES if c in by]
     if declared:
         def ft(v):

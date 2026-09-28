@@ -14,7 +14,7 @@ from .dtpp import load_dtpp
 from .english import plain_values, record_values, summarize, unsupported
 from .nasr import NearIndex, airport_ids, load, name_lists
 from .procedures import airports_by_procedure, load_routes
-from .remarks import translate_remarks
+from .remarks import rejected, translate_remarks, untranslated
 from .rules import REMARK_FILES, base
 
 PRIORITY_ORDER = {"action": 0, "ifr": 1, "fyi": 2}
@@ -85,7 +85,7 @@ def to_change(rec, airport, to_cycle):
         "summary": rec["summary"],
         "source": base(rec["source"]),
     }
-    for k in ("original", "fields", "details", "procedures", "chart"):
+    for k in ("original", "untranslated", "fields", "details", "procedures", "chart"):
         if rec.get(k):
             out[k] = rec[k]
     if "fields" not in out and row_fields(rec):
@@ -137,7 +137,9 @@ def run(old_zip, new_zip, ids=None, dtpp_path=None, llm=False, log=print, airspa
             texts += [f["new"] for f in r.get("fields", []) if f["field"] == "REMARK"]
         elif is_frq_remark(r):
             texts.append(r["fields"][0]["new"])
-    remarks = translate_remarks(texts, llm, *name_lists(old_zip, new_zip))
+    names = name_lists(old_zip, new_zip)
+    remarks = translate_remarks(texts, llm, *names)
+    rejects = rejected()
     wanted = {t for t in texts if t}
     remark_stats = {"texts": len(wanted), "plain_english": sum(remarks.get(t, t) != t for t in wanted)}
     routes = (load_routes(old_zip), load_routes(new_zip))
@@ -149,6 +151,11 @@ def run(old_zip, new_zip, ids=None, dtpp_path=None, llm=False, log=print, airspa
     for r in records:
         s = summarize(r, remarks)
         r["_phrases"] = s if isinstance(s, list) else [s]
+        if r.get("original"):       # why the reader sees the FAA's words, if they do
+            raw = r["original"]
+            why = untranslated(raw, remarks.get(raw), rejects.get(raw, ()), *names)
+            if why:
+                r["untranslated"] = why
         if r.pop("no_template", False):
             # no English for this file or column yet: it keeps its rank and says what the FAA
             # wrote (column name and value as written). a change that ranks act stays act; a

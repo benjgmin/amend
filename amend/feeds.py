@@ -70,8 +70,9 @@ def headline(changes):
 def change_li(c, label=False):
     tag = f"<b>{LABEL.get(c.get('priority'), '')}</b> " if label else ""
     summary = e(cap(c.get("summary"))).replace(" -&gt; ", " → ")
+    why = f'<br><small>{e(c["untranslated"])}</small>' if c.get("untranslated") else ""
     faa = f'<br><small>FAA text: {e(c["original"])}</small>' if c.get("original") else ""
-    return f"<li>{tag}{e(cap(c.get('category')))}: {summary}{faa}</li>"
+    return f"<li>{tag}{e(cap(c.get('category')))}: {summary}{why}{faa}</li>"
 
 
 def airport_html(changes, cycle, from_cycle, link):
