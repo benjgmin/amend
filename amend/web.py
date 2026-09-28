@@ -1232,6 +1232,10 @@ UPDATES = [
     ("Sep 2026", [
         "A <a href=\"../status/\">status page</a> shows whether Amend is current and every step of each recent "
         "run: the FAA files it downloaded, the checks it ran and whether it was published.",
+        "Remark translations are held to a stricter check. They have to keep every code (like 100LL or "
+        "D523-4244), every + or - on a height, every ++ after a time and the order of the numbers, and they "
+        "can't add words the FAA text doesn't have, like \"the runway\" or \"is available\". About 1,000 "
+        "translations that failed it now show the FAA text.",
         "Pages switch from upcoming to in effect at exactly 0901Z on cycle day, even if you have the page open, "
         "using the server's clock if your device's is off. Amend also checks the FAA for new data every 10 minutes.",
         "Docs, Privacy and Terms now say how to tell the FAA when its own data is wrong, what Amend can't see "

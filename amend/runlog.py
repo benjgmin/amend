@@ -48,6 +48,12 @@ Run:
                            translator reported (remarks.STATS), else null: llm_calls,
                            input_tokens, output_tokens, est_cost_usd, sent, translated,
                            rejected (broke the no-guess check), bad_batches, cache_retired,
+                           rejects_skipped (not asked: this ENGINE_VERSION already rejected
+                           their answer), llm_errors (calls that failed: no credit, bad key,
+                           API down, timeout), llm_error (the first one's HTTP status and
+                           message), llm_stopped (gave up after 3 failures in a row),
+                           unanswered (left as FAA text because a call failed or its answer
+                           was unreadable; asked again next build),
                            unknown_terms {contraction: count} with no verified meaning}
   summary_checks  object  {"no_english": {"<file> <kind>": n}, "summary_value_mismatches": n}:
                           changes shown as FAA column names because no English template covers
