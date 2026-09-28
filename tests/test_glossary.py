@@ -138,6 +138,19 @@ class TestGlossary(unittest.TestCase):
             self.assertTrue(glossary.lookup(t)["english"], t)
         self.assertIsNone(glossary.lookup("QZXW"))
 
+    def test_only_reviewed_forms_are_derived(self):
+        """the suffix rule also reads words, names and other codes as derived forms: DHS isn't
+        decision heights (it's Homeland Security), SFAR isn't a single frequency approach. so only
+        forms in DERIVED, each checked against real remarks, are derived; the rest are copied."""
+        for t in ("DHS", "SFAR", "PRIST", "THRUST", "MINUS", "DSPLD", "SIMS", "USAR"):
+            self.assertIsNone(glossary.lookup(t), t)
+            self.assertEqual(remarks.problems(f"{t} RQRD.", f"{t} required."), [], t)
+        self.assertTrue(remarks.problems("DHS RQRD.", "Decision heights required."))
+        for t in sorted(glossary.DERIVED):
+            e = glossary.lookup(t)
+            self.assertTrue(e and e["verified"], t)
+            self.assertTrue(e.get("derived_from") or t in glossary.load(), t)
+
     def test_sources_carry_provenance(self):
         cs, jo = SOURCES["chart_supplement"], SOURCES["jo_7340_2"]
         for s in (cs, jo):
@@ -226,10 +239,10 @@ GUESSES = [
 
 # the same remarks, said with the FAA's meanings or copied as written
 RIGHT = [
-    ("-3 FT DITCH 30 FT OUBD FM THLD.", "Ditch 3 feet deep, 30 feet outbound from the threshold."),
+    ("-3 FT DITCH 30 FT OUBD FM THLD.", "-3 foot ditch, 30 feet outbound from the threshold."),
     ("R/W 1900 FT MSL, F/W 2700 FT MSL.", "Rotary wing 1900 feet MSL, fixed wing 2700 feet MSL."),
     ("TRANS ALERT: 1500Z-0700Z++ MON-SAT; 1600Z-0000Z++ SAT-SUN; CLSD FED HOL.",
-     "TRANS ALERT: 1500Z-0700Z Monday through Saturday; 1600Z-0000Z Saturday through Sunday; closed FED holidays."),
+     "TRANS ALERT: 1500Z-0700Z++ Monday through Saturday; 1600Z-0000Z++ Saturday through Sunday; closed FED holidays."),
     ("FATO LENGTH 70 FT, FATO WIDTH 70 FT, SAFETY AREA LENGTH 93 FT, SAFETY AREA WIDTH 93 FT.",
      "FATO length 70 feet, FATO width 70 feet, safety area length 93 feet, safety area width 93 feet."),
     ("OT CALL (515) 291-5094 OR (515) 460-3892.", "Other times, call (515) 291-5094 or (515) 460-3892."),
@@ -260,7 +273,7 @@ RIGHT = [
      "Traffic pattern: all arrivals and departures make S traffic only to avoid extreme radiation hazard."),
     ("FICONS NOT RGLRLY MNT.", "Field conditions not regularly monitored."),
     ("APCH RATIO 18:1 TO DTHR OVR +85 FT TREE, 1534 FT DIST, 0 FT B.",
-     "Approach ratio 18:1 to displaced threshold over 85 foot tree, 1534 feet away, 0 feet B."),
+     "Approach ratio 18:1 to displaced threshold over +85 foot tree, 1534 feet away, 0 feet B."),
     ("RWY LGTS NTSD IN NR, TYPE, AND GLOBE COLOR; NO LGTS AT DSPLCD THLD.",
      "Runway lights NTSD in number, type, and globe color; no lights at the displaced threshold."),
     ("GRAIN ELEVATOR LEG", "Grain elevator leg."),
@@ -335,8 +348,8 @@ class TestNoGuess(unittest.TestCase):
 
     def test_a_contraction_is_not_a_plain_word(self):
         """a plain word may change its ending or be split, but a contraction isn't filled out."""
-        self.assertEqual(remarks.problems("COMM RQRD.", "Commercial required."), ["dropped COMM"])
-        self.assertEqual(remarks.problems("APPROX 200 FT.", "Approach 200 feet."), ["dropped APPROX"])
+        self.assertEqual(remarks.problems("COMM RQRD.", "Commercial required."), ["dropped COMM", "added 'commercial'"])
+        self.assertEqual(remarks.problems("APPROX 200 FT.", "Approach 200 feet."), ["dropped APPROX", "added 'approach'"])
         self.assertEqual(remarks.problems("APPROX 200 FT.", "APPROX 200 feet."), [])
         for raw, plain in [("20 FT DROPOFF 300 FT FM APCH END.", "There is a 20 foot drop-off 300 feet from the approach end."),
                            ("PHONE AVBL 24 HRS.", "Telephone available 24 hours."),
@@ -348,6 +361,134 @@ class TestNoGuess(unittest.TestCase):
         self.assertEqual(remarks.problems("115' LGTD/MKD RADIO TOWER 190' NNE.",
                                           "A 115-foot lighted and marked radio tower is 190 feet north-northeast."), [])
         self.assertTrue(remarks.problems("RADIO TOWER 190' NNE.", "Radio tower 190 feet northeast."))
+
+
+# (remark, what the model wrote, why it's rejected), from remark_cache.json: translations the
+# FAA-meaning check passed that still said something the remark doesn't
+SAID_MORE = [
+    ("BEARING STRENGTH RWY 12/30: S81 T110 ST175 SBTT590 TT333 TDT800 DDT857 TRT510.",
+     "Runway 12/30 bearing strength: single wheel 81, tandem 110, single tandem 175, single bicycle tandem 590, "
+     "tandem tandem 333, tandem dual tandem 800, dual dual tandem 857, triple tandem 510.", "changed T110"),
+    ("100LL 24 HR SELF SERVE WITH CREDIT CARD",
+     "100 octane low-lead fuel is available 24 hours via self-serve with credit card.", "changed 100LL"),
+    ("SELF SVC FUEL (100LL) AVBL 24 HRS. CTC FUEL C434-294-7558.",
+     "Self-service 100LL fuel available 24 hours; contact fuel at 434-294-7558.", "changed C434"),
+    ("TWR OPR MON-FRI 1230-0400Z++ EXC HOL",
+     "Tower operates Monday through Friday 1230-0400Z and beyond except holidays.", "dropped ++"),
+    ("(TWO) +4 FT NATURAL GAS RISERS LCTD ON RY 17/35 WEST EDGE.",
+     "Two natural gas risers 4 feet above ground located on runway 17/35 west edge.", "dropped the sign of +4"),
+    ("+22 FT FENCE 62 FT R & 515 FT FM RWY END; PENETRATES APCH SFC.",
+     "A 62-foot-tall fence is 515 feet from the runway end on the right and penetrates the approach surface, "
+     "plus a 22-foot fence.", "numbers moved"),
+    ("RWY 35, 21 INCH CONCRETE LIGHT BASES, 28 FT FROM W. RWY EDGE, 1300 FM RWY END.",
+     "Runway 35 and 21 have 21 inch concrete light bases 28 feet from the west runway edge and 1300 feet from "
+     "the runway end.", "numbers moved"),
+    ("OTS UFN.", "Runway threshold lights are out of service until further notice.", "added 'runway'"),
+    ("TWY L SOUTH OF TWY L3 NOT VSB TO ATCT.",
+     "Taxiway L south of taxiway L3 not visible to air traffic control tower.", "added 'air'"),
+    ("UNUSBL BYD 8 DEG L OF CNTRLN.", "Runway is unusable beyond 8 degrees left of centerline.", "added 'runway'"),
+    ("INDEX B AVBL WITH 4 HR PPR - 541-297-4777.",
+     "Index B aircraft are available with 4 hours prior permission required by calling 541-297-4777.",
+     "added 'aircraft'"),
+    ("ACR OPS MORE THAN 30 PAX SEATS 24 HR PPR - AMGR.",
+     "Air carrier operations with more than 30 passenger seats require 24 hour prior permission required - "
+     "contact airport manager.", "repeated 'required'"),
+    ("GLDR OPNS NE OF ARPT MAY-SEP.",
+     "Glider operations northeast of the airport are permitted May through September.", "added 'permitted'"),
+    ("RY 17 -3 FT DITCH 30 FT OUTBOUND FM THLD.",
+     "Runway 17 has a minus 3 foot ditch 30 feet outbound from the threshold.", "dropped the sign of -3"),
+]
+
+# the same remarks and a few more, said the way the FAA text does
+SAID_RIGHT = [
+    ("BEARING STRENGTH RWY 12/30: S81 T110 ST175 SBTT590 TT333 TDT800 DDT857 TRT510.",
+     "Bearing strength runway 12/30: S81 T110 ST175 SBTT590 TT333 TDT800 DDT857 TRT510."),
+    ("100LL 24 HR SELF SERVE WITH CREDIT CARD", "100LL 24 hour self serve with credit card."),
+    ("SELF SVC FUEL (100LL) AVBL 24 HRS. CTC FUEL C434-294-7558.",
+     "Self-service fuel (100LL) available 24 hours. Contact fuel C434-294-7558."),
+    ("TWR OPR MON-FRI 1230-0400Z++ EXC HOL", "Tower operates Monday through Friday 1230-0400Z++ except holidays."),
+    ("(TWO) +4 FT NATURAL GAS RISERS LCTD ON RY 17/35 WEST EDGE.",
+     "(Two) +4 foot natural gas risers located on runway 17/35 west edge."),
+    ("+22 FT FENCE 62 FT R & 515 FT FM RWY END; PENETRATES APCH SFC.",
+     "+22 foot fence 62 feet right and 515 feet from runway end; penetrates approach surface."),
+    ("RWY 35, 21 INCH CONCRETE LIGHT BASES, 28 FT FROM W. RWY EDGE, 1300 FM RWY END.",
+     "Runway 35, 21 inch concrete light bases, 28 feet from west runway edge, 1300 from runway end."),
+    ("OTS UFN.", "Out of service until further notice."),
+    ("TWY L SOUTH OF TWY L3 NOT VSB TO ATCT.",
+     "Taxiway L south of taxiway L3 not visible to airport traffic control tower."),
+    ("UNUSBL BYD 8 DEG L OF CNTRLN.", "Unusable beyond 8 degrees left of centerline."),
+    ("INDEX B AVBL WITH 4 HR PPR - 541-297-4777.",
+     "Index B available with 4 hour prior permission required - 541-297-4777."),
+    ("ACR OPS MORE THAN 30 PAX SEATS 24 HR PPR - AMGR.",
+     "Air carrier operations more than 30 passenger seats 24 hour prior permission required - airport manager."),
+    ("GLDR OPNS NE OF ARPT MAY-SEP.", "Glider operations northeast of airport May through September."),
+    ("RY 17 -3 FT DITCH 30 FT OUTBOUND FM THLD.", "Runway 17 -3 foot ditch 30 feet outbound from threshold."),
+    # the FAA wrote RQR and PPR, so the translation may say require and required
+    ("ALL ENGINE RUNUPS RQR PPR FM DUTY OPS OFFICER AT 937-6914/6800; RUNUPS 20 MIN MAX.",
+     "All engine run-ups require prior permission required from duty operations officer at 937-6914/6800; "
+     "run-ups 20 minutes maximum."),
+    ("24 HR HOP AT HOSPITAL 1.5 NM SSW OF ARPT; MNT CTAF.",
+     "24 hour helicopter operations at hospital 1.5 nautical miles south-south-west of airport; monitor CTAF."),
+]
+
+
+class TestWhatTheRemarkSays(unittest.TestCase):
+    """a translation says what the remark says and nothing more: codes copied, + - and ++ kept,
+    numbers in the remark's order, and no word the remark or an FAA meaning doesn't account for."""
+
+    def test_real_translations_that_said_more_are_rejected(self):
+        for raw, plain, why in SAID_MORE:
+            found = remarks.problems(raw, plain)
+            self.assertTrue(any(p.startswith(why) for p in found), f"{plain}\n  {found}")
+
+    def test_the_faa_text_said_plainly_passes(self):
+        for raw, plain in SAID_RIGHT:
+            self.assertEqual(remarks.problems(raw, plain), [], plain)
+
+    def test_codes_stay_as_written(self):
+        """PAM, from the hand-check: the D of DSN D523-4244 was dropped. C is the Chart Supplement's
+        Commercial Circuit, so 'commercial' may stand for it; nothing gives D a meaning."""
+        raw = ("RTNE CLASSIFIED/COMSEC STORAGE UNAVBL - AMGR D523-4244/4245; C850-283-4244/4245.")
+        dropped = ("Routine classified/comsec storage unavailable - airport manager 523-4244/4245; "
+                   "commercial 850-283-4244/4245.")
+        self.assertIn("changed D523; a code of letters and digits stays as written", remarks.problems(raw, dropped))
+        self.assertEqual(remarks.problems(raw, dropped.replace("manager 523", "manager D523")), [])
+        self.assertEqual(remarks.problems("FUEL C850-283-4244.", "Fuel C850-283-4244."), [])
+        self.assertTrue(remarks.problems("FUEL C850-283-4244.", "Fuel call 850-283-4244."))
+        self.assertTrue(remarks.problems("FUEL C850-283-4244.", "Fuel 850-283-4244."))
+
+    def test_codes_the_faa_gives_a_reading(self):
+        """runway sides (JO 7340.2 L, R, C), Z after a time (the Chart Supplement legend: UTC, 'shown
+        as Z time'; the AIM: Zulu), and a unit after a number"""
+        for raw, plain in [("RWY 18R CLSD.", "Runway 18 right closed."),
+                           ("RWY 18R CLSD.", "Runway 18R closed."),
+                           ("ATCT 1200-0400Z.", "Airport traffic control tower 1200-0400 UTC."),
+                           ("ATCT 1200-0400Z.", "Tower 1200-0400 Zulu."),
+                           ("ATCT 1200-0400Z.", "Tower 1200-0400Z."),
+                           ("99FT TREES 300 FT FM THR.", "99 feet trees 300 feet from threshold.")]:
+            self.assertEqual(remarks.problems(raw, plain), [], plain)
+        self.assertTrue(remarks.problems("RWY 18R CLSD.", "Runway 18 left closed."))
+        self.assertTrue(remarks.problems("ATCT 1200-0400Z.", "Tower 1200-0400 local."))
+
+    def test_signs_and_ranges(self):
+        self.assertEqual(remarks.problems("10 FT TREES 125 -150 FT W OF RWY.",
+                                          "10 foot trees 125 to 150 feet west of runway."), [])
+        self.assertEqual(remarks.problems("10 FT TREES 125 -150 FT W OF RWY.",
+                                          "10 foot trees 125-150 feet west of runway."), [])
+        self.assertIn("dropped the sign of +10", remarks.problems("+10 FT BRUSH 30 FT DIST.",
+                                                                  "Brush 10 feet high, 30 feet away."))
+
+    def test_words_a_translation_may_write_differently(self):
+        for raw, plain in [("TURN EAST AFT TKOF.", "Turn east after takeoff."),       # TKOF: take-off
+                           ("TURN EAST AFT TKOF.", "Turn east after take-off."),
+                           ("MAIL: P.O. BOX 240.", "Mail: P.O. Box 240."),
+                           ("DITCH 75 FT FM CNTRLN RUNS LEN OF NORTHSIDE OF RWY.",
+                            "Ditch 75 feet from centerline runs length of north side of runway."),
+                           ("ADAMDCCC@YAHOO.COM EAGLEROCKTOM@GMAIL.COM", "ADAMDCCC@YAHOO.COM or EAGLEROCKTOM@GMAIL.COM"),
+                           ("GATE ACES: 1-2-3-4.", "Gate access code: 1-2-3-4."),
+                           ("NO TOUCH & GO'S.", "No touch and go's."),
+                           ("RWY 18 NOT LGTD.", "Runway 18 isn't lighted.")]:
+            self.assertEqual(remarks.problems(raw, plain), [], plain)
 
 
 class TestPrompt(unittest.TestCase):
@@ -414,6 +555,68 @@ class TestTranslateStats(unittest.TestCase):
         out = self.run_with(["RWY 18 NOT LGTD.", "46 FT UNMKD POLE."], lambda batch: ["Runway 18 is not lighted."])
         self.assertEqual(out, {})
         self.assertEqual((remarks.STATS["bad_batches"], remarks.STATS["sent"], remarks.STATS["llm_calls"]), (1, 0, 1))
+
+    def fail_with(self, texts, error):
+        calls = []
+        def urlopen(req, timeout=None):
+            calls.append(req)
+            raise error()
+        with mock.patch.dict(os.environ, {"ANTHROPIC_API_KEY": "sk-ant-test-key"}), \
+                mock.patch.object(remarks.urllib.request, "urlopen", side_effect=urlopen), \
+                mock.patch("sys.stdout", new_callable=io.StringIO) as out:
+            cache = remarks.translate_remarks(texts, use_llm=True)
+        return cache, calls, out.getvalue()
+
+    def test_no_credit_falls_back_to_faa_text_and_says_so(self):
+        """a failed call never stops the build: the FAA text shows, the run log has the count and
+        the API's own message, and the Actions run shows a warning"""
+        body = json.dumps({"type": "error", "error": {"type": "invalid_request_error",
+                           "message": "Your credit balance is too low to access the Anthropic API."}}).encode()
+        error = lambda: remarks.urllib.error.HTTPError("https://api.anthropic.com/v1/messages", 400,
+                                                        "Bad Request", {}, io.BytesIO(body))
+        cache, calls, out = self.fail_with(["RWY 18 NOT LGTD.", "46 FT UNMKD POLE."], error)
+        self.assertEqual(cache, {})
+        s = remarks.STATS
+        self.assertEqual((s["llm_errors"], s["llm_calls"], s["unanswered"], s["llm_stopped"]), (1, 0, 2, False))
+        self.assertEqual(s["llm_error"], "HTTP 400: Your credit balance is too low to access the Anthropic API.")
+        self.assertIn("::warning title=remark translation::1 of 1 calls failed", out)
+        self.assertNotIn("sk-ant-test-key", out + json.dumps(s))
+
+    def test_three_failures_in_a_row_stop_asking(self):
+        """an outage can't hold a build past its time limit: after 3 failed calls the rest stay FAA text"""
+        texts = [f"RWY {n} NOT LGTD." for n in range(10, 30)]
+        with mock.patch.object(remarks, "BATCH", 2):
+            cache, calls, out = self.fail_with(texts, lambda: TimeoutError("timed out"))
+        s = remarks.STATS
+        self.assertEqual((len(calls), s["llm_errors"], s["llm_stopped"], s["unanswered"]), (3, 3, True, 20))
+        self.assertEqual(s["llm_error"], "TimeoutError: timed out")
+
+    def test_an_unreadable_answer_is_a_bad_batch(self):
+        def urlopen(req, timeout=None):
+            body = {"content": [{"type": "text", "text": '["Runway 18 is not li'}], "usage": {}}
+            return io.BytesIO(json.dumps(body).encode())
+        with mock.patch.dict(os.environ, {"ANTHROPIC_API_KEY": "sk-test"}), \
+                mock.patch.object(remarks.urllib.request, "urlopen", side_effect=urlopen):
+            self.assertEqual(remarks.translate_remarks(["RWY 18 NOT LGTD."], use_llm=True), {})
+        s = remarks.STATS
+        self.assertEqual((s["bad_batches"], s["llm_errors"], s["unanswered"]), (1, 0, 1))
+
+    def test_a_rejected_answer_is_asked_again_only_after_an_engine_change(self):
+        answers = {"RWY 18 NOT LGTD.": "Runway 18 is not lighted.",
+                   "OTS UFN.": "Runway threshold lights are out of service until further notice."}
+        self.run_with(list(answers), lambda batch: [answers[r] for r in batch])
+        with open(os.path.join(os.path.dirname(remarks.CACHE_FILE), remarks.REJECTS_FILE)) as f:
+            self.assertEqual(json.load(f), {"engine": remarks.ENGINE_VERSION,
+                                            "remarks": {"OTS UFN.": ["added 'runway'", "added 'threshold'",
+                                                                     "added 'lights'"]}})
+        self.prompts.clear()
+        self.run_with(list(answers), lambda batch: [answers[r] for r in batch])
+        self.assertEqual((self.prompts, remarks.STATS["rejects_skipped"]), ([], 1))
+        with mock.patch.object(remarks, "ENGINE_VERSION", "9.9.9"):
+            self.run_with(list(answers), lambda batch: ["Out of service until further notice." for r in batch])
+        self.assertEqual(len(self.prompts), 1)
+        self.assertEqual(self.run_with([], None), {"RWY 18 NOT LGTD.": "Runway 18 is not lighted.",
+                                                   "OTS UFN.": "Out of service until further notice."})
 
     def test_cached_guesses_are_retired(self):
         with open(remarks.CACHE_FILE, "w") as f:

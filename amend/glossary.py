@@ -263,6 +263,9 @@ CURATED = {
     "TGL": {"accept": [r"\btouch[- ]and[- ]go"]},
     "U/S": {"accept": [r"\bout of service\b"]},
     "UAS": {"accept": [r"\bun(manned|crewed) (aerial|aircraft)\b"]},
+    "Z": {"accept": [r"\butc\b", r"\bcoordinated universal time\b", r"\bzulu\b"],
+          "note": "'1300Z'. the Chart Supplement legend: hours 'are expressed in Coordinated Universal "
+                  "Time (UTC) and shown as \"Z\" time'; the AIM (appendix 5) says 'Zulu (Z)'"},
     # SS-SR is one period, sunset to sunrise: the meanings have to come out in that order
     "SS-SR": {"parts": ["SS", "SR"], "accept": [r"\bsunset\b.{0,40}\bsunrise\b"]},
     "SR-SS": {"parts": ["SR", "SS"], "accept": [r"\bsunrise\b.{0,40}\bsunset\b"]},
@@ -300,6 +303,52 @@ REVIEWED = {
     "WKDAY", "WKEND", "XNG", "XPLOS"
 }
 
+# JO 7340.2 1-2-3 derived forms (LGTS = LGT + S) that remarks really use that way. the suffix rule
+# also reads words, names and other codes as derivations: DHS isn't "decision heights" (it's
+# Homeland Security), SFAR isn't a single frequency approach, PRIST is a fuel additive, THRUST
+# and MINUS are words, DSPLD is "displaced" (not display). so only forms checked against every
+# remark in remark_cache.json and history/ (2026-09-28: 437 derived forms, 51 of them wrong) are
+# derived; any other one is copied as written until someone checks it and adds it here
+DERIVED = {
+    "ABNDD", "ACCUMG", "ACDNTS", "ACESS", "ACPTBL", "ACPTD", "ACPTG", "ACTVTD", "ACTVTY", "ADDNL",
+    "ADDNLY", "ADVND", "ADZD", "ADZYS", "AFTR", "AGRMTS", "ALTS", "AMDD", "AMGRS", "APCHG", "APCHS",
+    "APNS", "APNTMT", "APPRS", "APROPLY", "APRXLY", "APUS", "APVD", "ARNGMTS", "ARPTS", "ARRG",
+    "ARRS", "ASGND", "ASSOCD", "ASSOCN", "ASSTNC", "ATCHD", "ATNDD", "ATNDNC", "AUTOLY", "AUZD",
+    "AVBLTY", "AWTG", "AWYS", "BDRG", "BGNG", "BGNNG", "BGNS", "BLDGS", "BRGS", "CATS", "CERTD",
+    "CFMD", "CFMG", "CFMN", "CFNS", "CHGS", "CHRGD", "CHRGS", "CLNCS", "CLRD", "CLRG", "CLRNC",
+    "CLRNG", "CMPLTD", "CMSND", "CMSNG", "CNCTG", "CNLD", "CNTRD", "CNTRLNS", "CNTRR", "CNVGG",
+    "COLLD", "COMS", "CONDS", "CONFIGNS", "CONSLY", "CONTD", "CONTN", "COORDD", "COORDG", "COORDN",
+    "COORDR", "COVD", "CPBLTY", "CRCG", "CROSS", "CRTFYD", "CTCD", "CTCG", "CTCS", "CTLD", "CTLG",
+    "CTLNG", "CTLS", "DCMSND", "DCMTS", "DCTD", "DEGS", "DEPG", "DEPNG", "DEPS", "DETS", "DISPLD",
+    "DMGD", "DRCTD", "DRCTNL", "DSRD", "DSTCS", "DTHRS", "DTLS", "DTRMD", "DTRMN", "DVLPMT", "DVS",
+    "ELECL", "ELEVD", "EMERGS", "ENGRNG", "ENGS", "EORS", "ESTABD", "ESTABL", "ESTABMT", "EXCLDG",
+    "EXCLDN", "EXCLDNG", "EXCTG", "EXERS", "EXPD", "EXTDD", "EXTDG", "EXTDNG", "EXTDS", "EXTRMLY",
+    "EXTSVLY", "FACS", "FBOS", "FCSTR", "FICONS", "FLDS", "FLTS", "FLWG", "FQTLY", "FREQS", "FSDOS",
+    "FWDD", "GENLY", "GLDRS", "GLDS", "HAZUS", "HDGS", "HELS", "HGRS", "HGTS", "HNGRS", "HOLS",
+    "HOPS", "HRS", "IMTLY", "INCLG", "INCLNG", "INCLS", "INCRD", "INCRS", "INDCR", "INDCS",
+    "INDEFLY", "INSPD", "INSPN", "INSPNS", "INSTLD", "INSTLN", "INSTRD", "INSTRN", "INSTRNS",
+    "INSTRS", "INTRPN", "INTSTY", "INTSV", "INTVLS", "KTS", "LCTG", "LCTNS", "LDGS", "LGTG",
+    "LGTNG", "LMTD", "LMTNS", "LNDGS", "LNS", "LRGR", "LWRD", "MAINTD", "MDTLY", "MECHL", "MGRS",
+    "MINS", "MIRLS", "MKRS", "MNMS", "MNTD", "MNTND", "MNTNS", "MNTS", "MNVRG", "MNVRNG", "MNVRS",
+    "MOAS", "MOVMT", "MRKD", "MRKGS", "MRKS", "MSNS", "MTNS", "MTRLS", "MTS", "NAVAIDS", "NGTLY",
+    "NGTS", "NMBRS", "NOTAMS", "NRS", "NRWS", "OBSCD", "OBSCS", "OBSL", "OBSTD", "OBSTG", "OBSTNG",
+    "OBSTNS", "OBSTR", "OBSTS", "OCNLLY", "OCRS", "OGNG", "OPERD", "OPERG", "OPERN", "OPERNG",
+    "OPERNS", "OPERS", "OPRD", "OPRG", "OPRN", "OPRNG", "OPRNS", "OPRS", "OPSS", "OVLAD", "OVRNS",
+    "P-LINES", "PAPIS", "PARLS", "PATS", "PDS", "PENTG", "PERMLY", "PLAS", "PLINES", "PMTD", "PMTG",
+    "PPRS", "PPSD", "PREVLY", "PRIMLY", "PRKD", "PROCS", "PRVDD", "PRVDG", "PRVDS", "PSGRS", "PSNS",
+    "PTCPG", "PTNS", "PUBLD", "PVLG", "PVTLY", "PWRD", "PWRS", "QNS", "QUADS", "RCMDD", "RCVD",
+    "RCVG", "RDCD", "RDCG", "REGS", "REILS", "REQS", "RESD", "RESL", "RESNC", "RESPBL", "RESV",
+    "RFLG", "RFLNG", "RGLRLY", "RMKS", "RMNDR", "RMNG", "RPLCMT", "RPRS", "RPRTD", "RPRTG", "RPRTS",
+    "RPTD", "RQRD", "RQRG", "RQRMT", "RQRS", "RSTRD", "RSTRN", "RSTRNS", "RSTRS", "RSVNS", "RTES",
+    "RWYS", "RYS", "SEBD", "SECS", "SERS", "SERV", "SFCS", "SIDS", "SKEDD", "SKEDG", "SKEDS",
+    "SLPD", "SLPS", "SMLR", "SMTD", "SPECS", "SQDNS", "SRNDD", "SRNDG", "SRNDNG", "SRNDS", "STDS",
+    "STWYS", "SUPPLL", "SUPVRS", "SVCS", "SVRLY", "SVRTY", "TEMPOLY", "TGLS", "THLDS", "THRD",
+    "THRS", "THUR", "TILL", "TKOFS", "TMPRYLY", "TMTN", "TRKG", "TRMTS", "TRNSPG", "TRNSPN",
+    "TRSNL", "TUES", "TVLG", "TWRS", "TWYS", "TXLN", "TXLS", "UNABL", "UNAVBLTY", "UNCTLD",
+    "UNMRKD", "UNSKEDD", "UNSVCBL", "VARNS", "VFYD", "VSBL", "VSLS", "WEDS", "WKDAYS", "WKENDS",
+    "WKS", "WNDS", "WTS", "XNGS", "YDS", "YRS"
+}
+
 
 # ---------------------------------------------------------------- reading the glossary
 _GLOSSARY = None
@@ -315,10 +364,12 @@ def load():
 
 
 def lookup(term):
-    """the glossary entry for a term, a derived one (LGTS from LGT + S), or None."""
+    """the glossary entry for a term, a reviewed derived one (LGTS from LGT + S), or None."""
     terms = load()
     if term in terms or term in ENGLISH:
         return terms.get(term)
+    if term not in DERIVED:
+        return None
     for suffix in sorted(SUFFIXES, key=len):      # the longest root first: MINS is MIN + S
         root = term[:-len(suffix)]
         if not term.endswith(suffix) or len(root) < (2 if suffix == "S" else 3):
