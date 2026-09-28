@@ -234,7 +234,7 @@ a.sbi{color:var(--dm);transition:color .15s}a.sbi:hover{color:var(--tx);text-dec
 .sbi.on,a.sbi.on{background:var(--p2);color:var(--tx);font-weight:500}
 .sbi b{font:600 13px var(--mono)}.sbi.sub{color:var(--dm);font-size:13.5px}
 .sbt{display:flex;align-items:center;gap:8px;width:100%;padding:6px 8px;border:0;border-radius:6px;background:none;color:var(--dm);font:14px var(--sans);text-align:left;cursor:pointer;transition:color .15s}
-.sbt:hover,.sbl.open>.sbt{color:var(--tx)}.sbl.open>.sbt{font-weight:500}.sbl.on>.sbt{background:var(--p2);color:var(--tx)}
+.sbt:hover,.sbl.open>.sbt{color:var(--tx);text-decoration:none}.sbl.open>.sbt{font-weight:500}.sbl.on>.sbt{background:var(--p2);color:var(--tx)}
 .sbt .n{margin-left:auto;font:12px var(--mono);color:var(--fn)}.sbt .nw{margin-left:auto}.sbt .nw+.n{display:none}
 .sbl.open .sbt .nw{display:none}.sbl.open .sbt .nw+.n{display:inline}
 .sbp{display:grid;grid-template-rows:0fr;transition:grid-template-rows .22s ease}.sbl.open>.sbp{grid-template-rows:1fr}
@@ -644,20 +644,27 @@ const union=()=>[...new Set(all().flatMap(l=>l.ids))];
 function same(ids,name){const s=new Set(ids),m=all().filter(l=>l.ids.length===s.size&&l.ids.every(x=>s.has(x)));return m.find(l=>l.name===name)||m[0]||null}
 const link=l=>new URL((document.body.dataset.root||"")+"list/?w="+l.ids.join(",")+"&n="+encodeURIComponent(l.name),location.href).href;
 return{all,active,use,create,rename,set,remove,union,same,link}})();
-// the sidebar: every list, at most one open at a time. Which one stays open is remembered in amend.sb.open
-// ([id] or []), and none is open until you open one. Opening another closes the first, both animating at once.
-// The page runs SB.side() right after the sidebar's placeholder, so the lists are there on the first paint
-var SB=(()=>{const SBO="amend.sb.open",sbo=()=>{try{const v=JSON.parse(localStorage.getItem(SBO)||"[]");return Array.isArray(v)&&v.length?String(v[0]):""}catch(e){return""}};
-function side(){const el=document.getElementById("sbw");if(!el)return;const B=document.body.dataset,R=B.root||"",ls=LS.all(),op=sbo(),nc=AM.newc();
-  el.innerHTML=ls.length?'<div class="sbh">Your lists</div>'+ls.map(l=>{const o=l.id===op,n=l.ids.reduce((s,x)=>s+(nc[x]||0),0),u=R+'list/?l='+encodeURIComponent(l.id);
-    return '<div class="sbl'+(o?' open':'')+(l.id===B.list?' on':'')+'" data-l="'+esc(l.id)+'"><button type="button" class="sbt" aria-expanded="'+o+'">'+
-      '<span class="nm">'+esc(l.name)+'</span>'+(n?'<span class="nw">'+AM.pill(n)+'</span>':'')+'<span class="n">'+l.ids.length+'</span></button>'+
-      '<div class="sbp"'+(o?'':' inert')+'><div class="sbq">'+l.ids.slice(0,12).map(x=>'<a class="sba'+(x===el.dataset.on?' on':'')+'" href="'+R+x+'/"><b>'+x+'</b>'+(nc[x]?AM.pill(nc[x]):'')+'</a>').join("")+
-      (l.ids.length?'':'<div class="sba sub">No airports yet</div>')+
-      '<a class="sba go" href="'+u+'">'+(l.ids.length>12?'All '+l.ids.length+' airports':'Open list')+' ›</a></div></div></div>'}).join(""):""}
-document.addEventListener("click",ev=>{const t=ev.target.closest&&ev.target.closest("#sbw .sbt");if(!t)return;const el=document.getElementById("sbw"),box=t.parentNode,open=!box.classList.contains("open");
-  el.querySelectorAll(".sbl").forEach(b=>{const o=open&&b===box;b.classList.toggle("open",o);b.firstChild.setAttribute("aria-expanded",o);b.lastChild.inert=!o});
-  try{localStorage.setItem(SBO,JSON.stringify(open?[box.dataset.l]:[]))}catch(e){}});
+// the sidebar: every list, with the one that matches the page open. On a list's page that's the list shown, on an
+// airport page a list with that airport (the one in use first), anywhere else the list in use. Clicking a list's
+// name opens its page, so the sidebar and the page never disagree. The page runs SB.side() right after the
+// sidebar's placeholder, so it's right on the first paint; later calls only slide the open list if nothing else changed
+var SB=(()=>{
+function which(ls,el){const B=document.body.dataset,R=B.root||"",P=new URLSearchParams(location.search),has=id=>ls.some(l=>l.id===id);
+  if(new URL(R+"list/",location.href).pathname===location.pathname){if(B.list!==undefined)return B.list;const l=P.get("l");if(l&&has(l))return l}
+  const on=LS.active(),apt=el.dataset.on;
+  if(apt&&!(on&&on.ids.includes(apt))){const l=ls.find(x=>x.ids.includes(apt));if(l)return l.id}
+  return on?on.id:""}
+function side(){const el=document.getElementById("sbw");if(!el)return;const B=document.body.dataset,R=B.root||"",ls=LS.all(),nc=AM.newc(),op=which(ls,el);
+  const sig=JSON.stringify([ls,nc]);
+  if(el.dataset.sig!==sig){el.dataset.sig=sig;
+    el.innerHTML=ls.length?'<div class="sbh">Your lists</div>'+ls.map(l=>{const n=l.ids.reduce((s,x)=>s+(nc[x]||0),0),u=R+'list/?l='+encodeURIComponent(l.id);
+      return '<div class="sbl" data-l="'+esc(l.id)+'"><a class="sbt" href="'+u+'">'+
+        '<span class="nm">'+esc(l.name)+'</span>'+(n?'<span class="nw">'+AM.pill(n)+'</span>':'')+'<span class="n">'+l.ids.length+'</span></a>'+
+        '<div class="sbp"><div class="sbq">'+l.ids.slice(0,12).map(x=>'<a class="sba'+(x===el.dataset.on?' on':'')+'" href="'+R+x+'/"><b>'+x+'</b>'+(nc[x]?AM.pill(nc[x]):'')+'</a>').join("")+
+        (l.ids.length?'':'<div class="sba sub">No airports yet</div>')+
+        (l.ids.length>12?'<a class="sba go" href="'+u+'">All '+l.ids.length+' airports ›</a>':'')+'</div></div></div>'}).join(""):""}
+  el.querySelectorAll(".sbl").forEach(b=>{const o=b.dataset.l===op;b.classList.toggle("open",o);b.classList.toggle("on",o&&b.dataset.l===B.list);
+    b.firstChild.setAttribute("aria-current",o&&b.dataset.l===B.list?"page":"false");b.lastChild.inert=!o})}
 return{side}})();
 addEventListener("DOMContentLoaded",()=>{AM.sync();const R=document.body.dataset.root||"",B=document.body.dataset,el=document.getElementById("sbw");
 const short=(s,n)=>s.length>n?s.slice(0,n-1)+"…":s;
@@ -1253,7 +1260,8 @@ data-name="{e(wl['name'])}">Save to my lists</a><button class="btn ghost" id="co
 UPDATES = [
     ("Sep 2026", [
         "Moving between pages fades instead of flashing, and pages you point at load before you click. Get "
-        "alerts on an airport page opens right under the button.",
+        "alerts on an airport page opens right under the button. A list's name in the sidebar opens that list, and "
+        "the sidebar always has open the list you're looking at.",
         "Pages switch from upcoming to in effect at exactly 0901Z on cycle day, even if you have the page open, "
         "using the server's clock if your device's is off. Amend also checks the FAA for new data every 10 minutes.",
         "Docs, Privacy and Terms now say how to tell the FAA when its own data is wrong, what Amend can't see "

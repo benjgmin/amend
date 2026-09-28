@@ -601,7 +601,7 @@ class TestWeb(unittest.TestCase):
         self.assertIn('id="sq"', index)                                     # same sidebar on the home page
         self.assertIn('id="sbw"', index)
         app = open(os.path.join(site, "assets", "app.js")).read()
-        self.assertIn('SBO="amend.sb.open"', app)                           # sidebar lists remember open/closed
+        self.assertIn('function which(ls,el)', app)                         # the sidebar opens the list the page shows
         self.assertIn('href="list/">Lists</a>', index)                      # phone top bar reaches the lists
         lists = open(os.path.join(site, "list", "index.html")).read()
         for part in ('id="ltabs"', 'id="actions"', 'id="manage"', 'id="lnote"', '"DAB":["KDAB","Daytona Beach Intl"]'):
