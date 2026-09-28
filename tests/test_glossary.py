@@ -3,6 +3,7 @@ The verified glossary and the no-guess rule: a remark translation may expand a c
 to a meaning the FAA gives for it. the cases are real translations from remark_cache.json.
 run:  python -m unittest tests.test_glossary -v
 """
+import glob
 import io
 import json
 import os
@@ -470,6 +471,20 @@ class TestScrubHistory(unittest.TestCase):
             os.chdir(cwd)
         self.assertIn("1 translations in history/ fail the checks", out.getvalue())
         self.assertEqual(json.loads(self.read("XYZ.json"))["entries"][0]["summary"], f"remark updated: {self.raw}")
+
+    def test_history_holds_no_rejected_translation(self):
+        """the check and history/ change together: after making the checks stricter, run
+        python -m amend scrub-history and commit history/ with the change."""
+        bad = []
+        for path in glob.glob(os.path.join(os.path.dirname(__file__), "..", "history", "*.json")):
+            with open(path, encoding="utf-8") as f:
+                h = json.load(f)
+            for e in h.get("entries", []):
+                raw, (head, sep, plain) = e.get("original"), e["summary"].partition(": ")
+                if raw and sep and e.get("source") in remarks.REMARK_FILES + ("FRQ",) \
+                        and not remarks.faithful(raw, plain):
+                    bad.append(f"{h.get('airport')} {e['cycle']}: {e['summary']}")
+        self.assertEqual(bad[:5], [], f"{len(bad)} in all; run python -m amend scrub-history")
 
 
 if __name__ == "__main__":
