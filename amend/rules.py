@@ -207,6 +207,15 @@ def blank_fill(c, old, new):
     return (old or "").strip().upper() in blanks and (new or "").strip().upper() in blanks
 
 
+def phone_format(c, old, new):
+    """true if a phone column only changed how the number is written: BVN (402) 741-1290 ->
+    402-741-1290, Z52 907-283-4117. -> 907-283-4117 (2026-10-01, 8 contacts)."""
+    if "PHONE" not in c.upper():
+        return False
+    digits = lambda v: re.sub(r"\D", "", v or "")
+    return bool(digits(old)) and digits(old) == digits(new)
+
+
 def rwy_id(v):
     """'9/27' -> '09/27', '9' -> '09', '9L/27R' -> '09L/27R'. every runway in NASR is written
     with two digits except four new ones in 2026-10-01 (58KY, IL97, MN46, 39MN '9/27'); unpadded,

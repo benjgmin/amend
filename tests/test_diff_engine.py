@@ -302,6 +302,14 @@ class TestFillInsAndFormatting(TestPriorityRules):
         # N only equals blank on a yes/no column: a direction of N is north
         self.assertFalse(d.blank_fill("ARPT_DIR", "", "N"))
 
+    def test_a_phone_number_written_differently_is_not_a_change(self):   # BVN, Z52
+        from amend.rules import phone_format
+        self.assertTrue(phone_format("PHONE_NO", "(402) 741-1290", "402-741-1290"))
+        self.assertTrue(phone_format("PHONE_NO", "907-283-4117.", "907-283-4117"))
+        self.assertFalse(phone_format("PHONE_NO", "402-741-1290", "402-741-1291"))
+        self.assertFalse(phone_format("PHONE_NO", "", "402-741-1290"))
+        self.assertFalse(phone_format("RWY_LEN", "1-200", "1200"))
+
     def test_runway_nine_is_runway_zero_nine(self):   # 58KY, IL97
         h = "ARPT_ID,RWY_ID,RWY_LEN,RWY_WIDTH,SURFACE_TYPE_CODE"
         ch = self.one("APT_RWY.csv", h, ["58KY,09/27,1300,65,TURF", "58KY,11/29,2500,100,TURF"],
