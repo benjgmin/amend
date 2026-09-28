@@ -10,7 +10,7 @@ struct GuideView: View {
             VStack(alignment: .leading, spacing: 14) {
                 section("Priority") {
                     tier(.action, "ACT",
-                         "May change what you do there. Tower or Class D hours, frequencies, runways closed, renumbered or restricted, navaids removed or changed, new PPR or noise rules.",
+                         "Could change your plan. Tower or Class D hours, frequencies, runways closed, renumbered or restricted, navaids removed or changed, new PPR or noise rules.",
                          "Tower hours changed: 0700-2100 → 0700-0100 local")
                     tier(.ifr, "IFR",
                          "Instrument procedures: approaches amended, added or removed, STARs and departures, preferred IFR routes. Matters most if you fly IFR there.",
