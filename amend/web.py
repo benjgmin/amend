@@ -254,7 +254,9 @@ a.sbi{color:var(--dm);transition:color .15s}a.sbi:hover{color:var(--tx);text-dec
 .sbi.on,a.sbi.on{background:var(--p2);color:var(--tx);font-weight:500}
 .sbi b{font:600 13px var(--mono)}.sbi.sub{color:var(--dm);font-size:13.5px}
 .sbt{display:flex;align-items:center;gap:8px;width:100%;padding:6px 8px;border:0;border-radius:6px;background:none;color:var(--dm);font:14px var(--sans);text-align:left;cursor:pointer;transition:color .15s}
-.sbt:hover,.sbl.open>.sbt{color:var(--tx);text-decoration:none}.sbl.open>.sbt{font-weight:500}.sbl.on>.sbt{background:var(--p2);color:var(--tx)}
+.sbt:hover,.sbl.cur>.sbt{color:var(--tx);text-decoration:none}.sbl.cur>.sbt{font-weight:500}
+.sbl{position:relative}.sbl.cur>.sbt{padding-right:30px}.sbf{display:none;position:absolute;right:2px;top:3px;width:26px;height:26px;border:0;border-radius:5px;background:none;cursor:pointer;align-items:center;justify-content:center}
+.sbl.cur>.sbf{display:flex}.sbf:hover{background:var(--p2)}.sbf:hover .chev{color:var(--tx)}.sbf[aria-expanded=true] .chev{transform:rotate(90deg)}.sbl.on>.sbt{background:var(--p2);color:var(--tx)}
 .sbt .n{margin-left:auto;font:12px var(--mono);color:var(--fn)}.sbt .nw{margin-left:auto}.sbt .nw+.n{display:none}
 .sbl.open .sbt .nw{display:none}.sbl.open .sbt .nw+.n{display:inline}
 .sbp{display:grid;grid-template-rows:0fr;transition:grid-template-rows .22s ease}.sbl.open>.sbp{grid-template-rows:1fr}
@@ -471,11 +473,12 @@ async function renderNext(){const el=document.getElementById("next"),l=LS.union(
   AM.tick();renderLists();renderSearch();if(window.AMside)AMside()}
 function update(){renderLists();renderSearch();if(window.AMside)AMside();renderNext()}
 document.addEventListener("amend:flip",()=>renderNext());
+document.addEventListener("amend:fold",()=>renderLists());
 document.addEventListener("click",ev=>{const b=ev.target.closest("button");if(!b||b.closest("form,#welcome"))return;const l=LS.active();
   if(b.dataset.add)LS.set((l||LS.create("My airports",[])).id,[b.dataset.add],true);
   else if(b.dataset.rm&&l)LS.set(l.id,[b.dataset.rm],false);
   else if(b.dataset.use)LS.use(b.dataset.use);
-  else if(b.id==="fold"&&l){LS.fold(l.id,!LS.folded(l.id));renderLists();return document.getElementById("fold").focus()}
+  else if(b.id==="fold"&&l){LS.fold(l.id,!LS.folded(l.id));renderLists();if(window.AMside)AMside();return document.getElementById("fold").focus()}
   else if(b.id==="share"&&l)return AM.copy(LS.link(l),b);
   else if(b.id==="rename"&&l)return AM.form(document.getElementById("nf"),{value:l.name},n=>{LS.rename(l.id,n);update()});
   else if(b.id==="newlist")return AM.form(document.getElementById("nf"),{label:"Create",ph:"Name, e.g. Club SVFR or Bahamas trip"},n=>{LS.create(n,[]);update();q.focus()});
@@ -691,11 +694,17 @@ function side(){const el=document.getElementById("sbw");if(!el)return;const B=do
     el.innerHTML=ls.length?'<div class="sbh">Your lists</div>'+ls.map(l=>{const n=l.ids.reduce((s,x)=>s+(nc[x]||0),0),u=R+'list/?l='+encodeURIComponent(l.id);
       return '<div class="sbl" data-l="'+esc(l.id)+'"><a class="sbt" href="'+u+'">'+
         '<span class="nm">'+esc(l.name)+'</span>'+(n?'<span class="nw">'+AM.pill(n)+'</span>':'')+'<span class="n">'+l.ids.length+'</span></a>'+
+        '<button class="sbf" type="button" aria-label="Fold '+esc(l.name)+'"><span class="chev" aria-hidden="true">▶</span></button>'+
         '<div class="sbp"><div class="sbq">'+l.ids.slice(0,12).map(x=>'<a class="sba'+(x===el.dataset.on?' on':'')+'" href="'+R+x+'/"><b>'+x+'</b>'+(nc[x]?AM.pill(nc[x]):'')+'</a>').join("")+
         (l.ids.length?'':'<div class="sba sub">No airports yet</div>')+
         (l.ids.length>12?'<a class="sba go" href="'+u+'">All '+l.ids.length+' airports ›</a>':'')+'</div></div></div>'}).join(""):""}
-  el.querySelectorAll(".sbl").forEach(b=>{const o=b.dataset.l===op;b.classList.toggle("open",o);b.classList.toggle("on",o&&b.dataset.l===B.list);
-    b.firstChild.setAttribute("aria-current",o&&b.dataset.l===B.list?"page":"false");b.lastChild.inert=!o})}
+  // the list that matches the page shows its airports unless it's folded (the same fold as the home page's arrow)
+  el.querySelectorAll(".sbl").forEach(b=>{const c=b.dataset.l===op,o=c&&!LS.folded(op),f=b.querySelector(".sbf");
+    b.classList.toggle("cur",c);b.classList.toggle("open",o);b.classList.toggle("on",c&&b.dataset.l===B.list);
+    f.setAttribute("aria-expanded",o);f.setAttribute("aria-label",(o?"Fold ":"Show ")+b.querySelector(".nm").textContent);
+    b.firstChild.setAttribute("aria-current",c&&b.dataset.l===B.list?"page":"false");b.lastChild.inert=!o});
+  if(!el.dataset.wired){el.dataset.wired=1;el.addEventListener("click",ev=>{const f=ev.target.closest(".sbf");if(!f)return;const id=f.parentNode.dataset.l;
+    LS.fold(id,!LS.folded(id));side();document.dispatchEvent(new Event("amend:fold"))})}}
 return{side}})();
 addEventListener("DOMContentLoaded",()=>{AM.sync();const R=document.body.dataset.root||"",B=document.body.dataset,el=document.getElementById("sbw");
 const short=(s,n)=>s.length>n?s.slice(0,n-1)+"…":s;
@@ -1291,8 +1300,8 @@ data-name="{e(wl['name'])}">Save to my lists</a><button class="btn ghost" id="co
 # what shipped, newest first, for /changelog/. Add a line when something people can see changes.
 UPDATES = [
     ("Sep 2026", [
-        "On the home page, the arrow next to Your lists folds the list shown down to its name. Each list "
-        "remembers whether it's folded, in this browser.",
+        "The arrow next to Your lists on the home page, and next to the open list in the sidebar, folds that "
+        "list down to its name. Each list remembers whether it's folded, in this browser.",
         "W stays as the FAA wrote it in remark translations. The FAA's lists give W two meanings, west and "
         "white, and remarks also write W/ for with, so the check couldn't tell a wrong pick from a right one: "
         "\"W RWY MRKG CONES EV 300 FT\", on both ends of one runway, read \"West runway markings\". Where the "
