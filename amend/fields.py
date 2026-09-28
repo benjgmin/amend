@@ -349,7 +349,7 @@ F = {
     "SECTOR": ("sector", None), "CONTACT_FREQ_ALTITUDE": ("contact altitude", None),
     # RDR
     "RADAR_TYPE": ("radar type", RADAR_TYPES), "RADAR_NO": ("radar number", None),
-    "RADAR_HRS": ("radar hours", None),
+    "RADAR_HRS": ("radar hours and notes", None),
 }
 
 for _side, _ps, _role in (("APCH", "P", "approach control"), ("APCH", "S", "secondary approach control"),

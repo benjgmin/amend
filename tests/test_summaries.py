@@ -300,6 +300,41 @@ class TestRemarkSubject(Rows):
         self.assertEqual(say("RUNWAY_END", "CLOSE_IN_OBSTN", "12"), "runway 12 end")
 
 
+class TestSweep(Rows):
+    """findings from the 2026-09-28 engine sweep of the 10-01 build."""
+    H_END = "ARPT_ID,RWY_ID,RWY_END_ID,OBSTN_TYPE,OBSTN_HGT,DIST_FROM_THR,CNTRLN_OFFSET,CNTRLN_DIR_CODE,OBSTN_CLNC_SLOPE"
+
+    def test_obstacle_dropped_reads_whole(self):
+        """FBL runway 30: the road obstacle went away; the line only said 'clearance slope'."""
+        old = {"APT_RWY_END.csv": [self.H_END, "FBL,12/30,30,ROAD,14,580,280,R,27"]}
+        new = {"APT_RWY_END.csv": [self.H_END, "FBL,12/30,30,,,,,,34"]}
+        self.assertEqual([s for _, s in self.one(old, new, "FBL")], [
+            "runway 30: controlling obstacle: ROAD 14 ft tall, 580 ft from threshold, 280 ft right of "
+            "centerline -> none listed; obstacle clearance slope: 27:1 -> 34:1"])
+
+    def test_obstacle_side_and_type_once(self):
+        """02G runway 07: the obstacle moved to the other side of the centerline, and its type
+        was a second 'controlling obstacle' phrase."""
+        old = {"APT_RWY_END.csv": [self.H_END, "02G,07/25,07,TREE,8,321,58,R,15"]}
+        new = {"APT_RWY_END.csv": [self.H_END, "02G,07/25,07,TREES,59,1340,181,L,19"]}
+        self.assertEqual([s for _, s in self.one(old, new, "02G")], [
+            "runway 07: controlling obstacle: TREE 8 ft tall, 321 ft from threshold, 58 ft right of "
+            "centerline -> TREES 59 ft tall, 1340 ft from threshold, 181 ft left of centerline; "
+            "obstacle clearance slope: 15:1 -> 19:1"])
+
+    def test_airport_rename_said_once(self):
+        """BVN: the new name showed on the airport, tower and frequency rows."""
+        h_atc, h_frq = "FACILITY_TYPE,FACILITY_ID,FACILITY_NAME", "FACILITY,FACILITY_TYPE,SERVICED_FACILITY,SERVICED_FAC_NAME,FREQ,FREQ_USE"
+        old = {"APT_BASE.csv": ["ARPT_ID,ARPT_NAME", "BVN,ALBION MUNI"],
+               "ATC_BASE.csv": [h_atc, "NON-ATCT,BVN,ALBION MUNI"],
+               "FRQ.csv": [h_frq, "BVN,NON-ATCT,BVN,ALBION MUNI,122.9,CTAF"]}
+        new = {"APT_BASE.csv": ["ARPT_ID,ARPT_NAME", "BVN,ALBION MUNI/RON LEVANDER FLD"],
+               "ATC_BASE.csv": [h_atc, "NON-ATCT,BVN,ALBION MUNI/RON LEVANDER FLD"],
+               "FRQ.csv": [h_frq, "BVN,NON-ATCT,BVN,ALBION MUNI/RON LEVANDER FLD,122.9,CTAF"]}
+        ch = self.diff(old, new)["BVN"]
+        self.assertEqual([c["summary"] for c in ch], ["airport name: Albion Muni -> Albion Muni/Ron Levander Fld"])
+
+
 class TestColumns(Rows):
     """a changed column reads as the FAA layout's English, never its column name, and a code
     reads with the meaning the layout gives it. real rows, trimmed."""
