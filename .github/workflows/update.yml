@@ -102,14 +102,6 @@ jobs:
       - name: check the site before it goes live
         run: python -m amend verify site
 
-      # the status page (amend/statuspage.py) again, now that verify has written its result into
-      # this run's record, so the deployed page shows this run as verified and published. if this
-      # step ever breaks, the page from the build step (verify checked it's there) still deploys:
-      # a status page bug must not hold back FAA data that passed every check
-      - name: status page
-        continue-on-error: true
-        run: python -m amend status site
-
       # remark_cache.json is committed, not kept in the Actions cache: translations are paid for
       # once, never lost to cache eviction, and change ids (which hash the summary) stay stable.
       # also commits the audit packet the daily review reads (audit/<cycle>.json) and the run

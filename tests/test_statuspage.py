@@ -5,6 +5,8 @@ import glob
 import json
 import os
 import re
+import shutil
+import subprocess
 import tempfile
 import unittest
 
@@ -125,6 +127,64 @@ class TestStatusPage(unittest.TestCase):
         html = self.render(a, b, c)
         self.assertLess(html.index("27 Sep 2026 2000Z"), html.index("27 Sep 2026 1000Z"))
         self.assertEqual(html.count('class="card cycle run"'), 2)
+
+
+    def test_behind_check_only_on_a_published_headline(self):
+        self.assertIn('data-hours="30"', self.render(good()))
+        self.assertNotIn("data-last=", self.render(failed("2026-09-28T12:00:00+00:00")))
+
+
+def behind(now, last="2026-09-28T12:42:05+00:00", cyc="2026-10-01"):
+    """run the headline's browser check in node at `now`; the new headline html, or "" if unchanged."""
+    js = statuspage.BEHIND_JS.removeprefix("<script>").removesuffix("</script>")
+    stub = (f"const a={{dataset:{{last:{json.dumps(last)},cyc:{json.dumps(cyc)},hours:'{statuspage.BEHIND_HOURS}',"
+            f"log:'L'}},innerHTML:''}};const document={{getElementById:()=>a}};"
+            f"Date.now=()=>Date.parse({json.dumps(now)});")
+    out = subprocess.run(["node", "-e", stub + js + ";process.stdout.write(a.innerHTML)"],
+                         capture_output=True, text=True, check=True)
+    return out.stdout
+
+
+@unittest.skipUnless(shutil.which("node"), "node isn't installed")
+class TestBehindCheck(unittest.TestCase):
+    def test_fresh_build_stays_green(self):
+        self.assertEqual(behind("2026-09-28T14:00:00Z"), "")
+        self.assertEqual(behind("2026-09-29T18:00:00Z"), "")     # 29h: a slow day of dropped crons
+
+    def test_no_published_run_for_30h(self):
+        h = behind("2026-09-29T19:00:00Z")
+        self.assertIn("Amend is behind", h)
+        self.assertIn("No run has published since 28 Sep 2026 1242Z", h)
+        self.assertNotIn("isn't on Amend yet", h)
+
+    def test_changeover_passed_without_new_cycle(self):
+        h = behind("2026-10-29T09:30:00Z", last="2026-10-29T08:00:00+00:00")
+        self.assertIn("The 29 Oct 2026 FAA cycle took effect 29 Oct 2026 0901Z and isn't on Amend yet", h)
+        self.assertNotIn("No run has published", h)
+
+    def test_upcoming_cycle_before_and_after_changeover(self):
+        self.assertEqual(behind("2026-10-01T09:00:00Z", last="2026-10-01T08:00:00+00:00"), "")
+        self.assertEqual(behind("2026-10-01T09:02:00Z", last="2026-10-01T08:00:00+00:00"), "")
+
+    def test_several_cycles_behind(self):
+        self.assertIn("The 24 Dec 2026 FAA cycle", behind("2026-12-25T00:00:00Z"))
+
+
+class TestVerifyRefreshesThePage(unittest.TestCase):
+    def test_verify_rewrites_status_after_passing(self):
+        from unittest import mock
+        from amend import cli, freshness
+        from tests.test_pipeline_ops import TestVerify
+        site, old = TestVerify().site(), os.getcwd()
+        os.chdir(tempfile.mkdtemp())           # an empty run log, away from the repo's
+        try:
+            with mock.patch.object(freshness, "verify", lambda s: []), \
+                    mock.patch.dict(os.environ, {"GITHUB_RUN_ID": ""}):
+                cli.main(["verify", site])
+        finally:
+            os.chdir(old)
+        with open(os.path.join(site, "status", "index.html"), encoding="utf-8") as f:
+            self.assertIn("No runs recorded yet", f.read())
 
 
 if __name__ == "__main__":

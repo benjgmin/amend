@@ -7,8 +7,8 @@ rows it read, what the diff found, the remark translations, the checks, the pre-
 and whether it was published. Every value comes from a run record. A value the run didn't
 record shows as "not recorded"; nothing here is estimated.
 
-The page is rebuilt with the site (web.build) and again right after `amend verify` (the
-workflow's "status page" step), so the run that deploys it shows its own verify result. A
+The page is rebuilt with the site (web.build) and again by `amend verify` once it passes, so
+the run that deploys it shows its own verify result. A
 blocked run doesn't deploy, so it shows up here after the next run that does; its record is
 in audit/runs on GitHub as soon as that run ends, and the page says so.
 
@@ -35,6 +35,13 @@ AI_KEYS = [("sent", "sent to the translator"), ("translated", "came back and pas
            ("cache_retired", "old cached translations retired"), ("llm_calls", "translator calls"),
            ("input_tokens", "input tokens"), ("output_tokens", "output tokens")]
 NR = '<span class="nr">not recorded</span>'
+# the page is only redeployed by a run that passes, so on the day a run is blocked it would still
+# read green. the visitor's browser checks two things against the clock instead (BEHIND_JS), with
+# no request to anyone: how old the newest published run is, and whether the site has the cycle
+# the FAA's fixed 28-day schedule says is in effect now. a forced rebuild runs at least every 20h
+# when the scheduled check fires, and GitHub drops or delays scheduled runs by hours, so a
+# healthy site can reach ~26h between builds; 30h means runs really have stopped publishing
+BEHIND_HOURS = 30
 
 CSS = """<style>
 .st-top{display:grid;gap:10px}.st-ans{display:flex;gap:10px;align-items:flex-start}
@@ -392,11 +399,15 @@ def page(recs, meta, now):
                  ("Result", chip(kind, label))]
         if top.get("engine"):
             rows.append(("Engine", e(top["engine"])))
+    behind_attrs = ""
+    if meta and top is not None and top.get("published") and top.get("started_at"):
+        behind_attrs = (f' data-last="{e(top["started_at"])}" data-cyc="{e(meta["to_cycle"])}"'
+                        f' data-hours="{BEHIND_HOURS}" data-log="{web.REPO_URL}/tree/master/audit/runs"')
     kv = "".join(f'<div class="kv"><span>{k}</span><span>{v}</span></div>' for k, v in rows)
     body = [f"""<header class="full"><h1>Status</h1><p class="lede">Is Amend current, and did the latest run pass every check?
 Every number here comes from the run log Amend writes on each run. Nothing is estimated.</p></header>
-<section class="full card box st-top"><div class="st-ans">{ans[0]}<div><b>{ans[1]}</b>
-{f'<p class="note">{ans[2]}</p>' if ans[2] else ''}</div></div><div>{kv}</div></section>"""]
+<section class="full card box st-top"><div class="st-ans" id="stans"{behind_attrs}>{ans[0]}<div><b>{ans[1]}</b>
+{f'<p class="note">{ans[2]}</p>' if ans[2] else ''}</div></div><div>{kv}</div></section>{BEHIND_JS if behind_attrs else ""}"""]
     if top is not None:
         body.append(f'<section class="full card box"><h3>Latest build, step by step</h3>'
                     f'<p class="note">{run_meta(top)}</p><div class="stages">{stages(top)}</div></section>')
@@ -428,6 +439,21 @@ half old, a banner at the top says so.</p>
                     image=f"{web.SITE_URL}assets/card.png", active="status", meta=meta, now=now, head=CSS)
 
 
+BEHIND_JS = r"""<script>(()=>{const a=document.getElementById("stans");if(!a||!a.dataset.last)return;
+const D=86400000,now=Date.now(),last=Date.parse(a.dataset.last),to=Date.parse(a.dataset.cyc+"T09:01:00Z");
+const M="Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec".split(" "),p2=n=>String(n).padStart(2,"0"),
+  day=t=>{const d=new Date(t);return p2(d.getUTCDate())+" "+M[d.getUTCMonth()]+" "+d.getUTCFullYear()},
+  fmt=t=>{const d=new Date(t);return day(t)+" "+p2(d.getUTCHours())+p2(d.getUTCMinutes())+"Z"};
+let eff=to;while(eff+28*D<=now)eff+=28*D;   // the newest 0901Z changeover on the FAA's 28-day grid that has passed
+const why=[];
+if(eff>to)why.push("The "+day(eff)+" FAA cycle took effect "+fmt(eff)+" and isn't on Amend yet. Amend still shows the "+day(to)+" cycle.");
+if(now-last>+a.dataset.hours*36e5)why.push("No run has published since "+fmt(last)+". Runs normally publish at least once a day.");
+if(!why.length)return;
+const esc=s=>s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+a.innerHTML='<span class="ann act">Behind</span><div><b>Amend is behind.</b><p class="note">'+why.map(esc).join(" ")+
+' The checks below are from that last published run. Every later run, including blocked ones, is in the <a href="'+esc(a.dataset.log)+'">run log on GitHub</a>. Use official FAA sources until this clears.</p></div>'})()</script>"""
+
+
 def build(site, meta, now=None, log_dir=runlog.RUNS):
     """write site/status/index.html from the run log. returns the number of runs shown."""
     now = now or dt.datetime.now(dt.timezone.utc)
@@ -439,8 +465,8 @@ def build(site, meta, now=None, log_dir=runlog.RUNS):
 
 
 def rebuild(site="site", log_dir=runlog.RUNS):
-    """`python -m amend status`: rewrite the page after `amend verify` so it shows this run's verify
-    result. reads the cycle from the built site's latest/meta.json."""
+    """rewrite the page after `amend verify` passes (also `python -m amend status`), so it shows this
+    run's verify result. reads the cycle from the built site's latest/meta.json."""
     with open(os.path.join(site, "latest", "meta.json"), encoding="utf-8") as f:
         meta = json.load(f)
     return build(site, meta, log_dir=log_dir)
