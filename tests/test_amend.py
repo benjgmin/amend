@@ -698,7 +698,7 @@ class TestWeb(unittest.TestCase):
         about = open(os.path.join(site, "about", "index.html")).read()
         self.assertIn('id="report"', about)
         self.assertIn('"privacy": "../privacy/"', about)                 # old /about/#privacy links still land
-        self.assertIn('"how": "../docs/#how"', about)
+        self.assertIn('"how": "https://docs.amend.watch/#how"', about)   # old /about/#how goes to the docs name
         read = lambda p: open(os.path.join(site, p, "index.html")).read()
         docs, privacy, terms, log = read("docs"), read("privacy"), read("terms"), read("changelog")
         for text in ('id="how"', 'id="limits"', 'id="api"', "NOTAMs.</b>"):

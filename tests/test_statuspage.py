@@ -234,10 +234,12 @@ class TestSubdomains(unittest.TestCase):
         with open(os.path.join(site, "status", "index.html"), encoding="utf-8") as f:
             return f.read(), docspage.page(META, NOW)
 
-    def test_off_until_the_names_work(self):
+    def test_off_keeps_everything_on_amend_watch(self):
+        """with the names off (as before they worked), nothing forwards and every link stays on amend.watch"""
+        from unittest import mock
         from amend import web
-        self.assertFalse(web.SUBDOMAINS)       # flip it only once both names open in a browser
-        status, docs = self.pages()
+        with mock.patch.object(web, "SUBDOMAINS", False):
+            status, docs = self.pages()
         for html in (status, docs):
             self.assertNotIn("location.replace", html.split("</head>")[0])
             self.assertIn('href="https://amend.watch/docs/"', html)
@@ -249,11 +251,11 @@ class TestSubdomains(unittest.TestCase):
             self.assertIn(f'<section id="{anchor}">', docs)
 
     def test_on_forwards_the_old_pages_and_links(self):
-        from unittest import mock
         from amend import web
-        with mock.patch.object(web, "SUBDOMAINS", True):
-            status, docs = self.pages()
-            about = web.about_page(META, {}, [], NOW)
+        self.assertTrue(web.SUBDOMAINS)        # on since both names opened in a browser, 2026-09-28
+        status, docs = self.pages()
+        about = web.about_page(META, {}, [], NOW)
+        self.assertIn('href="/assets/style.css?v=', status)   # shared files still from the page's own origin
         self.assertIn('if(location.hostname==="amend.watch")location.replace("https://status.amend.watch/"'
                       '+location.search+location.hash)', status)
         self.assertIn('location.replace("https://docs.amend.watch/"', docs)
