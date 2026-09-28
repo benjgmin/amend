@@ -37,7 +37,7 @@ extension AirportStore {
         saveSeen()
     }
 
-    nonisolated static func loadSeen() -> [String: SeenRecord] {
+    static func loadSeen() -> [String: SeenRecord] {
         UserDefaults.standard.data(forKey: SettingsKey.seen)
             .flatMap { try? JSONDecoder().decode([String: SeenRecord].self, from: $0) } ?? [:]
     }
