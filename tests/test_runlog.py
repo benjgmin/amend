@@ -167,7 +167,7 @@ class TestDownloadRecord(FetchCase):
 class TestRunLog(unittest.TestCase):
     def setUp(self):
         self.dir = tempfile.mkdtemp()
-        env = mock.patch.dict(os.environ, {"GITHUB_RUN_ID": "77", "GITHUB_SHA": "abc1234",
+        env = mock.patch.dict(os.environ, {"GITHUB_RUN_ID": "77", "GITHUB_RUN_ATTEMPT": "2", "GITHUB_SHA": "abc1234",
                                            "GITHUB_EVENT_NAME": "schedule", "GITHUB_REPOSITORY": "o/r",
                                            "PYTHONHASHSEED": "0"})
         env.start()
@@ -192,7 +192,7 @@ class TestRunLog(unittest.TestCase):
         self.assertEqual((rec["engine"], rec["commit"], rec["hash_seed"]), (ENGINE_VERSION, "abc1234", "0"))
         self.assertEqual((rec["mode"], rec["outcome"], rec["verified"], rec["published"]),
                          ("latest", "built", None, None))
-        self.assertEqual(rec["run"], {"id": "77", "attempt": None, "trigger": "schedule",
+        self.assertEqual(rec["run"], {"id": "77", "attempt": "2", "trigger": "schedule",
                                       "url": "https://github.com/o/r/actions/runs/77"})
         self.assertEqual(rec["changes"], {"airports": 1, "action": 1, "ifr": 0, "fyi": 1, "hidden": 4,
                                           "by_category": {"remark": 1, "tower": 1}})
