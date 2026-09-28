@@ -23,7 +23,7 @@ REPO_URL = "https://github.com/benjgmin/amend"
 # the status page and the docs have their own names (amend/subsite.py). They're still built here, at site/status/
 # and site/docs/; a Cloudflare proxy (cloudflare/_worker.js) serves them under these names. SUBDOMAINS turns the
 # names on for every link and forwards the old pages: keep it False until both names open in a browser
-SUBDOMAINS = False
+SUBDOMAINS = True
 SUB_URLS = {"status": "https://status.amend.watch/", "docs": "https://docs.amend.watch/"}
 
 

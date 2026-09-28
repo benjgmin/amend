@@ -9,7 +9,7 @@
 
 <p align="center">
   <a href="https://amend.watch/"><b>amend.watch</b></a> ·
-  <a href="https://amend.watch/docs/#how">How it works</a> ·
+  <a href="https://docs.amend.watch/#how">How it works</a> ·
   <a href="https://amend.watch/guide/">Guide</a> ·
   <a href="https://github.com/benjgmin/amend/issues/new">Report a problem</a>
 </p>
@@ -41,7 +41,7 @@ lists of airports as you like (one for your training area, one per trip), saved 
 as one link. Named lists live under /list/, like [amend.watch/list/daytona-training](https://amend.watch/list/daytona-training/).
 Every airport with changes gets its own page with a link preview, so a page shared in iMessage or a group chat shows
 what changed. Every airport and named list also has an RSS feed (like [amend.watch/VRB/feed.xml](https://amend.watch/VRB/feed.xml))
-with one update per FAA cycle, action items first. [amend.watch/docs](https://amend.watch/docs/) covers how it works
+with one update per FAA cycle, action items first. [docs.amend.watch](https://docs.amend.watch/) covers how it works
 and what it doesn't cover, and [amend.watch/privacy](https://amend.watch/privacy/) what it stores.
 
 ## The iPhone app
