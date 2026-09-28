@@ -440,7 +440,10 @@ half old, a banner at the top says so.</p>
 
 
 BEHIND_JS = r"""<script>(()=>{const a=document.getElementById("stans");if(!a||!a.dataset.last)return;
-const D=86400000,now=Date.now(),last=Date.parse(a.dataset.last),to=Date.parse(a.dataset.cyc+"T09:01:00Z");
+// the site's own clock (app.js AM.now: this device's, corrected by the server's Date header) when there is one, so
+// this page and the rest of the site agree on which cycle is in effect. checked again once that clock has synced
+const clock=()=>typeof AM!=="undefined"&&AM.now?AM.now():Date.now();
+function check(){if(!a.dataset.last)return;const D=86400000,now=clock(),last=Date.parse(a.dataset.last),to=Date.parse(a.dataset.cyc+"T09:01:00Z");
 const M="Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec".split(" "),p2=n=>String(n).padStart(2,"0"),
   day=t=>{const d=new Date(t);return p2(d.getUTCDate())+" "+M[d.getUTCMonth()]+" "+d.getUTCFullYear()},
   fmt=t=>{const d=new Date(t);return day(t)+" "+p2(d.getUTCHours())+p2(d.getUTCMinutes())+"Z"};
@@ -451,7 +454,9 @@ if(now-last>+a.dataset.hours*36e5)why.push("No run has published since "+fmt(las
 if(!why.length)return;
 const esc=s=>s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 a.innerHTML='<span class="ann act">Behind</span><div><b>Amend is behind.</b><p class="note">'+why.map(esc).join(" ")+
-' The checks below are from that last published run. Every later run, including blocked ones, is in the <a href="'+esc(a.dataset.log)+'">run log on GitHub</a>. Use official FAA sources until this clears.</p></div>'})()</script>"""
+' The checks below are from that last published run. Every later run, including blocked ones, is in the <a href="'+esc(a.dataset.log)+'">run log on GitHub</a>. Use official FAA sources until this clears.</p></div>';
+delete a.dataset.last}
+check();setTimeout(check,2000);setInterval(check,60000)})()</script>"""
 
 
 def build(site, meta, now=None, log_dir=runlog.RUNS):

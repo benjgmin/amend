@@ -139,7 +139,7 @@ def behind(now, last="2026-09-28T12:42:05+00:00", cyc="2026-10-01"):
     js = statuspage.BEHIND_JS.removeprefix("<script>").removesuffix("</script>")
     stub = (f"const a={{dataset:{{last:{json.dumps(last)},cyc:{json.dumps(cyc)},hours:'{statuspage.BEHIND_HOURS}',"
             f"log:'L'}},innerHTML:''}};const document={{getElementById:()=>a}};"
-            f"Date.now=()=>Date.parse({json.dumps(now)});")
+            f"Date.now=()=>Date.parse({json.dumps(now)});setTimeout=setInterval=()=>0;")
     out = subprocess.run(["node", "-e", stub + js + ";process.stdout.write(a.innerHTML)"],
                          capture_output=True, text=True, check=True)
     return out.stdout
