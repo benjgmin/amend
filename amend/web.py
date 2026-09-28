@@ -138,9 +138,13 @@ time[data-until],time[data-ago]{font-variant-numeric:tabular-nums;white-space:no
 .pfresh{padding:7px 16px;font-size:12.5px;color:var(--dm);border-bottom:1px solid var(--ln);background:var(--p)}
 .is-stale .fresh{color:var(--am)}.stale{border-color:var(--am)}
 a.src{color:var(--dm)}a.src:hover{color:var(--cy)}
-.nx{display:grid;gap:7px;padding:12px 16px;border-top:1px solid var(--ln);color:var(--tx)}.nx:first-child{border-top:0}
-.nx:hover{background:var(--p2);text-decoration:none}
-.nxh{display:flex;align-items:center;gap:6px 12px;flex-wrap:wrap}.nxh .rname{color:var(--dm);font-size:14px}.nxh .chips{margin-left:auto}
+.nx{display:grid;gap:7px;padding:12px 16px;border-top:1px solid var(--ln);color:var(--tx);position:relative}.nx:first-child{border-top:0}
+.nx:hover{background:var(--p2)}
+.nxa{color:inherit}.nxa:hover{text-decoration:none}.nxa::after{content:"";position:absolute;inset:0}
+.nxh{display:flex;align-items:center;gap:6px 12px;flex-wrap:wrap}.nxh .rname{color:var(--dm);font-size:14px;flex:0 1 auto}.nxh .chips{margin-left:auto}
+.ltags{display:flex;gap:4px;flex-wrap:wrap}
+.ltag{position:relative;z-index:1;font-size:12px;line-height:1.6;padding:0 7px;border:1px solid var(--ln2);border-radius:3px;color:var(--dm);white-space:nowrap;max-width:180px;overflow:hidden;text-overflow:ellipsis}
+.ltag:hover{color:var(--cy);border-color:var(--cy);text-decoration:none}
 .nxi{display:grid;grid-template-columns:40px minmax(0,1fr);gap:10px;align-items:baseline;font-size:14px;overflow-wrap:anywhere}.nxi>.ann{justify-self:start}
 .nxm{font-size:13px;color:var(--cy);padding-left:50px}
 .nxq{padding:11px 16px;border-top:1px solid var(--ln);font-size:13.5px;color:var(--dm)}.nxq:first-child{border-top:0}
@@ -277,7 +281,7 @@ a.sbi{color:var(--dm);transition:color .15s}a.sbi:hover{color:var(--tx);text-dec
 ::view-transition-old(root),::view-transition-new(root){animation-duration:.16s}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}@view-transition{navigation:none}}
 @media (max-width:359px){.nav{gap:12px;font-size:13.5px}}
-@media (max-width:639px){.wrow>a{flex-wrap:wrap;row-gap:6px}.wrow>a .chips,.nxh .chips{flex-basis:100%;margin-left:0;padding-left:64px}}
+@media (max-width:639px){.wrow>a{flex-wrap:wrap;row-gap:6px}.wrow>a .chips,.nxh .chips,.nxh .ltags{flex-basis:100%;margin-left:0;padding-left:64px}.nxh .ltags{order:1}}
 @media (min-width:640px){.cards{grid-template-columns:repeat(2,minmax(0,1fr))}.feats{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (min-width:1000px){
  .app{grid-template-columns:248px minmax(0,1fr)}
@@ -446,11 +450,14 @@ async function renderNext(){const el=document.getElementById("next"),l=LS.union(
   rows.sort((x,y)=>y.d.counts.action-x.d.counts.action||y.nw.size-x.nw.size||(x.id<y.id?-1:1));
   const quiet=l.filter(id=>!busy.includes(id)).sort();
   const cap=s=>s.charAt(0).toUpperCase()+s.slice(1);
+  // which of your lists each airport is on, as tags that open the list; with one list it would say the same everywhere
+  const ls=LS.all(),tags=id=>{const on=ls.length>1?ls.filter(x=>x.ids.includes(id)):[];
+    return on.length?'<span class="ltags">'+on.map(x=>'<a class="ltag" href="list/?l='+encodeURIComponent(x.id)+'" title="Open '+esc(x.name)+'">'+esc(x.name)+'</a>').join("")+'</span>':""};
   const row=({id,d,nw})=>{const a=byId.get(id)||[id,"",""],top=d.changes.slice(0,3);
-    return '<a class="nx" href="'+esc(id)+'/"><span class="nxh"><span class="rid">'+esc(id)+'</span><span class="rname">'+esc(a[2]||"")+'</span>'+
+    return '<div class="nx"><span class="nxh"><a class="rid nxa" href="'+esc(id)+'/" aria-label="'+esc(id+(a[2]?" "+a[2]:""))+'">'+esc(id)+'</a><span class="rname">'+esc(a[2]||"")+'</span>'+tags(id)+
       chipsHtml([d.counts.action,d.counts.ifr,d.counts.fyi]).replace('<span class="chips">','<span class="chips">'+(nw.size?AM.pill(nw.size):""))+'</span>'+
       top.map(c=>'<span class="nxi"><span class="ann '+PRI[c.priority][0]+' plain">'+PRI[c.priority][1]+'</span><span>'+(nw.has(c.id)?AM.pill()+" ":"")+esc(cap(c.summary)).replace(/ -&gt; /g," → ")+'</span></span>').join("")+
-      (d.changes.length>3?'<span class="nxm">'+(d.changes.length-3)+' more ›</span>':'')+'</a>'};
+      (d.changes.length>3?'<span class="nxm">'+(d.changes.length-3)+' more ›</span>':'')+'</div>'};
   const up=NX.up&&AM.now()<Date.parse(NX.eff),when=up?NX.eff:NX.after;
   el.innerHTML='<div class="sec"><span class="hdr">'+(up?'Coming up at your airports':'This cycle at your airports')+'</span><span class="note" style="margin:0">'+
     (up?'Takes effect ':'Next cycle ')+'<time datetime="'+when+'" data-until="'+when+'"></time></span></div>'+
@@ -1275,6 +1282,8 @@ data-name="{e(wl['name'])}">Save to my lists</a><button class="btn ghost" id="co
 # what shipped, newest first, for /changelog/. Add a line when something people can see changes.
 UPDATES = [
     ("Sep 2026", [
+        "On the home page, each airport in “Coming up at your airports” shows which of your lists it's on, "
+        "and each list's name opens that list. It shows once you have more than one list.",
         "In this cycle's and the next cycle's changes, a remark kept in the FAA's words because of a "
         "contraction Amend can't verify, or a translation that failed its checks, now says why under it. NA "
         "and N/A stay as the FAA wrote them, with a line saying what they can mean: the FAA's lists say not "
