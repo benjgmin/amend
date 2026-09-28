@@ -470,6 +470,20 @@ class TestWhatTheRemarkSays(unittest.TestCase):
         self.assertTrue(remarks.problems("RWY 18R CLSD.", "Runway 18 left closed."))
         self.assertTrue(remarks.problems("ATCT 1200-0400Z.", "Tower 1200-0400 local."))
 
+    def test_fod_is_debris(self):
+        """the Chart Supplement's list says Foreign Object Damage; JO 7340.2 and AC 150/5300-13B say
+        foreign object debris, and remarks mean the loose material ('FOD ON RWY EDGE'), so debris"""
+        raw = "CAUTION: RWY 15C/33C AND RWY 15R/33L OVERRUNS HIGH POTENTIAL FOR FOD."
+        for plain in ["Caution: runway 15C/33C and runway 15R/33L overruns high potential for foreign object debris.",
+                      "Caution: runway 15C/33C and runway 15R/33L overruns high potential for FOD."]:
+            self.assertEqual(remarks.problems(raw, plain), [], plain)
+        # what the site showed at SPS
+        said = "Caution - runway 15C/33C and runway 15R/33L overruns have high potential for foreign object damage."
+        self.assertIn("FOD is 'foreign object debris'", remarks.problems(raw, said)[0])
+        self.assertIn("FOD = foreign object debris", remarks.prompt_for([raw]))
+        self.assertEqual(remarks.problems("CRACKS THROUGHOUT RWY, FOD PRESENT.",
+                                          "Cracks throughout runway, foreign object debris present."), [])
+
     def test_signs_and_ranges(self):
         self.assertEqual(remarks.problems("10 FT TREES 125 -150 FT W OF RWY.",
                                           "10 foot trees 125 to 150 feet west of runway."), [])
