@@ -17,7 +17,7 @@ struct SettingsView: View {
     @State private var testSent = false
 
     private let repo = URL(string: "https://github.com/benjgmin/amend")!
-    private let about = URL(string: "https://amend.watch/about/")!
+    private let about = URL(string: "https://amend.watch/docs/")!
     private let report = URL(string: "https://github.com/benjgmin/amend/issues/new")!
     private let nasr = URL(string: "https://www.faa.gov/air_traffic/flight_info/aeronav/aero_data/NASR_Subscription/")!
     private let dtpp = URL(string: "https://www.faa.gov/air_traffic/flight_info/aeronav/digital_products/dtpp/")!
