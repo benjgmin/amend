@@ -189,6 +189,27 @@ def behind(now, last="2026-09-28T12:42:05+00:00", cyc="2026-10-01", up="1"):
 
 
 @unittest.skipUnless(shutil.which("node"), "node isn't installed")
+class TestAlwaysDoneSteps(unittest.TestCase):
+    """normalizing and the tests always happen on a real build, so they never read "not recorded"
+    (to a pilot that reads like the step was skipped)"""
+
+    def test_normalize_is_done_once_the_comparison_ran(self):
+        self.assertIn("k-ok", statuspage.s_norm({"changes": {}}))
+        self.assertNotIn("Not recorded", statuspage.s_norm({"changes": {}}))
+        self.assertIn("Not run", statuspage.s_norm({}))
+
+    def test_tests_passed_on_a_github_build(self):
+        html = statuspage.s_tests({"run": {"trigger": "schedule"}})
+        self.assertIn("k-ok", html)
+        self.assertIn(">Passed<", html)
+
+    def test_local_build_says_the_tests_did_not_run(self):
+        for r in ({"run": {"trigger": "local"}}, {}):
+            html = statuspage.s_tests(r)
+            self.assertIn(">Not run<", html)
+            self.assertNotIn("Not recorded", html)
+
+
 class TestBehindCheck(unittest.TestCase):
     def test_fresh_build_stays_green(self):
         self.assertEqual(behind("2026-09-28T14:00:00Z"), "")

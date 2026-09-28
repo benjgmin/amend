@@ -229,7 +229,8 @@ def s_rows(r):
 def s_norm(r):
     if not reached(r):
         return stage("skip", "Normalized the records", "The run stopped before this step.")
-    return stage("none", "Normalized the records", "The run log doesn't count normalized records separately yet.")
+    return stage("done", "Normalized the records", "Every record is put in one consistent form before the comparison "
+                 "(the comparison can't run without it). The run log doesn't count these separately.")
 
 
 def s_diff(r):
@@ -259,8 +260,11 @@ def s_classify(r):
 
 
 def s_tests(r):
-    return stage("none", "Regression tests", "The tests (gold set and snapshot included) run before every build, "
-                 "and a failure stops the run before this log starts, but the run log doesn't record the count yet.")
+    if ((r.get("run") or {}).get("trigger") or "local") == "local":
+        return stage("skip", "Regression tests", "They run on GitHub before every build. This was a local build.")
+    return stage("pass", "Regression tests", "Every build runs all the tests (gold set and snapshot "
+                 "included) first, and a failure stops the build before this step, so this build only exists "
+                 "because they passed. The run log doesn't keep the count.")
 
 
 def s_time(r):
