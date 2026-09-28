@@ -103,6 +103,10 @@ CURATED = {
            "note": "remarks use FM for 'from' (JO 7340.2, ICAO). the Chart Supplement's fan marker "
                    "and frequency modulation don't occur in remarks"},
     "FT": {"expansion": ["foot", "feet"]},
+    "FOD": {"expansion": "foreign object debris",
+            "note": "'FOD ON RWY EDGE', 'LOOSE AGGREGATE & FOD': remarks mean the loose material itself. JO "
+                    "7340.2 and AC 150/5300-13B say foreign object debris; the Chart Supplement's Foreign "
+                    "Object Damage is what it does to an engine (AC 150/5340-1M uses each that way)"},
     "CD": {"expansion": "clearance delivery", "accept": [r"\bclearances?\b"],
            "note": "'FOR CD CTC ... APCH'. candela and civil defense don't occur in remarks"},
     "CL": {"expansion": "centre line", "note": "'250 FT L OF CL'. remarks don't use CL for class"},

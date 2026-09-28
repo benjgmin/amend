@@ -1260,6 +1260,9 @@ UPDATES = [
         "alerts on an airport page opens right under the button. A list's name in the sidebar opens that list, and "
         "the sidebar always has open the list you're looking at. Alerts no longer point at an outside email service: "
         "the alert link goes into a news reader app.",
+        "FOD in remarks now reads \"foreign object debris\", the meaning in the FAA's contractions list, "
+        "since remarks use it for loose material on the pavement. The translator is also told to write in "
+        "normal capitalization instead of leaving plain words in capitals.",
         "A <a href=\"../status/\">status page</a> shows whether Amend is current and every step of each recent "
         "run: the FAA files it downloaded, the checks it ran and whether it was published.",
         "Remark translations are held to a stricter check. They have to keep every code (like 100LL or "
