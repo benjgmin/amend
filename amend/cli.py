@@ -5,7 +5,7 @@ command line:
   python -m amend diff OLD.zip NEW.zip --all-airports [--dtpp FILE] [--airspace OLD NEW] [--llm] [--out DIR] [--print]
   python -m amend latest [--no-llm]      build site/ (what the GitHub Action runs)
   python -m amend history [--llm] [--keep]   add new cycles to history/
-  python -m amend scrub-history          put the FAA text back where history/ holds a rejected translation
+  python -m amend scrub-history          FAA text back where history/ holds a rejected translation; the rest said as now
   python -m amend set-key                store your Anthropic API key in .env
   python -m amend check                  scheduled runs: is a rebuild needed? (build=true/false)
   python -m amend verify [DIR]           refuse to deploy an empty or half-built site/
@@ -93,8 +93,9 @@ def main(argv=None):
     h = sub.add_parser("history", help="add new cycles to history/")
     h.add_argument("--llm", action="store_true")
     h.add_argument("--keep", action="store_true", help="keep downloaded zips")
-    sub.add_parser("scrub-history", help="run after making the translation checks stricter: history/ "
-                                         "shows the FAA text where a stored translation now fails them")
+    sub.add_parser("scrub-history", help="run after changing the translation checks or readable(): history/ "
+                                         "shows the FAA text where a stored translation now fails them, and "
+                                         "says the rest the way translations are said now")
 
     sub.add_parser("set-key", help="save your Anthropic API key to .env")
     sub.add_parser("check", help="is a rebuild needed? writes build=true/false to $GITHUB_OUTPUT")
@@ -127,8 +128,9 @@ def main(argv=None):
         update(llm=a.llm, keep=a.keep)
     elif a.cmd == "scrub-history":
         from .remarks import scrub_history
-        n, files = scrub_history()
-        print(f"{n} translations in history/ fail the checks; showing the FAA text for those ({files} airports)")
+        back, reworded, files = scrub_history()
+        print(f"{back} translations in history/ fail the checks; showing the FAA text for those. "
+              f"{reworded} reworded the way translations are said now ({files} airports)")
     elif a.cmd == "set-key":
         set_key()
     elif a.cmd == "check":

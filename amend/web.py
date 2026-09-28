@@ -183,6 +183,7 @@ a.src{color:var(--dm)}a.src:hover{color:var(--cy)}
 .it .m{display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:13.5px;white-space:nowrap}
 .it .m:empty{display:none}
 .more{margin-top:3px}
+.why{margin-top:3px;font-size:13px;line-height:1.45;color:var(--dm)}
 .more>summary{cursor:pointer;list-style:none;font-size:13.5px;color:var(--cy);display:inline-block}
 .more>summary::-webkit-details-marker{display:none}
 .more>summary::after{content:" \\25BE";font-size:11px}.more[open]>summary::after{content:" \\25B4"}
@@ -527,6 +528,7 @@ function changeHtml(c){const s=esc(cap(c.summary)).replace(/ -&gt; /g," → ");
   else m+='<a class="src" href="'+SRC.nasr+'" target="_blank" rel="noopener" title="FAA NASR data, file '+esc(c.source)+'">FAA source ↗</a>';
   let more="";if(c.original)more='<details class="more"><summary>FAA text</summary><pre>'+esc(c.original)+'</pre></details>';
   else if(c.details&&c.details.length)more='<details class="more"><summary>Details</summary><pre>'+c.details.map(d=>esc(d).replace(/ -&gt; /g," → ")).join("\n")+'</pre></details>';
+  if(c.untranslated)more='<div class="why">'+esc(c.untranslated)+'</div>'+more;
   return '<div class="it p-'+esc(c.priority)+'" data-id="'+esc(c.id)+'"><span class="k">'+esc(cap(c.category))+'</span><div class="s">'+s+more+'</div><div class="m">'+m+'</div></div>'}
 async function load(id){try{const r=await fetch("../latest/"+id+".json");return r.ok?await r.json():null}catch(e){return null}}
 async function body(){const my=++run,ids=mine?mine.ids:shared;
@@ -805,6 +807,8 @@ def change_html(c, cycle=None):
     elif c.get("details"):
         more = ('<details class="more"><summary>Details</summary><pre>'
                 + "\n".join(arrow(d) for d in c["details"]) + "</pre></details>")
+    if c.get("untranslated"):
+        more = f'<div class="why">{e(c["untranslated"])}</div>' + more
     extra.append(source_link(c, c.get("cycle") or cycle))
     ids = (f' data-id="{e(c["id"])}"' if c.get("id") else "") + (f' data-c="{e(c["cycle"])}"' if c.get("cycle") else "")
     return (f'<div class="it p-{e(c["priority"])}"{ids}><span class="k">{e(cap(c["category"]))}</span>'
@@ -1271,6 +1275,12 @@ data-name="{e(wl['name'])}">Save to my lists</a><button class="btn ghost" id="co
 # what shipped, newest first, for /changelog/. Add a line when something people can see changes.
 UPDATES = [
     ("Sep 2026", [
+        "A remark shown in the FAA's words now says why under it, like which contraction Amend has no verified "
+        "meaning for. NA and N/A stay as the FAA wrote them, with a line saying what they can mean: the FAA's "
+        "lists say not authorized and not applicable, but remarks also use them for not available. Runways are "
+        "written the FAA's way, like runway 33C or 15C/33C, instead of four different ways. HI PER, HIGH PER "
+        "and LOW PER now read \"high performance\" and \"low performance\": every remark in the FAA's data "
+        "that writes them means that. Past cycles' remarks follow the same rules.",
         "The status page is shorter: whether Amend is up to date, one line for each part of the service, the "
         "last 30 runs at a glance and any problems, with every step of the latest build folded underneath. The "
         "docs now walk through the whole process, from the FAA posting a cycle to a change on your screen.",

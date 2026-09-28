@@ -10,7 +10,7 @@ import tempfile
 import unittest
 import zipfile
 
-from amend import remarks
+from amend import ENGINE_VERSION, remarks
 from amend.pipeline import cycle_label, run
 
 
@@ -211,6 +211,55 @@ class TestRules(Case):
                              {ok: "Runway 09 is closed."})
         finally:
             os.remove(remarks.CACHE_FILE)
+
+
+class TestWhyFaaWords(Case):
+    """a remark shown in the FAA's words says why, in the public JSON and on the page"""
+
+    def test_each_remark_change_says_why(self):
+        rmk = "ARPT_ID,LEGACY_ELEMENT_NUMBER,REMARK"
+        texts = ["TIEDOWNS NA.", "RWY 21L CALM WIND RWY.", "66 FT RT.", "SOFT & RUTTED; IREG MRKD W CONES.", "RWY 03 CLSD."]
+        cache = {"TIEDOWNS NA.": "Tiedowns NA.", "RWY 21L CALM WIND RWY.": "Runway 21 Left is the calm wind runway.",
+                 "66 FT RT.": "66 FT RT."}
+        rejects = {"engine": ENGINE_VERSION, "remarks": {
+            "SOFT & RUTTED; IREG MRKD W CONES.": ["W is 'West or White' (CS), not what the translation says"]}}
+        with open(remarks.CACHE_FILE, "w") as f:
+            json.dump(cache, f)
+        with open(remarks._rejects_file(), "w") as f:
+            json.dump(rejects, f)
+        try:
+            ch = self.diff({"APT_RMK.csv": [rmk]},
+                           {"APT_RMK.csv": [rmk] + [f'DAB,A{i},"{t}"' for i, t in enumerate(texts)]}, {"DAB"})["DAB"]
+        finally:
+            os.remove(remarks.CACHE_FILE)
+            os.remove(remarks._rejects_file())
+        got = {c["original"]: (c["summary"], c.get("untranslated")) for c in ch}
+        self.assertEqual(got, {
+            "TIEDOWNS NA.": ("new remark: Tiedowns NA.",
+                             "NA is left as the FAA wrote it: it can mean not authorized or not available, and "
+                             "Amend doesn't guess which."),
+            "RWY 21L CALM WIND RWY.": ("new remark: Runway 21L is the calm wind runway.", None),
+            "66 FT RT.": ("new remark: 66 FT RT.", "Kept in the FAA's words: Amend has no verified meaning for RT."),
+            "SOFT & RUTTED; IREG MRKD W CONES.": (
+                "new remark: SOFT & RUTTED; IREG MRKD W CONES.",
+                "Kept in the FAA's words: the plain-English version didn't use the FAA's meaning for W (west or white)."),
+            "RWY 03 CLSD.": ("new remark: RWY 03 CLSD.", "Kept in the FAA's words until it's translated.")})
+
+    def test_the_page_shows_it(self):
+        from amend import web
+        c = {"id": "r", "priority": "fyi", "category": "remark", "kind": "added", "source": "APT_RMK",
+             "summary": "new remark: 66 FT RT.", "original": "66 FT RT.",
+             "untranslated": "Kept in the FAA's words: Amend has no verified meaning for RT."}
+        page = web.change_html(c, "2026-10-01")
+        self.assertIn('<div class="why">Kept in the FAA&#x27;s words: Amend has no verified meaning for RT.</div>'
+                      '<details class="more"><summary>FAA text</summary>', page)
+        self.assertNotIn('class="why"', web.change_html({**c, "untranslated": None}, "2026-10-01"))
+        from amend import feeds       # and news readers get it too
+        self.assertIn("<br><small>Kept in the FAA&#x27;s words: Amend has no verified meaning for RT.</small>"
+                      "<br><small>FAA text: 66 FT RT.</small>", feeds.change_li(c))
+        # the lists page draws changes in the browser, from the same JSON
+        with open(web.__file__, encoding="utf-8") as f:
+            self.assertIn("if(c.untranslated)more='<div class=\"why\">'+esc(c.untranslated)+'</div>'+more;", f.read())
 
 
 class TestAccuracyAudit(Case):

@@ -102,7 +102,8 @@
     "original": "DENVER ARTCC (ZDV) FREQS 126.5/371.85 (DENVER/A/ RCAG) USED FOR PINNR RNAV STAR 26000 FT AND BLW.",
     "priority": "action",
     "source": "ATC_RMK",
-    "summary": "new tower/ATC remark: DENVER ARTCC (ZDV) FREQS 126.5/371.85 (DENVER/A/ RCAG) USED FOR PINNR RNAV STAR 26000 FT AND BLW."
+    "summary": "new tower/ATC remark: DENVER ARTCC (ZDV) FREQS 126.5/371.85 (DENVER/A/ RCAG) USED FOR PINNR RNAV STAR 26000 FT AND BLW.",
+    "untranslated": "Kept in the FAA's words until it's translated."
    },
    {
     "category": "remark",
@@ -111,7 +112,8 @@
     "original": "DENVER ARTCC (ZDV) FREQS 128.325/377.075 (HAYDEN RCAG) USED FOR PINNR RNAV STAR 27000 FT AND ABV.",
     "priority": "action",
     "source": "ATC_RMK",
-    "summary": "new tower/ATC remark: DENVER ARTCC (ZDV) FREQS 128.325/377.075 (HAYDEN RCAG) USED FOR PINNR RNAV STAR 27000 FT AND ABV."
+    "summary": "new tower/ATC remark: DENVER ARTCC (ZDV) FREQS 128.325/377.075 (HAYDEN RCAG) USED FOR PINNR RNAV STAR 27000 FT AND ABV.",
+    "untranslated": "Kept in the FAA's words until it's translated."
    },
    {
     "category": "procedure",
@@ -270,7 +272,8 @@
     "original": "COMMUNICATIONS PRVDD BY DENVER RADIO ON FREQ 122.2 (DENVER RCO).",
     "priority": "fyi",
     "source": "ATC_RMK",
-    "summary": "removed tower/ATC remark: COMMUNICATIONS PRVDD BY DENVER RADIO ON FREQ 122.2 (DENVER RCO)."
+    "summary": "removed tower/ATC remark: COMMUNICATIONS PRVDD BY DENVER RADIO ON FREQ 122.2 (DENVER RCO).",
+    "untranslated": "Kept in the FAA's words until it's translated."
    }
   ],
   "ATL": [
@@ -413,7 +416,8 @@
     "original": "PILOTS CONDUCTING EFVS OPS; BE AWARE LED ALS IN USE RWY 36R.",
     "priority": "fyi",
     "source": "APT_RMK",
-    "summary": "new remark: PILOTS CONDUCTING EFVS OPS; BE AWARE LED ALS IN USE RWY 36R."
+    "summary": "new remark: PILOTS CONDUCTING EFVS OPS; BE AWARE LED ALS IN USE RWY 36R.",
+    "untranslated": "Kept in the FAA's words until it's translated."
    }
   ],
   "BNA": [
@@ -784,7 +788,8 @@
     "original": "ALL ACFT ARE PROHIBITED FM EXITING RWY 36 SEBD AT TWY R.",
     "priority": "action",
     "source": "APT_RMK",
-    "summary": "revised remark: ALL ACFT ARE PROHIBITED FM EXITING RWY 36 SEBD AT TWY R."
+    "summary": "revised remark: ALL ACFT ARE PROHIBITED FM EXITING RWY 36 SEBD AT TWY R.",
+    "untranslated": "Kept in the FAA's words until it's translated."
    },
    {
     "category": "remark",
@@ -800,7 +805,8 @@
     "original": "GROUP IV ACFT WITH A WINGSPAN GTR THAN 118 FT ARE PROHIBITED FM EXITING RWY 18/36 AT TWY C10.",
     "priority": "action",
     "source": "APT_RMK",
-    "summary": "revised remark: GROUP IV ACFT WITH A WINGSPAN GTR THAN 118 FT ARE PROHIBITED FM EXITING RWY 18/36 AT TWY C10."
+    "summary": "revised remark: GROUP IV ACFT WITH A WINGSPAN GTR THAN 118 FT ARE PROHIBITED FM EXITING RWY 18/36 AT TWY C10.",
+    "untranslated": "Kept in the FAA's words until it's translated."
    },
    {
     "category": "remark",
@@ -816,7 +822,8 @@
     "original": "TWY C10 UNUSBL FOR TXG ONTO RWY 18/36.",
     "priority": "action",
     "source": "APT_RMK",
-    "summary": "revised remark: TWY C10 UNUSBL FOR TXG ONTO RWY 18/36."
+    "summary": "revised remark: TWY C10 UNUSBL FOR TXG ONTO RWY 18/36.",
+    "untranslated": "Kept in the FAA's words until it's translated."
    },
    {
     "category": "navaid",
@@ -1112,7 +1119,8 @@
     "original": "ILS CLASSIFICATION CODE IB.",
     "priority": "ifr",
     "source": "ILS_RMK",
-    "summary": "revised ILS/DME RWY 18 remark: ILS CLASSIFICATION CODE IB."
+    "summary": "revised ILS/DME RWY 18 remark: ILS CLASSIFICATION CODE IB.",
+    "untranslated": "Kept in the FAA's words until it's translated."
    },
    {
     "category": "remark",
@@ -1128,7 +1136,8 @@
     "original": "ILS CLASSIFICATION CODE IIIE.",
     "priority": "ifr",
     "source": "ILS_RMK",
-    "summary": "revised ILS/DME RWY 36 remark: ILS CLASSIFICATION CODE IIIE."
+    "summary": "revised ILS/DME RWY 36 remark: ILS CLASSIFICATION CODE IIIE.",
+    "untranslated": "Kept in the FAA's words until it's translated."
    },
    {
     "category": "frequency",
@@ -1455,7 +1464,8 @@
     "original": "ENGINEERED MATERIALS ARRESTING GEAR SYSTEM (EMAS) 255 FT IN LENGTH BY 170 FT IN WIDTH AT THE DEPARTURE END OF RWY 36.",
     "priority": "fyi",
     "source": "APT_RMK",
-    "summary": "new runway 18/36 remark: ENGINEERED MATERIALS ARRESTING GEAR SYSTEM (EMAS) 255 FT IN LENGTH BY 170 FT IN WIDTH AT THE DEPARTURE END OF RWY 36."
+    "summary": "new runway 18/36 remark: ENGINEERED MATERIALS ARRESTING GEAR SYSTEM (EMAS) 255 FT IN LENGTH BY 170 FT IN WIDTH AT THE DEPARTURE END OF RWY 36.",
+    "untranslated": "Kept in the FAA's words until it's translated."
    },
    {
     "category": "remark",
@@ -1464,7 +1474,8 @@
     "original": "ENGINEERED MATERIALS ARRESTING GEAR SYSTEM (EMAS) 255 FT IN LENGTH BY 170 FT IN WIDTH AT THE DEPARTURE END OF RWY 36R.",
     "priority": "fyi",
     "source": "APT_RMK",
-    "summary": "removed runway 18L/36R remark: ENGINEERED MATERIALS ARRESTING GEAR SYSTEM (EMAS) 255 FT IN LENGTH BY 170 FT IN WIDTH AT THE DEPARTURE END OF RWY 36R."
+    "summary": "removed runway 18L/36R remark: ENGINEERED MATERIALS ARRESTING GEAR SYSTEM (EMAS) 255 FT IN LENGTH BY 170 FT IN WIDTH AT THE DEPARTURE END OF RWY 36R.",
+    "untranslated": "Kept in the FAA's words until it's translated."
    },
    {
     "category": "remark",
@@ -1480,7 +1491,8 @@
     "original": "ACFT WITH WINGSPAN GTR THAN 118 FT USE JUDGMENTAL OVERSTEER INSTEAD OF COCKPIT OVER CNTRLN STEERING ENTERING AND EXITING RWY 18/36.",
     "priority": "fyi",
     "source": "APT_RMK",
-    "summary": "revised remark: ACFT WITH WINGSPAN GTR THAN 118 FT USE JUDGMENTAL OVERSTEER INSTEAD OF COCKPIT OVER CNTRLN STEERING ENTERING AND EXITING RWY 18/36."
+    "summary": "revised remark: ACFT WITH WINGSPAN GTR THAN 118 FT USE JUDGMENTAL OVERSTEER INSTEAD OF COCKPIT OVER CNTRLN STEERING ENTERING AND EXITING RWY 18/36.",
+    "untranslated": "Kept in the FAA's words until it's translated."
    },
    {
     "category": "remark",
@@ -1496,7 +1508,8 @@
     "original": "SUCCESSIVE OR SIMULTANEOUS DEPARTURES FROM RWY 18 AND RWY 19L ARE APPROVED WITH COURSE DIVERGENCE BEGINNING NO FURTHER THAN 4 MILES FROM END OF RWY.",
     "priority": "fyi",
     "source": "APT_RMK",
-    "summary": "revised remark: SUCCESSIVE OR SIMULTANEOUS DEPARTURES FROM RWY 18 AND RWY 19L ARE APPROVED WITH COURSE DIVERGENCE BEGINNING NO FURTHER THAN 4 MILES FROM END OF RWY."
+    "summary": "revised remark: SUCCESSIVE OR SIMULTANEOUS DEPARTURES FROM RWY 18 AND RWY 19L ARE APPROVED WITH COURSE DIVERGENCE BEGINNING NO FURTHER THAN 4 MILES FROM END OF RWY.",
+    "untranslated": "Kept in the FAA's words until it's translated."
    },
    {
     "category": "remark",
@@ -1512,7 +1525,8 @@
     "original": "TWY C FROM THE APCH OF RWY 18 TO TWY J AND TWY M FROM THE APRON TO RWY 18/36 RSTRD TO 15 MPH OR LESS WITH WINGSPAN 171 FT AND GTR.",
     "priority": "fyi",
     "source": "APT_RMK",
-    "summary": "revised remark: TWY C FROM THE APCH OF RWY 18 TO TWY J AND TWY M FROM THE APRON TO RWY 18/36 RSTRD TO 15 MPH OR LESS WITH WINGSPAN 171 FT AND GTR."
+    "summary": "revised remark: TWY C FROM THE APCH OF RWY 18 TO TWY J AND TWY M FROM THE APRON TO RWY 18/36 RSTRD TO 15 MPH OR LESS WITH WINGSPAN 171 FT AND GTR.",
+    "untranslated": "Kept in the FAA's words until it's translated."
    },
    {
     "category": "airport",
@@ -2370,7 +2384,8 @@
     "original": "AIRPORT CONDITIONS ARE NOT MONITORED OUTSIDE HOURS OF ATTENDANCE.",
     "priority": "fyi",
     "source": "APT_RMK",
-    "summary": "new remark: AIRPORT CONDITIONS ARE NOT MONITORED OUTSIDE HOURS OF ATTENDANCE."
+    "summary": "new remark: AIRPORT CONDITIONS ARE NOT MONITORED OUTSIDE HOURS OF ATTENDANCE.",
+    "untranslated": "Kept in the FAA's words until it's translated."
    }
   ],
   "FLL": [
@@ -2774,7 +2789,8 @@
     "original": "PILOTS CONDUCTING EFVS OPS; BE AWARE LED ALS IN USE RWY 22.",
     "priority": "fyi",
     "source": "APT_RMK",
-    "summary": "new remark: PILOTS CONDUCTING EFVS OPS; BE AWARE LED ALS IN USE RWY 22."
+    "summary": "new remark: PILOTS CONDUCTING EFVS OPS; BE AWARE LED ALS IN USE RWY 22.",
+    "untranslated": "Kept in the FAA's words until it's translated."
    }
   ],
   "IAD": [
@@ -2930,7 +2946,8 @@
     "original": "APRON TERMINAL ALPHA NORTH RAMP EAST-WEST TXL CLSD TO ACFT WINGSPAN MORE THAN 118 FT.",
     "priority": "action",
     "source": "APT_RMK",
-    "summary": "removed remark: APRON TERMINAL ALPHA NORTH RAMP EAST-WEST TXL CLSD TO ACFT WINGSPAN MORE THAN 118 FT."
+    "summary": "removed remark: APRON TERMINAL ALPHA NORTH RAMP EAST-WEST TXL CLSD TO ACFT WINGSPAN MORE THAN 118 FT.",
+    "untranslated": "Kept in the FAA's words until it's translated."
    },
    {
     "category": "remark",
@@ -2939,7 +2956,8 @@
     "original": "TWY RC CLSD TO ACFT WITH WINGSPAN GTR THAN 118 FT.",
     "priority": "action",
     "source": "APT_RMK",
-    "summary": "removed remark: TWY RC CLSD TO ACFT WITH WINGSPAN GTR THAN 118 FT."
+    "summary": "removed remark: TWY RC CLSD TO ACFT WITH WINGSPAN GTR THAN 118 FT.",
+    "untranslated": "Kept in the FAA's words until it's translated."
    },
    {
     "category": "remark",
@@ -2955,7 +2973,8 @@
     "original": "APRON TERMINAL ALPHA NORTH RAMP SPOT 6 CLSD TO ACFT WINGSPAN MORE THAN 135 FT.",
     "priority": "action",
     "source": "APT_RMK",
-    "summary": "revised remark: APRON TERMINAL ALPHA NORTH RAMP SPOT 6 CLSD TO ACFT WINGSPAN MORE THAN 135 FT."
+    "summary": "revised remark: APRON TERMINAL ALPHA NORTH RAMP SPOT 6 CLSD TO ACFT WINGSPAN MORE THAN 135 FT.",
+    "untranslated": "Kept in the FAA's words until it's translated."
    },
    {
     "category": "remark",
@@ -2971,7 +2990,8 @@
     "original": "TWY WD BTN TWY WB AND TXLN NR CLSD TO ACFT WINGSPAN MORE THAN 214 FT.",
     "priority": "action",
     "source": "APT_RMK",
-    "summary": "revised remark: TWY WD BTN TWY WB AND TXLN NR CLSD TO ACFT WINGSPAN MORE THAN 214 FT."
+    "summary": "revised remark: TWY WD BTN TWY WB AND TXLN NR CLSD TO ACFT WINGSPAN MORE THAN 214 FT.",
+    "untranslated": "Kept in the FAA's words until it's translated."
    },
    {
     "category": "remark",
@@ -2987,7 +3007,8 @@
     "original": "TXLN 'NR' CLSD TO ACFT WITH WING SPANS GREATER THAN 135 FT BTN TWY 'WD' & TWY 'WB'.",
     "priority": "action",
     "source": "APT_RMK",
-    "summary": "revised remark: TXLN 'NR' CLSD TO ACFT WITH WING SPANS GREATER THAN 135 FT BTN TWY 'WD' & TWY 'WB'."
+    "summary": "revised remark: TXLN 'NR' CLSD TO ACFT WITH WING SPANS GREATER THAN 135 FT BTN TWY 'WD' & TWY 'WB'.",
+    "untranslated": "Kept in the FAA's words until it's translated."
    },
    {
     "category": "procedure",
@@ -3192,7 +3213,8 @@
     "original": "PILOTS CONDUCTING EFVS OPS; BE AWARE LED ALS IN USE RWY 09, RWY 15R & RWY 33R.",
     "priority": "fyi",
     "source": "APT_RMK",
-    "summary": "revised remark: PILOTS CONDUCTING EFVS OPS; BE AWARE LED ALS IN USE RWY 09, RWY 15R & RWY 33R."
+    "summary": "revised remark: PILOTS CONDUCTING EFVS OPS; BE AWARE LED ALS IN USE RWY 09, RWY 15R & RWY 33R.",
+    "untranslated": "Kept in the FAA's words until it's translated."
    },
    {
     "category": "remark",
@@ -3208,7 +3230,8 @@
     "original": "TXLN NR BTN TWY NB AND TWY WB DSGND NON-MOVEMENT AREA.",
     "priority": "fyi",
     "source": "APT_RMK",
-    "summary": "revised remark: TXLN NR BTN TWY NB AND TWY WB DSGND NON-MOVEMENT AREA."
+    "summary": "revised remark: TXLN NR BTN TWY NB AND TWY WB DSGND NON-MOVEMENT AREA.",
+    "untranslated": "Kept in the FAA's words until it's translated."
    },
    {
     "category": "remark",
@@ -3224,7 +3247,8 @@
     "original": "TXLN NR BTN TWY NB AND TWY WD CLSD TO ACFT WINGSPAN MORE THAN 214 FT.",
     "priority": "fyi",
     "source": "APT_RMK",
-    "summary": "revised remark: TXLN NR BTN TWY NB AND TWY WD CLSD TO ACFT WINGSPAN MORE THAN 214 FT."
+    "summary": "revised remark: TXLN NR BTN TWY NB AND TWY WD CLSD TO ACFT WINGSPAN MORE THAN 214 FT.",
+    "untranslated": "Kept in the FAA's words until it's translated."
    }
   ],
   "ISM": [
@@ -3540,7 +3564,8 @@
     "original": "PILOTS CONDUCTING EFVS OPS; BE AWARE LED ALS IN USE RWY 26L.",
     "priority": "fyi",
     "source": "APT_RMK",
-    "summary": "new remark: PILOTS CONDUCTING EFVS OPS; BE AWARE LED ALS IN USE RWY 26L."
+    "summary": "new remark: PILOTS CONDUCTING EFVS OPS; BE AWARE LED ALS IN USE RWY 26L.",
+    "untranslated": "Kept in the FAA's words until it's translated."
    },
    {
     "category": "remark",
@@ -3549,7 +3574,8 @@
     "original": "ACFT TAX WB ON TWY B NEAR TWY E USE CARE NOT TO ENTER THE RWY ON TWY Y, ACFT TAX WB ON TWY W NEAR TWY E USE CARE NOT TO ENTER THE RWY ON TWY U.",
     "priority": "fyi",
     "source": "APT_RMK",
-    "summary": "removed remark: ACFT TAX WB ON TWY B NEAR TWY E USE CARE NOT TO ENTER THE RWY ON TWY Y, ACFT TAX WB ON TWY W NEAR TWY E USE CARE NOT TO ENTER THE RWY ON TWY U."
+    "summary": "removed remark: ACFT TAX WB ON TWY B NEAR TWY E USE CARE NOT TO ENTER THE RWY ON TWY Y, ACFT TAX WB ON TWY W NEAR TWY E USE CARE NOT TO ENTER THE RWY ON TWY U.",
+    "untranslated": "Kept in the FAA's words until it's translated."
    }
   ],
   "LAX": [
@@ -3567,7 +3593,8 @@
     "original": "ACFT WITH LEN GTR THAN 240 FT ARE PROHIBITED ON TXLS C7 AND C9 BTN TXL C AND TWY B.",
     "priority": "action",
     "source": "APT_RMK",
-    "summary": "revised remark: ACFT WITH LEN GTR THAN 240 FT ARE PROHIBITED ON TXLS C7 AND C9 BTN TXL C AND TWY B."
+    "summary": "revised remark: ACFT WITH LEN GTR THAN 240 FT ARE PROHIBITED ON TXLS C7 AND C9 BTN TXL C AND TWY B.",
+    "untranslated": "Kept in the FAA's words until it's translated."
    },
    {
     "category": "procedure",
@@ -3910,7 +3937,8 @@
     "original": "ILS CLASSIFICATION CODE IE.",
     "priority": "ifr",
     "source": "ILS_RMK",
-    "summary": "new ILS/DME RWY 36L remark: ILS CLASSIFICATION CODE IE."
+    "summary": "new ILS/DME RWY 36L remark: ILS CLASSIFICATION CODE IE.",
+    "untranslated": "Kept in the FAA's words until it's translated."
    },
    {
     "category": "route",
@@ -4936,7 +4964,8 @@
     "original": "ENGINEERED MATERIAL ARRESTING SYSTEM (EMAS) WITH 389 FT SETBACK 211 FT IN LENGTH BY 170 FT IN WIDTH LCTD AT THE DER 08.",
     "priority": "fyi",
     "source": "APT_RMK",
-    "summary": "new runway 08 arresting system EMAS remark: ENGINEERED MATERIAL ARRESTING SYSTEM (EMAS) WITH 389 FT SETBACK 211 FT IN LENGTH BY 170 FT IN WIDTH LCTD AT THE DER 08."
+    "summary": "new runway 08 arresting system EMAS remark: ENGINEERED MATERIAL ARRESTING SYSTEM (EMAS) WITH 389 FT SETBACK 211 FT IN LENGTH BY 170 FT IN WIDTH LCTD AT THE DER 08.",
+    "untranslated": "Kept in the FAA's words until it's translated."
    },
    {
     "category": "airport",
@@ -5239,7 +5268,8 @@
     "original": "DUE TO LTD CBP FAC, SFB UNA TO ACCOMODATE INTL DVRSN EXC IN CASE OF A DECLARED IN-FLT EMERG.",
     "priority": "fyi",
     "source": "APT_RMK",
-    "summary": "new remark: DUE TO LTD CBP FAC, SFB UNA TO ACCOMODATE INTL DVRSN EXC IN CASE OF A DECLARED IN-FLT EMERG."
+    "summary": "new remark: DUE TO LTD CBP FAC, SFB UNA TO ACCOMODATE INTL DVRSN EXC IN CASE OF A DECLARED IN-FLT EMERG.",
+    "untranslated": "Kept in the FAA's words until it's translated."
    }
   ],
   "SFO": [
@@ -5868,7 +5898,8 @@
     "original": "SUSTAINABLE AVIATION FUEL (SAF) AVBL.",
     "priority": "fyi",
     "source": "APT_RMK",
-    "summary": "new fuel type A remark: SUSTAINABLE AVIATION FUEL (SAF) AVBL."
+    "summary": "new fuel type A remark: SUSTAINABLE AVIATION FUEL (SAF) AVBL.",
+    "untranslated": "Kept in the FAA's words until it's translated."
    }
   ],
   "VRB": []

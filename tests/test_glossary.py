@@ -339,7 +339,7 @@ class TestNoGuess(unittest.TestCase):
                            ("RWY 18 UNAVBL.", "Runway 18 is not available."),
                            ("NO FUEL AVBL.", "Fuel isn't available."),
                            ("NO TGL.", "Touch-and-go landings prohibited."),
-                           ("TKOF NA.", "Takeoffs not authorized."), ("TKOF NA.", "Takeoff NA."),
+                           ("PPR NLT 1700.", "PPR not later than 1700."), ("TKOF NA.", "Takeoff NA."),
                            ("CAUTION: RWY 30 PAPI U/S UFN.", "Caution: runway 30 PAPI out of service until further notice.")]:
             self.assertEqual(remarks.problems(raw, plain), [], plain)
         self.assertEqual(remarks.problems("RWY 18 NOT LGTD.", "Runway 18 lighted."), dropped)
@@ -533,6 +533,57 @@ class TestWhatTheRemarkSays(unittest.TestCase):
             self.assertEqual(remarks.readable(raw, plain), want)
             self.assertEqual(remarks.problems(raw, want), [], want)
 
+    def test_a_runway_side_is_written_the_faa_way(self):
+        """translations wrote 33L/33C four ways ('33 Left', '33 left', '33 Center', '33C'). readable()
+        writes the remark's own code after 'runway', and leaves a side the remark itself says in words"""
+        for raw, plain, want in [
+                ("DUE TO CLOSE PROXIMITY OF RWYS 33L & 33C USE VIGILANCE.",
+                 "Due to close proximity of runways 33 Left and 33 Center use vigilance.",
+                 "Due to close proximity of runways 33L and 33C use vigilance."),
+                ("RSTD: RWY 15C/33C CLSD EXC XNG AT TWY G.",
+                 "Restricted: runway 15 center/33 center closed except crossing at taxiway G.",
+                 "Restricted: runway 15C/33C closed except crossing at taxiway G."),
+                ("RWY 09R ROLLOUT RVR USED FOR RWY 09L MIDPOINT RVR.",            # PHL: the remark's 09R
+                 "Runway 9 right rollout RVR is used for runway 9 left midpoint RVR.",
+                 "Runway 09R rollout RVR is used for runway 09L midpoint RVR."),
+                ("RWYS 13/31, 17R/35L UNLGTD 0300-1200Z.", "Runways 13/31 and 17 right/35 left are unlighted 0300-1200Z.",
+                 "Runways 13/31 and 17R/35L are unlighted 0300-1200Z."),
+                ("RWY 21L CALM WIND RWY.", "Runway 21l is the calm wind runway.", "Runway 21L is the calm wind runway."),
+                # right traffic, and 20 feet left: sides in words, not runway ids
+                ("RWY 6 RIGHT TFC & RWY 24 LEFT TFC.", "Runway 6 right traffic and runway 24 left traffic.",
+                 "Runway 6 right traffic and runway 24 left traffic."),
+                ("RWY 20L: POLE 20 L OF CNTRLN.", "Runway 20 left: pole 20 left of centerline.",
+                 "Runway 20 left: pole 20 left of centerline."),
+                ("RWY 18R RIGHT HAND TFC.", "Runway 18 right right-hand traffic.", "Runway 18R right-hand traffic.")]:
+            self.assertEqual(remarks.readable(raw, plain), want)
+            self.assertEqual(remarks.problems(raw, want), [], want)
+        self.assertIn("'RWY 15C/33C' is 'runway 15C/33C', never '33 center'", remarks.PROMPT)
+
+    def test_a_line_says_why_the_faa_words_show(self):
+        """a remark in the FAA's words says why; so does a term a translation leaves as written when
+        remarks use it more than one way. a plain translation, or FAA text with nothing to explain
+        (a phone number), gets no line"""
+        why = remarks.untranslated
+        self.assertIsNone(why("RWY 18 CLSD.", "Runway 18 closed."))
+        self.assertIsNone(why("615-347-4196", "615-347-4196"))
+        self.assertIsNone(why(""))
+        self.assertEqual(why("TIEDOWNS NA.", "Tiedowns NA."),
+                         "NA is left as the FAA wrote it: it can mean not authorized or not available, and Amend "
+                         "doesn't guess which.")
+        self.assertEqual(why("RWY 18 CLSD."), "Kept in the FAA's words until it's translated.")
+        wrong = remarks.problems("TIEDOWNS NA.", "Tiedowns not available.")
+        self.assertEqual(why("TIEDOWNS NA.", None, wrong),
+                         "Kept in the FAA's words: NA can mean not authorized or not available, and Amend doesn't "
+                         "guess which.")
+        self.assertEqual(why("14 FT HANGAR, 0 FT FROM RWY END, 66 FT RT.", "14 FT HANGAR, 0 FT FROM RWY END, 66 FT RT."),
+                         "Kept in the FAA's words: Amend has no verified meaning for RT.")
+        self.assertEqual(why("SOFT & RUTTED; IREG MRKD W CONES.", None,
+                             remarks.problems("SOFT & RUTTED; IREG MRKD W CONES.", "Soft and rutted; irregular marked with cones.")[:3]),
+                         "Kept in the FAA's words: the plain-English version didn't use the FAA's meaning for W "
+                         "(west or white).")
+        self.assertEqual(why("SELF SVC FUEL H24.", None, ["lost number 24"]),
+                         "Kept in the FAA's words: the plain-English version didn't pass Amend's checks.")
+
     def test_a_meaning_may_change_form_to_read_as_english(self):
         """EXTN is 'extension': 'when tower hours are extended' says it, and the grammar words
         around it add nothing"""
@@ -568,6 +619,54 @@ class TestWhatTheRemarkSays(unittest.TestCase):
         self.assertEqual(remarks.problems("HELIPAD TEMP CLSD.", "Helipad TEMP closed."), [])
         self.assertTrue(remarks.problems("HELIPAD TEMP CLSD.", "Helipad temporarily closed."))
 
+    def test_na_and_n_a_stay_as_written(self):
+        """the FAA lists NA as not authorized and N/A as not applicable, but remarks use both for not
+        available too, and N/A for not authorized: live translations that read them the FAA's way
+        said the wrong thing (2026-09-28). copied as written passes; any reading of them fails"""
+        for term in ("NA", "N/A"):
+            self.assertFalse(glossary.lookup(term)["verified"], term)
+        for raw, wrong, kept in [
+                ("RSTD: SOLO STU N/A.", "Restricted: Solo student not applicable.", "Restricted: solo students N/A."),
+                ("TIEDOWNS NA.", "Tiedowns not authorized.", "Tiedowns NA."),
+                ("WINTER MAINT NA.", "Winter maintenance is not authorized.", "Winter maintenance NA."),
+                ("USE AT OWN RISK; TGL, SVCS, CELL RECEPTION NA.",
+                 "Use at own risk; touch-and-go landings, services, cell reception not available.",
+                 "Use at own risk; touch-and-go landings, services, cell reception NA.")]:
+            self.assertTrue(remarks.problems(raw, wrong)[0].startswith(raw.split()[-1].strip(".") + " has no verified"),
+                            wrong)
+            self.assertEqual(remarks.problems(raw, kept), [], kept)
+        p = remarks.prompt_for(["RSTD: SOLO STU N/A.", "TIEDOWNS NA."])
+        self.assertEqual(sorted(re.search(r"copy them exactly as written: (.*)\n", p).group(1).split(", ")),
+                         ["N/A", "NA"])
+
+    def test_per_after_hi_high_or_low_is_performance(self):
+        """every HI PER, HIGH PER and LOW PER in NASR means performance, the FAA's PER (JO 7340.2); the
+        translation of this one was rejected for saying so (2026-09-28). anywhere else PER is the word"""
+        raw = ("CAUTION: MIL ARPT CONDUCTS HI PER JET TRNG IN A HI DENSITY ENVIRONMENT MON-FRI 1200-0200Z++ "
+               "AND WHEN TWR HR EXTN BY NOTAM, OCNL SAT AND SUN.")
+        plain = ("Caution: military airport conducts high performance jet training in a high density environment "
+                 "Monday-Friday 1200-0200Z++ and when tower hours are extended by Notice to Airmen, occasionally "
+                 "Saturday and Sunday.")
+        self.assertEqual(remarks.problems(raw, plain), [])
+        self.assertEqual(remarks.problems(raw, plain.replace("high performance", "high per")), [])
+        self.assertEqual(glossary.lookup("PER")["after"]["source"], "JO 2-1-1 (ICAO)")
+        for raw, plain in [("TPA LOW PER ACFT 1000 FT AGL, HIGH PER ACFT 1500 FT AGL",
+                            "Traffic pattern altitude low performance aircraft 1000 feet AGL, high performance "
+                            "aircraft 1500 feet AGL"),
+                           ("LOW PER OR LOW PWRD ACFT MUST TKOF ON RWY 21.",
+                            "Low performance or low powered aircraft must take off on runway 21.")]:
+            self.assertEqual(remarks.problems(raw, plain), [], plain)
+        # no word before it that shows it: PER stays the word, even where it means performance
+        for raw, plain in [("LDG FEE $15 PER NIGHT.", "Landing fee $15 performance night."),
+                           ("CHECK ACFT PER DATA CALCULATIONS DUE TO RWY CONDS.",
+                            "Check aircraft performance data calculations due to runway conditions.")]:
+            self.assertEqual(remarks.problems(raw, plain), ["dropped PER", "added 'performance'"], plain)
+        self.assertIn("\nPER right after HI, HIGH or LOW = performance\n", remarks.prompt_for(["CTN: HI PER MIL OPS R4809A."]))
+        self.assertNotIn("PER right after", remarks.prompt_for(["LDG FEE $15 PER NIGHT."]))
+        bad = {"PER": (("HI",), "permission", "")}          # not an FAA meaning of PER
+        with mock.patch.dict(glossary.AFTER, bad), self.assertRaises(ValueError):
+            glossary.build()
+
     def test_signs_and_ranges(self):
         self.assertEqual(remarks.problems("10 FT TREES 125 -150 FT W OF RWY.",
                                           "10 foot trees 125 to 150 feet west of runway."), [])
@@ -598,7 +697,7 @@ class TestPrompt(unittest.TestCase):
                      "CNTRLN = centerline"):
             self.assertIn(f"\n{line}\n", p)
         copy = re.search(r"copy them exactly as written: (.*)\n", p).group(1).split(", ")
-        self.assertEqual(sorted(copy), ["TRANS", "UNMKD"])
+        self.assertEqual(sorted(copy), ["NA", "TRANS", "UNMKD"])
         # plain words, single letters and terms remarks use two ways get no meaning
         for t in ("TO", "L", "ALT", "PER", "NA"):
             self.assertNotIn(f"\n{t} = ", p)
@@ -824,6 +923,7 @@ class TestScrubHistory(unittest.TestCase):
         os.mkdir(self.hist)
         self.raw, guess = GUESSES[2][:2]      # "TRANS ALERT: ..." read as "Transition alert ..."
         ok_raw, ok = RIGHT[2]                 # the same remark with TRANS kept as written
+        ok = remarks.readable(ok_raw, ok)     # ... said the way translations are said now
         self.entries = [
             {"cycle": "2026-09-03", "id": "aaa", "source": "APT_RMK", "summary": f"remark updated: {guess}",
              "original": self.raw},
@@ -847,9 +947,11 @@ class TestScrubHistory(unittest.TestCase):
 
     def test_rejected_translations_go_back_to_faa_text(self):
         before = {n: self.read(n) for n in ("ABC.json", "cycles.json")}
-        self.assertEqual(remarks.scrub_history(self.hist), (1, 1))
+        self.assertEqual(remarks.scrub_history(self.hist), (1, 0, 1))
         h = json.loads(self.read("XYZ.json"))
-        self.assertEqual(h["entries"][0], {**self.entries[0], "summary": f"remark updated: {self.raw}"})
+        self.assertEqual(h["entries"][0], {**self.entries[0], "summary": f"remark updated: {self.raw}",
+                                           "untranslated": "Kept in the FAA's words: Amend has no verified "
+                                                           "meaning for TRANS and FED."})
         self.assertEqual(h["entries"][1:], self.entries[1:])
         self.assertEqual(self.read("XYZ.json"), json.dumps(h, **output.MIN))   # as history.append writes it
         self.assertEqual({n: self.read(n) for n in before}, before)              # nothing else rewritten
@@ -857,12 +959,35 @@ class TestScrubHistory(unittest.TestCase):
     def test_a_second_run_changes_nothing(self):
         remarks.scrub_history(self.hist)
         once = self.read("XYZ.json")
-        self.assertEqual(remarks.scrub_history(self.hist), (0, 0))
+        self.assertEqual(remarks.scrub_history(self.hist), (0, 0, 0))
         self.assertEqual(self.read("XYZ.json"), once)
 
     def test_only_remarks_are_judged(self):
         self.write("XYZ.json", {"airport": "XYZ", "entries": [{**self.entries[0], "source": "APT_BASE"}]})
-        self.assertEqual(remarks.scrub_history(self.hist), (0, 0))
+        self.assertEqual(remarks.scrub_history(self.hist), (0, 0, 0))
+
+    def test_translations_that_pass_are_said_as_now(self):
+        """a runway side and ++ read the same in history as in the latest cycle, and a term left as
+        written gets its line"""
+        entries = [
+            {"cycle": "2024-10-03", "id": "p1", "source": "APT_RMK", "original": "RWY 21L CALM WIND RWY.",
+             "summary": "new remark: Runway 21 Left is the calm wind runway."},
+            {"cycle": "2024-10-03", "id": "p2", "source": "APT_RMK", "original": "CUSTOMS 1400-0130Z++ MON-FRI.",
+             "summary": "new remark: Customs 1400-0130Z++ Monday-Friday."},
+            {"cycle": "2024-10-03", "id": "p3", "source": "APT_RMK", "original": "HELIPAD TEMP CLSD.",
+             "summary": "new remark: Helipad TEMP closed."}]
+        self.write("XYZ.json", {"airport": "XYZ", "entries": entries})
+        self.assertEqual(remarks.scrub_history(self.hist), (0, 2, 1))
+        h = json.loads(self.read("XYZ.json"))["entries"]
+        self.assertEqual([e["summary"] for e in h], [
+            "new remark: Runway 21L is the calm wind runway.",
+            "new remark: Customs 1400-0130Z (one hour earlier during daylight saving time) Monday-Friday.",
+            "new remark: Helipad TEMP closed."])
+        self.assertEqual([e.get("untranslated") for e in h], [
+            None, None, "TEMP is left as the FAA wrote it: it can mean temporary or temperature, and Amend "
+                        "doesn't guess which."])
+        self.assertEqual([e["id"] for e in h], ["p1", "p2", "p3"])
+        self.assertEqual(remarks.scrub_history(self.hist), (0, 0, 0))
 
     def test_the_command(self):
         cwd = os.getcwd()
@@ -876,8 +1001,8 @@ class TestScrubHistory(unittest.TestCase):
         self.assertEqual(json.loads(self.read("XYZ.json"))["entries"][0]["summary"], f"remark updated: {self.raw}")
 
     def test_history_holds_no_rejected_translation(self):
-        """the check and history/ change together: after making the checks stricter, run
-        python -m amend scrub-history and commit history/ with the change."""
+        """the check and history/ change together: after making the checks stricter or changing
+        readable(), run python -m amend scrub-history and commit history/ with the change."""
         bad = []
         for path in glob.glob(os.path.join(os.path.dirname(__file__), "..", "history", "*.json")):
             with open(path, encoding="utf-8") as f:
@@ -885,7 +1010,7 @@ class TestScrubHistory(unittest.TestCase):
             for e in h.get("entries", []):
                 raw, (head, sep, plain) = e.get("original"), e["summary"].partition(": ")
                 if raw and sep and e.get("source") in remarks.REMARK_FILES + ("FRQ",) \
-                        and not remarks.faithful(raw, plain):
+                        and not (remarks.faithful(raw, plain) and remarks.readable(raw, plain) == plain):
                     bad.append(f"{h.get('airport')} {e['cycle']}: {e['summary']}")
         self.assertEqual(bad[:5], [], f"{len(bad)} in all; run python -m amend scrub-history")
 
