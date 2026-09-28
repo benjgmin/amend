@@ -77,7 +77,7 @@
     "kind": "changed",
     "priority": "fyi",
     "source": "APT_RWY_END",
-    "summary": "runway 33: far part 77 code: PIR -> C"
+    "summary": "runway 33: Part 77 runway category: precision instrument runway (PIR) -> other than utility runway with a nonprecision approach having visibility minimums greater than 3/4 mile (C)"
    }
   ],
   "APA": [
@@ -1038,7 +1038,7 @@
     "kind": "changed",
     "priority": "fyi",
     "source": "NAV_BASE",
-    "summary": "BOS (Boston) navaid: simul voice flag: Y -> N; voice call: BRIDGEPORT RADIO -> NONE"
+    "summary": "BOS (Boston) navaid: simultaneous voice: yes -> no; voice call: BRIDGEPORT RADIO -> NONE"
    },
    {
     "category": "frequency",
@@ -1315,7 +1315,7 @@
     "kind": "changed",
     "priority": "action",
     "source": "ILS_BASE",
-    "summary": "runway 18: rwy end id: 18L -> 18"
+    "summary": "runway 18: runway end: 18L -> 18"
    },
    {
     "category": "runway",
@@ -1345,7 +1345,7 @@
     "kind": "changed",
     "priority": "action",
     "source": "ILS_BASE",
-    "summary": "runway 36: rwy end id: 36R -> 36"
+    "summary": "runway 36: runway end: 36R -> 36"
    },
    {
     "category": "procedure",
@@ -1693,6 +1693,36 @@
     "category": "frequency",
     "fields": [
      {
+      "field": "SECTORIZATION",
+      "new": "RWY 18/36",
+      "old": "RWY 18L/36R"
+     }
+    ],
+    "id": "66eb11a11177",
+    "kind": "changed",
+    "priority": "fyi",
+    "source": "FRQ",
+    "summary": "frequency 118.1 sector: RWY 18L/36R -> RWY 18/36"
+   },
+   {
+    "category": "frequency",
+    "fields": [
+     {
+      "field": "SECTORIZATION",
+      "new": "FLYYN, CEGAL TRANSITIONS, 18, 19L, 19R",
+      "old": "FLYYN, CEGAL TRANSITIONS, 18L, 19L, 19R"
+     }
+    ],
+    "id": "29485ed36cd3",
+    "kind": "changed",
+    "priority": "fyi",
+    "source": "FRQ",
+    "summary": "frequency 120.05 sector: FLYYN, CEGAL TRANSITIONS, 18L, 19L, 19R -> FLYYN, CEGAL TRANSITIONS, 18, 19L, 19R"
+   },
+   {
+    "category": "frequency",
+    "fields": [
+     {
       "field": "FACILITY",
       "new": "CLT",
       "old": ""
@@ -1783,6 +1813,21 @@
     "category": "frequency",
     "fields": [
      {
+      "field": "SECTORIZATION",
+      "new": "FLYYN, CEGAL TRANSITIONS RWY 01L, 01R, 36",
+      "old": "FLYYN, CEGAL TRANSITIONS RWY 01L, 01R, 36R"
+     }
+    ],
+    "id": "e3aa6d46bbee",
+    "kind": "changed",
+    "priority": "fyi",
+    "source": "FRQ",
+    "summary": "frequency 120.5 sector: FLYYN, CEGAL TRANSITIONS RWY 01L, 01R, 36R -> FLYYN, CEGAL TRANSITIONS RWY 01L, 01R, 36"
+   },
+   {
+    "category": "frequency",
+    "fields": [
+     {
       "field": "FREQ_USE",
       "new": "",
       "old": "KERMIT DP"
@@ -1793,6 +1838,36 @@
     "priority": "fyi",
     "source": "FRQ",
     "summary": "frequency 120.5 use: KERMIT DP -> none"
+   },
+   {
+    "category": "frequency",
+    "fields": [
+     {
+      "field": "SECTORIZATION",
+      "new": "RWY 18, 19R, 19L, 36",
+      "old": "RWY 18L, 19L, 19R, 36R"
+     }
+    ],
+    "id": "bb36a9c0a3d1",
+    "kind": "changed",
+    "priority": "fyi",
+    "source": "FRQ",
+    "summary": "frequency 124.0 sector: RWY 18L, 19L, 19R, 36R -> RWY 18, 19R, 19L, 36"
+   },
+   {
+    "category": "frequency",
+    "fields": [
+     {
+      "field": "SECTORIZATION",
+      "new": "RWY 18, 19R, 19L, 36",
+      "old": "RWY 18L, 19R, 19L, 36R"
+     }
+    ],
+    "id": "c0df8a4e28e7",
+    "kind": "changed",
+    "priority": "fyi",
+    "source": "FRQ",
+    "summary": "frequency 124.0 sector: RWY 18L, 19R, 19L, 36R -> RWY 18, 19R, 19L, 36"
    },
    {
     "category": "frequency",
@@ -1812,7 +1887,7 @@
     "kind": "changed",
     "priority": "fyi",
     "source": "FRQ",
-    "summary": "frequency 124.0 use: KERMIT DP -> BATTA DP; sectorization: 055-235 -> (none)"
+    "summary": "frequency 124.0 use: KERMIT DP -> BATTA DP; frequency 124.0 sector: 055-235 -> none"
    },
    {
     "category": "frequency",
@@ -2078,6 +2153,21 @@
     "category": "frequency",
     "fields": [
      {
+      "field": "SECTORIZATION",
+      "new": "236-054",
+      "old": "HARAY, PITTY TRANSITIONS, RWY 01L, 01R"
+     }
+    ],
+    "id": "86497c99589c",
+    "kind": "changed",
+    "priority": "fyi",
+    "source": "FRQ",
+    "summary": "frequency 257.2 sector: HARAY, PITTY TRANSITIONS, RWY 01L, 01R -> 236-054"
+   },
+   {
+    "category": "frequency",
+    "fields": [
+     {
       "field": "FREQ_USE",
       "new": "CHARLOTTE DP",
       "old": "KERMIT DP"
@@ -2092,7 +2182,67 @@
     "kind": "changed",
     "priority": "fyi",
     "source": "FRQ",
-    "summary": "frequency 257.2 use: KERMIT DP -> CHARLOTTE DP; sectorization: 235-055 -> HARAY, PITTY TRANSITIONS"
+    "summary": "frequency 257.2 use: KERMIT DP -> CHARLOTTE DP; frequency 257.2 sector: 235-055 -> HARAY, PITTY TRANSITIONS"
+   },
+   {
+    "category": "frequency",
+    "fields": [
+     {
+      "field": "SECTORIZATION",
+      "new": "055-235",
+      "old": "BUCKL TRANSITION, RWY 18L, 19L, 19R, 36R"
+     }
+    ],
+    "id": "29bdaf498106",
+    "kind": "changed",
+    "priority": "fyi",
+    "source": "FRQ",
+    "summary": "frequency 307.8 sector: BUCKL TRANSITION, RWY 18L, 19L, 19R, 36R -> 055-235"
+   },
+   {
+    "category": "frequency",
+    "fields": [
+     {
+      "field": "SECTORIZATION",
+      "new": "GANTS, LILLS, RUNIE, BUCKL TRANSITIONS",
+      "old": "GANTS, LILLS & RUNIE TRANSITIONS"
+     }
+    ],
+    "id": "09bb105c4c05",
+    "kind": "changed",
+    "priority": "fyi",
+    "source": "FRQ",
+    "summary": "frequency 307.8 sector: GANTS, LILLS & RUNIE TRANSITIONS -> GANTS, LILLS, RUNIE, BUCKL TRANSITIONS"
+   },
+   {
+    "category": "frequency",
+    "fields": [
+     {
+      "field": "SECTORIZATION",
+      "new": "RWY 18, 19L, 19R, 36",
+      "old": "RWY 18L, 19L, 19R, 36R"
+     }
+    ],
+    "id": "c88f54304b40",
+    "kind": "changed",
+    "priority": "fyi",
+    "source": "FRQ",
+    "summary": "frequency 307.8 sector: RWY 18L, 19L, 19R, 36R -> RWY 18, 19L, 19R, 36"
+   },
+   {
+    "category": "frequency",
+    "fields": [
+     {
+      "field": "SECTORIZATION",
+      "new": "RWY 18, 19R, 19L, 36",
+      "old": "RWY 18L, 19L, 19R, 36R"
+     }
+    ],
+    "id": "4ea8cab91335",
+    "kind": "changed",
+    "priority": "fyi",
+    "source": "FRQ",
+    "summary": "frequency 307.8 sector: RWY 18L, 19L, 19R, 36R -> RWY 18, 19R, 19L, 36"
    },
    {
     "category": "frequency",
@@ -2112,7 +2262,7 @@
     "kind": "changed",
     "priority": "fyi",
     "source": "FRQ",
-    "summary": "frequency 307.8 use: KERMIT DP -> BATTA DP"
+    "summary": "frequency 307.8 use: KERMIT DP -> BATTA DP; frequency 307.8 sector: 055-235 -> none"
    },
    {
     "category": "frequency",
@@ -2368,142 +2518,7 @@
     "kind": "changed",
     "priority": "fyi",
     "source": "APT_ARS",
-    "summary": "runway 36: rwy end id: 36R -> 36; rwy id: 18L/36R -> 18/36"
-   },
-   {
-    "category": "frequency",
-    "fields": [
-     {
-      "field": "SECTORIZATION",
-      "new": "055-235",
-      "old": "BUCKL TRANSITION, RWY 18L, 19L, 19R, 36R"
-     }
-    ],
-    "id": "29bdaf498106",
-    "kind": "changed",
-    "priority": "fyi",
-    "source": "FRQ",
-    "summary": "sectorization: BUCKL TRANSITION, RWY 18L, 19L, 19R, 36R -> 055-235"
-   },
-   {
-    "category": "frequency",
-    "fields": [
-     {
-      "field": "SECTORIZATION",
-      "new": "FLYYN, CEGAL TRANSITIONS RWY 01L, 01R, 36",
-      "old": "FLYYN, CEGAL TRANSITIONS RWY 01L, 01R, 36R"
-     }
-    ],
-    "id": "e3aa6d46bbee",
-    "kind": "changed",
-    "priority": "fyi",
-    "source": "FRQ",
-    "summary": "sectorization: FLYYN, CEGAL TRANSITIONS RWY 01L, 01R, 36R -> FLYYN, CEGAL TRANSITIONS RWY 01L, 01R, 36"
-   },
-   {
-    "category": "frequency",
-    "fields": [
-     {
-      "field": "SECTORIZATION",
-      "new": "FLYYN, CEGAL TRANSITIONS, 18, 19L, 19R",
-      "old": "FLYYN, CEGAL TRANSITIONS, 18L, 19L, 19R"
-     }
-    ],
-    "id": "29485ed36cd3",
-    "kind": "changed",
-    "priority": "fyi",
-    "source": "FRQ",
-    "summary": "sectorization: FLYYN, CEGAL TRANSITIONS, 18L, 19L, 19R -> FLYYN, CEGAL TRANSITIONS, 18, 19L, 19R"
-   },
-   {
-    "category": "frequency",
-    "fields": [
-     {
-      "field": "SECTORIZATION",
-      "new": "GANTS, LILLS, RUNIE, BUCKL TRANSITIONS",
-      "old": "GANTS, LILLS & RUNIE TRANSITIONS"
-     }
-    ],
-    "id": "09bb105c4c05",
-    "kind": "changed",
-    "priority": "fyi",
-    "source": "FRQ",
-    "summary": "sectorization: GANTS, LILLS & RUNIE TRANSITIONS -> GANTS, LILLS, RUNIE, BUCKL TRANSITIONS"
-   },
-   {
-    "category": "frequency",
-    "fields": [
-     {
-      "field": "SECTORIZATION",
-      "new": "236-054",
-      "old": "HARAY, PITTY TRANSITIONS, RWY 01L, 01R"
-     }
-    ],
-    "id": "86497c99589c",
-    "kind": "changed",
-    "priority": "fyi",
-    "source": "FRQ",
-    "summary": "sectorization: HARAY, PITTY TRANSITIONS, RWY 01L, 01R -> 236-054"
-   },
-   {
-    "category": "frequency",
-    "fields": [
-     {
-      "field": "SECTORIZATION",
-      "new": "RWY 18, 19L, 19R, 36",
-      "old": "RWY 18L, 19L, 19R, 36R"
-     }
-    ],
-    "id": "c88f54304b40",
-    "kind": "changed",
-    "priority": "fyi",
-    "source": "FRQ",
-    "summary": "sectorization: RWY 18L, 19L, 19R, 36R -> RWY 18, 19L, 19R, 36"
-   },
-   {
-    "category": "frequency",
-    "fields": [
-     {
-      "field": "SECTORIZATION",
-      "new": "RWY 18, 19R, 19L, 36",
-      "old": "RWY 18L, 19L, 19R, 36R"
-     }
-    ],
-    "id": "bb36a9c0a3d1",
-    "kind": "changed",
-    "priority": "fyi",
-    "source": "FRQ",
-    "summary": "sectorization: RWY 18L, 19L, 19R, 36R -> RWY 18, 19R, 19L, 36"
-   },
-   {
-    "category": "frequency",
-    "fields": [
-     {
-      "field": "SECTORIZATION",
-      "new": "RWY 18, 19R, 19L, 36",
-      "old": "RWY 18L, 19R, 19L, 36R"
-     }
-    ],
-    "id": "c0df8a4e28e7",
-    "kind": "changed",
-    "priority": "fyi",
-    "source": "FRQ",
-    "summary": "sectorization: RWY 18L, 19R, 19L, 36R -> RWY 18, 19R, 19L, 36"
-   },
-   {
-    "category": "frequency",
-    "fields": [
-     {
-      "field": "SECTORIZATION",
-      "new": "RWY 18/36",
-      "old": "RWY 18L/36R"
-     }
-    ],
-    "id": "66eb11a11177",
-    "kind": "changed",
-    "priority": "fyi",
-    "source": "FRQ",
-    "summary": "sectorization: RWY 18L/36R -> RWY 18/36"
+    "summary": "runway 36: runway end: 36R -> 36; runway: 18L/36R -> 18/36"
    }
   ],
   "DAB": [
@@ -2903,7 +2918,7 @@
     "kind": "changed",
     "priority": "action",
     "source": "APT_RWY_END",
-    "summary": "runway 36L: apch lgt system code: MALSR -> ALSF2"
+    "summary": "runway 36L: approach lights: 1,400 foot medium intensity approach lighting system with runway alignment indicator lights (MALSR) -> standard 2,400 foot high intensity approach lighting system with sequenced flashers, category II or III configuration (ALSF2)"
    },
    {
     "category": "procedure",
@@ -3633,7 +3648,7 @@
     "kind": "changed",
     "priority": "fyi",
     "source": "NAV_BASE",
-    "summary": "HNL (Honolulu) navaid: simul voice flag: Y -> N; voice call: HONOLULU RADIO -> NONE"
+    "summary": "HNL (Honolulu) navaid: simultaneous voice: yes -> no; voice call: HONOLULU RADIO -> NONE"
    },
    {
     "category": "frequency",
@@ -4509,7 +4524,7 @@
     "kind": "changed",
     "priority": "fyi",
     "source": "NAV_BASE",
-    "summary": "JFK (Kennedy) navaid: simul voice flag: Y -> N; voice call: NEW YORK RADIO -> NONE"
+    "summary": "JFK (Kennedy) navaid: simultaneous voice: yes -> no; voice call: NEW YORK RADIO -> NONE"
    },
    {
     "category": "frequency",
@@ -5412,7 +5427,7 @@
     "kind": "changed",
     "priority": "fyi",
     "source": "NAV_BASE",
-    "summary": "DHP (Dolphin) navaid, 3 NM from the field: simul voice flag: Y -> N; voice call: MIAMI RADIO -> NONE"
+    "summary": "DHP (Dolphin) navaid, 3 NM from the field: simultaneous voice: yes -> no; voice call: MIAMI RADIO -> NONE"
    }
   ],
   "MSP": [
@@ -5673,7 +5688,7 @@
     "kind": "changed",
     "priority": "fyi",
     "source": "NAV_BASE",
-    "summary": "OMN (Ormond Beach) navaid: simul voice flag: Y -> N; voice call: SAINT PETERSBURG RADIO -> NONE"
+    "summary": "OMN (Ormond Beach) navaid: simultaneous voice: yes -> no; voice call: SAINT PETERSBURG RADIO -> NONE"
    },
    {
     "category": "airport",
@@ -7072,7 +7087,7 @@
     "kind": "changed",
     "priority": "fyi",
     "source": "APT_BASE",
-    "summary": "fuel types: 100LL,A -> 100LL,A,UL94"
+    "summary": "fuel: added unleaded grade 94 gasoline (UL94)"
    },
    {
     "category": "remark",
