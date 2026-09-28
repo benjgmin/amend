@@ -83,363 +83,17 @@
   "APA": [
    {
     "category": "frequency",
-    "fields": [
-     {
-      "field": "FACILITY",
-      "new": "DENVER/A/",
-      "old": ""
-     },
-     {
-      "field": "FAC_NAME",
-      "new": "DENVER/A/",
-      "old": ""
-     },
-     {
-      "field": "FACILITY_TYPE",
-      "new": "RCAG",
-      "old": ""
-     },
-     {
-      "field": "ARTCC_OR_FSS_ID",
-      "new": "ZDV",
-      "old": ""
-     },
-     {
-      "field": "SERVICED_FACILITY",
-      "new": "APA",
-      "old": ""
-     },
-     {
-      "field": "SERVICED_FAC_NAME",
-      "new": "CENTENNIAL",
-      "old": ""
-     },
-     {
-      "field": "SERVICED_SITE_TYPE",
-      "new": "AIRPORT",
-      "old": ""
-     },
-     {
-      "field": "SERVICED_CITY",
-      "new": "DENVER",
-      "old": ""
-     },
-     {
-      "field": "SERVICED_STATE",
-      "new": "CO",
-      "old": ""
-     },
-     {
-      "field": "SERVICED_COUNTRY",
-      "new": "US",
-      "old": ""
-     },
-     {
-      "field": "TOWER_OR_COMM_CALL",
-      "new": "CENTENNIAL",
-      "old": ""
-     },
-     {
-      "field": "PRIMARY_APPROACH_RADIO_CALL",
-      "new": "DENVER",
-      "old": ""
-     },
-     {
-      "field": "FREQ",
-      "new": "126.5",
-      "old": ""
-     },
-     {
-      "field": "SECTORIZATION",
-      "new": "LOW/HIGH",
-      "old": ""
-     },
-     {
-      "field": "FREQ_USE",
-      "new": "DENVER/A/ RCAG",
-      "old": ""
-     },
-     {
-      "field": "REMARK",
-      "new": "DENVER ARTCC (ZDV) FREQS 126.5/371.85 (DENVER/A/ RCAG) USED FOR PINNR RNAV STAR 26000 FT AND BLW.",
-      "old": ""
-     }
+    "details": [
+     "added: 126.5 DENVER/A/ RCAG (LOW/HIGH)",
+     "added: 371.85 DENVER/A/ RCAG (LOW/HIGH)",
+     "added: 128.325 HAYDEN RCAG (HIGH)",
+     "added: 377.075 HAYDEN RCAG (HIGH)"
     ],
-    "id": "2edb717cd8b0",
+    "id": "cdea0742de07",
     "kind": "added",
     "priority": "action",
     "source": "FRQ",
-    "summary": "new frequency 126.5 (DENVER/A/ RCAG)"
-   },
-   {
-    "category": "frequency",
-    "fields": [
-     {
-      "field": "FACILITY",
-      "new": "HAYDEN",
-      "old": ""
-     },
-     {
-      "field": "FAC_NAME",
-      "new": "HAYDEN",
-      "old": ""
-     },
-     {
-      "field": "FACILITY_TYPE",
-      "new": "RCAG",
-      "old": ""
-     },
-     {
-      "field": "ARTCC_OR_FSS_ID",
-      "new": "ZDV",
-      "old": ""
-     },
-     {
-      "field": "SERVICED_FACILITY",
-      "new": "APA",
-      "old": ""
-     },
-     {
-      "field": "SERVICED_FAC_NAME",
-      "new": "CENTENNIAL",
-      "old": ""
-     },
-     {
-      "field": "SERVICED_SITE_TYPE",
-      "new": "AIRPORT",
-      "old": ""
-     },
-     {
-      "field": "SERVICED_CITY",
-      "new": "DENVER",
-      "old": ""
-     },
-     {
-      "field": "SERVICED_STATE",
-      "new": "CO",
-      "old": ""
-     },
-     {
-      "field": "SERVICED_COUNTRY",
-      "new": "US",
-      "old": ""
-     },
-     {
-      "field": "TOWER_OR_COMM_CALL",
-      "new": "CENTENNIAL",
-      "old": ""
-     },
-     {
-      "field": "PRIMARY_APPROACH_RADIO_CALL",
-      "new": "DENVER",
-      "old": ""
-     },
-     {
-      "field": "FREQ",
-      "new": "128.325",
-      "old": ""
-     },
-     {
-      "field": "SECTORIZATION",
-      "new": "HIGH",
-      "old": ""
-     },
-     {
-      "field": "FREQ_USE",
-      "new": "HAYDEN RCAG",
-      "old": ""
-     },
-     {
-      "field": "REMARK",
-      "new": "DENVER ARTCC (ZDV) FREQS 128.325/377.075 (HAYDEN RCAG) USED FOR PINNR RNAV STAR 27000 FT AND ABV.",
-      "old": ""
-     }
-    ],
-    "id": "fe555c11fa5b",
-    "kind": "added",
-    "priority": "action",
-    "source": "FRQ",
-    "summary": "new frequency 128.325 (HAYDEN RCAG)"
-   },
-   {
-    "category": "frequency",
-    "fields": [
-     {
-      "field": "FACILITY",
-      "new": "DENVER/A/",
-      "old": ""
-     },
-     {
-      "field": "FAC_NAME",
-      "new": "DENVER/A/",
-      "old": ""
-     },
-     {
-      "field": "FACILITY_TYPE",
-      "new": "RCAG",
-      "old": ""
-     },
-     {
-      "field": "ARTCC_OR_FSS_ID",
-      "new": "ZDV",
-      "old": ""
-     },
-     {
-      "field": "SERVICED_FACILITY",
-      "new": "APA",
-      "old": ""
-     },
-     {
-      "field": "SERVICED_FAC_NAME",
-      "new": "CENTENNIAL",
-      "old": ""
-     },
-     {
-      "field": "SERVICED_SITE_TYPE",
-      "new": "AIRPORT",
-      "old": ""
-     },
-     {
-      "field": "SERVICED_CITY",
-      "new": "DENVER",
-      "old": ""
-     },
-     {
-      "field": "SERVICED_STATE",
-      "new": "CO",
-      "old": ""
-     },
-     {
-      "field": "SERVICED_COUNTRY",
-      "new": "US",
-      "old": ""
-     },
-     {
-      "field": "TOWER_OR_COMM_CALL",
-      "new": "CENTENNIAL",
-      "old": ""
-     },
-     {
-      "field": "PRIMARY_APPROACH_RADIO_CALL",
-      "new": "DENVER",
-      "old": ""
-     },
-     {
-      "field": "FREQ",
-      "new": "371.85",
-      "old": ""
-     },
-     {
-      "field": "SECTORIZATION",
-      "new": "LOW/HIGH",
-      "old": ""
-     },
-     {
-      "field": "FREQ_USE",
-      "new": "DENVER/A/ RCAG",
-      "old": ""
-     },
-     {
-      "field": "REMARK",
-      "new": "DENVER ARTCC (ZDV) FREQS 126.5/371.85 (DENVER/A/ RCAG) USED FOR PINNR RNAV STAR 26000 FT AND BLW.",
-      "old": ""
-     }
-    ],
-    "id": "a4a7aa7945f9",
-    "kind": "added",
-    "priority": "action",
-    "source": "FRQ",
-    "summary": "new frequency 371.85 (DENVER/A/ RCAG)"
-   },
-   {
-    "category": "frequency",
-    "fields": [
-     {
-      "field": "FACILITY",
-      "new": "HAYDEN",
-      "old": ""
-     },
-     {
-      "field": "FAC_NAME",
-      "new": "HAYDEN",
-      "old": ""
-     },
-     {
-      "field": "FACILITY_TYPE",
-      "new": "RCAG",
-      "old": ""
-     },
-     {
-      "field": "ARTCC_OR_FSS_ID",
-      "new": "ZDV",
-      "old": ""
-     },
-     {
-      "field": "SERVICED_FACILITY",
-      "new": "APA",
-      "old": ""
-     },
-     {
-      "field": "SERVICED_FAC_NAME",
-      "new": "CENTENNIAL",
-      "old": ""
-     },
-     {
-      "field": "SERVICED_SITE_TYPE",
-      "new": "AIRPORT",
-      "old": ""
-     },
-     {
-      "field": "SERVICED_CITY",
-      "new": "DENVER",
-      "old": ""
-     },
-     {
-      "field": "SERVICED_STATE",
-      "new": "CO",
-      "old": ""
-     },
-     {
-      "field": "SERVICED_COUNTRY",
-      "new": "US",
-      "old": ""
-     },
-     {
-      "field": "TOWER_OR_COMM_CALL",
-      "new": "CENTENNIAL",
-      "old": ""
-     },
-     {
-      "field": "PRIMARY_APPROACH_RADIO_CALL",
-      "new": "DENVER",
-      "old": ""
-     },
-     {
-      "field": "FREQ",
-      "new": "377.075",
-      "old": ""
-     },
-     {
-      "field": "SECTORIZATION",
-      "new": "HIGH",
-      "old": ""
-     },
-     {
-      "field": "FREQ_USE",
-      "new": "HAYDEN RCAG",
-      "old": ""
-     },
-     {
-      "field": "REMARK",
-      "new": "DENVER ARTCC (ZDV) FREQS 128.325/377.075 (HAYDEN RCAG) USED FOR PINNR RNAV STAR 27000 FT AND ABV.",
-      "old": ""
-     }
-    ],
-    "id": "8b53672004ea",
-    "kind": "added",
-    "priority": "action",
-    "source": "FRQ",
-    "summary": "new frequency 377.075 (HAYDEN RCAG)"
+    "summary": "new center (ARTCC ZDV) frequencies: Denver/A/ RCAG 126.5, 371.85 (low/high altitude) and Hayden RCAG 128.325, 377.075 (high altitude); an RCAG is a remote center air to ground facility"
    },
    {
     "category": "remark",
@@ -599,153 +253,15 @@
    },
    {
     "category": "frequency",
-    "fields": [
-     {
-      "field": "FACILITY",
-      "new": "D01",
-      "old": ""
-     },
-     {
-      "field": "FAC_NAME",
-      "new": "DENVER TRACON",
-      "old": ""
-     },
-     {
-      "field": "FACILITY_TYPE",
-      "new": "TRACON",
-      "old": ""
-     },
-     {
-      "field": "SERVICED_FACILITY",
-      "new": "APA",
-      "old": ""
-     },
-     {
-      "field": "SERVICED_FAC_NAME",
-      "new": "CENTENNIAL",
-      "old": ""
-     },
-     {
-      "field": "SERVICED_SITE_TYPE",
-      "new": "AIRPORT",
-      "old": ""
-     },
-     {
-      "field": "SERVICED_CITY",
-      "new": "DENVER",
-      "old": ""
-     },
-     {
-      "field": "SERVICED_STATE",
-      "new": "CO",
-      "old": ""
-     },
-     {
-      "field": "SERVICED_COUNTRY",
-      "new": "US",
-      "old": ""
-     },
-     {
-      "field": "TOWER_OR_COMM_CALL",
-      "new": "CENTENNIAL",
-      "old": ""
-     },
-     {
-      "field": "PRIMARY_APPROACH_RADIO_CALL",
-      "new": "DENVER",
-      "old": ""
-     },
-     {
-      "field": "FREQ",
-      "new": "127.05",
-      "old": ""
-     },
-     {
-      "field": "FREQ_USE",
-      "new": "PINNR RNAV STAR",
-      "old": ""
-     }
+    "details": [
+     "added: 127.05 PINNR RNAV STAR",
+     "added: 363.25 PINNR RNAV STAR"
     ],
-    "id": "4cdb9a747459",
+    "id": "16ee77ca9df3",
     "kind": "added",
     "priority": "fyi",
     "source": "FRQ",
-    "summary": "frequency 127.05: also listed for PINNR RNAV STAR"
-   },
-   {
-    "category": "frequency",
-    "fields": [
-     {
-      "field": "FACILITY",
-      "new": "D01",
-      "old": ""
-     },
-     {
-      "field": "FAC_NAME",
-      "new": "DENVER TRACON",
-      "old": ""
-     },
-     {
-      "field": "FACILITY_TYPE",
-      "new": "TRACON",
-      "old": ""
-     },
-     {
-      "field": "SERVICED_FACILITY",
-      "new": "APA",
-      "old": ""
-     },
-     {
-      "field": "SERVICED_FAC_NAME",
-      "new": "CENTENNIAL",
-      "old": ""
-     },
-     {
-      "field": "SERVICED_SITE_TYPE",
-      "new": "AIRPORT",
-      "old": ""
-     },
-     {
-      "field": "SERVICED_CITY",
-      "new": "DENVER",
-      "old": ""
-     },
-     {
-      "field": "SERVICED_STATE",
-      "new": "CO",
-      "old": ""
-     },
-     {
-      "field": "SERVICED_COUNTRY",
-      "new": "US",
-      "old": ""
-     },
-     {
-      "field": "TOWER_OR_COMM_CALL",
-      "new": "CENTENNIAL",
-      "old": ""
-     },
-     {
-      "field": "PRIMARY_APPROACH_RADIO_CALL",
-      "new": "DENVER",
-      "old": ""
-     },
-     {
-      "field": "FREQ",
-      "new": "363.25",
-      "old": ""
-     },
-     {
-      "field": "FREQ_USE",
-      "new": "PINNR RNAV STAR",
-      "old": ""
-     }
-    ],
-    "id": "7c4083483984",
-    "kind": "added",
-    "priority": "fyi",
-    "source": "FRQ",
-    "summary": "frequency 363.25: also listed for PINNR RNAV STAR"
+    "summary": "frequencies now also listed for arrivals (STARs): 127.05 for PINNR RNAV; 363.25 for PINNR RNAV"
    },
    {
     "category": "remark",
@@ -1691,6 +1207,24 @@
    },
    {
     "category": "frequency",
+    "details": [
+     "added: 120.05 CHARLOTTE DP (236-054)",
+     "added: 120.05 CHARLOTTE DP (NEANO, BOBZY, NALEY, KRITR)",
+     "added: 124.0 DURST DP",
+     "added: 124.0 IRVVV DP",
+     "added: 128.325 CHARLOTTE DP (055-235)",
+     "added: 128.325 CHARLOTTE DP (BRCHM, HAMLN, LILLS, PEKNN, ANDYS)",
+     "added: 307.8 DURST DP",
+     "added: 307.8 IRVVV DP"
+    ],
+    "id": "072b59202da3",
+    "kind": "added",
+    "priority": "fyi",
+    "source": "FRQ",
+    "summary": "frequencies now also listed for departures (DPs): 120.05 for CHARLOTTE; 124.0 for DURST and IRVVV; 128.325 for CHARLOTTE; 307.8 for DURST and IRVVV"
+   },
+   {
+    "category": "frequency",
     "fields": [
      {
       "field": "SECTORIZATION",
@@ -1723,96 +1257,6 @@
     "category": "frequency",
     "fields": [
      {
-      "field": "FACILITY",
-      "new": "CLT",
-      "old": ""
-     },
-     {
-      "field": "FAC_NAME",
-      "new": "CHARLOTTE/DOUGLAS INTL",
-      "old": ""
-     },
-     {
-      "field": "FACILITY_TYPE",
-      "new": "ATCT-TRACON",
-      "old": ""
-     },
-     {
-      "field": "CPDLC",
-      "new": "CPDLC (LOGON KUSA)",
-      "old": ""
-     },
-     {
-      "field": "TOWER_HRS",
-      "new": "24",
-      "old": ""
-     },
-     {
-      "field": "SERVICED_FACILITY",
-      "new": "CLT",
-      "old": ""
-     },
-     {
-      "field": "SERVICED_FAC_NAME",
-      "new": "CHARLOTTE/DOUGLAS INTL",
-      "old": ""
-     },
-     {
-      "field": "SERVICED_SITE_TYPE",
-      "new": "AIRPORT",
-      "old": ""
-     },
-     {
-      "field": "SERVICED_CITY",
-      "new": "CHARLOTTE",
-      "old": ""
-     },
-     {
-      "field": "SERVICED_STATE",
-      "new": "NC",
-      "old": ""
-     },
-     {
-      "field": "SERVICED_COUNTRY",
-      "new": "US",
-      "old": ""
-     },
-     {
-      "field": "TOWER_OR_COMM_CALL",
-      "new": "CHARLOTTE",
-      "old": ""
-     },
-     {
-      "field": "PRIMARY_APPROACH_RADIO_CALL",
-      "new": "CHARLOTTE",
-      "old": ""
-     },
-     {
-      "field": "FREQ",
-      "new": "120.05",
-      "old": ""
-     },
-     {
-      "field": "SECTORIZATION",
-      "new": "236-054",
-      "old": ""
-     },
-     {
-      "field": "FREQ_USE",
-      "new": "CHARLOTTE DP",
-      "old": ""
-     }
-    ],
-    "id": "9cc0a9da595f",
-    "kind": "added",
-    "priority": "fyi",
-    "source": "FRQ",
-    "summary": "frequency 120.05: also listed for CHARLOTTE DP"
-   },
-   {
-    "category": "frequency",
-    "fields": [
-     {
       "field": "SECTORIZATION",
       "new": "FLYYN, CEGAL TRANSITIONS RWY 01L, 01R, 36",
       "old": "FLYYN, CEGAL TRANSITIONS RWY 01L, 01R, 36R"
@@ -1837,7 +1281,7 @@
     "kind": "changed",
     "priority": "fyi",
     "source": "FRQ",
-    "summary": "frequency 120.5 use: KERMIT DP -> none"
+    "summary": "frequency 120.5 use: KERMIT DP (departure) -> none"
    },
    {
     "category": "frequency",
@@ -1887,267 +1331,7 @@
     "kind": "changed",
     "priority": "fyi",
     "source": "FRQ",
-    "summary": "frequency 124.0 use: KERMIT DP -> BATTA DP; frequency 124.0 sector: 055-235 -> none"
-   },
-   {
-    "category": "frequency",
-    "fields": [
-     {
-      "field": "FACILITY",
-      "new": "CLT",
-      "old": ""
-     },
-     {
-      "field": "FAC_NAME",
-      "new": "CHARLOTTE/DOUGLAS INTL",
-      "old": ""
-     },
-     {
-      "field": "FACILITY_TYPE",
-      "new": "ATCT-TRACON",
-      "old": ""
-     },
-     {
-      "field": "CPDLC",
-      "new": "CPDLC (LOGON KUSA)",
-      "old": ""
-     },
-     {
-      "field": "TOWER_HRS",
-      "new": "24",
-      "old": ""
-     },
-     {
-      "field": "SERVICED_FACILITY",
-      "new": "CLT",
-      "old": ""
-     },
-     {
-      "field": "SERVICED_FAC_NAME",
-      "new": "CHARLOTTE/DOUGLAS INTL",
-      "old": ""
-     },
-     {
-      "field": "SERVICED_SITE_TYPE",
-      "new": "AIRPORT",
-      "old": ""
-     },
-     {
-      "field": "SERVICED_CITY",
-      "new": "CHARLOTTE",
-      "old": ""
-     },
-     {
-      "field": "SERVICED_STATE",
-      "new": "NC",
-      "old": ""
-     },
-     {
-      "field": "SERVICED_COUNTRY",
-      "new": "US",
-      "old": ""
-     },
-     {
-      "field": "TOWER_OR_COMM_CALL",
-      "new": "CHARLOTTE",
-      "old": ""
-     },
-     {
-      "field": "PRIMARY_APPROACH_RADIO_CALL",
-      "new": "CHARLOTTE",
-      "old": ""
-     },
-     {
-      "field": "FREQ",
-      "new": "124.0",
-      "old": ""
-     },
-     {
-      "field": "FREQ_USE",
-      "new": "DURST DP",
-      "old": ""
-     }
-    ],
-    "id": "fb626682a4f0",
-    "kind": "added",
-    "priority": "fyi",
-    "source": "FRQ",
-    "summary": "frequency 124.0: also listed for DURST DP"
-   },
-   {
-    "category": "frequency",
-    "fields": [
-     {
-      "field": "FACILITY",
-      "new": "CLT",
-      "old": ""
-     },
-     {
-      "field": "FAC_NAME",
-      "new": "CHARLOTTE/DOUGLAS INTL",
-      "old": ""
-     },
-     {
-      "field": "FACILITY_TYPE",
-      "new": "ATCT-TRACON",
-      "old": ""
-     },
-     {
-      "field": "CPDLC",
-      "new": "CPDLC (LOGON KUSA)",
-      "old": ""
-     },
-     {
-      "field": "TOWER_HRS",
-      "new": "24",
-      "old": ""
-     },
-     {
-      "field": "SERVICED_FACILITY",
-      "new": "CLT",
-      "old": ""
-     },
-     {
-      "field": "SERVICED_FAC_NAME",
-      "new": "CHARLOTTE/DOUGLAS INTL",
-      "old": ""
-     },
-     {
-      "field": "SERVICED_SITE_TYPE",
-      "new": "AIRPORT",
-      "old": ""
-     },
-     {
-      "field": "SERVICED_CITY",
-      "new": "CHARLOTTE",
-      "old": ""
-     },
-     {
-      "field": "SERVICED_STATE",
-      "new": "NC",
-      "old": ""
-     },
-     {
-      "field": "SERVICED_COUNTRY",
-      "new": "US",
-      "old": ""
-     },
-     {
-      "field": "TOWER_OR_COMM_CALL",
-      "new": "CHARLOTTE",
-      "old": ""
-     },
-     {
-      "field": "PRIMARY_APPROACH_RADIO_CALL",
-      "new": "CHARLOTTE",
-      "old": ""
-     },
-     {
-      "field": "FREQ",
-      "new": "124.0",
-      "old": ""
-     },
-     {
-      "field": "FREQ_USE",
-      "new": "IRVVV DP",
-      "old": ""
-     }
-    ],
-    "id": "c8199dfbff47",
-    "kind": "added",
-    "priority": "fyi",
-    "source": "FRQ",
-    "summary": "frequency 124.0: also listed for IRVVV DP"
-   },
-   {
-    "category": "frequency",
-    "fields": [
-     {
-      "field": "FACILITY",
-      "new": "CLT",
-      "old": ""
-     },
-     {
-      "field": "FAC_NAME",
-      "new": "CHARLOTTE/DOUGLAS INTL",
-      "old": ""
-     },
-     {
-      "field": "FACILITY_TYPE",
-      "new": "ATCT-TRACON",
-      "old": ""
-     },
-     {
-      "field": "CPDLC",
-      "new": "CPDLC (LOGON KUSA)",
-      "old": ""
-     },
-     {
-      "field": "TOWER_HRS",
-      "new": "24",
-      "old": ""
-     },
-     {
-      "field": "SERVICED_FACILITY",
-      "new": "CLT",
-      "old": ""
-     },
-     {
-      "field": "SERVICED_FAC_NAME",
-      "new": "CHARLOTTE/DOUGLAS INTL",
-      "old": ""
-     },
-     {
-      "field": "SERVICED_SITE_TYPE",
-      "new": "AIRPORT",
-      "old": ""
-     },
-     {
-      "field": "SERVICED_CITY",
-      "new": "CHARLOTTE",
-      "old": ""
-     },
-     {
-      "field": "SERVICED_STATE",
-      "new": "NC",
-      "old": ""
-     },
-     {
-      "field": "SERVICED_COUNTRY",
-      "new": "US",
-      "old": ""
-     },
-     {
-      "field": "TOWER_OR_COMM_CALL",
-      "new": "CHARLOTTE",
-      "old": ""
-     },
-     {
-      "field": "PRIMARY_APPROACH_RADIO_CALL",
-      "new": "CHARLOTTE",
-      "old": ""
-     },
-     {
-      "field": "FREQ",
-      "new": "128.325",
-      "old": ""
-     },
-     {
-      "field": "SECTORIZATION",
-      "new": "055-235",
-      "old": ""
-     },
-     {
-      "field": "FREQ_USE",
-      "new": "CHARLOTTE DP",
-      "old": ""
-     }
-    ],
-    "id": "36a8735e0d61",
-    "kind": "added",
-    "priority": "fyi",
-    "source": "FRQ",
-    "summary": "frequency 128.325: also listed for CHARLOTTE DP"
+    "summary": "frequency 124.0 use: KERMIT DP (departure) -> BATTA DP (departure); frequency 124.0 sector: 055-235 -> none"
    },
    {
     "category": "frequency",
@@ -2182,7 +1366,7 @@
     "kind": "changed",
     "priority": "fyi",
     "source": "FRQ",
-    "summary": "frequency 257.2 use: KERMIT DP -> CHARLOTTE DP; frequency 257.2 sector: 235-055 -> HARAY, PITTY TRANSITIONS"
+    "summary": "frequency 257.2 use: KERMIT DP (departure) -> CHARLOTTE DP (departure); frequency 257.2 sector: 235-055 -> HARAY, PITTY TRANSITIONS"
    },
    {
     "category": "frequency",
@@ -2262,177 +1446,7 @@
     "kind": "changed",
     "priority": "fyi",
     "source": "FRQ",
-    "summary": "frequency 307.8 use: KERMIT DP -> BATTA DP; frequency 307.8 sector: 055-235 -> none"
-   },
-   {
-    "category": "frequency",
-    "fields": [
-     {
-      "field": "FACILITY",
-      "new": "CLT",
-      "old": ""
-     },
-     {
-      "field": "FAC_NAME",
-      "new": "CHARLOTTE/DOUGLAS INTL",
-      "old": ""
-     },
-     {
-      "field": "FACILITY_TYPE",
-      "new": "ATCT-TRACON",
-      "old": ""
-     },
-     {
-      "field": "CPDLC",
-      "new": "CPDLC (LOGON KUSA)",
-      "old": ""
-     },
-     {
-      "field": "TOWER_HRS",
-      "new": "24",
-      "old": ""
-     },
-     {
-      "field": "SERVICED_FACILITY",
-      "new": "CLT",
-      "old": ""
-     },
-     {
-      "field": "SERVICED_FAC_NAME",
-      "new": "CHARLOTTE/DOUGLAS INTL",
-      "old": ""
-     },
-     {
-      "field": "SERVICED_SITE_TYPE",
-      "new": "AIRPORT",
-      "old": ""
-     },
-     {
-      "field": "SERVICED_CITY",
-      "new": "CHARLOTTE",
-      "old": ""
-     },
-     {
-      "field": "SERVICED_STATE",
-      "new": "NC",
-      "old": ""
-     },
-     {
-      "field": "SERVICED_COUNTRY",
-      "new": "US",
-      "old": ""
-     },
-     {
-      "field": "TOWER_OR_COMM_CALL",
-      "new": "CHARLOTTE",
-      "old": ""
-     },
-     {
-      "field": "PRIMARY_APPROACH_RADIO_CALL",
-      "new": "CHARLOTTE",
-      "old": ""
-     },
-     {
-      "field": "FREQ",
-      "new": "307.8",
-      "old": ""
-     },
-     {
-      "field": "FREQ_USE",
-      "new": "DURST DP",
-      "old": ""
-     }
-    ],
-    "id": "a324ca178d53",
-    "kind": "added",
-    "priority": "fyi",
-    "source": "FRQ",
-    "summary": "frequency 307.8: also listed for DURST DP"
-   },
-   {
-    "category": "frequency",
-    "fields": [
-     {
-      "field": "FACILITY",
-      "new": "CLT",
-      "old": ""
-     },
-     {
-      "field": "FAC_NAME",
-      "new": "CHARLOTTE/DOUGLAS INTL",
-      "old": ""
-     },
-     {
-      "field": "FACILITY_TYPE",
-      "new": "ATCT-TRACON",
-      "old": ""
-     },
-     {
-      "field": "CPDLC",
-      "new": "CPDLC (LOGON KUSA)",
-      "old": ""
-     },
-     {
-      "field": "TOWER_HRS",
-      "new": "24",
-      "old": ""
-     },
-     {
-      "field": "SERVICED_FACILITY",
-      "new": "CLT",
-      "old": ""
-     },
-     {
-      "field": "SERVICED_FAC_NAME",
-      "new": "CHARLOTTE/DOUGLAS INTL",
-      "old": ""
-     },
-     {
-      "field": "SERVICED_SITE_TYPE",
-      "new": "AIRPORT",
-      "old": ""
-     },
-     {
-      "field": "SERVICED_CITY",
-      "new": "CHARLOTTE",
-      "old": ""
-     },
-     {
-      "field": "SERVICED_STATE",
-      "new": "NC",
-      "old": ""
-     },
-     {
-      "field": "SERVICED_COUNTRY",
-      "new": "US",
-      "old": ""
-     },
-     {
-      "field": "TOWER_OR_COMM_CALL",
-      "new": "CHARLOTTE",
-      "old": ""
-     },
-     {
-      "field": "PRIMARY_APPROACH_RADIO_CALL",
-      "new": "CHARLOTTE",
-      "old": ""
-     },
-     {
-      "field": "FREQ",
-      "new": "307.8",
-      "old": ""
-     },
-     {
-      "field": "FREQ_USE",
-      "new": "IRVVV DP",
-      "old": ""
-     }
-    ],
-    "id": "bff745e659cd",
-    "kind": "added",
-    "priority": "fyi",
-    "source": "FRQ",
-    "summary": "frequency 307.8: also listed for IRVVV DP"
+    "summary": "frequency 307.8 use: KERMIT DP (departure) -> BATTA DP (departure); frequency 307.8 sector: 055-235 -> none"
    },
    {
     "category": "remark",
@@ -2441,7 +1455,7 @@
     "original": "ENGINEERED MATERIALS ARRESTING GEAR SYSTEM (EMAS) 255 FT IN LENGTH BY 170 FT IN WIDTH AT THE DEPARTURE END OF RWY 36.",
     "priority": "fyi",
     "source": "APT_RMK",
-    "summary": "new remark: ENGINEERED MATERIALS ARRESTING GEAR SYSTEM (EMAS) 255 FT IN LENGTH BY 170 FT IN WIDTH AT THE DEPARTURE END OF RWY 36."
+    "summary": "new runway 18/36 remark: ENGINEERED MATERIALS ARRESTING GEAR SYSTEM (EMAS) 255 FT IN LENGTH BY 170 FT IN WIDTH AT THE DEPARTURE END OF RWY 36."
    },
    {
     "category": "remark",
@@ -2450,7 +1464,7 @@
     "original": "ENGINEERED MATERIALS ARRESTING GEAR SYSTEM (EMAS) 255 FT IN LENGTH BY 170 FT IN WIDTH AT THE DEPARTURE END OF RWY 36R.",
     "priority": "fyi",
     "source": "APT_RMK",
-    "summary": "removed remark: ENGINEERED MATERIALS ARRESTING GEAR SYSTEM (EMAS) 255 FT IN LENGTH BY 170 FT IN WIDTH AT THE DEPARTURE END OF RWY 36R."
+    "summary": "removed runway 18L/36R remark: ENGINEERED MATERIALS ARRESTING GEAR SYSTEM (EMAS) 255 FT IN LENGTH BY 170 FT IN WIDTH AT THE DEPARTURE END OF RWY 36R."
    },
    {
     "category": "remark",
@@ -2886,7 +1900,7 @@
     "kind": "changed",
     "priority": "fyi",
     "source": "FRQ",
-    "summary": "frequency 127.05 use: PINNR STAR -> none"
+    "summary": "frequency 127.05 use: PINNR STAR (arrival) -> none"
    },
    {
     "category": "frequency",
@@ -2901,7 +1915,7 @@
     "kind": "changed",
     "priority": "fyi",
     "source": "FRQ",
-    "summary": "frequency 363.25 use: PINNR STAR -> none"
+    "summary": "frequency 363.25 use: PINNR STAR (arrival) -> none"
    }
   ],
   "DFW": [
@@ -3236,78 +2250,14 @@
    },
    {
     "category": "frequency",
-    "fields": [
-     {
-      "field": "FACILITY",
-      "new": "PHL",
-      "old": ""
-     },
-     {
-      "field": "FAC_NAME",
-      "new": "PHILADELPHIA INTL",
-      "old": ""
-     },
-     {
-      "field": "FACILITY_TYPE",
-      "new": "ATCT-TRACON",
-      "old": ""
-     },
-     {
-      "field": "SERVICED_FACILITY",
-      "new": "EWR",
-      "old": ""
-     },
-     {
-      "field": "SERVICED_FAC_NAME",
-      "new": "NEWARK LIBERTY INTL",
-      "old": ""
-     },
-     {
-      "field": "SERVICED_SITE_TYPE",
-      "new": "AIRPORT",
-      "old": ""
-     },
-     {
-      "field": "SERVICED_CITY",
-      "new": "NEWARK",
-      "old": ""
-     },
-     {
-      "field": "SERVICED_STATE",
-      "new": "NJ",
-      "old": ""
-     },
-     {
-      "field": "SERVICED_COUNTRY",
-      "new": "US",
-      "old": ""
-     },
-     {
-      "field": "TOWER_OR_COMM_CALL",
-      "new": "NEWARK",
-      "old": ""
-     },
-     {
-      "field": "PRIMARY_APPROACH_RADIO_CALL",
-      "new": "NEWARK",
-      "old": ""
-     },
-     {
-      "field": "FREQ",
-      "new": "120.15",
-      "old": ""
-     },
-     {
-      "field": "FREQ_USE",
-      "new": "SHAFF STAR",
-      "old": ""
-     }
+    "details": [
+     "added: 120.15 SHAFF STAR"
     ],
-    "id": "bd64e8fcbb7c",
+    "id": "ae6965bf72df",
     "kind": "added",
     "priority": "fyi",
     "source": "FRQ",
-    "summary": "frequency 120.15: also listed for SHAFF STAR"
+    "summary": "frequencies now also listed for arrivals (STARs): 120.15 for SHAFF"
    },
    {
     "category": "frequency",
@@ -3901,6 +2851,18 @@
    },
    {
     "category": "frequency",
+    "details": [
+     "added: 126.1 WAYNZ STAR (331-090)",
+     "added: 338.25 WAYNZ STAR (331-090)"
+    ],
+    "id": "31fdc71c9a24",
+    "kind": "added",
+    "priority": "fyi",
+    "source": "FRQ",
+    "summary": "frequencies now also listed for arrivals (STARs): 126.1 for WAYNZ; 338.25 for WAYNZ"
+   },
+   {
+    "category": "frequency",
     "fields": [
      {
       "field": "FREQ_USE",
@@ -3912,87 +2874,7 @@
     "kind": "changed",
     "priority": "fyi",
     "source": "FRQ",
-    "summary": "frequency 126.1 use: WAYNE STAR -> HYPER STAR"
-   },
-   {
-    "category": "frequency",
-    "fields": [
-     {
-      "field": "FACILITY",
-      "new": "PCT",
-      "old": ""
-     },
-     {
-      "field": "FAC_NAME",
-      "new": "POTOMAC TRACON",
-      "old": ""
-     },
-     {
-      "field": "FACILITY_TYPE",
-      "new": "TRACON",
-      "old": ""
-     },
-     {
-      "field": "SERVICED_FACILITY",
-      "new": "IAD",
-      "old": ""
-     },
-     {
-      "field": "SERVICED_FAC_NAME",
-      "new": "WASHINGTON DULLES INTL",
-      "old": ""
-     },
-     {
-      "field": "SERVICED_SITE_TYPE",
-      "new": "AIRPORT",
-      "old": ""
-     },
-     {
-      "field": "SERVICED_CITY",
-      "new": "WASHINGTON",
-      "old": ""
-     },
-     {
-      "field": "SERVICED_STATE",
-      "new": "DC",
-      "old": ""
-     },
-     {
-      "field": "SERVICED_COUNTRY",
-      "new": "US",
-      "old": ""
-     },
-     {
-      "field": "TOWER_OR_COMM_CALL",
-      "new": "DULLES",
-      "old": ""
-     },
-     {
-      "field": "PRIMARY_APPROACH_RADIO_CALL",
-      "new": "POTOMAC",
-      "old": ""
-     },
-     {
-      "field": "FREQ",
-      "new": "126.1",
-      "old": ""
-     },
-     {
-      "field": "SECTORIZATION",
-      "new": "331-090",
-      "old": ""
-     },
-     {
-      "field": "FREQ_USE",
-      "new": "WAYNZ STAR",
-      "old": ""
-     }
-    ],
-    "id": "16b0935cc339",
-    "kind": "added",
-    "priority": "fyi",
-    "source": "FRQ",
-    "summary": "frequency 126.1: also listed for WAYNZ STAR"
+    "summary": "frequency 126.1 use: WAYNE STAR (arrival) -> HYPER STAR (arrival)"
    },
    {
     "category": "frequency",
@@ -4007,7 +2889,7 @@
     "kind": "changed",
     "priority": "fyi",
     "source": "FRQ",
-    "summary": "frequency 133.0 use: HYPER STAR -> none"
+    "summary": "frequency 133.0 use: HYPER STAR (arrival) -> none"
    },
    {
     "category": "frequency",
@@ -4022,7 +2904,7 @@
     "kind": "changed",
     "priority": "fyi",
     "source": "FRQ",
-    "summary": "frequency 288.35 use: HYPER STAR -> none"
+    "summary": "frequency 288.35 use: HYPER STAR (arrival) -> none"
    },
    {
     "category": "frequency",
@@ -4037,87 +2919,7 @@
     "kind": "changed",
     "priority": "fyi",
     "source": "FRQ",
-    "summary": "frequency 338.25 use: WAYNE STAR -> HYPER STAR"
-   },
-   {
-    "category": "frequency",
-    "fields": [
-     {
-      "field": "FACILITY",
-      "new": "PCT",
-      "old": ""
-     },
-     {
-      "field": "FAC_NAME",
-      "new": "POTOMAC TRACON",
-      "old": ""
-     },
-     {
-      "field": "FACILITY_TYPE",
-      "new": "TRACON",
-      "old": ""
-     },
-     {
-      "field": "SERVICED_FACILITY",
-      "new": "IAD",
-      "old": ""
-     },
-     {
-      "field": "SERVICED_FAC_NAME",
-      "new": "WASHINGTON DULLES INTL",
-      "old": ""
-     },
-     {
-      "field": "SERVICED_SITE_TYPE",
-      "new": "AIRPORT",
-      "old": ""
-     },
-     {
-      "field": "SERVICED_CITY",
-      "new": "WASHINGTON",
-      "old": ""
-     },
-     {
-      "field": "SERVICED_STATE",
-      "new": "DC",
-      "old": ""
-     },
-     {
-      "field": "SERVICED_COUNTRY",
-      "new": "US",
-      "old": ""
-     },
-     {
-      "field": "TOWER_OR_COMM_CALL",
-      "new": "DULLES",
-      "old": ""
-     },
-     {
-      "field": "PRIMARY_APPROACH_RADIO_CALL",
-      "new": "POTOMAC",
-      "old": ""
-     },
-     {
-      "field": "FREQ",
-      "new": "338.25",
-      "old": ""
-     },
-     {
-      "field": "SECTORIZATION",
-      "new": "331-090",
-      "old": ""
-     },
-     {
-      "field": "FREQ_USE",
-      "new": "WAYNZ STAR",
-      "old": ""
-     }
-    ],
-    "id": "d0f6d9f67cae",
-    "kind": "added",
-    "priority": "fyi",
-    "source": "FRQ",
-    "summary": "frequency 338.25: also listed for WAYNZ STAR"
+    "summary": "frequency 338.25 use: WAYNE STAR (arrival) -> HYPER STAR (arrival)"
    }
   ],
   "IAH": [
@@ -6134,7 +4936,7 @@
     "original": "ENGINEERED MATERIAL ARRESTING SYSTEM (EMAS) WITH 389 FT SETBACK 211 FT IN LENGTH BY 170 FT IN WIDTH LCTD AT THE DER 08.",
     "priority": "fyi",
     "source": "APT_RMK",
-    "summary": "new remark: ENGINEERED MATERIAL ARRESTING SYSTEM (EMAS) WITH 389 FT SETBACK 211 FT IN LENGTH BY 170 FT IN WIDTH LCTD AT THE DER 08."
+    "summary": "new runway 08 arresting system EMAS remark: ENGINEERED MATERIAL ARRESTING SYSTEM (EMAS) WITH 389 FT SETBACK 211 FT IN LENGTH BY 170 FT IN WIDTH LCTD AT THE DER 08."
    },
    {
     "category": "airport",
@@ -7096,7 +5898,7 @@
     "original": "SUSTAINABLE AVIATION FUEL (SAF) AVBL.",
     "priority": "fyi",
     "source": "APT_RMK",
-    "summary": "new remark: SUSTAINABLE AVIATION FUEL (SAF) AVBL."
+    "summary": "new fuel type A remark: SUSTAINABLE AVIATION FUEL (SAF) AVBL."
    }
   ],
   "VRB": []

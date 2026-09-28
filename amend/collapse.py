@@ -2,8 +2,9 @@
 import re
 from collections import defaultdict
 
+from . import glossary
 from .diff import _canon
-from .english import ils, ils_part, procedure_name, summarize
+from .english import PROC_USE, freq_use, ils, ils_part, procedure_name, summarize
 from .procedures import describe, split_code
 from .rules import REMARK_FILES, base
 
@@ -135,6 +136,150 @@ def _routes(apt, routes):
             "details": sorted({summarize(r, {}) for r in routes})}
 
 
+RANK = {"fyi": 0, "ifr": 1, "action": 2}
+
+
+def _top(rs):
+    return max((r["priority"] for r in rs), key=lambda p: RANK.get(p, 0))
+
+
+def _rcag_meaning():
+    """'RCAG: remote center air to ground facility', from the glossary's verified entry."""
+    e = glossary.lookup("RCAG")
+    return f"an RCAG is a {e['expansion'].lower()}" if e and e.get("verified") else "RCAG"
+
+
+def _freqs(rows):
+    """'125.2, 372.0' in the FAA's order, each once."""
+    return ", ".join(dict.fromkeys(r.get("FREQ", "") for r in rows if r.get("FREQ")))
+
+
+def _site(name, rows):
+    """'Bethel RCAG 125.2, 372.0 (low altitude)'. for an RCAG the layout's SECTORIZATION is the
+    frequency's altitude: Low, High, Low/High or Ultra-High."""
+    alts = {r.get("SECTORIZATION", "").strip().lower() for r in rows} - {""}
+    alt = f" ({alts.pop()} altitude)" if len(alts) == 1 else ""
+    return f"{name.title()} RCAG {_freqs(rows)}{alt}"
+
+
+def _rcag_name(use):
+    """'RED BLUFF RCAG' -> 'Red Bluff RCAG'"""
+    return re.sub(r"\s*RCAG$", "", use).title() + " RCAG"
+
+
+def _faa_line(r):
+    """one grouped FRQ row as the FAA wrote it: 'removed: 125.2 BETHEL RCAG (LOW)'."""
+    row = r["row"]
+    sect = f" ({row['SECTORIZATION']})" if row.get("SECTORIZATION") else ""
+    return f"{r['kind']}: {row.get('FREQ', '')} {row.get('FREQ_USE', '')}{sect}"
+
+
+def _rcag_changes(apt, rs):
+    """a center's frequencies at an airport come from RCAG sites (FRQ FACILITY_TYPE RCAG, with the
+    ARTCC in ARTCC_OR_FSS_ID). one site's frequencies going and another's arriving for the same
+    center is one change, and every frequency of a site is one line. returns (records, ids)."""
+    src = lambda r: base(r["source"])
+    groups = defaultdict(list)
+    for r in rs:
+        if (src(r) == "FRQ" and r["kind"] in ("added", "removed")
+                and r["row"].get("FACILITY_TYPE") == "RCAG"):
+            groups[r["row"].get("ARTCC_OR_FSS_ID", "")].append(r)
+    out, drop = [], set()
+    for artcc, group in groups.items():
+        sites = {"removed": defaultdict(list), "added": defaultdict(list)}
+        for r in group:
+            name = r["row"].get("FACILITY") or r["row"].get("FAC_NAME") or "?"
+            sites[r["kind"]][name].append(r["row"])
+        said = {k: " and ".join(_site(n, rows) for n, rows in v.items()) for k, v in sites.items()}
+        center = f"center (ARTCC {artcc})" if artcc else "center"
+        if said["removed"] and said["added"]:
+            kind, s = "changed", f"{center} frequencies: {said['removed']} -> {said['added']}"
+        elif said["added"]:
+            kind, s = "added", f"new {center} frequencies: {said['added']}"
+        else:
+            kind, s = "removed", f"{center} frequencies discontinued: {said['removed']}"
+        out.append({"airport": apt, "source": "FRQ.csv", "kind": kind, "priority": _top(group),
+                    "summary_override": f"{s}; {_rcag_meaning()}",
+                    "folded": [{"source": "FRQ", "row": r["row"]} for r in group],
+                    "details": [_faa_line(r) for r in group]})
+        drop |= {id(r) for r in group}
+
+    # the same frequencies now through another site: FREQ_USE 'RED BLUFF RCAG' -> 'UKIAH RCAG'
+    moved = defaultdict(list)
+    for r in rs:
+        f = {x["field"]: x for x in r.get("fields", [])}
+        use = f.get("FREQ_USE")
+        if (src(r) == "FRQ" and r["kind"] == "changed" and use
+                and all(re.fullmatch(r".+ RCAG", use[k]) for k in ("old", "new"))):
+            moved[(use["old"], use["new"])].append(r)
+    for (old, new), group in moved.items():
+        freqs = _freqs([r.get("context", {}) for r in group])
+        out.append({"airport": apt, "source": "FRQ.csv", "kind": "changed", "priority": _top(group),
+                    "summary_override": f"center frequencies {freqs}: now through the {_rcag_name(new)} "
+                                        f"instead of the {_rcag_name(old)}; {_rcag_meaning()}",
+                    "fields": [{"field": "FREQ_USE", "old": old, "new": new}],
+                    "key": {"FREQ": freqs},
+                    "values": [v for r in group for x in r["fields"] for v in (x["old"], x["new"])]
+                              + [v for r in group for v in r.get("context", {}).values()]})
+        drop |= {id(r) for r in group}
+    return out, drop
+
+
+def _use_moves(apt, rs):
+    """a use leaving one frequency and arriving on another is one change: CTAF 123.05 -> 120.425.
+    only when exactly one frequency lost it and exactly one gained it. returns (records, ids)."""
+    lost, gained = defaultdict(list), defaultdict(list)
+    for r in rs:
+        if base(r["source"]) != "FRQ":
+            continue
+        f = r.get("fields", [])
+        if r["kind"] == "removed":
+            lost[r["row"].get("FREQ_USE", "")].append((r, r["row"].get("FREQ", "")))
+        elif r["kind"] == "added":
+            gained[r["row"].get("FREQ_USE", "")].append((r, r["row"].get("FREQ", "")))
+        elif (r["kind"] == "changed" and len(f) == 1 and f[0]["field"] == "FREQ_USE"
+              and f[0]["old"] and not f[0]["new"]):
+            lost[f[0]["old"]].append((r, r.get("context", {}).get("FREQ", "")))
+    out, drop = [], set()
+    for use in lost.keys() & gained.keys():
+        if not use or len(lost[use]) != 1 or len(gained[use]) != 1:
+            continue
+        (a, old), (b, new) = lost[use][0], gained[use][0]
+        if not old or not new or old == new or "RCAG" in use or PROC_USE.fullmatch(use):
+            continue
+        u = freq_use(use, b.get("row"))
+        what = f"{u[0]} frequency ({u[1] + '; ' if u[1] else ''}FAA: {use})" if u else f"{use} frequency"
+        out.append({"airport": apt, "source": "FRQ.csv", "kind": "changed", "priority": _top([a, b]),
+                    "summary_override": f"{what}: {old} -> {new}",
+                    "fields": [{"field": "FREQ", "old": old, "new": new}],
+                    "context": {"FREQ_USE": use}})
+        drop |= {id(a), id(b)}
+    return out, drop
+
+
+def _proc_listings(apt, rs):
+    """'frequency 118.4: also listed for ALLLN STAR', one per procedure and frequency -> one line
+    per airport. returns (records, ids)."""
+    group = [r for r in rs if base(r["source"]) == "FRQ" and r["kind"] == "added"
+             and r["priority"] == "fyi" and PROC_USE.fullmatch(r["row"].get("FREQ_USE", ""))]
+    if not group:
+        return [], set()
+    by_freq = defaultdict(list)
+    for r in group:
+        by_freq[r["row"].get("FREQ", "")].append(PROC_USE.fullmatch(r["row"]["FREQ_USE"]))
+    kinds = {m[2] for ms in by_freq.values() for m in ms}
+    what = ("arrivals (STARs)" if kinds == {"STAR"} else "departures (DPs)" if kinds == {"DP"}
+            else "arrivals and departures (STARs and DPs)")
+    def names(ms):
+        n = list(dict.fromkeys(m[1] if kinds != {"STAR", "DP"} else f"{m[1]} {m[2]}" for m in ms))
+        return n[0] if len(n) == 1 else ", ".join(n[:-1]) + " and " + n[-1]
+    parts = "; ".join(f"{f} for {names(ms)}" for f, ms in by_freq.items())
+    return [{"airport": apt, "source": "FRQ.csv", "kind": "added", "priority": "fyi",
+             "summary_override": f"frequencies now also listed for {what}: {parts}",
+             "folded": [{"source": "FRQ", "row": r["row"]} for r in group],
+             "details": [_faa_line(r) for r in group]}], {id(r) for r in group}
+
+
 def is_frq_remark(r):
     """an FRQ row where only the REMARK column changed: a remark, not a frequency change."""
     f = r.get("fields", [])
@@ -216,6 +361,12 @@ def collapse(records, route_tables=None):
             if any(x["priority"] == "action" for x in parts):
                 r["priority"] = "action"
             drop |= {id(x) for x in parts + gone_rmks}
+
+        # 3e. center frequencies through RCAG sites, and frequencies listed for new procedures
+        for group in (_rcag_changes, _use_moves, _proc_listings):
+            recs, ids = group(apt, [r for r in rs if id(r) not in drop])
+            out.extend(recs)
+            drop |= ids
 
         rest = [r for r in rs if id(r) not in drop]
 

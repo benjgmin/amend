@@ -218,6 +218,88 @@ class TestOtherFiles(Rows):
                          [("action", "added (apt_new): something clsd=RWY CLSD")])
 
 
+class TestFrequencies(Rows):
+    """ben, 2026-09-28: 'can we make it more descriptive what frequencies changed, i have no idea'."""
+    H = "FACILITY,FACILITY_TYPE,ARTCC_OR_FSS_ID,SERVICED_FACILITY,PRIMARY_APPROACH_RADIO_CALL,FREQ,SECTORIZATION,FREQ_USE"
+
+    def test_center_moves_to_another_rcag(self):
+        """4AK 2026-10-01: Anchorage Center's two frequencies moved from the Bethel RCAG to the
+        Murphy Dome RCAG. four raw rows, one change, and what an RCAG is (glossary, verified)."""
+        old = {"FRQ.csv": [self.H, "BETHEL,RCAG,ZAN,4AK,,125.2,LOW,BETHEL RCAG",
+                           "BETHEL,RCAG,ZAN,4AK,,372.0,LOW,BETHEL RCAG"]}
+        new = {"FRQ.csv": [self.H, "MURPHY DOME,RCAG,ZAN,4AK,ANCHORAGE ARTCC,120.9,LOW/HIGH,MURPHY DOME RCAG",
+                           "MURPHY DOME,RCAG,ZAN,4AK,ANCHORAGE ARTCC,319.2,LOW/HIGH,MURPHY DOME RCAG"]}
+        self.assertEqual(self.one(old, new, "4AK"), [
+            ("action", "center (ARTCC ZAN) frequencies: Bethel RCAG 125.2, 372.0 (low altitude) -> "
+                       "Murphy Dome RCAG 120.9, 319.2 (low/high altitude); an RCAG is a remote center "
+                       "air to ground facility")])
+
+    def test_same_frequencies_through_another_rcag(self):
+        """CN01 2026-10-01: 132.2 and 350.3 stayed, the site behind them changed."""
+        old = {"FRQ.csv": [self.H, "RED BLUFF,RCAG,ZOA,CN01,,132.2,LOW,RED BLUFF RCAG",
+                           "RED BLUFF,RCAG,ZOA,CN01,,350.3,LOW,RED BLUFF RCAG"]}
+        new = {"FRQ.csv": [self.H, "UKIAH,RCAG,ZOA,CN01,,132.2,LOW,UKIAH RCAG",
+                           "UKIAH,RCAG,ZOA,CN01,,350.3,LOW,UKIAH RCAG"]}
+        ch = self.one(old, new, "CN01")
+        self.assertEqual([s for _, s in ch], [
+            "center frequencies 132.2, 350.3: now through the Ukiah RCAG instead of the Red Bluff RCAG; "
+            "an RCAG is a remote center air to ground facility"])
+
+    def test_approach_frequency_says_who_and_what(self):
+        """CVO 2026-10-01: 'new frequency 119.6 (APCH/P DEP/P IC)' told a pilot nothing. IC isn't
+        a word we have an FAA meaning for, so the FAA text stays next to ours."""
+        new = {"FRQ.csv": [self.H, "EUG,ATCT-TRACON,,CVO,CASCADE,119.6,,APCH/P DEP/P IC"]}
+        self.assertEqual(self.one({"FRQ.csv": [self.H]}, new, "CVO"), [
+            ("action", "new Cascade approach/departure frequency 119.6 (primary; FAA: APCH/P DEP/P IC)")])
+
+    def test_ctaf_moves(self):
+        """GIF 2026-10-01: the CTAF went from 123.05 to 120.425, one change, not two."""
+        old = {"FRQ.csv": [self.H, "GIF,NON-ATCT,,GIF,,123.05,,CTAF", "GIF,NON-ATCT,,GIF,,123.05,,UNICOM"]}
+        new = {"FRQ.csv": [self.H, "GIF,NON-ATCT,,GIF,,120.425,,CTAF", "GIF,NON-ATCT,,GIF,,123.05,,UNICOM"]}
+        self.assertEqual(self.one(old, new, "GIF"), [("action", "CTAF frequency: 123.05 -> 120.425")])
+
+    def test_star_listings_are_one_line(self):
+        """1M5 2026-10-01: eight 'also listed for X STAR' lines were one piece of news."""
+        rows = [f"BNA,ATCT-TRACON,,1M5,NASHVILLE,{f},,{u}" for f, u in (
+            ("118.4", "APCH/P"), ("360.7", "APCH/P"))]
+        new = rows + [f"BNA,ATCT-TRACON,,1M5,NASHVILLE,{f},,{p} STAR" for f in ("118.4", "360.7")
+                      for p in ("ALLLN", "JNING")]
+        self.assertEqual(self.one({"FRQ.csv": [self.H] + rows}, {"FRQ.csv": [self.H] + new}, "1M5"), [
+            ("fyi", "frequencies now also listed for arrivals (STARs): 118.4 for ALLLN and JNING; "
+                    "360.7 for ALLLN and JNING")])
+
+
+class TestRemarkSubject(Rows):
+    """ben, 2026-09-28: 'removed remark "closed"?' NASR files each airport remark against a table,
+    column and element: say what it's about."""
+    H = "ARPT_ID,TAB_NAME,REF_COL_NAME,ELEMENT,REMARK"
+
+    def test_closed_runway_remark_removed(self):
+        """SPS 2026-10-01: the remark on runway 15C/33C that said only CLOSED. went away."""
+        old = {"APT_RMK.csv": [self.H, "SPS,RUNWAY,RWY_ID,15C/33C,CLOSED."]}
+        ch = self.diff({"APT_BASE.csv": ["ARPT_ID", "SPS"], **old},
+                       {"APT_BASE.csv": ["ARPT_ID", "SPS"], "APT_RMK.csv": [self.H]})["SPS"]
+        self.assertEqual(len(ch), 1)
+        self.assertEqual(ch[0]["summary"],
+                         "runway 15C/33C closure remark removed, so it may be open again: CLOSED.")
+
+    def test_subjects(self):
+        say = lambda tab, ref, el: english.remark_subject({"TAB_NAME": tab, "REF_COL_NAME": ref, "ELEMENT": el})
+        self.assertEqual(say("RUNWAY", "RWY_ID", "15C/33C"), "runway 15C/33C")
+        self.assertEqual(say("RUNWAY_SURFACE_TYPE", "SURFACE_TYPE_CODE", "15C/33C"), "runway 15C/33C surface")
+        self.assertEqual(say("ARRESTING_DEVICE", "ARREST_DEVICE_CODE", "15C_MA-1A"),
+                         "runway 15C arresting system MA-1A")
+        self.assertEqual(say("RUNWAY", "RWY_LGT_CODE", "H1"), "helipad H1 edge light intensity")
+        self.assertEqual(say("AIRPORT", "LGT_SKED", ""), "airport lighting schedule")
+        self.assertEqual(say("AIRPORT", "BCN_LGT_SKED", ""), "airport beacon schedule")
+        self.assertEqual(say("AIRPORT", "GENERAL_REMARK", ""), "")
+        self.assertEqual(say("AIRPORT_SERVICE", "SERVICE_TYPE_CODE", "INSTR"),
+                         "airport service pilot instruction (INSTR)")
+        # a column the layouts don't name never shows up as a raw column name
+        self.assertEqual(say("AIRPORT", "ARPT_PSN_SOURCE", ""), "")
+        self.assertEqual(say("RUNWAY_END", "CLOSE_IN_OBSTN", "12"), "runway 12 end")
+
+
 class TestColumns(Rows):
     """a changed column reads as the FAA layout's English, never its column name, and a code
     reads with the meaning the layout gives it. real rows, trimmed."""

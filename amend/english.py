@@ -9,6 +9,55 @@ def label(field):
     return field.replace("_", " ").lower()
 
 
+# FRQ's FREQ_USE words. the meanings are the glossary's verified ones (APCH, DEP, LCL, GND, CD,
+# EMERG, OPS, PMSV, D-ATIS, GCO); /P and /S are primary and secondary, the same P and S the APT layout
+# uses for its APCH_P / DEP_S columns. any other word (IC, a sector name) stays as the FAA wrote it,
+# and the FAA's own text is always shown next to ours.
+USE_ROLES = {"APCH": "approach", "DEP": "departure", "LCL": "tower (local control)",
+             "GND": "ground control", "CD": "clearance delivery"}
+USE_WORDS = {"EMERG": "emergency", "OPS": "operations", "PMSV": "pilot-to-metro service",
+             "D-ATIS": "digital ATIS", "GCO": "ground communication outlet (GCO)"}
+PROC_USE = re.compile(r"(\S+(?: RNAV)?) (STAR|DP)")
+
+
+def freq_use(use, row=None):
+    """'APCH/P DEP/P IC' -> ('approach/departure', 'primary'), with the radio call in front when
+    the row has it ('Cascade approach/departure'). None when no word of it is one we know."""
+    roles, ps, words = [], set(), []
+    for tok in use.split():
+        m = re.fullmatch(r"(APCH|DEP|LCL|GND|CD)(?:/([PS]))?", tok)
+        if m:
+            roles.append(USE_ROLES[m[1]])
+            ps.add(m[2])
+        elif tok in USE_WORDS:
+            words.append(USE_WORDS[tok])
+    if not roles and not words:
+        return None
+    what = " and ".join(x for x in ("/".join(roles), ", ".join(words)) if x)
+    row = row or {}
+    call = (row.get("PRIMARY_APPROACH_RADIO_CALL") if set(roles) <= {"approach", "departure"}
+            else row.get("TOWER_OR_COMM_CALL") if roles else "")
+    if call and roles:
+        what = f"{call.title()} {what}"
+    note = {"P": "primary", "S": "secondary"}.get(ps.pop()) if len(ps) == 1 else None
+    return what, note
+
+
+def say_use(use):
+    """a FREQ_USE value for 'old -> new': 'approach/departure, primary (APCH/P DEP/P)'."""
+    if not use:
+        return "none"
+    procs = [PROC_USE.fullmatch(u.strip()) for u in use.split(",")]
+    if all(procs):
+        kinds = {m[2] for m in procs}
+        what = "arrival" if kinds == {"STAR"} else "departure" if kinds == {"DP"} else "procedure"
+        return f"{use} ({what}{'s' if len(procs) > 1 else ''})"
+    u = freq_use(use)
+    if not u:
+        return use
+    return f"{u[0]}{', ' + u[1] if u[1] else ''} ({use})"
+
+
 def field_phrases(fields, source, ctx=None):
     """one phrase per meaningful field change on a 'changed' record."""
     ctx = ctx or {}
@@ -36,10 +85,7 @@ def field_phrases(fields, source, ctx=None):
                        else "landing fee: charged -> none")
     if "FREQ_USE" in by:
         f = by["FREQ_USE"]
-        if f["new"]:
-            phrases.append(f"frequency {ctx.get('FREQ', '')} use: {f['old']} -> {f['new']}")
-        else:
-            phrases.append(f"frequency {ctx.get('FREQ', '')} use: {f['old']} -> none")
+        phrases.append(f"frequency {ctx.get('FREQ', '')} use: {say_use(f['old'])} -> {say_use(f['new'])}")
     obst = {"OBSTN_HGT", "DIST_FROM_THR", "CNTRLN_OFFSET", "CNTRLN_DIR_CODE", "OBSTN_CLNC_SLOPE"}
     if obst & set(by):
         side = {"L": "left of", "R": "right of", "B": "either side of"}.get(
@@ -122,8 +168,46 @@ def name_label(col, source, ctx):
     return "facility name"
 
 
+# a remark that is nothing but a closure: "CLOSED.", "CLSD"
+CLOSED = re.compile(r"\s*(?:CLOSED|CLSD)\.?\s*", re.I)
+
+
+def remark_subject(row):
+    """what an airport remark is filed against, from its TAB_NAME / REF_COL_NAME / ELEMENT:
+    'runway 15C/33C', 'runway 15C arresting system MA-1A', 'airport lighting schedule'. '' for a
+    general airport remark, or when NASR doesn't say."""
+    tab, ref, e = (row.get(c, "").strip() for c in ("TAB_NAME", "REF_COL_NAME", "ELEMENT"))
+    col = fl.name(ref, "APT_BASE") if fl.known(ref, "APT_BASE") and ref not in (
+        "GENERAL_REMARK", "RWY_ID", "RWY_END_ID", "FUEL_TYPE", "ARREST_DEVICE_CODE",
+        "SERVICE_TYPE_CODE", "NAME") else ""
+    strip = lambda t: " ".join(t.split())
+    if tab == "AIRPORT":
+        return "" if not col else col if col.startswith("airport") else f"airport {col}"
+    if tab in ("RUNWAY", "RUNWAY_SURFACE_TYPE") and e:
+        what = "helipad" if is_helipad(e) else "runway"
+        return strip(f"{what} {e} {col or ('surface' if tab == 'RUNWAY_SURFACE_TYPE' else '')}")
+    if tab in ("RUNWAY_END", "RUNWAY_END_OBSTN") and e:
+        what = "helipad" if is_helipad(e) else "runway"
+        return strip(f"{what} {e} {col or ('obstacle' if tab == 'RUNWAY_END_OBSTN' else 'end')}")
+    if tab == "ARRESTING_DEVICE" and e:
+        rwy, _, dev = e.partition("_")
+        return strip(f"runway {rwy} arresting system {dev}") if dev else f"runway {rwy} arresting system"
+    if tab == "FUEL_TYPE" and e:
+        return f"fuel type {e}"
+    if tab == "AIRPORT_CONTACT" and e:
+        return f"airport {e.lower()} contact"
+    if tab == "AIRPORT_SERVICE" and e:
+        return f"airport service {fl.SERVICES[e]} ({e})" if e in fl.SERVICES else f"airport service {e}"
+    if tab == "AIRPORT_ATTEND_SCHED":
+        return "attendance schedule"
+    return ""
+
+
 def remark_label(b, row):
-    """'remark', 'ILS RWY 22 remark', 'navaid remark', ..."""
+    """'remark', 'runway 15C/33C remark', 'ILS RWY 22 remark', 'navaid remark', ..."""
+    if b == "APT_RMK":
+        what = remark_subject(row)
+        return f"{what} remark" if what else "remark"
     if b == "ILS_RMK":
         rwy = row.get("RWY_END_ID", "")
         kind = row.get("SYSTEM_TYPE_CODE", "")
@@ -153,6 +237,9 @@ def summarize(rec, remarks):
             return f"revised {what}: {remarks.get(new, new)}"
         text = row.get("REMARK", "")
         rec["original"] = text
+        if kind == "removed" and b == "APT_RMK" and CLOSED.fullmatch(text) and remark_subject(row):
+            # the whole remark was the closure. another remark could still close it, so: "may"
+            return f"{remark_subject(row)} closure remark removed, so it may be open again: {remarks.get(text, text)}"
         return f"{'new ' + what if kind == 'added' else 'removed ' + what}: {remarks.get(text, text)}"
 
     if b == "FRQ" and kind == "changed" and [f["field"] for f in rec["fields"]] == ["REMARK"]:
@@ -196,11 +283,18 @@ def summarize(rec, remarks):
             if kind == "removed":
                 return f"flight service (FSS) {row.get('FREQ', '?')} via the {where} outlet: discontinued"
             return f"new flight service (FSS) {row.get('FREQ', '?')} via the {where} outlet"
+        freq = row.get("FREQ", "?")
+        u = freq_use(use, row)
         if kind == "added" and rec["priority"] == "fyi":
-            return f"frequency {row.get('FREQ', '?')}: also listed for {use}"
+            return f"frequency {freq}: also listed for {say_use(use)}"
+        if not u:
+            return (f"frequency {freq} ({use}): discontinued" if kind == "removed"
+                    else f"new frequency {freq} ({use})")
+        what, note = u
+        paren = f" ({note}; FAA: {use})" if note else f" (FAA: {use})"
         if kind == "removed":
-            return f"frequency {row.get('FREQ', '?')} ({use}): discontinued"
-        return f"new frequency {row.get('FREQ', '?')} ({use})"
+            return f"{what} frequency {freq}{paren}: discontinued"
+        return f"new {what} frequency {freq}{paren}"
 
     if b == "PJA_BASE" and kind != "changed":
         name = row.get("DROP_ZONE_NAME", "").title()
