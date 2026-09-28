@@ -52,6 +52,7 @@ A GitHub Action checks the FAA every 3 hours and rebuilds when there's something
 - **Charts:** added, amended and removed approaches, departures, STARs and airport diagrams, with links to the new PDF plates
 - **Arrivals and departures down to the waypoint:** when a STAR or DP is amended, Amend compares the old and new routes and says what moved ("MINEE6 (was MINEE5): waypoints removed FUPGE, LBV, RINSE; transitions removed LBV")
 - **Plain-English remarks:** FAA contractions ("RSCD NOT MNT 2300-0600 M-F") are translated with Claude using a fixed glossary. Unknown abbreviations are left as-is rather than guessed, and the original FAA text is always kept
+- **Checked before it ships:** every cycle is audited before it's published. Dates off the FAA 28-day schedule, duplicated items, a translation that drops or changes a number or gets a known contraction wrong, a chart link from the wrong cycle, or an action count wildly off from past cycles stop the build, and the last good version stays up. Impossible-looking values (a runway 16/37, a frequency in the FM broadcast band) are flagged. The action and IFR items at watched and busy airports are written to `audit/<cycle>.json` for a review against the FAA text
 - **Noise filtering:** survey dates, pavement codes, coordinate rounding, duplicate files and reworded remarks are hidden or demoted, and one real-world event (a renumbered runway, a new airport, a new STAR version) becomes one line instead of dozens of raw rows
 
 Data is public at `https://amend.watch/`, documented in [SCHEMA.md](SCHEMA.md).
@@ -68,6 +69,7 @@ Data is public at `https://amend.watch/`, documented in [SCHEMA.md](SCHEMA.md).
 | `amend/dtpp.py` | approach plate / chart changes |
 | `amend/airspace.py` | class airspace shapefile: floors, ceilings, boundaries |
 | `amend/procedures.py` | waypoint-level STAR / DP comparisons |
+| `amend/audit.py` | sanity checks that stop a bad cycle from publishing, and the review packet in `audit/` |
 | `amend/pipeline.py` | the whole diff in one call, public JSON shape |
 | `amend/history.py`, `latest.py`, `airports.py` | history timeline, the published site, airport directory |
 | `amend/web.py` | the web pages: one per airport plus the search page |

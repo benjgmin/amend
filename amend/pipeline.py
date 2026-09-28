@@ -141,6 +141,10 @@ def run(old_zip, new_zip, ids=None, dtpp_path=None, llm=False, log=print, airspa
 
     airports = {}
     for apt, recs in by_apt.items():
+        # charts and airspace skip the phrase dedup above; an E3 and E4 extension changed
+        # together read the same, and one line twice is noise (and one id twice)
+        seen = set()
+        recs = [r for r in recs if not (r["summary"] in seen or seen.add(r["summary"]))]
         if not recs:
             continue
         recs = sorted(recs, key=lambda r: PRIORITY_ORDER[r["priority"]])  # stable
