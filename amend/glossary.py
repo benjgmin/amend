@@ -269,9 +269,9 @@ CURATED = {
 }
 
 # JO 7340.2-only meanings checked against the 4,458 translated remarks in remark_cache.json
-# (2026-09-28): the model, which wasn't told them, read them the FAA's way, and where it
-# didn't, the FAA meaning was the right one (STWY is stopway, not taxiway; EUO is emergency
-# use only). the model is told these. any other JO 7340.2 meaning is still
+# (2026-09-28): the model, told only 10 of them by the old prompt, read them the FAA's way, and
+# where it didn't, the FAA meaning was the right one (STWY is stopway, not taxiway; EUO is
+# emergency use only). the model is told these. any other JO 7340.2 meaning is still
 # accepted in a translation but isn't suggested, since remarks may use the letters for
 # something else: DEPT for department and departure, OBS for observation and obstacle, RLS
 # for release and reduced level of service, NB and WB for taxiway names
