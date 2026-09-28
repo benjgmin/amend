@@ -1,8 +1,7 @@
 # Data pipeline
 
 What happens from the FAA posting a file to a change showing on amend.watch, as the code does it
-today. The target pipeline and its rules are in [AMEND_MASTER_SPEC.md](../AMEND_MASTER_SPEC.md);
-the module map is in [architecture.md](architecture.md).
+today. The module map is in [architecture.md](architecture.md).
 
 Line references are against `master` at `8b18fdf`.
 
@@ -182,7 +181,7 @@ Remark texts from the records (`pipeline.py:89-95`) go through `remarks.translat
    that failed a check.
 
 Only 31 contractions are checked in code. The other glossary terms, and any term outside the
-glossary, rely on the prompt alone. See section 6 of the master spec.
+glossary, rely on the prompt alone.
 
 ### Collapse into events
 
@@ -279,5 +278,3 @@ The ones in bold in the table above, plus:
 - **Unstable ids.** Rewording a summary or re-translating a remark changes the change id
   (`pipeline.py:48-50`), which resets "seen" state.
 - **No engine version, processing log, token or cost tracking.**
-
-The plan for fixing these is phase 1 in [AMEND_MASTER_SPEC.md](../AMEND_MASTER_SPEC.md).

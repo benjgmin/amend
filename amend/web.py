@@ -119,7 +119,7 @@ h1 .icao{font:500 15px var(--mono);color:var(--fn);letter-spacing:.02em}
 .ann[title]{cursor:help}
 .ann.new{color:var(--p);background:var(--tx);border-color:var(--tx)}
 .it.new{box-shadow:inset 3px 0 0 var(--tx)}
-.sbi .ann.new{font-size:10px;padding:0 5px}
+.sbi .ann.new,.sbt .ann.new,.sba .ann.new{font-size:10px;padding:0 5px}
 time[data-until],time[data-ago]{font-variant-numeric:tabular-nums;white-space:nowrap}
 .pfresh{padding:7px 16px;font-size:12.5px;color:var(--dm);border-bottom:1px solid var(--ln);background:var(--p)}
 .is-stale .fresh{color:var(--am)}.stale{border-color:var(--am)}
@@ -152,7 +152,7 @@ a.src{color:var(--dm)}a.src:hover{color:var(--cy)}
 .mh{font-size:12.5px;color:var(--fn);padding:6px 10px 4px}
 .mi{display:flex;align-items:center;gap:10px;width:100%;padding:8px 10px;border:0;border-radius:8px;background:none;color:var(--tx);font:14px var(--sans);text-align:left;cursor:pointer}
 .mi:hover{background:var(--p2)}.mi input{margin:0;width:16px;height:16px;accent-color:var(--cy);flex:none}
-.mi .nm,.sbi .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.mi .n,.sbi .n{color:var(--fn);font-size:12.5px}
+.mi .nm,.sbi .nm,.sbt .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.mi .n,.sbi .n{color:var(--fn);font-size:12.5px}
 .mi.add{color:var(--cy)}.menu .nf{margin:4px 6px 6px}
 .addto{display:block;margin:0 0 8px}
 .addto select{font:500 14px var(--sans);color:var(--tx);background:var(--p);border:1px solid var(--ln);border-radius:8px;padding:3px 8px;margin-left:6px;max-width:60vw}
@@ -229,11 +229,20 @@ kbd{font:500 12px var(--mono);border:1px solid var(--ln);border-radius:3px;paddi
 .dots i.on{width:22px;background:var(--tx)}
 .sbh{font:600 11px var(--sans);color:var(--fn);margin:18px 8px 4px;text-transform:uppercase;letter-spacing:.07em}
 .sbi{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:6px 8px;border-radius:6px;font-size:14px;color:var(--tx)}
-a.sbi:hover{background:var(--p2);text-decoration:none}.sbi.on{background:var(--p2);font-weight:500}
-.sbi b{font:600 13px var(--mono)}.sbi.sub{color:var(--dm);font-size:13.5px}.sbi.apt{padding-left:30px}
-.sbr{display:flex;align-items:center;gap:2px}.sbr .sbi{flex:1;min-width:0;padding-left:4px}
-.sbt{flex:none;display:grid;place-items:center;width:24px;height:30px;padding:0;border:0;border-radius:6px;background:none;color:var(--fn);cursor:pointer}
-.sbt:hover{background:var(--p2);color:var(--tx)}.sbt[aria-expanded=true] .chev{transform:rotate(90deg)}
+a.sbi{color:var(--dm);transition:color .15s}a.sbi:hover{color:var(--tx);text-decoration:none}
+.sbi.on,a.sbi.on{background:var(--p2);color:var(--tx);font-weight:500}
+.sbi b{font:600 13px var(--mono)}.sbi.sub{color:var(--dm);font-size:13.5px}
+.sbt{display:flex;align-items:center;gap:8px;width:100%;padding:6px 8px;border:0;border-radius:6px;background:none;color:var(--dm);font:14px var(--sans);text-align:left;cursor:pointer;transition:color .15s}
+.sbt:hover,.sbl.open>.sbt{color:var(--tx)}.sbl.open>.sbt{font-weight:500}.sbl.on>.sbt{background:var(--p2);color:var(--tx)}
+.sbt .n{margin-left:auto;font:12px var(--mono);color:var(--fn)}.sbt .nw{margin-left:auto}.sbt .nw+.n{display:none}
+.sbl.open .sbt .nw{display:none}.sbl.open .sbt .nw+.n{display:inline}
+.sbp{display:grid;grid-template-rows:0fr;transition:grid-template-rows .22s ease}.sbl.open>.sbp{grid-template-rows:1fr}
+.sbq{min-height:0;overflow:hidden;margin-left:16px;border-left:1px solid var(--ln);opacity:0;transition:opacity .22s ease}
+.sbl.open .sbq{opacity:1}
+.sba{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-left:-1px;padding:4px 10px;border-left:2px solid transparent;font-size:13.5px;color:var(--dm);transition:color .15s,border-color .15s}
+.sba b{font:500 13px var(--mono)}.sba:hover{color:var(--tx);text-decoration:none;border-left-color:var(--ln2)}
+.sba.on{color:var(--tx);border-left-color:var(--tx)}.sba.go{color:var(--cy);margin-bottom:6px}.sba.go:hover{border-left-color:var(--cy)}
+.sba.sub{color:var(--fn)}
 .sb .search{margin:14px 0 0;border-radius:6px;padding:0 10px;box-shadow:none}.sb .search input{font-size:14px;padding:7px 0}
 .sbfoot{margin-top:auto;padding:16px 8px 0;font-size:12.5px;color:var(--fn)}.sbfoot a{color:var(--dm)}
 .doc{display:grid;gap:14px;max-width:780px}.doc .card,.ggrid .card{scroll-margin-top:64px}
@@ -251,7 +260,8 @@ a.sbi:hover{background:var(--p2);text-decoration:none}.sbi.on{background:var(--p
 @media (min-width:640px){.cards{grid-template-columns:repeat(2,minmax(0,1fr))}.feats{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (min-width:1000px){
  .app{grid-template-columns:248px minmax(0,1fr)}
- .sb{display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto;border-right:1px solid var(--ln);background:var(--p);padding:16px 12px}
+ html{overscroll-behavior-y:none}
+ .sb{display:flex;flex-direction:column;position:sticky;top:0;align-self:start;height:100vh;height:100dvh;overflow-y:auto;overscroll-behavior:contain;border-right:1px solid var(--ln);background:var(--p);padding:16px 12px}
  .sb .brand{padding:4px 8px 0}
  .mtop,.pfresh{display:none}
  .main{padding:32px 40px 56px}
@@ -618,17 +628,19 @@ document.querySelectorAll("[data-look]").forEach(x=>{const r=AM.mark(x,x.dataset
   const s=x.querySelector(":scope>summary .chips");if(r.n&&s)s.insertAdjacentHTML("afterbegin",AM.pill(r.n));
   const nn=document.getElementById("newnote");if(nn&&r.n&&r.prev){nn.innerHTML=AM.pill(r.n)+"<span>"+(r.n==1?"change":"changes")+
     " since you last looked here on "+new Date(r.prev.t).toLocaleDateString(undefined,{day:"numeric",month:"short"})+".</span>";nn.hidden=false}});
-// the sidebar: every list, each one folded or open the way this browser last left it (amend.sb.open), none by default
-const SBO="amend.sb.open",sbo=()=>{try{const v=JSON.parse(localStorage.getItem(SBO)||"[]");return new Set(Array.isArray(v)?v:[])}catch(e){return new Set()}};
+// the sidebar: every list, at most one open at a time. Which one stays open is remembered in amend.sb.open
+// ([id] or []), and none is open until you open one. Opening another closes the first, both animating at once
+const SBO="amend.sb.open",sbo=()=>{try{const v=JSON.parse(localStorage.getItem(SBO)||"[]");return Array.isArray(v)&&v.length?String(v[0]):""}catch(e){return""}};
 function side(){if(!el)return;const ls=LS.all(),op=sbo(),nc=AM.newc();
-  el.innerHTML=ls.length?'<div class="sbh">Your lists</div>'+ls.map(l=>{const o=op.has(l.id),n=l.ids.reduce((s,x)=>s+(nc[x]||0),0),u=R+'list/?l='+encodeURIComponent(l.id);
-    return '<div class="sbr"><button type="button" class="sbt" data-t="'+esc(l.id)+'" aria-expanded="'+o+'" aria-label="'+(o?"Hide":"Show")+' airports on '+esc(l.name)+'"><span class="chev">▶</span></button>'+
-      '<a class="sbi'+(l.id===B.list?' on':'')+'" href="'+u+'"><span class="nm">'+esc(l.name)+'</span>'+(n&&!o?AM.pill(n):'<span class="n">'+l.ids.length+'</span>')+'</a></div>'+
-      (o?l.ids.slice(0,12).map(x=>'<a class="sbi apt'+(x===el.dataset.on?' on':'')+'" href="'+R+x+'/"><b>'+x+'</b>'+(nc[x]?AM.pill(nc[x]):'')+'</a>').join("")+
-        (l.ids.length>12?'<a class="sbi apt sub" href="'+u+'">All '+l.ids.length+' airports ›</a>':'')+(l.ids.length?'':'<div class="sbi apt sub">No airports yet</div>'):'')}).join(""):""}
-if(el)el.addEventListener("click",ev=>{const t=ev.target.closest("button[data-t]");if(!t)return;const op=sbo(),id=t.dataset.t;
-  if(op.has(id))op.delete(id);else op.add(id);try{localStorage.setItem(SBO,JSON.stringify([...op].filter(x=>LS.all().some(l=>l.id===x))))}catch(e){}
-  side();const b=[...el.querySelectorAll("button[data-t]")].find(x=>x.dataset.t===id);if(b)b.focus()});
+  el.innerHTML=ls.length?'<div class="sbh">Your lists</div>'+ls.map(l=>{const o=l.id===op,n=l.ids.reduce((s,x)=>s+(nc[x]||0),0),u=R+'list/?l='+encodeURIComponent(l.id);
+    return '<div class="sbl'+(o?' open':'')+(l.id===B.list?' on':'')+'" data-l="'+esc(l.id)+'"><button type="button" class="sbt" aria-expanded="'+o+'">'+
+      '<span class="nm">'+esc(l.name)+'</span>'+(n?'<span class="nw">'+AM.pill(n)+'</span>':'')+'<span class="n">'+l.ids.length+'</span></button>'+
+      '<div class="sbp"'+(o?'':' inert')+'><div class="sbq">'+l.ids.slice(0,12).map(x=>'<a class="sba'+(x===el.dataset.on?' on':'')+'" href="'+R+x+'/"><b>'+x+'</b>'+(nc[x]?AM.pill(nc[x]):'')+'</a>').join("")+
+      (l.ids.length?'':'<div class="sba sub">No airports yet</div>')+
+      '<a class="sba go" href="'+u+'">'+(l.ids.length>12?'All '+l.ids.length+' airports':'Open list')+' ›</a></div></div></div>'}).join(""):""}
+if(el)el.addEventListener("click",ev=>{const t=ev.target.closest(".sbt");if(!t)return;const box=t.parentNode,open=!box.classList.contains("open");
+  el.querySelectorAll(".sbl").forEach(b=>{const o=open&&b===box;b.classList.toggle("open",o);b.firstChild.setAttribute("aria-expanded",o);b.lastChild.inert=!o});
+  try{localStorage.setItem(SBO,JSON.stringify(open?[box.dataset.l]:[]))}catch(e){}});
 // airport pages: put this airport on your lists. With one list the button adds it straight away; the menu does the rest
 const wb=document.getElementById("wbtn"),wm=document.getElementById("wmenu");let paint=()=>{};
 if(wb&&wm){const apt=wb.dataset.apt;
@@ -1160,6 +1172,7 @@ UPDATES = [
         "Docs, Privacy and Terms now say how to tell the FAA when its own data is wrong, what Amend can't see "
         "between cycles, what choices you have about your data, and that other sites' rules apply when you "
         "follow a link.",
+        "The sidebar stays in place while you scroll, and its lists open one at a time with a quick slide.",
         "The sidebar looks the same on every page, search included, and each list in it folds open or shut and "
         "stays the way you left it. Alerts are explained in plain words, and the old About page is now About, "
         "Docs, Changelog, Privacy and Terms.",
