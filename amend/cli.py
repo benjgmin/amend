@@ -101,6 +101,9 @@ def main(argv=None):
     v = sub.add_parser("verify", help="check a built site before it's deployed")
     v.add_argument("site", nargs="?", default="site")
 
+    st = sub.add_parser("status", help="rewrite site/status/ from the run log (after verify)")
+    st.add_argument("site", nargs="?", default="site")
+
     ar = sub.add_parser("archive", help="keep each cycle's raw FAA files as a GitHub Release")
     ar.add_argument("cycles", nargs="*", help="cycle dates, e.g. 2024-08-08 (default: in effect + next)")
     ar.add_argument("--backfill", action="store_true", help="every cycle since Aug 2024")
@@ -138,9 +141,22 @@ def main(argv=None):
         for b in bad:
             print(f"  {b}")
         mark_verified(not bad, bad)     # the run log says whether the build got past this
+        if not bad:
+            # the status page again, now that this run's record says verified, so the page that
+            # deploys shows its own run as published. a status page bug must never hold back FAA
+            # data that passed every check: the page from the build step (checked above) stays
+            try:
+                from .statuspage import rebuild
+                rebuild(a.site)
+            except Exception as ex:
+                print(f"::warning title=status page::couldn't refresh {a.site}/status/ after verify: "
+                      f"{type(ex).__name__}: {ex}")
         if bad:
             sys.exit(f"{a.site}/ failed {len(bad)} check(s); not deploying, the live site stays as it was")
         print(f"{a.site}/ looks complete")
+    elif a.cmd == "status":
+        from .statuspage import rebuild
+        print(f"{a.site}/status/ shows {rebuild(a.site)} runs")
     elif a.cmd == "archive":
         from .archive import main as archive
         archive(a)
