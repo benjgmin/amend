@@ -18,6 +18,8 @@ jobs:
         run: |
           set -o pipefail
           python .github/probe/probe.py | tee -a "$GITHUB_STEP_SUMMARY"
+      - name: why 503
+        run: python .github/probe/probe2.py | tee -a "$GITHUB_STEP_SUMMARY"
       - name: the real archive --list
         run: |
           set -o pipefail
