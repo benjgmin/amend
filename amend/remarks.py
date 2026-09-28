@@ -5,6 +5,7 @@ may expand a contraction only to its meaning in the verified glossary (glossary.
 the FAA's own lists). Any other contraction has to appear exactly as written, or problems()
 rejects the translation and the FAA text is shown instead.
 """
+import glob
 import json
 import os
 import re
@@ -12,6 +13,7 @@ import urllib.request
 from collections import Counter
 
 from . import glossary
+from .rules import REMARK_FILES
 
 LLM_MODEL = "claude-haiku-4-5-20251001"
 CACHE_FILE = "remark_cache.json"
@@ -109,6 +111,29 @@ def translate_remarks(texts, use_llm):
     with open(CACHE_FILE, "w") as f:
         json.dump(cache, f, indent=1)
     return cache
+
+
+def scrub_history(hist_dir="history"):
+    """history/ keeps each summary as it was written, so a translation the checks now reject
+    outlives its cache entry there: put the FAA text back in its place. run it whenever the checks
+    get stricter, in the same change. ids stay as stored, so nothing shows as new, and only files
+    that change are rewritten. returns (summaries, airport files) changed."""
+    from .output import dump    # output imports pipeline, which imports this module
+    fixed = files = 0
+    for path in sorted(glob.glob(os.path.join(hist_dir, "*.json"))):
+        with open(path, encoding="utf-8") as f:
+            h = json.load(f)
+        n = 0
+        for e in h.get("entries", []):
+            raw = e.get("original")
+            head, sep, plain = e["summary"].partition(": ")
+            if raw and sep and e.get("source") in REMARK_FILES + ("FRQ",) and not faithful(raw, plain):
+                e["summary"] = f"{head}: {raw}"
+                n += 1
+        if n:
+            dump(h, path)
+            fixed, files = fixed + n, files + 1
+    return fixed, files
 
 
 # lighting you turn on from the cockpit: "ACTVT MIRL RWY 17/35 - CTAF." nobody answers on
