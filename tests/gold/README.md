@@ -46,9 +46,15 @@ passing fails too, so whoever fixed the engine drops the flag and the fix is on 
 
 ### status of the seed set
 
-Every seed case says `"verified_by": "claude, against the FAA source rows; needs human check"`.
-Claude read the real FAA rows for each one and set the expected answer; nobody has hand-checked
-them yet. `python -m amend.gold` prints how many a person has checked.
+Every seed case started as `"verified_by": "claude, against the FAA source rows; needs human check"`.
+Claude read the real FAA rows for each one and set the expected answer. `python -m amend.gold`
+prints how many a person has checked.
+
+On 2026-09-28 ben hand-checked 21 of them (17 seed cases plus g124-g127, the judgment calls the
+diff fixes flagged at TIX, PAM, SBM and 5A6). Each was shown with the FAA's old and new text side by
+side, abbreviations decoded only from the FAA's lists, next to amend's line and priority. All 21
+came back right. Only cases a person answered count: "not sure" leaves a case unchecked, and g084
+(LUF class D hours) stays unchecked because it was okayed without the FAA text in view.
 
 ### adding your own hand-checked airports
 
