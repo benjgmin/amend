@@ -50,8 +50,6 @@ NO_CHG_TIP = "Nothing changed at this airport between the two cycles"
 # "https://buttondown.com/api/emails/embed-subscribe/amend". Empty = no email form, only the RSS feed.
 # Each signup is tagged list:<slug>, so one RSS-to-email automation per list can send just to its tag.
 EMAIL_FORM = ""
-# for airports (too many for one automation each): a free service where pilots subscribe to any feed themselves
-SELF_SERVE_EMAIL = "https://feedrabbit.com/"
 
 
 # IBM Plex Sans and IBM Plex Mono (SIL OFL, amend/fonts/OFL.txt), served from amend.watch itself so a page view
@@ -234,7 +232,7 @@ a.sbi{color:var(--dm);transition:color .15s}a.sbi:hover{color:var(--tx);text-dec
 .sbi.on,a.sbi.on{background:var(--p2);color:var(--tx);font-weight:500}
 .sbi b{font:600 13px var(--mono)}.sbi.sub{color:var(--dm);font-size:13.5px}
 .sbt{display:flex;align-items:center;gap:8px;width:100%;padding:6px 8px;border:0;border-radius:6px;background:none;color:var(--dm);font:14px var(--sans);text-align:left;cursor:pointer;transition:color .15s}
-.sbt:hover,.sbl.open>.sbt{color:var(--tx)}.sbl.open>.sbt{font-weight:500}.sbl.on>.sbt{background:var(--p2);color:var(--tx)}
+.sbt:hover,.sbl.open>.sbt{color:var(--tx);text-decoration:none}.sbl.open>.sbt{font-weight:500}.sbl.on>.sbt{background:var(--p2);color:var(--tx)}
 .sbt .n{margin-left:auto;font:12px var(--mono);color:var(--fn)}.sbt .nw{margin-left:auto}.sbt .nw+.n{display:none}
 .sbl.open .sbt .nw{display:none}.sbl.open .sbt .nw+.n{display:inline}
 .sbp{display:grid;grid-template-rows:0fr;transition:grid-template-rows .22s ease}.sbl.open>.sbp{grid-template-rows:1fr}
@@ -251,11 +249,17 @@ a.sbi{color:var(--dm);transition:color .15s}a.sbi:hover{color:var(--tx);text-dec
 .prose code{font:13px var(--mono);background:var(--p2);border-radius:3px;padding:0 4px;overflow-wrap:anywhere}
 .go{display:grid;gap:4px;align-content:start;color:var(--tx)}.go:hover{text-decoration:none;border-color:var(--fn)}.go .note{margin:0}
 .prose p{margin:10px 0 0}.prose ul{margin:10px 0 0;padding-left:18px}.prose li{margin:6px 0}.prose li::marker{color:var(--fn)}
+.pop>summary{list-style:none}.pop>summary::-webkit-details-marker{display:none}
+.pop[open]>summary{border-color:var(--tx)}.pop>.menu{width:340px;padding:14px 16px}.pop .note{margin-top:0}
+@media (max-width:639px){.pop[open]{flex-basis:100%;flex-wrap:wrap}.pop>.menu{position:static;width:100%;max-width:none;margin-top:8px;box-shadow:none}}
 .alerts .btns{margin-top:10px}.alerts .more{margin-top:10px}
 .steps{margin:10px 0 0;padding-left:20px;font-size:14px;color:var(--dm)}.steps li{margin:4px 0}.steps li::marker{color:var(--fn)}.alerts form{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
 .alerts input[type=email]{flex:1;min-width:0;border:1px solid var(--ln);border-radius:6px;background:var(--p);color:var(--tx);font:15px var(--sans);padding:7px 10px}
 .alerts input[type=email]:focus{outline:none;border-color:var(--cy)}
-@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+@view-transition{navigation:auto}
+.sb{view-transition-name:sb}.mtop{view-transition-name:mtop}
+::view-transition-old(root),::view-transition-new(root){animation-duration:.16s}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}@view-transition{navigation:none}}
 @media (max-width:359px){.nav{gap:12px;font-size:13.5px}}
 @media (max-width:639px){.wrow>a{flex-wrap:wrap;row-gap:6px}.wrow>a .chips,.nxh .chips{flex-basis:100%;margin-left:0;padding-left:64px}}
 @media (min-width:640px){.cards{grid-template-columns:repeat(2,minmax(0,1fr))}.feats{grid-template-columns:repeat(2,minmax(0,1fr))}}
@@ -638,6 +642,28 @@ const union=()=>[...new Set(all().flatMap(l=>l.ids))];
 function same(ids,name){const s=new Set(ids),m=all().filter(l=>l.ids.length===s.size&&l.ids.every(x=>s.has(x)));return m.find(l=>l.name===name)||m[0]||null}
 const link=l=>new URL((document.body.dataset.root||"")+"list/?w="+l.ids.join(",")+"&n="+encodeURIComponent(l.name),location.href).href;
 return{all,active,use,create,rename,set,remove,union,same,link}})();
+// the sidebar: every list, with the one that matches the page open. On a list's page that's the list shown, on an
+// airport page a list with that airport (the one in use first), anywhere else the list in use. Clicking a list's
+// name opens its page, so the sidebar and the page never disagree. The page runs SB.side() right after the
+// sidebar's placeholder, so it's right on the first paint; later calls only slide the open list if nothing else changed
+var SB=(()=>{
+function which(ls,el){const B=document.body.dataset,R=B.root||"",P=new URLSearchParams(location.search),has=id=>ls.some(l=>l.id===id);
+  if(new URL(R+"list/",location.href).pathname===location.pathname){if(B.list!==undefined)return B.list;const l=P.get("l");if(l&&has(l))return l}
+  const on=LS.active(),apt=el.dataset.on;
+  if(apt&&!(on&&on.ids.includes(apt))){const l=ls.find(x=>x.ids.includes(apt));if(l)return l.id}
+  return on?on.id:""}
+function side(){const el=document.getElementById("sbw");if(!el)return;const B=document.body.dataset,R=B.root||"",ls=LS.all(),nc=AM.newc(),op=which(ls,el);
+  const sig=JSON.stringify([ls,nc]);
+  if(el.dataset.sig!==sig){el.dataset.sig=sig;
+    el.innerHTML=ls.length?'<div class="sbh">Your lists</div>'+ls.map(l=>{const n=l.ids.reduce((s,x)=>s+(nc[x]||0),0),u=R+'list/?l='+encodeURIComponent(l.id);
+      return '<div class="sbl" data-l="'+esc(l.id)+'"><a class="sbt" href="'+u+'">'+
+        '<span class="nm">'+esc(l.name)+'</span>'+(n?'<span class="nw">'+AM.pill(n)+'</span>':'')+'<span class="n">'+l.ids.length+'</span></a>'+
+        '<div class="sbp"><div class="sbq">'+l.ids.slice(0,12).map(x=>'<a class="sba'+(x===el.dataset.on?' on':'')+'" href="'+R+x+'/"><b>'+x+'</b>'+(nc[x]?AM.pill(nc[x]):'')+'</a>').join("")+
+        (l.ids.length?'':'<div class="sba sub">No airports yet</div>')+
+        (l.ids.length>12?'<a class="sba go" href="'+u+'">All '+l.ids.length+' airports ›</a>':'')+'</div></div></div>'}).join(""):""}
+  el.querySelectorAll(".sbl").forEach(b=>{const o=b.dataset.l===op;b.classList.toggle("open",o);b.classList.toggle("on",o&&b.dataset.l===B.list);
+    b.firstChild.setAttribute("aria-current",o&&b.dataset.l===B.list?"page":"false");b.lastChild.inert=!o})}
+return{side}})();
 addEventListener("DOMContentLoaded",()=>{AM.sync();const R=document.body.dataset.root||"",B=document.body.dataset,el=document.getElementById("sbw");
 const short=(s,n)=>s.length>n?s.slice(0,n-1)+"…":s;
 // airport pages and named lists: label what's new since the last visit, then remember this visit
@@ -645,19 +671,7 @@ document.querySelectorAll("[data-look]").forEach(x=>{const r=AM.mark(x,x.dataset
   const s=x.querySelector(":scope>summary .chips");if(r.n&&s)s.insertAdjacentHTML("afterbegin",AM.pill(r.n));
   const nn=document.getElementById("newnote");if(nn&&r.n&&r.prev){nn.innerHTML=AM.pill(r.n)+"<span>"+(r.n==1?"change":"changes")+
     " since you last looked here on "+new Date(r.prev.t).toLocaleDateString(undefined,{day:"numeric",month:"short"})+".</span>";nn.hidden=false}});
-// the sidebar: every list, at most one open at a time. Which one stays open is remembered in amend.sb.open
-// ([id] or []), and none is open until you open one. Opening another closes the first, both animating at once
-const SBO="amend.sb.open",sbo=()=>{try{const v=JSON.parse(localStorage.getItem(SBO)||"[]");return Array.isArray(v)&&v.length?String(v[0]):""}catch(e){return""}};
-function side(){if(!el)return;const ls=LS.all(),op=sbo(),nc=AM.newc();
-  el.innerHTML=ls.length?'<div class="sbh">Your lists</div>'+ls.map(l=>{const o=l.id===op,n=l.ids.reduce((s,x)=>s+(nc[x]||0),0),u=R+'list/?l='+encodeURIComponent(l.id);
-    return '<div class="sbl'+(o?' open':'')+(l.id===B.list?' on':'')+'" data-l="'+esc(l.id)+'"><button type="button" class="sbt" aria-expanded="'+o+'">'+
-      '<span class="nm">'+esc(l.name)+'</span>'+(n?'<span class="nw">'+AM.pill(n)+'</span>':'')+'<span class="n">'+l.ids.length+'</span></button>'+
-      '<div class="sbp"'+(o?'':' inert')+'><div class="sbq">'+l.ids.slice(0,12).map(x=>'<a class="sba'+(x===el.dataset.on?' on':'')+'" href="'+R+x+'/"><b>'+x+'</b>'+(nc[x]?AM.pill(nc[x]):'')+'</a>').join("")+
-      (l.ids.length?'':'<div class="sba sub">No airports yet</div>')+
-      '<a class="sba go" href="'+u+'">'+(l.ids.length>12?'All '+l.ids.length+' airports':'Open list')+' ›</a></div></div></div>'}).join(""):""}
-if(el)el.addEventListener("click",ev=>{const t=ev.target.closest(".sbt");if(!t)return;const box=t.parentNode,open=!box.classList.contains("open");
-  el.querySelectorAll(".sbl").forEach(b=>{const o=open&&b===box;b.classList.toggle("open",o);b.firstChild.setAttribute("aria-expanded",o);b.lastChild.inert=!o});
-  try{localStorage.setItem(SBO,JSON.stringify(open?[box.dataset.l]:[]))}catch(e){}});
+const side=SB.side;
 // airport pages: put this airport on your lists. With one list the button adds it straight away; the menu does the rest
 const wb=document.getElementById("wbtn"),wm=document.getElementById("wmenu");let paint=()=>{};
 if(wb&&wm){const apt=wb.dataset.apt;
@@ -691,6 +705,8 @@ document.querySelectorAll(".seg a[data-f]").forEach(a=>a.addEventListener("click
   document.querySelectorAll(".seg a").forEach(x=>x.classList.toggle("on",x===a));
   document.querySelectorAll(".grp").forEach(g=>g.hidden=f!=="all"&&g.dataset.p!==f)}));
 const open=()=>{const t=location.hash&&document.getElementById(decodeURIComponent(location.hash.slice(1)));if(t&&t.tagName==="DETAILS")t.open=true};
+document.querySelectorAll("details.pop").forEach(d=>{document.addEventListener("click",ev=>{if(d.open&&!d.contains(ev.target))d.open=false});
+  d.addEventListener("keydown",ev=>{if(ev.key==="Escape"&&d.open){d.open=false;d.firstChild.focus()}})});
 addEventListener("hashchange",open);open();AM.tick();
 // printing a briefing: show every airport on a list, not just the open ones
 addEventListener("beforeprint",()=>document.querySelectorAll("details.apt").forEach(d=>d.open=true))});
@@ -799,7 +815,7 @@ def legend(root):
     return f'<div class="legend">{keys}<a href="{root}guide/">What do these mean?</a></div>'
 
 
-def alerts_box(feed_url, what, tag=None):
+def alerts_box(feed_url, what, tag=None, pop=False):
     """rail card: how to hear about the next change at an airport or named list, in pilot words. The feed is RSS,
     but that word and the raw link sit behind "More options". tag (named lists only) turns on the email form once
     EMAIL_FORM is set; everywhere else it points at a free service that emails a feed to you."""
@@ -811,17 +827,19 @@ def alerts_box(feed_url, what, tag=None):
                '<button class="btn" type="submit">Email me</button></form>'
                f'<p class="foot">One email per FAA cycle when something changes at {what}. Unsubscribe anytime.</p>')
     else:
-        how = ('<ol class="steps"><li>Copy the alert link.</li><li>'
-               + (f'Paste it into a free service like <a href="{e(SELF_SERVE_EMAIL)}" target="_blank" '
-                  'rel="noopener">Feedrabbit</a> to get it by email, or into a news reader app.'
-                  if SELF_SERVE_EMAIL else 'Paste it into a news reader app.')
-               + f'</li></ol><div class="btns"><button class="btn" data-copy="{e(feed_url)}" hidden>Copy alert link'
+        how = ('<ol class="steps"><li>Copy the alert link.</li><li>Paste it into a news reader app like Feedly, '
+               'Inoreader or NetNewsWire. It shows each update when the FAA posts it.'
+               f'</li></ol><div class="btns"><button class="btn" data-copy="{e(feed_url)}" hidden>Copy alert link'
                '</button></div>')
-    return (f'<div class="card box alerts" id="alerts"><h3>Get alerts</h3><p class="note">Hear about it when a new FAA '
-            f'cycle changes {what}, action items first. One update per cycle, nothing in between.</p>{how}'
-            '<details class="more"><summary>More options</summary><p class="foot">The alert link is an RSS feed, the '
-            'same kind of link podcast and news apps follow. Apps like Feedly, Inoreader or NetNewsWire can follow it '
-            f'too. <a href="{e(feed_url)}" type="application/rss+xml">Open the feed</a></p></details></div>')
+    inner = (f'<p class="note">Hear about it when a new FAA cycle changes {what}, action items first. One update per '
+             f'cycle, nothing in between.</p>{how}'
+             '<details class="more"><summary>More options</summary><p class="foot">The alert link is an RSS feed, the '
+             'same kind of link podcast and news apps follow. Apps like Feedly, Inoreader or NetNewsWire can follow '
+             f'it too. <a href="{e(feed_url)}" type="application/rss+xml">Open the feed</a></p></details>')
+    if pop:   # pop: a button that opens the options right under itself (a <details>, so it works without scripts)
+        return (f'<details class="addw pop" id="alerts"><summary class="btn ghost dd">Get alerts</summary>'
+                f'<div class="menu card box alerts" role="group" aria-label="Get alerts">{inner}</div></details>')
+    return f'<div class="card box alerts" id="alerts"><h3>Get alerts</h3>{inner}</div>'
 
 
 def tier_rows(full):
@@ -873,11 +891,12 @@ def sidebar(root, active, meta=None, now=None, on=""):
                         f'<span class="ann ifr">Upcoming</span></div>')
             return out
         cyc = (f'<div class="sbh">FAA cycle</div>{flip(meta, t, rows)}'
-               f'<div class="sbi sub fresh">Updated {built_at(t)}</div>')
+               f'<div class="sbi sub fresh">Updated {built_at(t)}</div>'
+               '<script>AM.tick()</script>')   # "1h ago" from the first paint, so it doesn't flicker between pages
     side = (f'<nav class="sb" aria-label="Site">{logo(root)}{search}'
             f'<div class="sbh">Browse</div>{link("", "Airports", "home")}{link("list/", "Lists", "list")}'
             f'{link("guide/", "Guide", "guide")}{link("docs/", "Docs", "docs")}{link("about/", "About", "about")}'
-            f'<div id="sbw" data-on="{e(on)}"></div>{cyc}'
+            f'<div id="sbw" data-on="{e(on)}"></div><script>SB.side()</script>{cyc}'
             f'<div class="sbfoot">Not for navigation. Independent, not affiliated with the FAA.<br>'
             f'<a href="{root}changelog/">Changelog</a> · <a href="{root}status/">Status</a> · '
             f'<a href="{root}privacy/">Privacy</a> · <a href="{root}terms/">Terms</a><br>'
@@ -890,6 +909,14 @@ def sidebar(root, active, meta=None, now=None, on=""):
     if meta:
         top += f'<div class="pfresh fresh">{freshness(meta, now or dt.datetime.now(dt.timezone.utc))}</div>'
     return side + top
+
+
+# hovering a link to another page of the site fetches it early (Chromium browsers), so the click opens at once.
+# prefetch, never prerender: prefetch only downloads the HTML and runs nothing, so the analytics beacon never counts
+# a page nobody opened. Feeds, data files and calendars are left alone
+SPECULATION = ('<script type="speculationrules">' + json.dumps({"prefetch": [{"where": {"and": [
+    {"href_matches": "/*"}, {"not": {"href_matches": "/*.(json|xml|ics|png|pdf)"}},
+    {"not": {"selector_matches": "[target=_blank],[download]"}}]}, "eagerness": "moderate"}]}) + "</script>")
 
 
 def page(title, description, url, body, root, og_title=None, image=None, active="", meta=None, now=None,
@@ -906,7 +933,7 @@ def page(title, description, url, body, root, og_title=None, image=None, active=
 {f'<meta property="og:url" content="{e(url)}">' if url else ''}{img}
 <meta name="theme-color" content="#F6F8FA" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#09121C" media="(prefers-color-scheme: dark)">
-{head_links(root, url)}
+{head_links(root, url)}{SPECULATION}
 <link rel="stylesheet" href="{root}assets/style.css?v={CSS_VERSION}">{
 f'<link rel="alternate" type="application/rss+xml" title="{e(feed[1])}" href="{e(feed[0])}">' if feed else ""}{head}
 </head><body data-root="{root}" data-cyc="{e(meta['to_cycle'] if meta else '')}"{eff_attr(meta, now)} data-built="{(now or dt.datetime.now(dt.timezone.utc)):%Y-%m-%dT%H:%M:%SZ}"><script src="{root}assets/app.js?v={APP_VERSION}"></script><div class="app">{sidebar(root, active, meta, now, on)}
@@ -1038,7 +1065,7 @@ def airport_page(apt, info, latest, hist, meta, now, has_card=False):
             + f'<div class="btns"><span class="addw"><button class="btn" id="wbtn" data-apt="{e(apt)}" hidden '
             'aria-haspopup="true" aria-expanded="false">+ Add to list</button><div class="menu card" id="wmenu" hidden></div></span>'
             '<button class="btn ghost" id="sharebtn" hidden>Share</button>'
-            '<a class="btn ghost" href="#alerts">Get alerts</a></div></header>']
+            + alerts_box(f"{SITE_URL}{apt}/feed.xml", apt, pop=True) + '</div></header>']
     if changes:
         seg = [f'<a class="on" href="#action" data-f="all">All<b>{len(changes)}</b></a>'] + \
               [f'<a href="#{p}" data-f="{p}">{title_}<b>{c[p]}</b></a>' for p, _, title_ in PRIORITY if c[p]]
@@ -1069,8 +1096,7 @@ def airport_page(apt, info, latest, hist, meta, now, has_card=False):
             f'<div class="kv"><span>Effective</span><span>{nice(meta["to_cycle"])} 0901Z</span></div>'
             f'<div class="kv"><span>Compared to</span><span>{nice(meta["from_cycle"])}</span></div>'
             f'{next_kv(meta, now)}'
-            f'<div class="kv"><span>Updated</span><span class="fresh">{built_at(now)}</span></div></div>',
-            alerts_box(f"{SITE_URL}{apt}/feed.xml", apt)]
+            f'<div class="kv"><span>Updated</span><span class="fresh">{built_at(now)}</span></div></div>']
     src = lambda href, text: f'<a class="hrow" href="{href}" target="_blank" rel="noopener"><span>{text}</span><span>↗</span></a>'
     rail.append('<div class="card box"><h3>Check the official source</h3>'
                 + src(SUPPLEMENT_SEARCH, f"Chart Supplement (search {e(apt)})") + src(DTPP_SEARCH, "Approach plates (d-TPP)")
@@ -1230,6 +1256,10 @@ data-name="{e(wl['name'])}">Save to my lists</a><button class="btn ghost" id="co
 # what shipped, newest first, for /changelog/. Add a line when something people can see changes.
 UPDATES = [
     ("Sep 2026", [
+        "Moving between pages fades instead of flashing, and pages you point at load before you click. Get "
+        "alerts on an airport page opens right under the button. A list's name in the sidebar opens that list, and "
+        "the sidebar always has open the list you're looking at. Alerts no longer point at an outside email service: "
+        "the alert link goes into a news reader app.",
         "FOD in remarks now reads \"foreign object debris\", the meaning in the FAA's contractions list, "
         "since remarks use it for loose material on the pavement. The translator is also told to write in "
         "normal capitalization instead of leaving plain words in capitals.",
@@ -1423,8 +1453,8 @@ def privacy_page(meta, now):
     email = ("<p>If you sign up for email on a shared list, your address goes to the email service that sends it, "
              "which keeps it until you unsubscribe. It's used for that list's updates and nothing else.</p>"
              if EMAIL_FORM else
-             "<p>Amend doesn't collect email addresses. If you use a service like Feedrabbit or a news reader app "
-             "to follow an alert link, that service's own privacy policy applies to what you give it.</p>")
+             "<p>Amend doesn't collect email addresses. If you use a news reader app to "
+             "follow an alert link, that app's own privacy policy applies to what you give it.</p>")
     sections = [
         ("short", "The short version", (
             "<p>No accounts, no cookies, no ads, and nothing sold. Your lists stay in your browser. Visitor counts "
@@ -1506,8 +1536,8 @@ def terms_page(meta, now):
             "how the site works.</p>"
             f'<p>The code is open source under the <a href="{REPO_URL}/blob/master/LICENSE">MIT license</a>.</p>')),
         ("links", "Other sites", (
-            "<p>Amend links to sites it doesn't run, like FAA pages and plates, GitHub, and alert services such as "
-            "Feedrabbit. Their own terms and privacy policies apply there, and Amend isn't responsible for them.</p>")),
+            "<p>Amend links to sites it doesn't run, like FAA pages and plates, GitHub, and news reader apps. "
+            "Their own terms and privacy policies apply there, and Amend isn't responsible for them.</p>")),
         ("changes", "Changes", (
             f"<p>Last changed {POLICY_DATE}. These terms can change as Amend does; changes are listed in the "
             f'<a href="../changelog/">changelog</a> and every edit is <a href="{REPO_URL}">on GitHub</a>. '
@@ -1560,8 +1590,8 @@ GUIDE_SECTIONS = [
      "<p>Every airport page and shared list has a <b>Get alerts</b> box. It gives you one update per FAA cycle: "
      "what changes there, action items first, usually within a day of the FAA posting it (about three weeks before "
      "it takes effect).</p>"
-     "<p>Copy the alert link and paste it into a free service like Feedrabbit to get it by email, or into a news "
-     "reader app like Feedly. The link is an RSS feed, the same kind podcast apps use.</p>"
+     "<p>Copy the alert link and paste it into a news reader app like Feedly, Inoreader or NetNewsWire. The link is "
+     "an RSS feed, the same kind podcast apps use.</p>"
      "<p>Lists saved in your browser don't have one alert link, since only your browser knows what's on them. "
      "Follow each airport instead, or use <b>More options</b> on the list's page to download all of its alerts as "
      "one file (OPML) a news reader can import.</p>"),
