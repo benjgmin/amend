@@ -70,7 +70,7 @@ class TestStatusPage(unittest.TestCase):
     def test_every_step_of_the_spec_outline_shows(self):
         """master spec §19: each step shows, with "Not recorded" where the run log has nothing for it"""
         t = text(self.render(good()))
-        for step in ("Ingestion", "Parsing", "Normalization", "Diff", "Classification", "AI", "Validation",
+        for step in ("Ingestion", "Parsing", "Normalization", "Diff", "Classification", "Translation", "Validation",
                      "Publishing", "Processing", "Engine"):
             self.assertIn(f" {step} ", t)
         self.assertIn("Translator cost $", t)
@@ -113,7 +113,9 @@ class TestStatusPage(unittest.TestCase):
     def test_blocked_run_after_last_good_build(self):
         r = good()
         b = copy.deepcopy(r)
-        b.update(mode="history", started_at="2026-09-28T23:00:00+00:00", outcome="blocked", published=False,
+        # an hour after the good one: a fixed time broke once the repo's own newest record was later than it
+        later = (dt.datetime.fromisoformat(r["started_at"]) + dt.timedelta(hours=1)).isoformat()
+        b.update(mode="history", started_at=later, outcome="blocked", published=False,
                  error="audit failed for 2026-09-03 -> 2026-10-01 <b>", verified=None,
                  checks={"errors": ["APT_RMK.csv went from 90009 to 100 rows (-100%)"], "warnings": [],
                          "error_count": 1, "warning_count": 0})
@@ -354,9 +356,9 @@ process.stdout.write(JSON.stringify({a,b,st:r.status,type:r.headers.get("content
 
 
 class TestChecksCard(unittest.TestCase):
-    def test_card_links_github_and_loads_checks_only_off_amend_watch(self):
+    def test_card_loads_checks_only_off_amend_watch(self):
         html = statuspage.checks_card()
-        self.assertIn('href="https://github.com/benjgmin/amend/actions/workflows/update.yml"', html)
+        self.assertNotIn("github.com", html)   # pilot-facing: no GitHub links in the card
         self.assertIn('fetch("/checks.json")', html)
         self.assertIn('location.hostname==="amend.watch")return', html)
         self.assertNotIn("innerHTML", statuspage.CHECKS_JS + statuspage.TIP_JS)   # GitHub's text never goes in as HTML
@@ -389,6 +391,29 @@ class TestDocsPages(unittest.TestCase):
                           "status": "how-it-works/", "labels": "using/", "remarks": "using/", "api": "api/"})
         self.assertLess(head.index("const m="), head.index('location.hostname==="amend.watch"'))   # before the forward
         self.assertNotIn("open", m)   # still on the first page
+
+    def test_every_in_page_link_lands(self):
+        """each #link on a docs page has its section on that page (steps 9 and 10 once pointed at sections that
+        had moved to another page), and a link to another docs page's #section finds it there"""
+        from amend import docspage
+        pages = {p: docspage.one_page(n, META, NOW) for n, (p, *_) in enumerate(docspage.PAGES)}
+        ids = {p: set(re.findall(r'id="([^"]+)"', h)) for p, h in pages.items()}
+        base = "https://docs.amend.watch/"
+        for p, h in pages.items():
+            for anchor in re.findall(r'href="#([^"]+)"', h):
+                self.assertIn(anchor, ids[p], f"{p or 'start'}: #{anchor}")
+            for other, anchor in re.findall(re.escape(base) + r'([a-z-]*/?)#([\w-]+)"', h):
+                self.assertIn(anchor, ids[other], f"{p or 'start'} -> {other}#{anchor}")
+
+    def test_pilot_pages_keep_ai_and_github_mentions_to_where_they_belong(self):
+        from amend import docspage
+        start, using, how, api = (docspage.one_page(n, META, NOW) for n in range(4))
+        for h in (start, how):
+            self.assertNotIn(" AI", text(h.split("<article")[1].split("</article>")[0]))   # the one disclosure is on the remarks section
+        self.assertIn("AI model", using)
+        self.assertEqual(text(start.split("<article")[1].split("</article>")[0]).count("GitHub"), 1)   # open source + reporting only
+        self.assertNotIn("github.com", how.split("<article")[1].split("</article>")[0])   # the footer keeps Report a problem
+        self.assertIn("SCHEMA.md", api)
 
     def test_a_renamed_schema_heading_fails_loudly(self):
         from unittest import mock

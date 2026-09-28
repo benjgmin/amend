@@ -163,7 +163,7 @@ def more(label, inner):
 
 # which step of the engine-health outline in the master spec (§19) each stage is
 STEPS = {"Downloaded the FAA files": "Ingestion", "Read the FAA data": "Parsing", "Normalized the records": "Normalization",
-         "Compared the two cycles": "Diff", "Sorted the changes": "Classification", "Remarks in plain English": "AI",
+         "Compared the two cycles": "Diff", "Sorted the changes": "Classification", "Remarks in plain English": "Translation",
          "Regression tests": "Validation", "Checked the change summaries": "Validation",
          "Input checks and release audit": "Validation", "Pre-publish check": "Publishing", "Published": "Publishing",
          "History": "Publishing", "Processing time": "Processing", "Engine version": "Engine"}
@@ -260,8 +260,8 @@ def s_classify(r):
              + "".join(f'<tr><td>{e(k)}</td><td class="n">{num(v)}</td></tr>' for k, v in cat.items())
              + "</table></div>") if cat else ""
     return stage("done", "Sorted the changes",
-                 f"{num(ch.get('action'))} ACT, {num(ch.get('ifr'))} IFR, {num(ch.get('fyi'))} FYI, by fixed rules "
-                 "(no AI).", more("Changes by category", table) if table else "")
+                 f"{num(ch.get('action'))} ACT, {num(ch.get('ifr'))} IFR, {num(ch.get('fyi'))} FYI.",
+                 more("Changes by category", table) if table else "")
 
 
 def s_tests(r):
@@ -579,7 +579,7 @@ BAR = {"live": "b-ok", "warn": "b-ok", "wait": "b-info", "held": "b-bad", "fail"
 
 def bars(recs):
     """the last SHOWN runs as a strip, oldest on the left. Hovering (or tapping) one shows exactly when it ran, what
-    it was and how it ended (TIP_JS); clicking opens its record on GitHub."""
+    it was and how it ended (TIP_JS). Bars aren't links: the records are one link away, under the page."""
     shown = recs[:SHOWN][::-1]
     if not shown:
         return ""
@@ -598,10 +598,9 @@ def bars(recs):
         what = ("history" if r.get("mode") == "history" else "site build") + (f", {trig}" if trig else "")
         sec = f", {r['seconds']:,.0f}s" if r.get("seconds") is not None else ""
         tip = e(f"{exact} · {what} · {label} · {cycles(r)}")
-        href = f'{web.REPO_URL}/blob/master/{e(r["_path"])}' if r.get("_path") else e(run.get("url") or "")
         attrs = (f'class="{BAR[kind]}" data-t="{iso}" data-x="{e(exact)}" data-w="{e(what + sec)}" data-l="{e(label)}" '
                  f'data-c="{e(cycles(r))}" aria-label="{tip}"')
-        out.append(f'<a {attrs} href="{href}"></a>' if href else f'<span {attrs}></span>')
+        out.append(f'<span tabindex="0" {attrs}></span>')
     counts = ", ".join(f"{n} {k.lower()}" for k, n in sorted(tally.items(), key=lambda kv: -kv[1]))
     return (f'<div class="sx-bars" id="sxbars">{"".join(out)}</div><div class="sx-legend"><span>Older</span>'
             f'<span>{len(shown)} builds: {e(counts)}</span><span>Newest</span></div>')
@@ -653,7 +652,7 @@ fetch("/checks.json").then(r=>r.ok?r.json():null).then(j=>{const runs=(j&&Array.
   for(const r of runs.slice(-40)){const ok=r.status!=="completed"?["b-info","Running"]:r.conclusion==="success"?["b-ok","Passed"]:
       r.conclusion==="failure"?["b-bad","Failed"]:["b-none",(r.conclusion||"ended").replace(/_/g," ")];
     tally[ok[1]]=(tally[ok[1]]||0)+1;
-    const u=typeof r.url==="string"&&r.url.startsWith("https://github.com/")?r.url:"",b=el(u?"a":"span",ok[0]);if(u)b.href=u;
+    const b=el("span",ok[0]);b.tabIndex=0;
     const sec=Date.parse(r.updated)-Date.parse(r.started);
     b.dataset.t=r.started;b.dataset.x=fmt(r.started);b.dataset.l=ok[1];
     b.dataset.w=(why[r.event]||"check")+(r.status==="completed"&&sec>=0?", took "+Math.round(sec/1e3)+"s":"");
@@ -663,11 +662,10 @@ fetch("/checks.json").then(r=>r.ok?r.json():null).then(j=>{const runs=(j&&Array.
 
 
 def checks_card():
-    actions = f"{web.REPO_URL}/actions/workflows/update.yml"
     return (f'<div class="sx-card" id="sxchk" data-every="{CHECK_EVERY_MIN}"><div class="sx-live"></div>'
             f'<p class="sx-none">Amend checks the FAA for new data every {CHECK_EVERY_MIN} minutes. A check that '
             "finds nothing new stops after a few seconds and builds nothing, so it isn't listed under Recent "
-            f'builds. <a href="{actions}">Every check on GitHub</a></p></div>{CHECKS_JS}')
+            "builds.</p></div>" + CHECKS_JS)
 
 
 

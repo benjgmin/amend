@@ -47,8 +47,8 @@ PRIORITY = [("action", "ACT", "Action"), ("ifr", "IFR", "IFR procedures"), ("fyi
 # what the labels mean, same words as the iOS guide (ios/Amend/GuideView.swift): css class, legend, tooltip,
 # full text, example
 TIERS = {
-    "action": ("act", "changes how you fly", "Changes how you fly it: tower hours, frequencies, runways, navaids",
-               "Changes how you fly the airport. Tower or Class D hours, frequencies, runways closed, renumbered or "
+    "action": ("act", "could change your plan", "Could change your plan: tower hours, frequencies, runways, navaids",
+               "Could change your plan. Tower or Class D hours, frequencies, runways closed, renumbered or "
                "restricted, navaids removed or changed, new PPR or noise rules.",
                "Tower hours changed: 0700-2100 → 0700-0100 local"),
     "ifr": ("ifr", "instrument procedures", "Approaches, STARs, departures and IFR routes",
@@ -1405,7 +1405,7 @@ before it takes effect.</p>
 <div class="btns"><a class="btn" href="../">Search an airport</a><a class="btn ghost" href="../{e(example)}/">See an example</a></div></header>
 {f'<div class="shots full">{shots}</div>' if shots else ''}
 <div class="full"><h2 class="h2" style="margin-bottom:12px">What you get</h2><div class="feats">
-{feat("ACT", "act", "Action items first", "Tower and Class D hours, frequencies, closed or renumbered runways, decommissioned navaids, new PPR rules: the changes that affect how you fly.")}
+{feat("ACT", "act", "Action items first", "Tower and Class D hours, frequencies, closed or renumbered runways, decommissioned navaids, new PPR rules: the changes that matter most when you fly there.")}
 {feat("IFR", "ifr", "Instrument procedures", "Amended, new and removed approaches, STARs and departures, down to which waypoints moved, with the new plate one tap away.")}
 {feat("FYI", "fyi", "Everything else, in plain English", "FAA remarks translated from contractions, with the original text always kept alongside.")}
 {feat("Lists", "ifr", "Lists you can share", "Keep a list for your home area, another for a trip, and share any of them as one link, like amend.watch/list/daytona-training.")}
