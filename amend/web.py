@@ -27,12 +27,12 @@ SUBDOMAINS = True
 SUB_URLS = {"status": "https://status.amend.watch/", "docs": "https://docs.amend.watch/"}
 
 
-def sub_url(kind, root=None):
+def sub_url(kind, root=None, path=""):
     """where links to the status page or the docs go: their own name once SUBDOMAINS is on, else the page here
-    (relative to root, or in full with no root)."""
+    (relative to root, or in full with no root). path is a page under it, like "api/" for the docs' API page."""
     if SUBDOMAINS:
-        return SUB_URLS[kind]
-    return f"{SITE_URL if root is None else root}{kind}/"
+        return SUB_URLS[kind] + path
+    return f"{SITE_URL if root is None else root}{kind}/{path}"
 
 
 REPORT_URL = REPO_URL + "/issues/new"    # "report a problem" until there's an email address
@@ -1282,6 +1282,9 @@ data-name="{e(wl['name'])}">Save to my lists</a><button class="btn ghost" id="co
 # what shipped, newest first, for /changelog/. Add a line when something people can see changes.
 UPDATES = [
     ("Sep 2026", [
+        "The docs are now four pages: getting started, using Amend, how it works, and API and data, which "
+        "documents every public JSON file and field. The status page shows when Amend last checked the FAA for "
+        "new data, with the recent checks, one every 10 minutes.",
         "On the home page, each airport in “Coming up at your airports” shows which of your lists it's on, "
         "and each list's name opens that list. It shows once you have more than one list.",
         "A remark the translator sent back untranslated, like \"4 IN LOOSE GRVL, RUTS & DIPS FULL LEN.\", is "
@@ -1353,7 +1356,7 @@ POLICY_DATE = "28 Sep 2026"   # when privacy/ or terms/ last changed in substanc
 
 # the about page used to hold everything. Old links to its sections go on to where each one lives now
 def about_moved():
-    return {"how": sub_url("docs", "../") + "#how", "limits": sub_url("docs", "../") + "#limits",
+    return {"how": sub_url("docs", "../", "how-it-works/") + "#how", "limits": sub_url("docs", "../", "how-it-works/") + "#limits",
             "privacy": "../privacy/", "updates": "../changelog/"}
 
 
@@ -1460,7 +1463,10 @@ def privacy_page(meta, now):
             "<a href=\"https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement\">"
             "GitHub's privacy statement</a>. Fonts, scripts and images are served by amend.watch itself, so no "
             "font or image service sees a visit either. Links out, like FAA sources and plates, only reach those sites when you "
-            "open them.</p>")),
+            "open them.</p>"
+            "<p>status.amend.watch and docs.amend.watch are served through Cloudflare Pages, which passes the pages on "
+            "from amend.watch, so Cloudflare sees those visits' IP addresses too. The status page's recent checks come "
+            "from GitHub through that same proxy: your browser doesn't contact GitHub for them.</p>")),
         ("alerts", "Alerts and email", email),
         ("reports", "Reporting a problem", (
             "<p>Problem reports are GitHub issues, which are public and fall under GitHub's own terms. Don't put "
@@ -1719,7 +1725,8 @@ def build(site, meta, directory, latest, history_dir, now=None, watchlists=None,
     with open(os.path.join(about, "index.html"), "w", encoding="utf-8") as f:
         f.write(about_page(meta, latest, shots, now, example))
     from . import docspage, statuspage   # they import web, so not at the top
-    for slug, make in (("guide", guide_page), ("docs", docspage.page), ("changelog", changelog_page),
+    docspage.build(site, meta, now)
+    for slug, make in (("guide", guide_page), ("changelog", changelog_page),
                        ("privacy", privacy_page), ("terms", terms_page)):
         os.makedirs(os.path.join(site, slug), exist_ok=True)
         with open(os.path.join(site, slug, "index.html"), "w", encoding="utf-8") as f:

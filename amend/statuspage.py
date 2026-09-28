@@ -95,6 +95,11 @@ padding:8px 10px;border-radius:6px;box-shadow:0 4px 14px rgba(0,0,0,.25);white-s
 .sx-tip b{font-weight:600;font-variant-numeric:tabular-nums}.sx-tip .sx-sub{opacity:.75}
 .sx-tip::after{content:"";position:absolute;left:50%;top:100%;margin-left:-5px;border:5px solid transparent;border-top-color:var(--tx)}
 .sx-none{color:var(--dm);margin:0;font-size:14px}
+.sx-live:not(:empty){margin-bottom:14px}.sx-live:not(:empty)+.sx-none{font-size:13px;color:var(--fn)}
+.sx-last{display:flex;flex-wrap:wrap;align-items:center;gap:0 6px;margin:0 0 12px;font-size:14.5px;color:var(--dm)}
+.sx-last b{color:var(--tx);font-weight:600}.sx-last .sx-dot{width:8px;height:8px;margin:0;border-radius:50%;background:var(--gn);flex:none}
+.sx-last.late .sx-dot{background:var(--am)}.sx-when::before{content:"· "}
+@media (max-width:479px){.sx-when{flex-basis:100%;padding-left:14px}.sx-when::before{content:none}}.sx-bars.sx-chk{height:22px}
 .sx-inc{list-style:none;margin:0;padding:0}
 .sx-inc li{display:flex;align-items:center;gap:16px;padding:12px 0;border-top:1px solid var(--ln)}
 .sx-inc li:first-child{border-top:0;padding-top:0}.sx-inc li:last-child{padding-bottom:0}.sx-inc .sx-d{overflow-wrap:anywhere}
@@ -598,18 +603,20 @@ def bars(recs):
         out.append(f'<a {attrs} href="{href}"></a>' if href else f'<span {attrs}></span>')
     counts = ", ".join(f"{n} {k.lower()}" for k, n in sorted(tally.items(), key=lambda kv: -kv[1]))
     return (f'<div class="sx-bars" id="sxbars">{"".join(out)}</div><div class="sx-legend"><span>Older</span>'
-            f'<span>{len(shown)} runs: {e(counts)}</span><span>Newest</span></div>{TIP_JS}')
+            f'<span>{len(shown)} builds: {e(counts)}</span><span>Newest</span></div>')
 
 
 # the tooltip on a run bar: the exact UTC time (and how long ago, on the site's clock), what the run was, how it
 # ended and which cycles it compared. Shown on hover or focus, and on a tap, where the first tap shows it and the
 # second follows the link
-TIP_JS = r"""<script>(()=>{const w=document.getElementById("sxbars");if(!w)return;let tip=null,cur=null;
+TIP_JS = r"""<script>window.sxTip=w=>{if(!w)return;let tip=null,cur=null;
 const clock=()=>typeof AM!=="undefined"&&AM.now?AM.now():Date.now();
 const ago=t=>{if(!t)return"";const m=Math.floor((clock()-Date.parse(t))/6e4),h=Math.floor(m/60),d=Math.floor(h/24);
   return m<1?"just now":m<60?m+" min ago":h<48?h+"h ago":d+" days ago"};
-function show(b){hide();const d=b.dataset,a=ago(d.t);tip=document.createElement("div");tip.className="sx-tip";
-  tip.innerHTML="<b>"+d.x+"</b>"+(a?' <span class="sx-sub">('+a+")</span>":"")+"<br>"+d.w+" · "+d.l+'<br><span class="sx-sub">'+d.c+"</span>";
+const el=(t,c,x)=>{const n=document.createElement(t);if(c)n.className=c;if(x)n.textContent=x;return n};
+function show(b){hide();const d=b.dataset,a=ago(d.t);tip=el("div","sx-tip");tip.append(el("b","",d.x));
+  if(a)tip.append(" ",el("span","sx-sub","("+a+")"));tip.append(el("br"),d.w+" · "+d.l);
+  if(d.c)tip.append(el("br"),el("span","sx-sub",d.c));
   w.appendChild(tip);const r=b.getBoundingClientRect(),p=w.getBoundingClientRect();
   let x=r.left-p.left+r.width/2;const half=tip.offsetWidth/2;x=Math.max(half,Math.min(p.width-half,x));
   tip.style.left=x+"px";tip.style.top="0";cur=b}
@@ -618,7 +625,46 @@ w.querySelectorAll("[data-x]").forEach(b=>{b.addEventListener("mouseenter",()=>s
   b.addEventListener("focus",()=>show(b));b.addEventListener("blur",hide);
   b.addEventListener("touchstart",ev=>{if(cur!==b){ev.preventDefault();show(b)}},{passive:false});
   b.addEventListener("click",ev=>{if(matchMedia("(hover:none)").matches&&cur!==b){ev.preventDefault();show(b)}})});
-document.addEventListener("touchstart",ev=>{if(!w.contains(ev.target))hide()},{passive:true})})()</script>"""
+document.addEventListener("touchstart",ev=>{if(!w.contains(ev.target))hide()},{passive:true})};
+sxTip(document.getElementById("sxbars"))</script>"""
+
+
+# the checks for new FAA data. Most of them find nothing and build nothing, so the run log (and the builds strip) never
+# sees them; the status proxy (cloudflare/_worker.js) serves GitHub's list of runs at /checks.json, cached, so a
+# visitor's browser never talks to GitHub. On amend.watch itself (or if GitHub says no) the card keeps its link
+CHECK_EVERY_MIN = 10
+CHECKS_JS = r"""<script>(()=>{const w=document.getElementById("sxchk");if(!w||location.hostname==="amend.watch")return;
+const clock=()=>typeof AM!=="undefined"&&AM.now?AM.now():Date.now();
+const el=(t,c,x)=>{const n=document.createElement(t);if(c)n.className=c;if(x)n.textContent=x;return n};
+const M=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],p=n=>String(n).padStart(2,"0");
+const fmt=t=>{const d=new Date(t);return p(d.getUTCDate())+" "+M[d.getUTCMonth()]+" "+d.getUTCFullYear()+" "+p(d.getUTCHours())+":"+p(d.getUTCMinutes())+":"+p(d.getUTCSeconds())+"Z"};
+const why={workflow_dispatch:"check",schedule:"check",push:"after a code change"};
+fetch("/checks.json").then(r=>r.ok?r.json():null).then(j=>{const runs=(j&&Array.isArray(j.runs)?j.runs:[]).filter(r=>r&&Date.parse(r.started));
+  if(!runs.length)return;runs.sort((a,b)=>Date.parse(a.started)-Date.parse(b.started));
+  const done=runs.filter(r=>r.status==="completed"),last=done[done.length-1];if(!last)return;
+  const mins=Math.floor((clock()-Date.parse(last.started))/6e4),late=mins>3*+w.dataset.every;
+  const line=el("p","sx-last"+(late?" late":""));line.append(el("span","sx-dot"),"Last checked ",el("b","",mins<1?"just now":mins<120?mins+" min ago":Math.floor(mins/60)+"h ago"),
+    el("span","sx-when",fmt(last.started)));if(late)line.append(el("span","sx-when","no check for a while, the timer may have stopped"));
+  const bars=el("div","sx-bars sx-chk"),tally={};
+  for(const r of runs.slice(-40)){const ok=r.status!=="completed"?["info","Running"]:r.conclusion==="success"?["","Passed"]:
+      r.conclusion==="failure"?["bad","Failed"]:["none",(r.conclusion||"ended").replace(/_/g," ")];
+    tally[ok[1]]=(tally[ok[1]]||0)+1;
+    const u=typeof r.url==="string"&&r.url.startsWith("https://github.com/")?r.url:"",b=el(u?"a":"span",ok[0]);if(u)b.href=u;
+    const sec=Date.parse(r.updated)-Date.parse(r.started);
+    b.dataset.t=r.started;b.dataset.x=fmt(r.started);b.dataset.l=ok[1];
+    b.dataset.w=(why[r.event]||"check")+(r.status==="completed"&&sec>=0?", took "+Math.round(sec/1e3)+"s":"");
+    b.setAttribute("aria-label",b.dataset.x+" · "+b.dataset.w+" · "+ok[1]);bars.append(b)}
+  const leg=el("div","sx-legend");leg.append(el("span","","Older"),el("span","",Math.min(runs.length,40)+" checks: "+Object.entries(tally).map(([k,n])=>n+" "+k.toLowerCase()).join(", ")),el("span","","Newest"));
+  w.querySelector(".sx-live").replaceChildren(line,bars,leg);if(window.sxTip)sxTip(bars)}).catch(()=>{})})()</script>"""
+
+
+def checks_card():
+    actions = f"{web.REPO_URL}/actions/workflows/update.yml"
+    return (f'<div class="sx-card" id="sxchk" data-every="{CHECK_EVERY_MIN}"><div class="sx-live"></div>'
+            f'<p class="sx-none">Amend checks the FAA for new data every {CHECK_EVERY_MIN} minutes. A check that '
+            "finds nothing new stops after a few seconds and builds nothing, so it isn't listed under Recent "
+            f'builds. <a href="{actions}">Every check on GitHub</a></p></div>{CHECKS_JS}')
+
 
 
 def problems(recs):
@@ -649,20 +695,22 @@ def page(recs, meta, now):
                         f' data-hours="{BEHIND_HOURS}" data-log="{web.REPO_URL}/tree/master/audit/runs"'
                         # did that run find the next cycle posted? False: the FAA hadn't posted it yet
                         f' data-up="{"1" if top.get("upcoming") else "0" if top.get("upcoming") is False else ""}"')
-    docs = web.sub_url("docs")
+    docs = web.sub_url("docs", None, "how-it-works/")
     body = [f'<section class="sx-hero {cls}" id="stans"{behind_attrs}><span class="sx-dot" aria-hidden="true"></span>'
             f'<div><h1>{title}</h1>{f"<p>{sentence}</p>" if sentence else ""}</div></section>'
             + (BEHIND_JS if behind_attrs else ""),
             components(top, next((r for r in builds if r.get("published")), None), meta, now)]
+    body.append(f'<h2 class="sx-h">Checks for new FAA data</h2>{checks_card()}')
     if recs:
-        body.append(f'<h2 class="sx-h">Recent runs</h2><div class="sx-card">{bars(recs)}</div>')
+        body.append(f'<h2 class="sx-h">Recent builds</h2><div class="sx-card">{bars(recs)}</div>')
     body.append(f'<h2 class="sx-h">Incidents</h2><div class="sx-card">{problems(recs)}</div>')
     if top is not None:
         body.append(f'<details class="sx-full"><summary>Every step of the latest build</summary>'
                     f'<p class="sx-meta">{run_meta(top)}</p><div class="stages">{stages(top)}</div></details>')
-    body.append(f'<p class="sx-about">Every value on this page comes from the run log Amend writes on each run; nothing '
-                f'is estimated. <a href="{docs}#status">How this page works</a> · '
+    body.append(f'<p class="sx-about">The checks come from GitHub\'s list of runs. Everything else comes from the run '
+                f'log Amend writes on each build. <a href="{docs}#status">How this page works</a> · '
                 f'<a href="{web.REPO_URL}/tree/master/audit/runs">All run records</a></p>')
+    body.append(TIP_JS)
     return subsite.page("status", "Amend Status", "Is Amend up to date? The FAA cycle, the latest build and its "
                         "checks, from Amend's run log.", "".join(body), meta, now, head=CSS)
 

@@ -35,27 +35,28 @@ CSS = """<style>
 </style>"""
 
 
-def forward(kind):
+def forward(kind, path=""):
     """once the names are on, amend.watch/status/ (or /docs/) opens its own name, keeping ?query and #section.
     Only on amend.watch itself: the proxy serves this same page under the new name, where it must stay."""
     if not web.SUBDOMAINS:
         return ""
     host = web.SITE_URL.split("//")[1].strip("/")
     return (f'<script>if(location.hostname==={json.dumps(host)})location.replace('
-            f'{json.dumps(web.SUB_URLS[kind].rstrip("/") + "/")}+location.search+location.hash)</script>')
+            f'{json.dumps(web.SUB_URLS[kind] + path)}+location.search+location.hash)</script>')
 
 
-def page(kind, title, description, body, meta, now=None, head=""):
-    """a whole page for status.amend.watch (kind "status") or docs.amend.watch ("docs")."""
+def page(kind, title, description, body, meta, now=None, head="", path="", early=""):
+    """a whole page for status.amend.watch (kind "status") or docs.amend.watch ("docs"). path is a page under the
+    name ("api/"); early is a script that has to run before the forward (the docs' old #section links)."""
     now = now or dt.datetime.now(dt.timezone.utc)
-    site, url = web.SITE_URL, web.sub_url(kind)
+    site, url = web.SITE_URL, web.sub_url(kind, None, path)
     items = ((site, "Airports", "", "sx-x"), (f"{site}guide/", "Guide", "", "sx-x"),
              (web.sub_url("docs"), "Docs", "docs", ""), (web.sub_url("status"), "Status", "status", ""))
     cur = ' aria-current="page"'
     links = "".join(f'<a class="{(cls + " on").strip() if key == kind else cls}" href="{href}"{cur if key == kind else ""}>'
                     f'{text}</a>' for href, text, key, cls in items)
     fresh = web.freshness(meta, now)
-    return f"""<!doctype html><html lang="en"><head><meta charset="utf-8">{forward(kind)}
+    return f"""<!doctype html><html lang="en"><head><meta charset="utf-8">{early}{forward(kind, path)}
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{e(title)}</title>
 <meta name="description" content="{e(description)}">

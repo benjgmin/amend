@@ -9,7 +9,7 @@
 
 <p align="center">
   <a href="https://amend.watch/"><b>amend.watch</b></a> ·
-  <a href="https://docs.amend.watch/#how">How it works</a> ·
+  <a href="https://docs.amend.watch/how-it-works/">How it works</a> ·
   <a href="https://amend.watch/guide/">Guide</a> ·
   <a href="https://github.com/benjgmin/amend/issues/new">Report a problem</a>
 </p>
