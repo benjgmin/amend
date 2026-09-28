@@ -16,6 +16,8 @@ import shutil
 
 from . import brand
 
+from . import feeds
+
 SITE_URL = "https://amend.watch/"
 REPO_URL = "https://github.com/benjgmin/amend"
 REPORT_URL = REPO_URL + "/issues/new"    # "report a problem" until there's an email address
@@ -41,6 +43,12 @@ TIERS = {
             "Airport phone number changed"),
 }
 NO_CHG_TIP = "Nothing changed at this airport between the two cycles"
+# email alerts for named watchlists: paste a Buttondown embed-subscribe url here, e.g.
+# "https://buttondown.com/api/emails/embed-subscribe/amend". Empty = no email form, only the RSS feed.
+# Each signup is tagged list:<slug>, so one RSS-to-email automation per list can send just to its tag.
+EMAIL_FORM = ""
+# for airports (too many for one automation each): a free service where pilots subscribe to any feed themselves
+SELF_SERVE_EMAIL = "https://feedrabbit.com/"
 
 
 # IBM Plex Sans and IBM Plex Mono (SIL OFL, amend/fonts/OFL.txt), served from amend.watch itself so a page view
@@ -76,7 +84,7 @@ body{margin:0;color:var(--tx);background:var(--bg);font:15px/1.5 var(--sans);-we
 a{color:var(--cy);text-decoration:none}a:hover{text-decoration:underline}
 :focus-visible{outline:2px solid var(--cy);outline-offset:2px}
 b,strong{font-weight:600}
-.app{display:grid;grid-template-columns:minmax(0,1fr);min-height:100vh}
+.app{display:grid;grid-template-columns:minmax(0,1fr);min-height:100vh;align-content:start}
 .sb{display:none}
 .mtop{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;border-bottom:1px solid var(--ln);background:var(--p);position:sticky;top:0;z-index:5}
 .brand{font:600 17px var(--sans);letter-spacing:-.2px;color:var(--tx);display:inline-flex;align-items:center;gap:8px}
@@ -85,7 +93,7 @@ b,strong{font-weight:600}
 .brand .ms{fill:var(--mks)}.brand .mn{fill:var(--mkn)}
 .nav{display:flex;gap:16px;font-size:14px}.nav a{color:var(--dm)}.nav a.on{color:var(--tx);font-weight:500}
 .main{padding:20px 16px 48px;display:grid;gap:20px;grid-template-columns:minmax(0,1fr);align-content:start;width:100%;max-width:1400px;margin:0 auto}
-.col,.rail{display:grid;gap:16px;align-content:start;min-width:0}
+.col,.rail{display:grid;gap:16px;align-content:start;min-width:0}.col>div:empty{display:none}
 .rail .hist{display:none}
 .full{min-width:0}
 .eyebrow{font-size:12px;color:var(--dm);text-transform:uppercase;letter-spacing:.06em}
@@ -125,6 +133,26 @@ a.src{color:var(--dm)}a.src:hover{color:var(--cy)}
 .seg a{font:500 14px var(--sans);padding:9px 0 7px;border-bottom:2px solid transparent;color:var(--dm);white-space:nowrap}
 .seg a b{margin-left:5px;font-weight:500;color:var(--fn)}.seg a:hover{text-decoration:none;color:var(--tx)}
 .seg a.on{color:var(--tx);border-bottom-color:var(--tx)}.seg a.on b{color:var(--tx)}
+.seg button{font:500 14px var(--sans);padding:9px 0 7px;border:0;border-bottom:2px solid transparent;background:none;color:var(--dm);white-space:nowrap;cursor:pointer}
+.seg button b{margin-left:5px;font-weight:500;color:var(--fn)}.seg button:hover{color:var(--tx)}
+.seg button.on{color:var(--tx);border-bottom-color:var(--tx)}.seg button.on b{color:var(--tx)}
+.tabs{display:inline-flex;vertical-align:top;margin:0 0 10px}#ltabs .tabs{margin:12px 0 0}
+.lnk{background:none;border:0;padding:0;font:inherit;color:var(--cy);cursor:pointer}.lnk:hover{text-decoration:underline}
+.lnk.dim{color:var(--dm)}.sec .lnk{font-size:13.5px}
+.manage{display:flex;flex-wrap:wrap;gap:4px 16px;margin-top:10px;font-size:13.5px}.manage:empty{display:none}
+.nf{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 0;max-width:560px}
+.nf input{flex:1 1 200px;min-width:0;border:1px solid var(--ln);border-radius:6px;background:var(--p);color:var(--tx);font:15px var(--sans);padding:7px 12px}
+.nf input:focus{outline:none;border-color:var(--cy)}
+.addw{position:relative;display:inline-flex}
+.btn.dd::after{content:"";border:4px solid transparent;border-top-color:currentColor;margin:4px 0 0 8px}
+.menu{position:absolute;top:calc(100% + 6px);left:0;z-index:20;width:max-content;min-width:240px;max-width:min(340px,calc(100vw - 32px));padding:6px;box-shadow:0 10px 30px rgba(0,0,0,.18)}
+.mh{font-size:12.5px;color:var(--fn);padding:6px 10px 4px}
+.mi{display:flex;align-items:center;gap:10px;width:100%;padding:8px 10px;border:0;border-radius:8px;background:none;color:var(--tx);font:14px var(--sans);text-align:left;cursor:pointer}
+.mi:hover{background:var(--p2)}.mi input{margin:0;width:16px;height:16px;accent-color:var(--cy);flex:none}
+.mi .nm,.sbi .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.mi .n,.sbi .n{color:var(--fn);font-size:12.5px}
+.mi.add{color:var(--cy)}.menu .nf{margin:4px 6px 6px}
+.addto{display:block;margin:0 0 8px}
+.addto select{font:500 14px var(--sans);color:var(--tx);background:var(--p);border:1px solid var(--ln);border-radius:8px;padding:3px 8px;margin-left:6px;max-width:60vw}
 .banner{display:flex;gap:10px;align-items:flex-start;flex-wrap:wrap;padding:12px 14px;font-size:14px;color:var(--dm)}
 .banner .ann{margin-top:1px}.banner span:last-child{flex:1;min-width:200px}
 .lst{background:var(--p);border:1px solid var(--ln);border-radius:8px;overflow:hidden;box-shadow:var(--shadow)}
@@ -199,14 +227,18 @@ kbd{font:500 12px var(--mono);border:1px solid var(--ln);border-radius:3px;paddi
 .sbh{font:600 11px var(--sans);color:var(--fn);margin:18px 8px 4px;text-transform:uppercase;letter-spacing:.07em}
 .sbi{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:6px 8px;border-radius:6px;font-size:14px;color:var(--tx)}
 a.sbi:hover{background:var(--p2);text-decoration:none}.sbi.on{background:var(--p2);font-weight:500}
-.sbi b{font:600 13px var(--mono)}.sbi.sub{color:var(--dm);font-size:13.5px}
+.sbi b{font:600 13px var(--mono)}.sbi.sub{color:var(--dm);font-size:13.5px}.sbi.apt{padding-left:20px}
 .sb .search{margin:14px 0 0;border-radius:6px;padding:0 10px;box-shadow:none}.sb .search input{font-size:14px;padding:7px 0}
 .sbfoot{margin-top:auto;padding:16px 8px 0;font-size:12.5px;color:var(--fn)}.sbfoot a{color:var(--dm)}
 .prose p{margin:10px 0 0}.prose ul{margin:10px 0 0;padding-left:18px}.prose li{margin:6px 0}.prose li::marker{color:var(--fn)}
 .log{display:grid;grid-template-columns:minmax(0,1fr);gap:2px 16px;margin:10px 0 0;font-size:14.5px}
 .log dt{font-size:12.5px;color:var(--fn);margin-top:8px}.log dd{margin:0}
+.alerts .btns{margin-top:10px}.alerts form{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.alerts input[type=email]{flex:1;min-width:0;border:1px solid var(--ln);border-radius:6px;background:var(--p);color:var(--tx);font:15px var(--sans);padding:7px 10px}
+.alerts input[type=email]:focus{outline:none;border-color:var(--cy)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
-@media (max-width:639px){.wrow>a{flex-wrap:wrap;row-gap:6px}.wrow>a .chips{flex-basis:100%;padding-left:64px}}
+@media (max-width:359px){.nav{gap:12px;font-size:13.5px}}
+@media (max-width:639px){.wrow>a{flex-wrap:wrap;row-gap:6px}.wrow>a .chips,.nxh .chips{flex-basis:100%;margin-left:0;padding-left:64px}}
 @media (min-width:640px){.cards{grid-template-columns:repeat(2,minmax(0,1fr))}.feats{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (min-width:1000px){
  .app{grid-template-columns:248px minmax(0,1fr)}
@@ -215,7 +247,7 @@ a.sbi:hover{background:var(--p2);text-decoration:none}.sbi.on{background:var(--p
  .mtop,.pfresh{display:none}
  .main{padding:32px 40px 56px}
  .main.two{grid-template-columns:minmax(0,1fr) 300px;column-gap:32px;align-items:start}
- .main.two>.full{grid-column:1/-1}
+ .main.two>.full{grid-column:1/-1}.main.two>.foot.full{grid-column:1}
  .rail{position:sticky;top:24px}.rail .hist{display:block}
  .it{grid-template-columns:104px minmax(0,1fr) auto;align-items:baseline}
  .it .k{font-size:11.5px;color:var(--dm)}.it .m{justify-content:flex-end}
@@ -228,7 +260,7 @@ a.sbi:hover{background:var(--p2);text-decoration:none}.sbi.on{background:var(--p
 --amS:#F8E6F0;--cy:#15508F;--cyS:#E3EDF8;--gy:#444;--gyS:#EEF2F6;--gn:#2D7A4B;--gnS:#E4F2E9;--on:#fff;--shadow:none;
 --mk:#fff;--mkl:#B8C2CE;--mko:#AAB5C3;--mks:#A3186E;--mkn:#000;color-scheme:light}
  .act{color:var(--am);background:none}.ann.new{color:var(--tx);background:none}
- .sb,.mtop,.rail,.seg,.btns,.search,#res,#welcome,#newnote,#next .nxm{display:none!important}
+ .sb,.mtop,.rail,.seg,.btns,.search,#res,#welcome,#newnote,#next .nxm,.manage,.nf,.menu,.addto,#lnote,.foot .lnk{display:none!important}
  .app{display:block}.main{display:block;padding:0;max-width:none}.main>*,.col>*{margin-bottom:12px}
  body{font-size:12.5px}a{color:inherit}.it,.apthead,.nx{break-inside:avoid}.it.new{box-shadow:none}}
 """
@@ -319,39 +351,28 @@ def card(path, big, name, loc, chip_list, line, footer):
     return True
 
 
-COMMON_JS = 'const TIP=' + json.dumps({**{v[0]: v[2] for v in TIERS.values()}, "ok": NO_CHG_TIP}) + ';\n' + \
-    'const KEY="amend.watch";\nconst esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",\'"\':"&quot;"}[c]));\nconst loadW=()=>{try{return[...new Set(JSON.parse(localStorage.getItem(KEY)||"[]"))]}catch(e){return[]}};\nconst saveW=l=>{try{localStorage.setItem(KEY,JSON.stringify([...new Set(l)]))}catch(e){}};\nconst parseW=q=>[...new Set((q||"").toUpperCase().split(/[\\s,]+/).map(s=>s.replace(/^K(?=[A-Z]{3}$)/,"")).filter(s=>/^[A-Z0-9]{2,4}$/.test(s)))].slice(0,200);\nfunction chipsHtml(k){if(!k||!(k[0]||k[1]||k[2]))return \'<span class="chips"><span class="ann ok" title="\'+TIP.ok+\'">No change</span></span>\';\n  const t=[[k[0],"act","ACT"],[k[1],"ifr","IFR"],[k[2],"fyi","FYI"]].filter(x=>x[0]).map(x=>\'<span class="ann \'+x[1]+\'" title="\'+TIP[x[1]]+\'">\'+x[2]+\' \'+x[0]+\'</span>\');\n  return \'<span class="chips">\'+t.join("")+\'</span>\'}\n'
-LANDING_JS = r"""if(new URLSearchParams(location.search).get("w")){location.replace("list/"+location.search)}
-const A=__ROWS__;const byId=new Map(A.map(a=>[a[0],a]));
+COMMON_JS = 'const TIP=' + json.dumps({**{v[0]: v[2] for v in TIERS.values()}, "ok": NO_CHG_TIP}) + ';\n' + r"""
+const parseW=q=>[...new Set((q||"").toUpperCase().split(/[\s,]+/).map(s=>s.replace(/^K(?=[A-Z]{3}$)/,"")).filter(s=>/^[A-Z0-9]{2,4}$/.test(s)))].slice(0,200);
+function chipsHtml(k){if(!k||!(k[0]||k[1]||k[2]))return '<span class="chips"><span class="ann ok" title="'+TIP.ok+'">No change</span></span>';
+  const t=[[k[0],"act","ACT"],[k[1],"ifr","IFR"],[k[2],"fyi","FYI"]].filter(x=>x[0]).map(x=>'<span class="ann '+x[1]+'" title="'+TIP[x[1]]+'">'+x[2]+' '+x[0]+'</span>');
+  return '<span class="chips">'+t.join("")+'</span>'}
+"""
+LANDING_JS = r"""const A=__ROWS__;const byId=new Map(A.map(a=>[a[0],a]));
 const NX=__NEXT__;let NEWC=AM.newc();
-const NKEY="amend.watch.name";
-const q=document.getElementById("q"),r=document.getElementById("res");
-const params=new URLSearchParams(location.search);
-if(params.get("q"))q.value=params.get("q");
-const loadName=()=>{try{return localStorage.getItem(NKEY)||""}catch(e){return""}};
-const saveName=n=>{try{n?localStorage.setItem(NKEY,n):localStorage.removeItem(NKEY)}catch(e){}};
+const q=document.getElementById("q"),r=document.getElementById("res"),params=new URLSearchParams(location.search);
+if(params.get("w"))location.replace("list/"+location.search);   // early share links pointed here
+if(params.get("q")){q.value=params.get("q");
+  // the sidebar search on other pages: an exact ID or ICAO code goes straight to that airport
+  const s=q.value.trim().toUpperCase(),a=params.has("go")&&A.find(x=>x[0]===s||x[1]===s);if(a&&a[5])location.replace(a[0]+"/")}
 function sub(a){return esc([a[1],[a[3],a[4]].filter(Boolean).join(", ")].filter(Boolean).join(" · "))}
 function airportRow(id,btn){const a=byId.get(id)||[id,"","","","",0,null];
   const inner='<span class="rid">'+esc(a[0])+'</span><span class="rname">'+esc(a[2]||"Unknown airport")+'<br><span class="rsub">'+sub(a)+'</span></span>'+chipsHtml(a[6]).replace('<span class="chips">','<span class="chips">'+(NEWC[id]?AM.pill(NEWC[id]):""));
   return '<div class="wrow">'+(a[5]?'<a href="'+esc(a[0])+'/">'+inner+'</a>':'<a>'+inner+'</a>')+btn+'</div>'}
 const act=id=>((byId.get(id)||[])[6]||[0])[0];
-const sameSet=(x,y)=>x.length===y.length&&x.every(v=>y.includes(v));
-function shareUrl(){const n=loadName();return new URL("list/?w="+loadW().join(",")+(n?"&n="+encodeURIComponent(n):""),location.href).href}
-function clearShared(){history.replaceState(null,"",location.pathname);render()}
-function renderShared(){const s=document.getElementById("shared"),ids=parseW(params.get("w")),name=(params.get("n")||"").slice(0,60);
-  if(!ids.length||!location.search.includes("w=")){s.innerHTML="";return false}
-  if(sameSet(ids,loadW())){s.innerHTML="";return true}   // it's your own list: show it once, below
-  s.innerHTML='<div class="sec"><span class="hdr" style="color:var(--cy)">Shared'+(name?': '+esc(name):' watchlist')+' · '+ids.length+'</span></div><div class="rows">'+
-    [...ids].sort((x,y)=>act(y)-act(x)).map(id=>airportRow(id,"")).join("")+'</div>'+
-    '<div class="btns"><a class="btn" href="list/?w='+ids.join(",")+(name?"&n="+encodeURIComponent(name):"")+'">View all changes</a>'+
-    '<button class="btn ghost" id="saveShared" data-ids="'+ids.join(",")+'" data-name="'+esc(name)+'">Add to my watchlist</button>'+
-    '<button class="btn ghost" id="closeShared">Close</button></div>';return false}
-function renderWatch(isMine){const l=loadW(),w=document.getElementById("watch"),n=loadName();
-  if(!l.length){w.innerHTML='<div class="sec"><span class="hdr">Your watchlist</span></div><div class="card box note" style="margin:0">Search below and tap <b>+</b> to add airports to your watchlist. It’s saved in this browser; copy the link to send it to someone.</div>';return}
-  w.innerHTML='<div class="sec"><span class="hdr">'+(n?esc(n):'Your watchlist')+' · '+l.length+(isMine?' · this link':'')+'</span></div><div class="rows">'+
-    [...l].sort((x,y)=>act(y)-act(x)).map(id=>airportRow(id,'<button class="x" data-rm="'+esc(id)+'" title="Remove" aria-label="Remove '+esc(id)+'">×</button>')).join("")+'</div>'+
-    '<div class="btns"><a class="btn" href="list/?w='+l.join(",")+(n?"&n="+encodeURIComponent(n):"")+'">View all changes</a>'+
-    '<button class="btn ghost" id="share">Copy share link</button><button class="btn ghost" id="rename">'+(n?'Rename':'Name this list')+'</button></div>'}
+// + / ✓ / × act on the list in use; with no list yet, + starts "My airports"
+function xBtn(id,l,kind){const n=esc(l?l.name:"a new list");
+  return kind==="add"?'<button class="x" data-add="'+esc(id)+'" title="Add to '+n+'" aria-label="Add '+esc(id)+' to '+n+'">+</button>'
+    :'<button class="x'+(kind==="on"?' on':'')+'" data-rm="'+esc(id)+'" title="Remove from '+n+'" aria-label="Remove '+esc(id)+' from '+n+'">'+(kind==="on"?"✓":"×")+'</button>'}
 function renderSearch(){const s=q.value.trim().toUpperCase();if(!s){r.innerHTML="";return}
   const hit=[];for(const a of A){const[id,ic,n,c]=a;let k=-1;
     if(id===s||ic===s)k=0;else if(id.startsWith(s)||ic.startsWith(s))k=1;
@@ -359,21 +380,31 @@ function renderSearch(){const s=q.value.trim().toUpperCase();if(!s){r.innerHTML=
     else if(s.length>2&&(n.toUpperCase().includes(s)||c.toUpperCase().includes(s)))k=3;
     if(k>=0)hit.push([k*10+(ic?0:2),a])}
   hit.sort((x,y)=>x[0]-y[0]||x[1][0].length-y[1][0].length||(x[1][0]<y[1][0]?-1:1));
-  const w=new Set(loadW());
-  r.innerHTML=hit.length?'<div class="rows">'+hit.slice(0,30).map(([_,a])=>airportRow(a[0],w.has(a[0])?'<button class="x on" data-rm="'+esc(a[0])+'" title="Remove from watchlist" aria-label="Remove '+esc(a[0])+' from watchlist">✓</button>':'<button class="x" data-add="'+esc(a[0])+'" title="Add to watchlist" aria-label="Add '+esc(a[0])+' to watchlist">+</button>')).join("")+'</div>':'<div class="note">No airport found.</div>'}
-// "coming up at your airports": the top changes at each watchlist airport, with the countdown to 0901Z
+  const ls=LS.all(),l=LS.active(),on=new Set(l?l.ids:[]);
+  const to=ls.length>1?'<label class="addto note">Tap + to add to <select id="addto">'+ls.map(x=>'<option value="'+esc(x.id)+'"'+(x.id===l.id?" selected":"")+'>'+esc(x.name)+'</option>').join("")+'</select></label>':"";
+  r.innerHTML=hit.length?to+'<div class="rows">'+hit.slice(0,30).map(([_,a])=>airportRow(a[0],xBtn(a[0],l,on.has(a[0])?"on":"add"))).join("")+'</div>':'<div class="note">No airport found.</div>'}
+function renderLists(){const w=document.getElementById("watch");if(w.querySelector("form"))return;   // never wipe a name being typed
+  const ls=LS.all(),l=LS.active();
+  if(!l){w.innerHTML='<div class="sec"><span class="hdr">Your lists</span><button class="lnk" id="newlist">+ New list</button></div><div id="nf" hidden></div><div class="card box note" style="margin:0">Search above and tap <b>+</b> to start a list of your airports. Lists are saved in this browser, and you can share each one as a link.</div>';return}
+  w.innerHTML='<div class="sec"><span class="hdr">'+(ls.length>1?'Your lists':esc(l.name)+' · '+l.ids.length)+'</span><button class="lnk" id="newlist">+ New list</button></div><div id="nf" hidden></div>'+
+    (ls.length>1?'<nav class="seg tabs" aria-label="Your lists">'+ls.map(x=>'<button class="'+(x.id===l.id?'on':'')+'" data-use="'+esc(x.id)+'" aria-pressed="'+(x.id===l.id)+'">'+esc(x.name)+'<b>'+x.ids.length+'</b></button>').join("")+'</nav>':'')+
+    (l.ids.length?'<div class="rows">'+[...l.ids].sort((x,y)=>act(y)-act(x)).map(id=>airportRow(id,xBtn(id,l,"rm"))).join("")+'</div>'+
+      '<div class="btns"><a class="btn" href="list/?l='+encodeURIComponent(l.id)+'">View all changes</a><button class="btn ghost" id="share">Copy share link</button><button class="btn ghost" id="rename">Rename</button></div>'
+     :'<div class="card box note" style="margin:0">No airports on '+esc(l.name)+' yet. Search above and tap <b>+</b> to add some.</div>'+
+      '<div class="btns"><button class="btn ghost" id="rename">Rename</button><button class="btn ghost" id="dellist">Delete list</button></div>')}
+// "coming up at your airports": the top changes at every airport on your lists, with the countdown to 0901Z
 const got=new Map();
 const latestOf=id=>{if(!got.has(id))got.set(id,fetch("latest/"+id+".json").then(r=>r.ok?r.json():null).catch(()=>null));return got.get(id)};
 const PRI={action:["act","ACT"],ifr:["ifr","IFR"],fyi:["fyi","FYI"]};
-async function renderNext(){const el=document.getElementById("next"),l=loadW();
+async function renderNext(){const el=document.getElementById("next"),l=LS.union();
   if(!l.length){el.innerHTML="";return}
-  const ch=l.filter(id=>(byId.get(id)||[])[6]).slice(0,60),data=await Promise.all(ch.map(latestOf)),rows=[],nc={};
+  const busy=l.filter(id=>(byId.get(id)||[])[6]).sort((x,y)=>act(y)-act(x)),ch=busy.slice(0,60),data=await Promise.all(ch.map(latestOf)),rows=[],nc={};
   ch.forEach((id,i)=>{const d=data[i];if(!d||!d.changes)return;const items=d.changes.map(c=>({id:c.id,c:NX.to}));
     AM.base(id,items,NX.to);const nw=AM.look(id,items,NX.to,false).nw;if(nw.size)nc[id]=nw.size;rows.push({id,d,nw})});
-  l.filter(id=>!ch.includes(id)).forEach(id=>AM.base(id,[],NX.to));
+  l.filter(id=>!busy.includes(id)).forEach(id=>AM.base(id,[],NX.to));
   AM.setNewc(nc);NEWC=nc;
   rows.sort((x,y)=>y.d.counts.action-x.d.counts.action||y.nw.size-x.nw.size||(x.id<y.id?-1:1));
-  const quiet=l.filter(id=>!rows.some(r=>r.id===id)).sort();
+  const quiet=l.filter(id=>!busy.includes(id)).sort();
   const cap=s=>s.charAt(0).toUpperCase()+s.slice(1);
   const row=({id,d,nw})=>{const a=byId.get(id)||[id,"",""],top=d.changes.slice(0,3);
     return '<a class="nx" href="'+esc(id)+'/"><span class="nxh"><span class="rid">'+esc(id)+'</span><span class="rname">'+esc(a[2]||"")+'</span>'+
@@ -383,23 +414,31 @@ async function renderNext(){const el=document.getElementById("next"),l=loadW();
   el.innerHTML='<div class="sec"><span class="hdr">'+(NX.up?'Coming up at your airports':'This cycle at your airports')+'</span><span class="note" style="margin:0">'+
     (NX.up?'Takes effect ':'Next cycle ')+'<time datetime="'+NX.when+'" data-until="'+NX.when+'"></time></span></div>'+
     '<div class="rows">'+(rows.length?rows.map(row).join(""):'<div class="nxq">Nothing '+(NX.up?'changes':'changed')+' at your '+l.length+' airport'+(l.length==1?'':'s')+' this cycle.</div>')+
+    (busy.length>ch.length?'<div class="nxq">Showing the '+ch.length+' busiest of '+busy.length+' airports with changes. Each list’s page has all of them.</div>':'')+
     (rows.length&&quiet.length?'<div class="nxq">No change at '+quiet.map(esc).join(", ")+'</div>':'')+'</div>';
-  AM.tick();renderWatch(false);renderSearch();if(window.AMside)AMside()}
-function render(){renderWatch(false);renderSearch()}
-document.addEventListener("click",ev=>{const b=ev.target.closest("button");if(!b)return;
-  if(b.dataset.add){saveW([...loadW(),b.dataset.add]);renderNext()}
-  else if(b.dataset.rm){saveW(loadW().filter(x=>x!==b.dataset.rm));renderNext()}
-  else if(b.id==="saveShared"){saveW([...loadW(),...b.dataset.ids.split(",")]);if(!loadName()&&b.dataset.name)saveName(b.dataset.name);clearShared();renderNext();return}
-  else if(b.id==="closeShared"){clearShared();return}
-  else if(b.id==="rename"){const n=prompt("Name this watchlist (shows on shared links):",loadName());if(n===null)return;saveName(n.trim().slice(0,60))}
-  else if(b.id==="share"){const u=shareUrl();
-    (navigator.clipboard?navigator.clipboard.writeText(u):Promise.reject()).then(()=>b.textContent="Copied",()=>prompt("Copy this link:",u));return}
-  render()});
-q.addEventListener("input",renderSearch);render();renderNext();
+  AM.tick();renderLists();renderSearch();if(window.AMside)AMside()}
+function update(){renderLists();renderSearch();if(window.AMside)AMside();renderNext()}
+document.addEventListener("click",ev=>{const b=ev.target.closest("button");if(!b||b.closest("form,#welcome"))return;const l=LS.active();
+  if(b.dataset.add)LS.set((l||LS.create("My airports",[])).id,[b.dataset.add],true);
+  else if(b.dataset.rm&&l)LS.set(l.id,[b.dataset.rm],false);
+  else if(b.dataset.use)LS.use(b.dataset.use);
+  else if(b.id==="share"&&l)return AM.copy(LS.link(l),b);
+  else if(b.id==="rename"&&l)return AM.form(document.getElementById("nf"),{value:l.name},n=>{LS.rename(l.id,n);update()});
+  else if(b.id==="newlist")return AM.form(document.getElementById("nf"),{label:"Create",ph:"Name, e.g. Club SVFR or Bahamas trip"},n=>{LS.create(n,[]);update();q.focus()});
+  else if(b.id==="dellist"&&l)LS.remove(l.id);
+  else return;
+  update()});
+document.addEventListener("change",ev=>{if(ev.target.id==="addto"){LS.use(ev.target.value);update()}});
+q.addEventListener("input",renderSearch);
+addEventListener("storage",ev=>{if(ev.key==="amend.lists"||ev.key==="amend.list.on")update()});
+// Enter opens the top result
+q.addEventListener("keydown",ev=>{const a=ev.key==="Enter"&&r.querySelector(".wrow>a");if(a&&a.hasAttribute("href")){ev.preventDefault();location.href=a.getAttribute("href")}});
+renderLists();renderSearch();renderNext();
 """
 WELCOME_JS = r"""(()=>{const W=document.getElementById("welcome"),K="amend.watch.welcomed",P=new URLSearchParams(location.search);
 let seen=false;try{seen=!!localStorage.getItem(K)}catch(e){}
-if(P.has("w")||P.has("q")||(seen&&!P.has("welcome")))return;
+// a first visit only: not someone following a link, and not someone who already saved airports
+if(P.has("w")||P.has("q")||(!P.has("welcome")&&(seen||LS.union().length)))return;
 const steps=[...W.querySelectorAll(".step")],dots=[...W.querySelectorAll(".dots i")],intro=document.getElementById("intro");let i=0;
 const show=()=>{steps.forEach((s,j)=>s.hidden=j!==i);dots.forEach((d,j)=>d.classList.toggle("on",j===i));
   document.getElementById("wnext").textContent=i<steps.length-1?"Next":"Get started";document.getElementById("wskip").hidden=i===steps.length-1};
@@ -410,13 +449,31 @@ W.addEventListener("click",ev=>{const b=ev.target.closest("button");if(!b)return
 W.hidden=false;intro.hidden=true;show()})();
 """
 WATCH_JS = r"""const META=__META__,NAMES=__NAMES__,SEL=__PRI__,SRC=__SRC__;
-const P=new URLSearchParams(location.search),shared=parseW(P.get("w"));
-const ids=shared.length?shared:loadW();
-const NKEY="amend.watch.name",myName=(()=>{try{return localStorage.getItem(NKEY)||""}catch(e){return""}})();
-const listName=((shared.length?P.get("n"):myName)||"").slice(0,60);
-const isMine=!shared.length||(shared.length===loadW().length&&shared.every(x=>loadW().includes(x)));
-const out=document.getElementById("list");
-const cap=s=>s.charAt(0).toUpperCase()+s.slice(1);
+const P=new URLSearchParams(location.search),sname=(P.get("n")||"").trim().slice(0,60);let shared=parseW(P.get("w"));
+const $=id=>document.getElementById(id),out=$("list"),cap=s=>s.charAt(0).toUpperCase()+s.slice(1);
+const ICAO={};for(const k in NAMES)if(NAMES[k][0])ICAO[NAMES[k][0]]=k;
+// one of your lists (?l=, or a link to a list you already saved), a list someone shared (?w=), or the one in use
+let mine=LS.all().find(l=>l.id===P.get("l"))||(shared.length?LS.same(shared,sname):LS.active()),run=0;
+function say(t){$("lnote").textContent=t||"";$("lnote").hidden=!t}
+function head(){const ls=LS.all(),ids=mine?mine.ids:shared,name=mine?mine.name:sname||"Shared list";
+  // your own list keeps its whole share link in the address bar too
+  if(mine)history.replaceState(null,"","?l="+encodeURIComponent(mine.id)+"&w="+mine.ids.join(",")+"&n="+encodeURIComponent(mine.name)+location.hash);
+  document.body.dataset.list=mine?mine.id:"";
+  $("kind").textContent=mine?"Your list":ids.length?"Shared list":"Lists";
+  $("title").textContent=mine||ids.length?name:"Your lists";document.title=$("title").textContent+" · Amend";
+  $("count").textContent=ids.length?ids.length+" airport"+(ids.length==1?"":"s"):"";
+  $("ltabs").innerHTML=mine&&ls.length>1?'<nav class="seg tabs" aria-label="Your lists">'+ls.map(l=>'<a class="'+(l.id===mine.id?"on":"")+'" href="?l='+encodeURIComponent(l.id)+'">'+esc(l.name)+'<b>'+l.ids.length+'</b></a>').join("")+'</nav>':"";
+  $("actions").innerHTML=mine?(ids.length?'<button class="btn" id="copy">Copy share link</button>':'')+'<button class="btn'+(ids.length?' ghost':'')+'" id="addapt">Add airports</button>'
+    :ids.length?'<button class="btn" id="save">Save to my lists</button><button class="btn ghost" id="copy">Copy link</button>':'<a class="btn" href="../">Search airports</a>';
+  $("manage").innerHTML=mine?'<button class="lnk" id="rename">Rename</button><button class="lnk" id="newlist">New list</button><button class="lnk dim" id="del">Delete list</button>'
+    :ids.length?'':'<button class="lnk" id="newlist">Start a new list</button>';
+  // alerts: every airport has its own feed; one OPML file of the list shown adds them all to a news reader
+  const om=$("opml"),ot=esc(name);$("alerts").hidden=!ids.length;
+  if(om&&ids.length){if(om.href.startsWith("blob:"))URL.revokeObjectURL(om.href);
+    om.href=URL.createObjectURL(new Blob(['<?xml version="1.0" encoding="utf-8"?>\n<opml version="2.0"><head><title>'+ot+'</title></head><body><outline text="'+ot+'">'+
+    ids.map(id=>'<outline type="rss" text="'+id+' · Amend" xmlUrl="https://amend.watch/'+id+'/feed.xml" htmlUrl="https://amend.watch/'+id+'/"/>').join("")+
+    '</outline></body></opml>\n'],{type:"text/x-opml"}))}
+  if(window.AMside)AMside()}
 function changeHtml(c){const s=esc(cap(c.summary)).replace(/ -&gt; /g," → ");
   let m="";const ch=c.chart||{};
   if(ch.amdt)m+='<span class="ann fyi plain">'+(["0","ORIG"].includes(ch.amdt.toUpperCase())?"Original":"Amdt "+esc(ch.amdt))+'</span>';
@@ -427,37 +484,61 @@ function changeHtml(c){const s=esc(cap(c.summary)).replace(/ -&gt; /g," → ");
   else if(c.details&&c.details.length)more='<details class="more"><summary>Details</summary><pre>'+c.details.map(d=>esc(d).replace(/ -&gt; /g," → ")).join("\n")+'</pre></details>';
   return '<div class="it p-'+esc(c.priority)+'" data-id="'+esc(c.id)+'"><span class="k">'+esc(cap(c.category))+'</span><div class="s">'+s+more+'</div><div class="m">'+m+'</div></div>'}
 async function load(id){try{const r=await fetch("../latest/"+id+".json");return r.ok?await r.json():null}catch(e){return null}}
-(async()=>{
-  if(!ids.length){out.innerHTML='<div class="card box note">Your watchlist is empty. Add airports on the <a href="../">search page</a>.</div>';return}
-  document.getElementById("count").textContent=ids.length+" airport"+(ids.length==1?"":"s");
-  document.getElementById("title").textContent=listName||(isMine?"Your watchlist":"Shared watchlist");
-  if(listName)document.title=listName+" · Amend watchlist";
-  const link=new URL("?w="+ids.join(",")+(listName?"&n="+encodeURIComponent(listName):""),location.href).href;
-  document.getElementById("actions").innerHTML=(isMine?'':'<button class="btn" id="add">Add to my watchlist</button>')+
-    '<button class="btn'+(isMine?'':' ghost')+'" id="copy">Copy link</button><a class="btn ghost" href="../">Search all airports</a>';
-  document.addEventListener("click",ev=>{const b=ev.target.closest("button");if(!b)return;
-    if(b.id==="add"){const l=[...new Set([...loadW(),...ids])];try{localStorage.setItem(KEY,JSON.stringify(l));
-      if(!myName&&listName)localStorage.setItem(NKEY,listName)}catch(e){}b.textContent="Added";b.disabled=true}
-    if(b.id==="copy"){(navigator.clipboard?navigator.clipboard.writeText(link):Promise.reject()).then(()=>b.textContent="Copied",()=>prompt("Copy this link:",link))}});
-  const data=await Promise.all(ids.map(load));
+async function body(){const my=++run,ids=mine?mine.ids:shared;
+  if(!ids.length){out.innerHTML='<div class="card box note">'+(mine?'No airports on '+esc(mine.name)+' yet. Tap <b>Add airports</b> above, or search on the <a href="../">home page</a> and tap <b>+</b>.'
+    :'You don’t have any lists yet. <a href="../">Search for an airport</a> and tap <b>+</b> to start one. Lists are saved in this browser, and you can share each one as a link.')+'</div>';return}
+  if(!out.querySelector("details"))out.innerHTML='<div class="note">Loading…</div>';
+  const data=await Promise.all(ids.map(load));if(my!==run)return;
   const items=ids.map((id,i)=>({id,d:data[i]})).sort((a,b)=>((b.d&&b.d.counts.action)||0)-((a.d&&a.d.counts.action)||0));
-  out.innerHTML=items.map(({id,d})=>{const n=NAMES[id]||[];const k=d?[d.counts.action,d.counts.ifr,d.counts.fyi]:null;
+  out.innerHTML=items.map(({id,d})=>{const n=NAMES[id],k=d?[d.counts.action,d.counts.ifr,d.counts.fyi]:null;
     const body=d?SEL.map(([p,t])=>{const g=d.changes.filter(c=>c.priority===p);return g.length?'<section class="lst"><div class="gh"><span><span class="dot d-'+p+'"></span>'+t+'</span><span class="n">'+g.length+'</span></div>'+g.map(changeHtml).join("")+'</section>':""}).join("")
-             :'<div class="note">No changes in this cycle.</div>';
-    return '<details class="apt" data-apt="'+esc(id)+'" '+(d?"open":"")+'><summary class="card apthead"><span><span class="rid">'+esc(id)+'</span> <span class="rname">'+esc(n[1]||"")+'</span></span>'+chipsHtml(k)+'</summary>'+body+'<p class="foot"><a href="../'+esc(id)+'/">Full page and history ›</a></p></details>'}).join("");
-  out.querySelectorAll("details.apt").forEach(x=>{const r=AM.mark(x,x.dataset.apt,META.to_cycle),c=x.querySelector("summary .chips");
-    if(r.n&&c)c.insertAdjacentHTML("afterbegin",AM.pill(r.n))});
-})();
+      :'<div class="note">'+(n?'No changes in this cycle.':'Amend doesn’t know this airport ID: it isn’t in the FAA’s airport data.')+'</div>';
+    const links=[n||d?'<a href="../'+esc(id)+'/">Full page and history ›</a>':'',mine?'<button class="lnk" data-rm="'+esc(id)+'">Remove from list</button>':''].filter(Boolean).join(" · ");
+    return '<details class="apt" data-apt="'+esc(id)+'"'+(d?" open":"")+'><summary class="card apthead"><span><span class="rid">'+esc(id)+'</span> <span class="rname">'+esc(n?n[1]:"Unknown airport ID")+'</span></span>'+
+      (n||d?chipsHtml(k):'<span class="chips"><span class="ann plain">Not found</span></span>')+'</summary>'+body+(links?'<p class="foot">'+links+'</p>':'')+'</details>'}).join("");
+  out.querySelectorAll("details.apt").forEach(x=>{const r=AM.mark(x,x.dataset.apt,META.to_cycle),c=x.querySelector("summary .chips");if(r.n&&c)c.insertAdjacentHTML("afterbegin",AM.pill(r.n))});
+  if(window.AMside)AMside()}
+// "DAB, komn PHNL" -> the airport ids Amend knows, plus whatever didn't match
+function airports(v){const ok=[],bad=[];for(const t of v.toUpperCase().split(/[\s,;]+/).filter(Boolean)){
+  const id=NAMES[t]?t:ICAO[t]||(NAMES[t.replace(/^K(?=[A-Z]{3}$)/,"")]?t.slice(1):"");id?ok.push(id):bad.push(t)}return{ok:[...new Set(ok)],bad}}
+document.addEventListener("click",ev=>{const b=ev.target.closest("button");if(!b||b.closest("form"))return;
+  if(b.id==="copy")AM.copy(mine?LS.link(mine):new URL("?w="+shared.join(",")+(sname?"&n="+encodeURIComponent(sname):""),location.href).href,b);
+  else if(b.id==="save"){mine=LS.same(shared,sname)||LS.create(sname||"Shared list",shared);LS.use(mine.id);say("Saved to your lists as “"+mine.name+"”.");head();body()}
+  else if(b.id==="addapt")AM.form($("nf"),{label:"Add",ph:"Airport IDs, e.g. DAB OMN KSFB",aria:"Airport IDs to add",max:600},v=>{const{ok,bad}=airports(v),had=ok.filter(x=>mine.ids.includes(x)),add=ok.filter(x=>!had.includes(x));
+    if(add.length){const l=LS.set(mine.id,add,true);if(!l)return gone();mine=l}const got=add.filter(x=>mine.ids.includes(x)),full=add.filter(x=>!got.includes(x)),few=a=>a.length>8?a.length+" airports":a.join(", ");
+    say([got.length?"Added "+few(got)+".":"",had.length?"Already on it: "+few(had)+".":"",full.length?"A list holds up to 200 airports, so "+few(full)+" didn’t fit.":"",
+      bad.length?"Not found: "+bad.join(", ")+".":""].filter(Boolean).join(" "));head();body()});
+  else if(b.id==="rename")AM.form($("nf"),{value:mine.name},n=>{const l=LS.rename(mine.id,n);if(!l)return gone();mine=l;head()});
+  else if(b.id==="newlist")AM.form($("nf"),{label:"Create",ph:"Name, e.g. Club SVFR or Bahamas trip"},n=>{mine=LS.create(n,[]);say("");head();body();$("addapt").click()});
+  else if(b.id==="del"&&confirm("Delete “"+mine.name+"”? This can’t be undone.")){LS.remove(mine.id);say("");gone()}
+  else if(b.dataset.rm&&mine){const l=LS.set(mine.id,[b.dataset.rm],false);if(!l)return gone();mine=l;const d=b.closest("details");if(d)d.remove();head();if(!mine.ids.length)body()}});
+// after a delete, here or in another tab: show the list in use now, or none
+function gone(){mine=LS.active();shared=[];if(!mine)history.replaceState(null,"",location.pathname);head();body()}
+// the same list changed in another tab
+addEventListener("storage",ev=>{if(ev.key!=="amend.lists"||!mine)return;const l=LS.all().find(x=>x.id===mine.id);
+  if(!l)gone();else if(JSON.stringify(l)!==JSON.stringify(mine)){mine=l;head();body()}});
+if(mine)LS.use(mine.id);
+// a link to airports you already keep under another name opens your list; say so
+if(mine&&shared.length&&sname&&mine.id!==P.get("l")&&mine.name!==sname)say("You already have these airports as “"+mine.name+"”.");
+head();body();
 """
-# every page, before anything else runs: what this browser has already seen (for "New" labels) and the
-# countdown to the next 0901Z changeover. First look at an airport marks nothing, it only remembers.
-SEEN_JS = r"""var AM=(()=>{const STALE=__STALE__,K="amend.seen",NC="amend.newc",SH="amend.newshown";
+# the named-list page (/list/<slug>/): save it to your lists in one tap, or copy its link
+NAMED_JS = r"""(()=>{const b=document.getElementById("savenamed"),c=document.getElementById("copynamed"),ids=b.dataset.ids.split(","),name=b.dataset.name;
+const paint=()=>{const l=LS.same(ids,name);if(l){b.textContent="✓ Saved to your lists";b.href="../?l="+encodeURIComponent(l.id);b.classList.add("ghost")}};
+b.addEventListener("click",ev=>{if(LS.same(ids,name))return;ev.preventDefault();LS.create(name,ids);paint();if(window.AMside)AMside()});
+paint();c.hidden=false;c.addEventListener("click",()=>AM.copy(location.href.split(/[?#]/)[0],c))})();
+"""
+# every page loads this first, as assets/app.js: what this browser has already seen (for "New" labels), the countdown
+# to the next 0901Z changeover, the lists saved in this browser, and the page chrome (the sidebar's lists, the
+# add-to-list menu on airport pages, share, / to search, filter tabs, opening a linked history cycle)
+APP_JS = r"""var esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+var AM=(()=>{const STALE=__STALE__,K="amend.seen",NC="amend.newc",SH="amend.newshown";
 const rd=(k,st)=>{try{return JSON.parse((st||localStorage).getItem(k)||"{}")||{}}catch(e){return{}}};
 const wr=(k,v,st)=>{try{(st||localStorage).setItem(k,JSON.stringify(v))}catch(e){}};
-// items: [{id, c: cycle}]. new = not seen before and from a cycle at or after the last look.
+// items: [{id, c: cycle}]. new = not seen before and from a cycle at or after the last look. First look marks nothing.
 function look(apt,items,cyc,save){const all=rd(K),prev=all[apt],shown=rd(SH,sessionStorage),sh=new Set(shown[apt]||[]),nw=new Set();
   if(prev){const ids=new Set(prev.ids||[]);for(const x of items)if(sh.has(x.id)||(x.c>=prev.c&&!ids.has(x.id)))nw.add(x.id)}
-  if(save!==false){all[apt]={c:cyc,t:Date.now(),ids:items.filter(x=>x.c>=cyc).map(x=>x.id).slice(0,400)};wr(K,all);
+  if(save!==false){all[apt]={c:cyc,t:Date.now(),ids:[...new Set(items.filter(x=>x.c>=cyc).map(x=>x.id))].slice(0,400)};wr(K,all);
     shown[apt]=[...nw];wr(SH,shown,sessionStorage);const nc=rd(NC);if(apt in nc){delete nc[apt];wr(NC,nc)}}
   return{nw,prev}}
 function base(apt,items,cyc){const all=rd(K);if(!all[apt]){all[apt]={c:cyc,t:Date.now(),ids:items.map(x=>x.id)};wr(K,all)}}
@@ -477,28 +558,86 @@ function fresh(){document.querySelectorAll("time[data-ago]").forEach(t=>{t.textC
     ago(age)+'. Amend’s daily update may have stopped, so newer FAA changes might be missing. Check the official FAA sources before you fly.</span>';st.hidden=false}}}
 function tick2(){tick();fresh()}
 setInterval(tick2,15000);
-return{look,base,mark,pill,tick:tick2,newc:()=>rd(NC),setNewc:m=>wr(NC,m)}})();
-"""
-# every page: the sidebar watchlist, the / shortcut, filter tabs on airport pages, opening a linked history cycle
-SHELL_JS = r"""(()=>{const R=document.body.dataset.root||"",B=document.body.dataset,el=document.getElementById("sbw");
-const loadL=()=>{try{return[...new Set(JSON.parse(localStorage.getItem("amend.watch")||"[]"))].filter(x=>/^[A-Z0-9]{2,4}$/.test(x))}catch(e){return[]}};
+function copy(u,b){(navigator.clipboard?navigator.clipboard.writeText(u):Promise.reject()).then(()=>{if(!b)return;const t=b.textContent;
+  b.textContent="Copied";setTimeout(()=>{b.textContent=t},1500)},()=>prompt("Copy this link:",u))}
+// a one-line form in place of prompt(): done(value) on submit, back() on cancel
+function form(el,o,done,back){el.innerHTML='<form class="nf"><input maxlength="'+(o.max||60)+'" required autocomplete="off" aria-label="'+esc(o.aria||"List name")+
+  '" placeholder="'+esc(o.ph||"List name")+'"><button class="btn">'+esc(o.label||"Save")+'</button><button type="button" class="btn ghost">Cancel</button></form>';
+  el.hidden=false;const f=el.firstChild,i=f.firstChild,shut=()=>{el.innerHTML="";el.hidden=true},x=()=>{shut();if(back)back()};
+  i.value=o.value||"";i.focus();i.select();
+  f.addEventListener("submit",ev=>{ev.preventDefault();const v=i.value.trim();if(v){shut();done(v)}});
+  f.lastChild.addEventListener("click",x);i.addEventListener("keydown",ev=>{if(ev.key==="Escape"){ev.stopPropagation();x()}})}
+return{look,base,mark,pill,tick:tick2,newc:()=>rd(NC),setNewc:m=>wr(NC,m),copy,form}})();
+// the lists saved in this browser: amend.lists = [{id, name, ids}], the one in use in amend.list.on. amend.watch was
+// the single watchlist before there were lists; the first visit turns it (and its name) into the first list, and it
+// keeps every saved airport after that, so nothing still reading it comes up empty
+var LS=(()=>{const K="amend.lists",ON="amend.list.on",OLD="amend.watch";
+const get=k=>{try{return localStorage.getItem(k)}catch(e){return null}};
+const ok=x=>/^[A-Z0-9]{2,4}$/.test(x),hash=s=>{let x=5381;for(let i=0;i<s.length;i++)x=(x*33^s.charCodeAt(i))>>>0;return x.toString(36)};
+const clean=l=>({id:String(l.id),name:String(l.name||"").trim().slice(0,60)||"Untitled list",
+  ids:[...new Set((Array.isArray(l.ids)?l.ids:[]).map(String))].filter(ok).slice(0,200)});
+function write(ls){try{localStorage.setItem(K,JSON.stringify(ls));localStorage.setItem(OLD,JSON.stringify([...new Set(ls.flatMap(l=>l.ids))]))}catch(e){}}
+function all(){let v=null;try{v=JSON.parse(get(K))}catch(e){}
+  if(Array.isArray(v))return v.filter(l=>l&&l.id).map(clean);
+  let old=[];try{old=JSON.parse(get(OLD)||"[]")}catch(e){}
+  // its id comes from what's on it: the same on every read even if saving fails, and not the same for everyone
+  const nm=get(OLD+".name")||"My airports",ls=Array.isArray(old)&&old.length?[clean({id:"w"+hash(old.join()+"|"+nm),name:nm,ids:old})]:[];
+  if(ls.length)write(ls);return ls}
+const uid=ls=>{let i;do{i=Math.random().toString(36).slice(2,8)}while(!i||ls.some(l=>l.id===i));return i};
+function uname(ls,n,skip){n=String(n||"").trim().slice(0,60)||"My airports";let m=n,k=2;
+  while(ls.some(l=>l.id!==skip&&l.name.toLowerCase()===m.toLowerCase()))m=n.slice(0,56)+" "+k++;return m}
+function active(){const ls=all();return ls.find(l=>l.id===get(ON))||ls[0]||null}
+function use(id){try{localStorage.setItem(ON,id)}catch(e){}}
+function create(name,ids){const ls=all(),l=clean({id:uid(ls),name:uname(ls,name),ids:ids||[]});ls.push(l);write(ls);use(l.id);return l}
+function edit(id,fn){const ls=all(),l=ls.find(x=>x.id===id);if(!l)return null;fn(l,ls);const out=ls.map(clean);write(out);return out.find(x=>x.id===id)}
+const rename=(id,n)=>edit(id,(l,ls)=>{l.name=uname(ls,n,id)});
+const set=(id,apts,on)=>edit(id,l=>{l.ids=on?[...l.ids,...apts]:l.ids.filter(x=>!apts.includes(x))});
+function remove(id){const ls=all().filter(l=>l.id!==id);write(ls);if(get(ON)===id&&ls[0])use(ls[0].id)}
+const union=()=>[...new Set(all().flatMap(l=>l.ids))];
+// a saved list with exactly these airports, the same name first
+function same(ids,name){const s=new Set(ids),m=all().filter(l=>l.ids.length===s.size&&l.ids.every(x=>s.has(x)));return m.find(l=>l.name===name)||m[0]||null}
+const link=l=>new URL((document.body.dataset.root||"")+"list/?w="+l.ids.join(",")+"&n="+encodeURIComponent(l.name),location.href).href;
+return{all,active,use,create,rename,set,remove,union,same,link}})();
+addEventListener("DOMContentLoaded",()=>{const R=document.body.dataset.root||"",B=document.body.dataset,el=document.getElementById("sbw");
+const short=(s,n)=>s.length>n?s.slice(0,n-1)+"…":s;
 // airport pages and named lists: label what's new since the last visit, then remember this visit
 document.querySelectorAll("[data-look]").forEach(x=>{const r=AM.mark(x,x.dataset.look,B.cyc);
   const s=x.querySelector(":scope>summary .chips");if(r.n&&s)s.insertAdjacentHTML("afterbegin",AM.pill(r.n));
   const nn=document.getElementById("newnote");if(nn&&r.n&&r.prev){nn.innerHTML=AM.pill(r.n)+"<span>"+(r.n==1?"change":"changes")+
     " since you last looked here on "+new Date(r.prev.t).toLocaleDateString(undefined,{day:"numeric",month:"short"})+".</span>";nn.hidden=false}});
-function side(){const w=loadL(),nc=AM.newc();if(!el)return;el.innerHTML=w.length?'<div class="sbh">Your watchlist</div>'+w.slice(0,15).map(id=>'<a class="sbi'+(id===el.dataset.on?' on':'')+'" href="'+R+id+'/"><b>'+id+'</b>'+(nc[id]?AM.pill(nc[id]):'')+'</a>').join("")+
-  '<a class="sbi sub" href="'+R+'list/">'+(w.length>15?'All '+w.length+' airports ›':'View all changes ›')+'</a>':""}
-side();window.AMside=side;addEventListener("storage",side);
-// airport pages: add to / remove from the watchlist, and share
-const wb=document.getElementById("wbtn");
-if(wb){const id=wb.dataset.apt,paint=()=>{const on=loadL().includes(id);wb.textContent=on?"✓ On your watchlist":"+ Add to watchlist";wb.classList.toggle("ghost",on)};
-  wb.hidden=false;paint();wb.addEventListener("click",()=>{const l=loadL(),on=l.includes(id);
-    try{localStorage.setItem("amend.watch",JSON.stringify(on?l.filter(x=>x!==id):[...l,id]))}catch(e){}paint();side()})}
+// the sidebar: every list, with the airports of the one in use
+function side(){if(!el)return;const ls=LS.all(),on=LS.active(),nc=AM.newc();
+  el.innerHTML=ls.length?'<div class="sbh">Your lists</div>'+ls.map(l=>{const cur=l.id===on.id,n=l.ids.reduce((s,x)=>s+(nc[x]||0),0);
+    return '<a class="sbi'+(l.id===B.list?' on':'')+'" href="'+R+'list/?l='+encodeURIComponent(l.id)+'"><span class="nm">'+esc(l.name)+'</span>'+(n&&!cur?AM.pill(n):'<span class="n">'+l.ids.length+'</span>')+'</a>'+
+      (cur?l.ids.slice(0,12).map(x=>'<a class="sbi apt'+(x===el.dataset.on?' on':'')+'" href="'+R+x+'/"><b>'+x+'</b>'+(nc[x]?AM.pill(nc[x]):'')+'</a>').join("")+
+        (l.ids.length>12?'<a class="sbi apt sub" href="'+R+'list/?l='+encodeURIComponent(l.id)+'">All '+l.ids.length+' airports ›</a>':''):'')}).join(""):""}
+// airport pages: put this airport on your lists. With one list the button adds it straight away; the menu does the rest
+const wb=document.getElementById("wbtn"),wm=document.getElementById("wmenu");let paint=()=>{};
+if(wb&&wm){const apt=wb.dataset.apt;
+  paint=()=>{const ls=LS.all(),on=ls.filter(l=>l.ids.includes(apt));
+    wb.textContent=on.length?"✓ On "+(on.length>1?on.length+" lists":short(on[0].name,26)):"+ Add to list";
+    wb.classList.toggle("ghost",on.length>0);wb.classList.toggle("dd",on.length>0||ls.length>1)};
+  const close=()=>{wm.hidden=true;wb.setAttribute("aria-expanded","false")};
+  const menu=()=>{wm.innerHTML='<div class="mh">Lists with '+esc(apt)+'</div>'+LS.all().map(l=>'<label class="mi"><input type="checkbox" data-l="'+esc(l.id)+'"'+
+    (l.ids.includes(apt)?" checked":"")+'><span class="nm">'+esc(l.name)+'</span><span class="n">'+l.ids.length+'</span></label>').join("")+
+    '<div id="wnew"><button type="button" class="mi add">+ New list</button></div>';wm.hidden=false;wb.setAttribute("aria-expanded","true")};
+  wb.hidden=false;paint();
+  wb.addEventListener("click",()=>{if(!wm.hidden)return close();const ls=LS.all();
+    if(!ls.length)LS.create("My airports",[apt]);
+    else if(ls.length===1&&!ls[0].ids.includes(apt))LS.set(ls[0].id,[apt],true);
+    else return menu();
+    paint();side()});
+  wm.addEventListener("change",ev=>{const c=ev.target.closest("input[data-l]"),l=c&&LS.set(c.dataset.l,[apt],c.checked);
+    if(l)c.parentNode.querySelector(".n").textContent=l.ids.length;paint();side()});
+  wm.addEventListener("click",ev=>{ev.stopPropagation();if(ev.target.closest(".add"))AM.form(document.getElementById("wnew"),{label:"Create",ph:"New list name"},
+    n=>{LS.create(n,[apt]);paint();side();menu()},menu)});
+  document.addEventListener("click",ev=>{if(!wm.hidden&&ev.target!==wb&&!wm.contains(ev.target))close()});
+  addEventListener("keydown",ev=>{if(ev.key==="Escape"&&!wm.hidden){close();wb.focus()}})}
+side();window.AMside=side;addEventListener("storage",()=>{side();paint()});
 const sb=document.getElementById("sharebtn");
 if(sb){sb.hidden=false;sb.addEventListener("click",()=>{const u=location.href.split("#")[0];
-  if(navigator.share)navigator.share({title:document.title,url:u}).catch(()=>{});
-  else(navigator.clipboard?navigator.clipboard.writeText(u):Promise.reject()).then(()=>sb.textContent="Copied",()=>prompt("Copy this link:",u))})}
+  if(navigator.share)navigator.share({title:document.title,url:u}).catch(()=>{});else AM.copy(u,sb)})}
+document.querySelectorAll("button[data-copy]").forEach(b=>{b.hidden=false;b.addEventListener("click",()=>AM.copy(b.dataset.copy,b))});
 addEventListener("keydown",e=>{if(e.key!=="/"||/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName))return;
   const i=[document.getElementById("q"),document.getElementById("sq")].find(x=>x&&x.offsetParent);if(i){e.preventDefault();i.focus()}});
 document.querySelectorAll(".seg a[data-f]").forEach(a=>a.addEventListener("click",ev=>{ev.preventDefault();const f=a.dataset.f;
@@ -507,8 +646,11 @@ document.querySelectorAll(".seg a[data-f]").forEach(a=>a.addEventListener("click
 const open=()=>{const t=location.hash&&document.getElementById(decodeURIComponent(location.hash.slice(1)));if(t&&t.tagName==="DETAILS")t.open=true};
 addEventListener("hashchange",open);open();AM.tick();
 // printing a briefing: show every airport on a list, not just the open ones
-addEventListener("beforeprint",()=>document.querySelectorAll("details.apt").forEach(d=>d.open=true))})();
+addEventListener("beforeprint",()=>document.querySelectorAll("details.apt").forEach(d=>d.open=true))});
 """
+STALE_HOURS = 36   # the update runs daily; past this the page says so instead of looking current
+APP = APP_JS.replace("__STALE__", str(STALE_HOURS))
+APP_VERSION = hashlib.sha1(APP.encode()).hexdigest()[:10]   # like CSS_VERSION: new pages never run an old cached app.js
 
 
 def e(s):
@@ -610,6 +752,27 @@ def legend(root):
     return f'<div class="legend">{keys}<a href="{root}guide/">What do these mean?</a></div>'
 
 
+def alerts_box(feed_url, what, tag=None):
+    """rail card: the RSS feed for an airport or list, plus email. tag (named lists only) turns on the email
+    form once EMAIL_FORM is set; everywhere else, point at a service where pilots can email themselves a feed."""
+    if tag and EMAIL_FORM:
+        email = (f'<form action="{e(EMAIL_FORM)}" method="post" target="_blank">'
+                 '<input type="email" name="email" required placeholder="you@example.com" aria-label="Email address">'
+                 f'<input type="hidden" name="tag" value="{e(tag)}"><input type="hidden" name="embed" value="1">'
+                 '<button class="btn" type="submit">Email me</button></form>'
+                 f'<p class="foot">One email per FAA cycle when something changes at {e(what)}. Unsubscribe anytime.</p>')
+    elif SELF_SERVE_EMAIL:
+        email = (f'<p class="foot">Rather have email? Paste the feed link into a free RSS-to-email service like '
+                 f'<a href="{e(SELF_SERVE_EMAIL)}" target="_blank" rel="noopener">Feedrabbit</a>.</p>')
+    else:
+        email = ""
+    return (f'<div class="card box alerts" id="alerts"><h3>Get alerts</h3><p class="note">One update each FAA cycle '
+            f'with what changes at {e(what)}, action items first. Add the feed to any news reader'
+            f'{" or get it by email" if tag and EMAIL_FORM else ""}.</p>'
+            f'<div class="btns"><a class="btn" href="{e(feed_url)}" type="application/rss+xml">RSS feed</a>'
+            f'<button class="btn ghost" data-copy="{e(feed_url)}" hidden>Copy feed link</button></div>{email}</div>')
+
+
 def tier_rows(full):
     """ACT / IFR / FYI / No change with what each means; the guide's version adds an example."""
     rows = []
@@ -640,11 +803,12 @@ def head_links(root, url):
 
 
 def sidebar(root, active, meta=None, now=None, on=""):
-    """desktop sidebar (and the phone top bar): search, pages, this browser's watchlist, the cycle."""
+    """desktop sidebar (and the phone top bar): search, pages, the lists saved in this browser, the cycle."""
     link = lambda href, text, key: f'<a class="sbi{" on" if key == active else ""}" href="{root}{href}">{text}</a>'
     search = "" if active == "home" else (
         f'<form class="search" action="{root}" method="get" role="search"><input id="sq" name="q" '
-        f'placeholder="Search airports" aria-label="Search airports" autocomplete="off"><kbd>/</kbd></form>')
+        f'placeholder="Search airports" aria-label="Search airports" autocomplete="off"><kbd>/</kbd>'
+        f'<input type="hidden" name="go" value="1"></form>')   # go: an exact ID opens that airport
     cyc = ""
     if meta:
         upcoming, _ = status(meta, now or dt.datetime.now(dt.timezone.utc))
@@ -656,7 +820,7 @@ def sidebar(root, active, meta=None, now=None, on=""):
                     f'<span class="ann ifr">Upcoming</span></div>')
         cyc += f'<div class="sbi sub fresh">Updated {built_at(now or dt.datetime.now(dt.timezone.utc))}</div>'
     side = (f'<nav class="sb" aria-label="Site">{logo(root)}{search}'
-            f'<div class="sbh">Browse</div>{link("", "Airports", "home")}{link("list/", "Watchlist", "list")}'
+            f'<div class="sbh">Browse</div>{link("", "Airports", "home")}{link("list/", "Lists", "list")}'
             f'{link("guide/", "Guide", "guide")}{link("about/", "About", "about")}'
             f'<div id="sbw" data-on="{e(on)}"></div>{cyc}'
             f'<div class="sbfoot">Not for navigation. Independent, not affiliated with the FAA.<br>'
@@ -664,14 +828,15 @@ def sidebar(root, active, meta=None, now=None, on=""):
             f'<a href="{REPO_URL}">Source</a></div></nav>')
     nav = lambda href, text, key: f'<a class="{"on" if key == active else ""}" href="{root}{href}">{text}</a>'
     top = (f'<header class="mtop">{logo(root)}<nav class="nav">'
-           f'{nav("", "Search", "home")}{nav("guide/", "Guide", "guide")}{nav("about/", "About", "about")}</nav></header>')
+           f'{nav("", "Search", "home")}{nav("list/", "Lists", "list")}{nav("guide/", "Guide", "guide")}'
+           f'{nav("about/", "About", "about")}</nav></header>')
     if meta:
         top += f'<div class="pfresh fresh">{freshness(meta, now or dt.datetime.now(dt.timezone.utc))}</div>'
     return side + top
 
 
 def page(title, description, url, body, root, og_title=None, image=None, active="", meta=None, now=None,
-         two=False, on=""):
+         two=False, on="", feed=None, head=""):
     img = (f'<meta property="og:image" content="{e(image)}"><meta property="og:image:width" content="1200">'
            f'<meta property="og:image:height" content="630"><meta name="twitter:card" content="summary_large_image">'
            if image else '<meta name="twitter:card" content="summary">')
@@ -685,13 +850,13 @@ def page(title, description, url, body, root, og_title=None, image=None, active=
 <meta name="theme-color" content="#F6F8FA" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#09121C" media="(prefers-color-scheme: dark)">
 {head_links(root, url)}
-<link rel="stylesheet" href="{root}assets/style.css?v={CSS_VERSION}">
-</head><body data-root="{root}" data-cyc="{e(meta['to_cycle'] if meta else '')}" data-built="{(now or dt.datetime.now(dt.timezone.utc)):%Y-%m-%dT%H:%M:%SZ}"><script>{SEEN_JS.replace("__STALE__", str(STALE_HOURS))}</script><div class="app">{sidebar(root, active, meta, now, on)}
+<link rel="stylesheet" href="{root}assets/style.css?v={CSS_VERSION}">{
+f'<link rel="alternate" type="application/rss+xml" title="{e(feed[1])}" href="{e(feed[0])}">' if feed else ""}{head}
+</head><body data-root="{root}" data-cyc="{e(meta['to_cycle'] if meta else '')}" data-built="{(now or dt.datetime.now(dt.timezone.utc)):%Y-%m-%dT%H:%M:%SZ}"><script src="{root}assets/app.js?v={APP_VERSION}"></script><div class="app">{sidebar(root, active, meta, now, on)}
 <main class="main{' two' if two else ''}"><div class="card banner stale full" id="stale" hidden></div>{body}
 <p class="foot full">{freshness(meta, now or dt.datetime.now(dt.timezone.utc))}{'. ' if meta else ''}Not for navigation. Always use official FAA publications, NOTAMs and a proper preflight briefing.
 Amend is independent and not affiliated with the FAA. Data: FAA NASR and d-TPP.
-<a href="{root}about/#how">How it works</a> · <a href="{root}about/#privacy">Privacy</a> · <a href="{REPORT_URL}">Report a problem</a> · <a href="{REPO_URL}">Source</a></p></main></div>
-<script>{SHELL_JS}</script></body></html>"""
+<a href="{root}about/#how">How it works</a> · <a href="{root}about/#privacy">Privacy</a> · <a href="{REPORT_URL}">Report a problem</a> · <a href="{REPO_URL}">Source</a></p></main></div></body></html>"""
 
 
 def effective(cycle):
@@ -710,9 +875,6 @@ def countdown(when):
     """a <time> the page script turns into "in 3d 14h 22m"; without scripts it reads "01 Oct 0901Z"."""
     iso = when.strftime("%Y-%m-%dT%H:%M:00Z")
     return f'<time datetime="{iso}" data-until="{iso}">{when:%d %b} 0901Z</time>'
-
-
-STALE_HOURS = 36   # the update runs daily; past this the page says so instead of looking current
 
 
 def built_at(when):
@@ -768,14 +930,18 @@ def airport_page(apt, info, latest, hist, meta, now, has_card=False):
     by_cycle = {}
     for x in (hist or {}).get("entries", []):
         by_cycle.setdefault(x["cycle"], []).append(x)
-    cycles = sorted(by_cycle, reverse=True)
+    # once a cycle is in effect the daily job adds it to history too; it's already the list at the top, so the
+    # history starts with the cycle before (and the top list, made with today's rules, is the one to trust)
+    cycles = sorted((c for c in by_cycle if c != meta["to_cycle"]), reverse=True)
 
     icao = f' <span class="icao">{e(info["icao"])}</span>' if info.get("icao") and info.get("icao") != apt else ""
     eyebrow = " · ".join(x for x in (loc, f"{'Upcoming ' if upcoming else ''}{nice(meta['to_cycle'])} cycle") if x)
     body = [f'<header class="full"><div class="eyebrow">{e(eyebrow)}</div><h1>{e(apt)}{icao}</h1>'
             + (f'<div class="aname">{e(name)}</div>' if name else "")
-            + f'<div class="btns"><button class="btn" id="wbtn" data-apt="{e(apt)}" hidden>+ Add to watchlist</button>'
-            '<button class="btn ghost" id="sharebtn" hidden>Share</button></div></header>']
+            + f'<div class="btns"><span class="addw"><button class="btn" id="wbtn" data-apt="{e(apt)}" hidden '
+            'aria-haspopup="true" aria-expanded="false">+ Add to list</button><div class="menu card" id="wmenu" hidden></div></span>'
+            '<button class="btn ghost" id="sharebtn" hidden>Share</button>'
+            '<a class="btn ghost" href="#alerts">Get alerts</a></div></header>']
     state = (f'<span class="ann {"ifr" if upcoming else "ok"}">{"Not in effect yet" if upcoming else "In effect"}</span>')
     if changes:
         seg = [f'<a class="on" href="#action" data-f="all">All<b>{len(changes)}</b></a>'] + \
@@ -805,7 +971,8 @@ def airport_page(apt, info, latest, hist, meta, now, has_card=False):
             f'<div class="kv"><span>Compared to</span><span>{nice(meta["from_cycle"])}</span></div>'
             f'<div class="kv"><span>{"Takes effect" if upcoming else "Next cycle"}</span>'
             f'<span>{countdown(next_changeover(meta, now)[0])}</span></div>'
-            f'<div class="kv"><span>Updated</span><span class="fresh">{built_at(now)}</span></div></div>']
+            f'<div class="kv"><span>Updated</span><span class="fresh">{built_at(now)}</span></div></div>',
+            alerts_box(f"{SITE_URL}{apt}/feed.xml", apt)]
     src = lambda href, text: f'<a class="hrow" href="{href}" target="_blank" rel="noopener"><span>{text}</span><span>↗</span></a>'
     rail.append('<div class="card box"><h3>Check the official source</h3>'
                 + src(SUPPLEMENT_SEARCH, f"Chart Supplement (search {e(apt)})") + src(DTPP_SEARCH, "Approach plates (d-TPP)")
@@ -823,7 +990,7 @@ def airport_page(apt, info, latest, hist, meta, now, has_card=False):
     image = (f"{SITE_URL}{apt}/card.png" if has_card
              else f"{SITE_URL}assets/nochange.png" if not changes else f"{SITE_URL}assets/card.png")
     return page(title, desc, f"{SITE_URL}{apt}/", "".join(body), "../", og_title, image, meta=meta, now=now,
-                two=True, on=apt)
+                two=True, on=apt, feed=(f"{SITE_URL}{apt}/feed.xml", f"{apt} changes each FAA cycle"))
 
 
 def landing_note(meta, now, upcoming):
@@ -865,9 +1032,9 @@ def index_page(meta, directory, latest, pages, now):
                + step("How to read it", tier_rows(False) + "<p>Remarks are the FAA's free-text airport notes. "
                       "They're translated to plain English, and the original FAA text is always one tap away.</p>"
                       '<p><a href="guide/">Read the full guide ›</a></p>')
-               + step("Set up", "<p>Search for your home field and tap <b>+</b> to add it to your watchlist, then add "
-                      "the other airports you fly to. The list is saved in this browser, and you can share it as one "
-                      "link with your flight school or club.</p>"
+               + step("Set up", "<p>Search for your home field and tap <b>+</b> to add it to a list, then add the "
+                      "other airports you fly to. Lists are saved in this browser. Make one for each area or trip, and "
+                      "share any of them as one link with your flight school or club.</p>"
                       '<p class="foot" style="margin-top:12px">Not for navigation. Always use official FAA publications, '
                       "NOTAMs and a proper preflight briefing.</p>")
                + '<div class="wfoot"><span class="dots"><i></i><i></i><i></i></span><span class="btns">'
@@ -878,10 +1045,10 @@ def index_page(meta, directory, latest, pages, now):
 <header class="full" id="intro"><h1 class="hero">What changed at your airport</h1>
 <p class="lede">Every 28 days the FAA publishes new airport, airspace and chart data. Amend compares each cycle to the last
 and shows what changed at every US airport in plain English: tower hours, frequencies, runways, navaids,
-approach plates. Build a watchlist of your airports, or share one link for a whole training area.</p></header>
+approach plates. Keep lists of the airports you fly to, and share one link for a whole training area.</p></header>
 <div class="full"><label class="search"><span aria-hidden="true">⌕</span><input id="q" placeholder="Search by ID, ICAO, name or city" aria-label="Search airports" autocomplete="off"><kbd>/</kbd></label>
 <div id="res" style="margin-top:10px"></div></div>
-<div class="col"><div id="shared"></div><div id="next"></div><div id="watch"></div>
+<div class="col"><div id="next"></div><div id="watch"></div>
 <div><div class="sec"><span class="hdr">Most action items this cycle</span><span class="note" style="margin:0">{n:,} airports {'change' if upcoming else 'changed'}</span></div>
 <div class="cards">{top}</div></div></div>
 <aside class="rail"><div class="card box"><h3>FAA cycle</h3><div class="big">{nice(meta['to_cycle'])}</div>
@@ -901,28 +1068,32 @@ approach plates. Build a watchlist of your airports, or share one link for a who
 
 
 def watch_page(meta, directory, now):
-    """site/list/: every change for a watchlist (from ?w= or this browser), fully expanded."""
+    """site/list/: every change at the airports on a list, fully expanded. The list is one of the lists saved in
+    this browser (?l=, or the one in use) or one someone shared (?w=IDS&n=NAME); the script sorts out which."""
     upcoming, _ = status(meta, now)
     names = {a["id"]: [a.get("icao", "") if a.get("icao") != a["id"] else "", a.get("name", "")] for a in directory}
     pri = [[p, t] for p, _, t in PRIORITY]
     js = COMMON_JS + WATCH_JS.replace("__META__", json.dumps(meta)).replace(
         "__NAMES__", json.dumps(names, separators=(",", ":"))).replace("__PRI__", json.dumps(pri)).replace(
         "__SRC__", json.dumps({"nasr": NASR_PAGE.format(cycle=meta["to_cycle"]), "dtpp": DTPP_SEARCH}))
-    body = f"""<header class="full"><div class="eyebrow">Watchlist · {nice(meta['to_cycle'])} cycle</div><h1 id="title">Watchlist</h1>
-<div class="aname" id="count"></div></header>
+    body = f"""<header class="full"><div class="eyebrow"><span id="kind">Lists</span> · {nice(meta['to_cycle'])} cycle</div>
+<h1 id="title">Your lists</h1><div class="aname" id="count"></div><div id="ltabs"></div><div class="btns" id="actions"></div>
+<div class="manage" id="manage"></div><div id="nf" hidden></div><p class="note" id="lnote" role="status" hidden></p></header>
 <div class="col" id="list"><div class="note">Loading…</div></div>
 <aside class="rail"><div class="card box"><span class="ann {'ifr' if upcoming else 'ok'}">{'Not in effect yet' if upcoming else 'In effect'}</span>
 <p class="note">{e(landing_note(meta, now, upcoming))}</p>
-<div class="kv"><span>{'Takes effect' if upcoming else 'Next cycle'}</span><span>{countdown(next_changeover(meta, now)[0])}</span></div>
-<div class="btns" id="actions"></div></div>
+<div class="kv"><span>{'Takes effect' if upcoming else 'Next cycle'}</span><span>{countdown(next_changeover(meta, now)[0])}</span></div></div>
+<div class="card box alerts" id="alerts" hidden><h3>Get alerts</h3><p class="note">Every airport has its own RSS feed with
+one update per FAA cycle. Download them all as one file and import it into your news reader.</p>
+<div class="btns"><a class="btn" id="opml" download="amend-watchlist.opml">Download feeds (OPML)</a></div></div>
 <div class="card box"><h3>What the labels mean</h3>{legend("../")}</div></aside><script>{js}</script>"""
-    return page("Amend · watchlist", "Everything that changed at a list of airports this FAA cycle.",
+    return page("Airport list · Amend", "Everything that changes at a list of airports this FAA cycle.",
                 f"{SITE_URL}list/", body, "../", image=f"{SITE_URL}assets/card.png", active="list", meta=meta,
                 now=now, two=True)
 
 
 def named_watch_page(slug, wl, meta, info, latest, now, has_card):
-    """static page for a named watchlist at /list/<slug>/ (amend.watch/list/clubsvfr): every change, expanded."""
+    """static page for a named list at /list/<slug>/ (amend.watch/list/clubsvfr): every change, expanded."""
     upcoming, _ = status(meta, now)
     apts = sorted(wl["airports"], key=lambda a: (-counts(latest.get(a, []))["action"], -len(latest.get(a, [])), a))
     total = {p: sum(counts(latest.get(a, []))[p] for a in apts) for p, _, _ in PRIORITY}
@@ -939,23 +1110,29 @@ def named_watch_page(slug, wl, meta, info, latest, now, has_card):
     when = f"{'on' if upcoming else 'since'} {efb(meta['to_cycle'])[:6]}"
     desc = (f"{changed} of {len(apts)} airports change {when}" + (f" · {' · '.join(parts)}" if parts else "")
             if changed else f"No changes at these {len(apts)} airports {when}.")
-    body = f"""<header class="full"><div class="eyebrow">Watchlist · {nice(meta['to_cycle'])} cycle</div><h1>{e(wl['name'])}</h1>
+    # saving and sharing sit under the title: on a phone the rail is below every change
+    body = f"""<header class="full"><div class="eyebrow">Shared list · {nice(meta['to_cycle'])} cycle</div><h1>{e(wl['name'])}</h1>
 {f'<div class="aname">{e(wl["description"])}</div>' if wl["description"] else ''}
-<div class="toolbar" style="margin-top:10px">{chips(total)}<span class="note" style="margin:0">{len(apts)} airports · {changed} with changes this cycle</span></div></header>
+<div class="toolbar" style="margin-top:10px">{chips(total)}<span class="note" style="margin:0">{len(apts)} airports · {changed} with changes this cycle</span></div>
+<div class="btns"><a class="btn" id="savenamed" href="{e('../?w=' + ','.join(wl['airports']) + '&n=' + quote(wl['name']))}" data-ids="{e(','.join(wl['airports']))}"
+data-name="{e(wl['name'])}">Save to my lists</a><button class="btn ghost" id="copynamed" hidden>Copy link</button></div></header>
 <div class="col">{''.join(blocks)}</div>
 <aside class="rail"><div class="card box"><span class="ann {'ifr' if upcoming else 'ok'}">{'Not in effect yet' if upcoming else 'In effect'}</span>
 <p class="note">{e(landing_note(meta, now, upcoming))}</p>
-<div class="kv"><span>{'Takes effect' if upcoming else 'Next cycle'}</span><span>{countdown(next_changeover(meta, now)[0])}</span></div>
-<div class="btns"><a class="btn" href="../?w={','.join(apts)}&n={e(quote(wl['name']))}">Add to my watchlist</a><a class="btn ghost" href="../../">Search all airports</a></div></div>
-<div class="card box"><h3>What the labels mean</h3>{legend("../../")}</div></aside>"""
+<div class="kv"><span>{'Takes effect' if upcoming else 'Next cycle'}</span><span>{countdown(next_changeover(meta, now)[0])}</span></div></div>
+{alerts_box(f"{SITE_URL}list/{slug}/feed.xml", wl["name"], f"list:{slug}")}
+<div class="card box"><h3>What the labels mean</h3>{legend("../../")}</div></aside><script>{NAMED_JS}</script>"""
     image = f"{SITE_URL}list/{slug}/card.png" if has_card else f"{SITE_URL}assets/card.png"
-    return page(f"{wl['name']} · Amend watchlist", desc, f"{SITE_URL}list/{slug}", body, "../../",
-                f"{wl['name']}: {desc}", image, active="list", meta=meta, now=now, two=True)
+    return page(f"{wl['name']} · Amend", desc, f"{SITE_URL}list/{slug}", body, "../../",
+                f"{wl['name']}: {desc}", image, active="list", meta=meta, now=now, two=True,
+                feed=(f"{SITE_URL}list/{slug}/feed.xml", f"{wl['name']} changes each FAA cycle"))
 
 
 # what shipped, newest first, for the about page. Add a line when something people can see changes.
 UPDATES = [
     ("Sep 2026", [
+        "Keep as many lists of airports as you like and share any of them as one link, and get an RSS feed for any "
+        "airport or list.",
         "A new logo and a cleaner look, and this page now says how Amend works, what it doesn't cover, what it "
         "stores and how to report a problem.",
         "New FAA data is picked up within hours of being posted, and a failed download can no longer publish a "
@@ -972,7 +1149,8 @@ UPDATES = [
 ]
 
 
-def about_page(meta, latest, screenshots, now):
+def about_page(meta, latest, screenshots, now, example="VRB"):
+    """example: an airport with changes this cycle, so "See an example" never opens a page saying nothing changed."""
     shots = "".join(f'<img src="shots/{e(s)}" alt="Amend on iPhone" loading="lazy">' for s in screenshots)
     feat = lambda tag, cls, title, text: (f'<div class="card box"><span class="ann {cls}">{tag}</span>'
                                           f'<h3>{title}</h3><div class="note">{text}</div></div>')
@@ -1025,15 +1203,15 @@ def about_page(meta, latest, screenshots, now):
 <p class="lede">Every 28 days the FAA changes tower hours, frequencies, runways, navaids and approach
 plates. Amend compares every cycle for every US airport and tells you what matters, in plain English, up to three weeks
 before it takes effect.</p>
-<div class="btns"><a class="btn" href="../">Search an airport</a><a class="btn ghost" href="../VRB/">See an example</a></div></header>
+<div class="btns"><a class="btn" href="../">Search an airport</a><a class="btn ghost" href="../{e(example)}/">See an example</a></div></header>
 {f'<div class="shots full">{shots}</div>' if shots else ''}
 <div class="full"><h2 class="h2" style="margin-bottom:12px">What you get</h2><div class="feats">
 {feat("ACT", "act", "Action items first", "Tower and Class D hours, frequencies, closed or renumbered runways, decommissioned navaids, new PPR rules: the changes that affect how you fly.")}
 {feat("IFR", "ifr", "Instrument procedures", "Amended, new and removed approaches, STARs and departures, down to which waypoints moved, with the new plate one tap away.")}
 {feat("FYI", "fyi", "Everything else, in plain English", "FAA remarks translated from contractions, with the original text always kept alongside.")}
-{feat("Watchlists", "ifr", "Watchlists you can share", "Save your airports, name the list, and share one link with your flight school or club.")}
+{feat("Lists", "ifr", "Lists you can share", "Keep a list for your home area, another for a trip, and share any of them as one link, like amend.watch/list/daytona-training.")}
 {feat("History", "fyi", "Two years of history", "Every change at every airport since August 2024, grouped by cycle.")}
-{feat("iPhone", "ok", "iPhone app", "In testing and not on the App Store yet. It keeps your home airport and watchlists on your phone and notifies you when a new cycle changes them.")}
+{feat("iPhone", "ok", "iPhone app", "In testing and not on the App Store yet. It keeps your home airport and lists on your phone and notifies you when a new cycle changes them.")}
 </div></div>
 <div class="full ggrid">{how}{limits}{privacy}{independent}{report}{updates}</div>"""
     return page("About Amend · what changed at your airport", "How Amend works, what it covers, what it stores, "
@@ -1068,15 +1246,24 @@ GUIDE_SECTIONS = [
      "before each changeover.</p>"
      "<p>History goes back to Aug 2024 for airport data. Chart history starts in fall 2026 because the FAA doesn't "
      "keep old chart indexes online.</p>"),
-    ("watchlists", "Watchlists",
-     '<p>Search for an airport on the <a href="../">home page</a> and tap <b>+</b> to add it to your watchlist. '
-     "It's saved in this browser (no account needed), with the airports that have action items first. "
-     "<b>View all changes</b> shows every change at every airport on it in one page.</p>"
+    ("lists", "Lists",
+     '<p>Search for an airport on the <a href="../">home page</a> and tap <b>+</b> to add it to a list, or use '
+     "<b>+ Add to list</b> on any airport page. Lists are saved in this browser (no account needed). Make as many "
+     "as you like, say one for your home area and one for a trip, and switch between them on the home page or the "
+     '<a href="../list/">Lists</a> page. <b>View all changes</b> shows every change at every airport on a list, '
+     "action items first.</p>"
      '<p>Changes you haven\'t seen yet get a <span class="ann new">New</span> label, based on the last time you '
-     "opened that airport or your watchlist in this browser. The home page shows what's coming up at your "
-     "airports and counts down to the 0901Z changeover.</p>"
-     "<p><b>Copy share link</b> gives you one link for the whole list, handy for a flight school or a training "
-     "area. Anyone who opens it sees the same airports and can add them to their own list.</p>"),
+     "opened that airport or list in this browser. The home page shows what's coming up at all your airports and "
+     "counts down to the 0901Z changeover.</p>"
+     "<p><b>Copy share link</b> gives you one link for a whole list, handy for a flight school or a training area. "
+     "Anyone who opens it sees the same airports and can save the list as their own.</p>"),
+    ("alerts", "Alerts",
+     "<p>Every airport page and named list has an RSS feed (<b>Get alerts</b>) with one update per FAA cycle: "
+     "what changes, action items first, usually within a day of the FAA posting it (about three weeks before it takes "
+     "effect). Add it to any news reader, or to an "
+     "RSS-to-email service to get it in your inbox.</p>"
+     "<p>On a list's page, <b>Download feeds (OPML)</b> gives you a feed for every airport on it in one file "
+     "that most news readers can import.</p>"),
 ]
 
 
@@ -1110,28 +1297,24 @@ def cycles_ics(meta, now):
     return "\r\n".join(lines + ["END:VCALENDAR"]) + "\r\n"
 
 
-# 404.html: GitHub Pages serves it for any missing path, so its links are root-absolute. amend.watch/vrb,
-# /KVRB and /kvrb/ go to the VRB page when there is one; otherwise it says why there's no page.
-NOT_FOUND_JS = r"""(()=>{const seg=location.pathname.split("/").filter(Boolean),raw=(seg[0]||"").toUpperCase();
-if(seg.length!==1||!/^K?[A-Z0-9]{2,4}$/.test(raw))return;
-const ids=[...new Set([raw,raw.replace(/^K(?=[A-Z0-9]{3}$)/,"")])],id=ids[ids.length-1];
-document.getElementById("q404").value=id;
-(async()=>{for(const x of ids){try{const r=await fetch("/"+x+"/",{method:"HEAD"});if(r.ok){location.replace("/"+x+"/"+location.hash);return}}catch(e){}}
-  document.getElementById("nf").textContent="Amend makes a page for every airport with a change on record since Aug 2024, so if "+id+
-    " is an airport, nothing there has changed since then. Search to check the ID."})()})();
-"""
-
-
 def not_found_page(meta, now):
-    body = (f'<header class="full"><div class="eyebrow">Page not found</div><h1 class="hero">No page here</h1>'
-            f'<p class="lede" id="nf">That link doesn\'t match an airport or a page on Amend. Search for the airport '
-            f'instead.</p></header><div class="full"><form class="search" action="/" method="get" role="search">'
-            f'<span aria-hidden="true">⌕</span><input id="q404" name="q" placeholder="Search by ID, ICAO, name or city" '
-            f'aria-label="Search airports" autocomplete="off"></form>'
-            f'<div class="btns"><a class="btn ghost" href="/">Home</a><a class="btn ghost" href="/guide/">Guide</a></div>'
-            f'</div><script>{NOT_FOUND_JS}</script>')
-    return page("Page not found · Amend", "See what changed at any US airport each FAA cycle, in plain English.",
-                "", body, "/", meta=meta, now=now)
+    """site/404.html, which GitHub Pages serves for any address that doesn't exist. People type amend.watch/KDAB or
+    amend.watch/dab, so those go on to /DAB/; anything else gets a way back. Links start at / because this page
+    shows up at any depth."""
+    body = r"""<header class="full"><div class="eyebrow">Page not found</div><h1 id="nfh">Nothing here</h1>
+<p class="lede" id="nfp">There’s no page at this address.</p>
+<div class="btns"><a class="btn" href="/">Search airports</a><a class="btn ghost" href="/list/">Your lists</a></div></header>
+<script>(()=>{const seg=location.pathname.split("/").filter(Boolean).map(s=>{try{return decodeURIComponent(s)}catch(e){return s}}),
+  f=seg[0]||"",low=f.toLowerCase(),rest=location.search+location.hash,h=document.getElementById("nfh"),p=document.getElementById("nfp");
+if(seg.length===1&&["list","guide","about"].includes(low)&&f!==low)return location.replace("/"+low+"/"+rest);
+if(low==="list"&&seg.length===2){const slug=seg[1].toLowerCase();if(slug!==seg[1])return location.replace("/list/"+slug+"/"+rest);
+  h.textContent="No list called “"+seg[1]+"”";p.textContent="Check the link. Lists you saved yourself are under Your lists.";return}
+const id=f.toUpperCase().replace(/^K(?=[A-Z]{3}$)/,"");   // KDAB -> DAB, like the search box
+if(seg.length===1&&/^[A-Z0-9]{2,4}$/.test(id)){if(id!==f)return location.replace("/"+id+"/"+rest);
+  h.textContent="No changes on record at "+id;
+  p.innerHTML="Airports get a page here once the FAA changes something there. <a href=\"/?q="+encodeURIComponent(id)+"\">Search for "+esc(id)+"</a> to check the ID."}})()</script>"""
+    return page("Page not found · Amend", "See what changed at any US airport each FAA cycle.", "", body, "/",
+                meta=meta, now=now, head='<meta name="robots" content="noindex">')
 
 
 def redirect(folder, to, title, keep_query=False):
@@ -1155,8 +1338,8 @@ def build(site, meta, directory, latest, history_dir, now=None, watchlists=None,
     for n in [x[1] for x in WEB_FONTS] + ["OFL.txt"]:
         shutil.copy(os.path.join(brand.FONTS, n), os.path.join(site, "assets", "fonts", n))
     brand.write_site_icons(site)
-    with open(os.path.join(site, "404.html"), "w", encoding="utf-8") as f:
-        f.write(not_found_page(meta, now))
+    with open(os.path.join(site, "assets", "app.js"), "w", encoding="utf-8") as f:
+        f.write(APP)
     with open(os.path.join(site, "cycles.ics"), "w", newline="") as f:
         f.write(cycles_ics(meta, now))
     info = {a["id"]: a for a in directory}
@@ -1194,13 +1377,21 @@ def build(site, meta, directory, latest, history_dir, now=None, watchlists=None,
                             f"Effective {nice(meta['to_cycle'])}")
         with open(os.path.join(site, apt, "index.html"), "w", encoding="utf-8") as f:
             f.write(airport_page(apt, info.get(apt, {}), latest.get(apt), hist, meta, now, has_card))
+        with open(os.path.join(site, apt, "feed.xml"), "w", encoding="utf-8") as f:
+            f.write(feeds.airport_feed(apt, info.get(apt, {}), latest.get(apt), hist, meta, now))
+    # quiet airports get no page, but a feed anyone can subscribe to before the first change shows up
+    for apt in sorted(info.keys() - ids - RESERVED):
+        if re.fullmatch(r"[A-Z0-9]{2,4}", apt):
+            os.makedirs(os.path.join(site, apt), exist_ok=True)
+            with open(os.path.join(site, apt, "feed.xml"), "w", encoding="utf-8") as f:
+                f.write(feeds.airport_feed(apt, info[apt], None, None, meta, now, has_page=False))
     with open(os.path.join(site, "index.html"), "w", encoding="utf-8") as f:
         f.write(index_page(meta, directory, latest, ids, now))
     os.makedirs(os.path.join(site, "list"), exist_ok=True)
     with open(os.path.join(site, "list", "index.html"), "w", encoding="utf-8") as f:
         f.write(watch_page(meta, directory, now))
     # early share links were /watch/?w=...; forward them with the query intact
-    redirect(os.path.join(site, "watch"), "../list/", "Watchlist", keep_query=True)
+    redirect(os.path.join(site, "watch"), "../list/", "Your lists", keep_query=True)
     shots = []
     about = os.path.join(site, "about")
     os.makedirs(os.path.join(about, "shots"), exist_ok=True)
@@ -1209,11 +1400,16 @@ def build(site, meta, directory, latest, history_dir, now=None, watchlists=None,
             if n.lower().endswith((".png", ".jpg", ".jpeg")):
                 shutil.copy(os.path.join(screenshots_dir, n), os.path.join(about, "shots", n))
                 shots.append(n)
+    # "See an example": this cycle's busiest airport with an ICAO code, so it's a real public field
+    ranked = sorted((a for a in latest if a in ids), key=lambda a: (-counts(latest[a])["action"], -len(latest[a]), a))
+    example = next((a for a in ranked if info.get(a, {}).get("icao")), ranked[0] if ranked else "VRB")
     with open(os.path.join(about, "index.html"), "w", encoding="utf-8") as f:
-        f.write(about_page(meta, latest, shots, now))
+        f.write(about_page(meta, latest, shots, now, example))
     os.makedirs(os.path.join(site, "guide"), exist_ok=True)
     with open(os.path.join(site, "guide", "index.html"), "w", encoding="utf-8") as f:
         f.write(guide_page(meta, now))
+    with open(os.path.join(site, "404.html"), "w", encoding="utf-8") as f:
+        f.write(not_found_page(meta, now))
     for slug, wl in (watchlists or {}).items():
         # early links were /watch/<slug>/ and then /<slug>/; keep both working
         redirect(os.path.join(site, "watch", slug), f"../../list/{slug}/", wl["name"])
@@ -1228,4 +1424,12 @@ def build(site, meta, directory, latest, history_dir, now=None, watchlists=None,
                         f"Effective {nice(meta['to_cycle'])}")
         with open(os.path.join(folder, "index.html"), "w", encoding="utf-8") as f:
             f.write(named_watch_page(slug, wl, meta, info, latest, now, has_card))
+        hists = {}
+        for a in wl["airports"]:
+            path = os.path.join(history_dir or "", f"{a}.json")
+            if history_dir and os.path.isfile(path):
+                with open(path, encoding="utf-8") as f:
+                    hists[a] = json.load(f)
+        with open(os.path.join(folder, "feed.xml"), "w", encoding="utf-8") as f:
+            f.write(feeds.list_feed(slug, wl, info, latest, hists, meta, now))
     return len(ids)

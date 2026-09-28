@@ -124,6 +124,11 @@ def verify(site="site", min_airports=MIN_AIRPORTS):
             out.append("index.html is nearly empty")
     except OSError:
         out.append("index.html missing")
+    try:
+        if os.path.getsize(os.path.join(site, "assets", "app.js")) < 1000:
+            out.append("assets/app.js is nearly empty")
+    except OSError:
+        out.append("assets/app.js missing")   # every page runs it: lists, adding airports, "New" labels
     meta, index = load("latest/meta.json"), load("latest/index.json")
     if meta:
         try:

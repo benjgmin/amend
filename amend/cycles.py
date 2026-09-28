@@ -1,8 +1,9 @@
 """FAA 28-day cycle math, download URLs, and downloading."""
 import datetime as dt
+import hashlib
 import io
+import json
 import os
-import shutil
 import time
 import urllib.error
 import urllib.request
@@ -136,6 +137,12 @@ def _open(url, timeout):
     return urllib.request.urlopen(req, timeout=timeout)
 
 
+def meta_path(path):
+    """where download() records how a file was fetched: url, time, size, sha256, FAA headers.
+    the run log reads it; a file kept in the Actions cache keeps its first retrieval time."""
+    return path + ".json"
+
+
 def download(url, path, required=()):
     """download url to path unless it's already there.
     True: we have it. False: the FAA hasn't posted it (404/403/410, or an HTML page instead
@@ -145,14 +152,21 @@ def download(url, path, required=()):
     if os.path.exists(path):
         print(f"  {path} is corrupt, downloading again")
         os.remove(path)
+    if os.path.exists(meta_path(path)):
+        os.remove(meta_path(path))
     os.makedirs(os.path.dirname(path) or ".", exist_ok=True)
     part, last = path + ".part", None
     for attempt in range(1, TRIES + 1):
         print(f"downloading {url}" + (f" (try {attempt}/{TRIES})" if attempt > 1 else ""))
         try:
+            sha = hashlib.sha256()
             with _open(url, TIMEOUT) as r, open(part, "wb") as f:
-                shutil.copyfileobj(r, f)
+                for chunk in iter(lambda: r.read(1 << 20), b""):
+                    sha.update(chunk)
+                    f.write(chunk)
                 want = r.headers.get("Content-Length")
+                headers = {k: r.headers.get(h) for k, h in (("last_modified", "Last-Modified"),
+                                                            ("etag", "ETag"))}
             got = os.path.getsize(part)
             if want and want.isdigit() and int(want) != got:
                 raise ValueError(f"got {got} of {want} bytes")
@@ -162,6 +176,10 @@ def download(url, path, required=()):
                 return False
             check_file(part, path, required)
             os.replace(part, path)
+            with open(meta_path(path), "w") as f:
+                json.dump({"url": url, "bytes": got, "sha256": sha.hexdigest(),
+                           "retrieved_at": dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"),
+                           **headers}, f, indent=1)
             return True
         except urllib.error.HTTPError as e:
             if e.code in MISSING:

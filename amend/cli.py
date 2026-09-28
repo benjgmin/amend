@@ -5,9 +5,11 @@ command line:
   python -m amend diff OLD.zip NEW.zip --all-airports [--dtpp FILE] [--airspace OLD NEW] [--llm] [--out DIR] [--print]
   python -m amend latest [--no-llm]      build site/ (what the GitHub Action runs)
   python -m amend history [--llm] [--keep]   add new cycles to history/
+  python -m amend scrub-history          put the FAA text back where history/ holds a rejected translation
   python -m amend set-key                store your Anthropic API key in .env
   python -m amend check                  scheduled runs: is a rebuild needed? (build=true/false)
   python -m amend verify [DIR]           refuse to deploy an empty or half-built site/
+  python -m amend archive [CYCLE ...] [--backfill] [--list]   keep raw FAA files as GitHub Releases
 """
 import argparse
 import sys
@@ -91,11 +93,18 @@ def main(argv=None):
     h = sub.add_parser("history", help="add new cycles to history/")
     h.add_argument("--llm", action="store_true")
     h.add_argument("--keep", action="store_true", help="keep downloaded zips")
+    sub.add_parser("scrub-history", help="run after making the translation checks stricter: history/ "
+                                         "shows the FAA text where a stored translation now fails them")
 
     sub.add_parser("set-key", help="save your Anthropic API key to .env")
     sub.add_parser("check", help="is a rebuild needed? writes build=true/false to $GITHUB_OUTPUT")
     v = sub.add_parser("verify", help="check a built site before it's deployed")
     v.add_argument("site", nargs="?", default="site")
+
+    ar = sub.add_parser("archive", help="keep each cycle's raw FAA files as a GitHub Release")
+    ar.add_argument("cycles", nargs="*", help="cycle dates, e.g. 2024-08-08 (default: in effect + next)")
+    ar.add_argument("--backfill", action="store_true", help="every cycle since Aug 2024")
+    ar.add_argument("--list", action="store_true", help="show what the FAA still serves; download nothing")
 
     wl = sub.add_parser("watchlist", help="create or list named watchlists (watchlists/*.json)")
     wl.add_argument("action", choices=["create", "list"])
@@ -113,6 +122,10 @@ def main(argv=None):
     elif a.cmd == "history":
         from .history import update
         update(llm=a.llm, keep=a.keep)
+    elif a.cmd == "scrub-history":
+        from .remarks import scrub_history
+        n, files = scrub_history()
+        print(f"{n} translations in history/ fail the checks; showing the FAA text for those ({files} airports)")
     elif a.cmd == "set-key":
         set_key()
     elif a.cmd == "check":
@@ -120,12 +133,17 @@ def main(argv=None):
         check()
     elif a.cmd == "verify":
         from .freshness import verify
+        from .runlog import mark_verified
         bad = verify(a.site)
         for b in bad:
             print(f"  {b}")
+        mark_verified(not bad, bad)     # the run log says whether the build got past this
         if bad:
             sys.exit(f"{a.site}/ failed {len(bad)} check(s); not deploying, the live site stays as it was")
         print(f"{a.site}/ looks complete")
+    elif a.cmd == "archive":
+        from .archive import main as archive
+        archive(a)
     elif a.cmd == "watchlist":
         from . import watchlists
         if a.action == "list":

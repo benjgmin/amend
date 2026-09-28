@@ -3,7 +3,7 @@ import re
 from collections import defaultdict
 
 from .diff import _canon
-from .english import procedure_name, summarize
+from .english import ils, ils_part, procedure_name, summarize
 from .procedures import describe, split_code
 from .rules import REMARK_FILES, base
 
@@ -34,9 +34,11 @@ def _new_or_removed_airport(apt, rs, kind):
     ctaf = next((r["row"].get("FREQ") for r in rs if src(r) == "FRQ" and r["kind"] == kind
                  and "CTAF" in r["row"].get("FREQ_USE", "").upper()), None)
     bits = [b for b in (name, rwy_txt, f"CTAF {ctaf}" if ctaf else "") if b]
+    used = [base_row["row"]] + rwys + [r["row"] for r in rs if src(r) == "FRQ" and r["kind"] == kind]
     return {"airport": apt, "source": "APT_BASE.csv", "kind": kind,
             "priority": "action" if kind == "removed" else "fyi",
-            "summary_override": f"{word}: " + ", ".join(bits)}
+            "summary_override": f"{word}: " + ", ".join(bits),
+            "key": {"airport": apt}, "values": [v for row in used for v in row.values()]}
 
 
 def _runway_changes(apt, rs):
@@ -78,7 +80,8 @@ def _runway_changes(apt, rs):
              else f"runway {o_id} -> {n_id} (new runway){tail}")
         out.append({"airport": apt, "source": "APT_RWY.csv", "kind": "changed", "priority": "action",
                     "summary_override": s,
-                    "fields": [{"field": "RWY_ID", "old": o_id, "new": n_id}]})
+                    "fields": [{"field": "RWY_ID", "old": o_id, "new": n_id}],
+                    "values": list(o.values()) + list(n.values())})
         drop |= {id(old), id(new)}
         ids = set(o_id.split("/")) | {o_id} | set(n_id.split("/")) | {n_id}
         for r in rs:  # the runway-end rows are covered by the one line
@@ -108,7 +111,8 @@ def _procedures(apt, procs, route_tables=None):
     if gone:
         s += f"; removed: {', '.join(gone)}"
     rec = {"airport": apt, "source": "STAR/DP", "kind": "changed", "priority": "ifr",
-           "summary_override": s, "procedures": {"updated": new_names, "removed": gone}}
+           "summary_override": s, "procedures": {"updated": new_names, "removed": gone},
+           "values": sorted(was.values())}
     if route_tables:  # waypoint-level detail, one line per procedure
         old_routes, new_routes = route_tables
         prev = lambda n: was.get(stem(n)) or (n if n in old_routes else None)
@@ -122,8 +126,12 @@ def _routes(apt, routes):
     for r in routes:
         counts[r["kind"]] += 1
     parts = ", ".join(f"{n} {kind}" for kind, n in sorted(counts.items()))
+    ends = lambda r: [r.get("row") or r.get("context") or {}]
+    key = sorted([r["kind"]] + [e.get(c, "") for e in ends(r) for c in ("Orig", "Dest", "Type", "Route String")]
+                 for r in routes)
     return {"airport": apt, "source": "PFR", "kind": "changed", "priority": "ifr",
             "summary_override": f"preferred IFR routes: {parts}",
+            "key": key, "values": [str(n) for n in counts.values()],
             "details": sorted({summarize(r, {}) for r in routes})}
 
 
@@ -188,6 +196,26 @@ def collapse(records, route_tables=None):
             if (src(r) == "APT_RWY_END" and r["kind"] in ("added", "removed")
                     and r["row"].get("RWY_ID", "") in whole):
                 drop.add(id(r))
+
+        # 3d. a whole ILS added or removed: its glideslope, DME and markers are the same news,
+        # and so are the remarks of one that's gone
+        ils_key = lambda r: (r["row"].get("RWY_END_ID", ""), r["row"].get("ILS_LOC_ID", ""))
+        for r in rs:
+            if src(r) != "ILS_BASE" or r["kind"] not in ("added", "removed") or id(r) in drop:
+                continue
+            parts = [x for x in rs if src(x) in ("ILS_GS", "ILS_DME", "ILS_MKR")
+                     and x["kind"] == r["kind"] and ils_key(x) == ils_key(r) and id(x) not in drop]
+            gone_rmks = [x for x in rs if src(x) == "ILS_RMK" and r["kind"] == x["kind"] == "removed"
+                         and ils_key(x) == ils_key(r)]
+            if not parts and not gone_rmks:
+                continue
+            order = {"ILS_GS": 0, "ILS_DME": 1, "ILS_MKR": 2}
+            parts.sort(key=lambda x: (order[src(x)], x["row"].get("ILS_COMP_TYPE_CODE", "")))
+            r["summary_override"] = ils(r["kind"], r["row"], [ils_part(src(x), x["row"]) for x in parts])
+            r["folded"] = [{"source": base(x["source"]), "row": x["row"]} for x in parts + gone_rmks]
+            if any(x["priority"] == "action" for x in parts):
+                r["priority"] = "action"
+            drop |= {id(x) for x in parts + gone_rmks}
 
         rest = [r for r in rs if id(r) not in drop]
 

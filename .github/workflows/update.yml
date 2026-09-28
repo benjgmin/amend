@@ -53,6 +53,11 @@ jobs:
     if: needs.check.outputs.build == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    # the diff pairs rows in set order, which Python randomizes per process: two runs on the
+    # same FAA files differed at ~20 of 10.7k airports (Sep 2026 cycle), ids included. a fixed
+    # seed makes a rebuild give the same output; the run log records it (runlog.py hash_seed)
+    env:
+      PYTHONHASHSEED: "0"
     steps:
       - uses: actions/checkout@v4
 
@@ -74,30 +79,43 @@ jobs:
           key: faa-data-restore
           restore-keys: faa-data-
 
+      # every diff (here and in the build) adds a record to the run log, audit/runs/<cycle>.json
+      # (amend/runlog.py): sources and checksums, rows read, changes, checks, outcome
       - name: append new cycles to history
+        id: history
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: python -m amend history --llm
 
+      # also runs the audit (amend/audit.py): a failed check stops here, so the last good
+      # site stays up and the failure alert fires
       - name: build site (latest + history)
+        id: build
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: python -m amend latest
 
-      # any step failing stops here: nothing is committed or deployed, and the last good
-      # site stays live until a later run succeeds
+      # any step failing stops here: nothing is deployed, and the last good site stays live
+      # until a later run succeeds (the commit step below still records history and the audit)
       - name: check the site before it goes live
         run: python -m amend verify site
 
       # remark_cache.json is committed, not kept in the Actions cache: translations are paid for
-      # once, never lost to cache eviction, and change ids (which hash the summary) stay stable
-      - name: commit history and remark translations
+      # once, never lost to cache eviction, and change ids (which hash the summary) stay stable.
+      # also commits the audit packet the daily review reads (audit/<cycle>.json) and the run
+      # log (audit/runs/), and runs when the history step or the build failed too, so a blocked
+      # or crashed run is on record. history only ever holds audited cycles (history.py audits
+      # before it appends). one step, so no file is left modified and unstaged when git pull
+      # --rebase runs
+      - name: commit history, remark translations, audit packet and run log
+        if: ${{ !cancelled() && steps.history.outcome != 'skipped' }}
         run: |
           git config user.name "amend-bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add history remark_cache.json
+          if [ -d audit ]; then git add audit; fi
           git diff --cached --quiet && exit 0
-          git commit -m "data: new history / remark translations"
+          git commit -m "data: history, remark translations, audit and run log"
           for i in 1 2 3; do     # a merge landing mid-run makes the first push bounce
             git pull --rebase origin "${{ github.ref_name }}" && git push && exit 0
             git rebase --abort 2>/dev/null || true
@@ -112,6 +130,9 @@ jobs:
           ls -t data/*_airspace.zip 2>/dev/null | tail -n +4 | xargs -r rm -f
           ls -t data/dtpp_*.xml 2>/dev/null | tail -n +4 | xargs -r rm -f
           rm -f data/*.part
+          for m in data/*.json; do     # download records (cycles.meta_path) of trimmed files
+            if [ -e "$m" ] && [ ! -e "${m%.json}" ]; then rm -f "$m"; fi
+          done
 
       - uses: actions/cache/save@v4
         if: hashFiles('data/**') != ''

@@ -8,12 +8,14 @@ If a field is added, `schema_version` stays the same. If a field is renamed or r
 
 ## Web pages (not part of the JSON contract)
 `index.html` (search), `<ID>/index.html` (one page per airport with changes or history) and
-`assets/style.css`, `about/`, `list/` (a watchlist from `?w=` or the browser) and `list/<slug>/` (named
-watchlists from `watchlists/<slug>.json` in the repo, served at amend.watch/list/<slug>; slugs are
+`assets/style.css` and `assets/app.js` (shared by every page), `about/`, `list/` (one of the lists saved in the
+browser, `?l=<id>`, or a shared one, `?w=DAB,OMN&n=Club%20SVFR`) and `list/<slug>/` (named
+lists from `watchlists/<slug>.json` in the repo, e.g. amend.watch/list/daytona-training; slugs are
 3–40 lowercase letters, digits or dashes). Old links (`watch/?w=`, `watch/<slug>/`, `<slug>/`) redirect
-there. `cycles.ics` is a calendar feed of the 0901Z cycle changeovers. `404.html` sends lowercase or ICAO
-paths (`/kvrb`) to the airport page when there is one. `favicon.ico`, `site.webmanifest` and `assets/` (styles,
-fonts, icons, link-preview images) are the site's own files. `build.json` records what the deploy was built from, for the pipeline's own freshness check. Airport folders are always 2–4 uppercase letters/digits, so they never collide with the JSON paths below.
+there. `404.html` is the not-found page: it sends `/kdab` to `/DAB/` and says when an airport has no changes on record. `cycles.ics` is a calendar feed of the 0901Z cycle changeovers. `favicon.ico`, `site.webmanifest` and `assets/` (styles, scripts,
+fonts, icons, link-preview images) are the site's own files. `build.json` records what the deploy was built from, for the pipeline's own freshness check. `<ID>/feed.xml` (every airport in `airports.json`, even ones with no page yet) and
+`list/<slug>/feed.xml` are RSS 2.0 feeds with one item per cycle with changes, newest first, about a year's worth; the
+item `guid` is `amend.watch/<ID>/<cycle>` (or `amend.watch/list/<slug>/<cycle>`) and never changes. Airport folders are always 2–4 uppercase letters/digits, so they never collide with the JSON paths below.
 
 ## `latest/meta.json`
 Which cycles `latest/` compares.
@@ -26,6 +28,7 @@ Which cycles `latest/` compares.
 | `includes_charts` | bool | d-TPP chart changes included |
 | `includes_airspace` | bool | class airspace shape changes (floors, ceilings, boundaries) included |
 | `changed_airports` | int | |
+| `engine` | string | version of the engine that made these changes (`1.0.0`) |
 | `generated` | string | ISO timestamp, UTC |
 
 ## `latest/index.json`
@@ -51,14 +54,14 @@ Only exists if the airport changed. **A 404 means no changes**, not an error.
 
 | field | type | always? | notes |
 |---|---|---|---|
-| `id` | string | yes | 12-char stable id (airport + cycle + summary). Use it to remember what's been seen |
+| `id` | string | yes | 12-char stable id (airport + cycle + the FAA file, kind and values behind the change, not its wording). Use it to remember what's been seen |
 | `priority` | string | yes | `action` (changes how you fly), `ifr` (procedures/charts/routes), `fyi` |
 | `category` | string | yes | `tower`, `airspace`, `frequency`, `navaid`, `runway`, `remark`, `procedure`, `route`, `chart`, `weather`, `airport`, `other` |
 | `kind` | string | yes | `added`, `removed`, `changed` |
 | `summary` | string | yes | plain-English, ready to display |
 | `source` | string | yes | FAA file it came from (`ATC_BASE`, `APT_RMK`, `d-TPP`, `CLS_ARSP_SHP` for the class airspace shapefile, ...) |
 | `original` | string | no | raw FAA remark text (show under translated remarks) |
-| `fields` | array | no | `[{"field", "old", "new"}]` raw before/after values |
+| `fields` | array | no | `[{"field", "old", "new"}]` raw before/after values. A whole row added or removed lists its columns with `old` or `new` empty. `ATTENDANCE` (source `APT_ATT`) is the airport's whole attendance schedule, its rows' MONTH DAY HOUR joined with `; ` |
 | `details` | array of string | no | route-level lines behind a "preferred IFR routes" summary |
 | `procedures` | object | no | `{"updated": [...], "removed": [...]}` STAR/DP names |
 | `chart` | object | no | `{"code", "name", "amdt", "pdf"?}`. `pdf` links the new plate; absent for removed charts |
@@ -81,6 +84,8 @@ Every change at an airport since Aug 2024, newest first.
 {"schema_version": 1, "airport": "VRB", "first_cycle": "2025-01-23", "last_cycle": "2025-07-10",
  "entries": [Change + {"cycle": "2025-07-10", "from_cycle": "2025-06-12"}, ...]}
 ```
+Entries added since the engine was versioned also carry `"engine": "1.0.0"`, the engine version
+that made them; older entries have no `engine`.
 "What changed since X" = entries with `cycle` after X. Chart (d-TPP) history starts Oct 2026;
 the FAA doesn't keep older metafiles online.
 
@@ -89,3 +94,9 @@ the FAA doesn't keep older metafiles online.
 {"schema_version": 1, "cycles": ["2024-09-05", ...],
  "airports": {"VRB": {"entries": 14, "last_cycle": "2025-07-10", "action": 6}}}
 ```
+## Processing log (in the repo, not served)
+`audit/runs/<cycle>.json` holds one record per engine run (the site build and each history
+cycle): the FAA source files with checksums and retrieval times, rows read per file, changes
+by priority, the input checks and release audit, and whether the run was built, blocked or
+failed. Its full shape is documented at the top of `amend/runlog.py`, and it has its own
+`runlog_version`.

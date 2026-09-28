@@ -1,7 +1,7 @@
 """Turning raw change records into plain-English summaries."""
 import re
 
-from .rules import DECLARED_DISTANCES, NAME_COLS, NAV_NAMES, REMARK_FILES, base
+from .rules import DECLARED_DISTANCES, NAME_COLS, NAV_NAMES, REMARK_FILES, base, is_helipad
 
 
 def label(field):
@@ -28,9 +28,6 @@ def field_phrases(fields, source, ctx=None):
     prov = [by[k] for k in ("APCH_P_PROVIDER", "DEP_P_PROVIDER") if k in by]
     if prov:
         phrases.append(f"approach/departure control: {prov[0]['old']} -> {prov[0]['new']}")
-    if "HOUR" in by and base(source) == "APT_ATT":
-        f = by["HOUR"]
-        phrases.append(f"airport attendance hours: {f['old']} -> {f['new']}")
     if "PHONE_NO" in by:
         what = ("AWOS/ASOS " if base(source).startswith("AWOS")
                 else "airport " if base(source).startswith("APT") else "")
@@ -97,8 +94,6 @@ def field_phrases(fields, source, ctx=None):
     handled = {"TWR_HRS", "TOWER_HRS", "AIRSPACE_HRS", "APCH_P_PROVIDER", "DEP_P_PROVIDER",
                "PHONE_NO", "NAV_TYPE", "FREQ", "FACILITY", "FAC_NAME", "LNDG_FEE_FLAG", "FREQ_USE",
                "RWY_MARKING_COND", "COND", "TACAN_DME_STATUS"} | obst | set(DECLARED_DISTANCES)
-    if base(source) == "APT_ATT":
-        handled.add("HOUR")
     for k, f in by.items():
         if k in handled:
             continue
@@ -222,6 +217,15 @@ def summarize(rec, remarks):
         what = f"{row.get('NAV_ID', '')} VOR checkpoint{brg}{': ' + where if where else ''}"
         return f"new {what}" if kind == "added" else f"{what}: removed"
 
+    if b == "APT_ATT" and [f["field"] for f in rec.get("fields", [])] == ["ATTENDANCE"]:
+        f = rec["fields"][0]
+        if not f["old"]:
+            return f"airport attendance listed: {f['new']}"
+        return f"airport attendance: {f['old']} -> {f['new'] or 'none listed'}"
+
+    if kind != "changed" and b in ROW_SUMMARIES:
+        return ROW_SUMMARIES[b](kind, row)
+
     if kind == "changed":
         where = ""
         if ctx.get("RWY_END_ID"):
@@ -235,8 +239,181 @@ def summarize(rec, remarks):
         phrases = field_phrases(rec["fields"], rec["source"], ctx)
         return [where + "; ".join(phrases)] if where else phrases
 
+    # a file nobody wrote English for yet: the FAA's own column names and values, marked so
+    # the pipeline can keep it out of act and count it (the run log shows every one)
+    rec["no_template"] = True
     shown = ", ".join(f"{label(k)}={v}" for k, v in list(row.items())[:6] if not k.startswith("_"))
     return f"{kind} ({b.lower()}): {shown}"
+
+
+# whole rows added or removed, one function per NASR file. codes are spelled the way the FAA's
+# data layouts (the "<FILE> DATA LAYOUT.pdf" in every NASR CSV zip) spell them, never guessed:
+# ILS_BASE SYSTEM_TYPE_CODE "System Type", ILS_MKR ILS_COMP_TYPE_CODE marker types.
+ILS_TYPES = {"LS": "ILS", "SF": "SDF", "LC": "LOC", "LA": "LDA", "LD": "ILS/DME", "SD": "SDF/DME",
+             "LE": "LOC/DME", "LG": "LOC/GS", "DD": "LDA/DME"}
+MARKERS = {"IM": "inner marker", "MM": "middle marker", "OM": "outer marker"}
+
+
+def ils_name(row):
+    """'ILS/DME RWY 28 (NIP, 109.15)': the FAA system type, runway end, identifier, frequency."""
+    code = row.get("SYSTEM_TYPE_CODE", "")
+    name = ILS_TYPES.get(code, f"ILS ({code})" if code else "ILS")
+    rwy = f" RWY {row['RWY_END_ID']}" if row.get("RWY_END_ID") else ""
+    ids = ", ".join(v for v in (row.get("ILS_LOC_ID", ""), row.get("LOC_FREQ", "")) if v)
+    return f"{name}{rwy}{f' ({ids})' if ids else ''}"
+
+
+def ils_part(b, row):
+    """one ILS component in a few words: 'glideslope 3°', 'DME channel 28Y', 'outer marker
+    (compass locator FITZY 209)'."""
+    if b == "ILS_GS":
+        return f"glideslope{' ' + row['G_S_ANGLE'] + '°' if row.get('G_S_ANGLE') else ''}"
+    if b == "ILS_DME":
+        return f"DME{' channel ' + row['CHANNEL'] if row.get('CHANNEL') else ''}"
+    if b == "ILS_MKR":
+        code = row.get("ILS_COMP_TYPE_CODE", "")
+        what = MARKERS.get(code, f"marker ({code})" if code else "marker")
+        loc = " ".join(v for v in (row.get("COMPASS_LOCATOR_NAME", ""), row.get("FREQ", "")) if v)
+        return f"{what}{f' (compass locator {loc})' if loc else ''}"
+    return "localizer"
+
+
+def ils(kind, row, parts=()):
+    """a whole ILS, or one of its parts, appearing or going away. parts: the components that
+    came or went with it ('glideslope 3°', ...)."""
+    name = ils_name(row)
+    if parts:
+        name += f" with {', '.join(parts)}"
+    return f"new {name}" if kind == "added" else f"{name}: removed"
+
+
+def ils_component(b):
+    def say(kind, row):
+        part = ils_part(b, row)
+        where = ils_name({k: v for k, v in row.items() if k != "LOC_FREQ"})
+        return f"{where}: new {part}" if kind == "added" else f"{where}: {part} removed"
+    return say
+
+
+def runway(kind, row):
+    """'new runway 18/36: 2546x60 ft turf', 'helipad H2 (80x80 ft conc): removed'."""
+    rid = row.get("RWY_ID", "?")
+    what = "helipad" if is_helipad(rid) else "runway"
+    size = ""
+    if row.get("RWY_LEN") and row.get("RWY_WIDTH"):
+        size = f"{row['RWY_LEN']}x{row['RWY_WIDTH']} ft"
+    size = " ".join(v for v in (size, row.get("SURFACE_TYPE_CODE", "").lower()) if v)
+    if kind == "added":
+        return f"new {what} {rid}{': ' + size if size else ''}"
+    return f"{what} {rid}{f' ({size})' if size else ''}: removed"
+
+
+def runway_end(kind, row):
+    what = "helipad" if is_helipad(row.get("RWY_ID", "")) else "runway"
+    end = row.get("RWY_END_ID", "")
+    rid = row.get("RWY_ID", "")
+    name = f"{what} {rid}" + (f" end {end}" if end and end != rid else "")
+    return f"new {name}" if kind == "added" else f"{name}: removed"
+
+
+def arresting_system(kind, row):
+    """APT_ARS: 'runway 32: new arresting system (EMAS)'."""
+    code = f" ({row['ARREST_DEVICE_CODE']})" if row.get("ARREST_DEVICE_CODE") else ""
+    end = row.get("RWY_END_ID") or row.get("RWY_ID", "?")
+    return (f"runway {end}: new arresting system{code}" if kind == "added"
+            else f"runway {end}: arresting system{code} removed")
+
+
+def control(row):
+    """'ELLSWORTH (RCA), secondary DENVER ARTCC (ZDV)' from an ATC_BASE row's approach (or,
+    if it names none, departure) columns."""
+    for side in ("APCH", "DEP"):
+        calls = [(row.get(f"PRIMARY_{side}_RADIO_CALL", ""), row.get(f"{side}_P_PROVIDER", "")),
+                 (row.get(f"SECONDARY_{side}_RADIO_CALL", ""), row.get(f"{side}_S_PROVIDER", ""))]
+        said = [f"{c} ({p})" if c and p and p != c else c or p for c, p in calls]
+        if said[0] or said[1]:
+            return ", secondary ".join(s for s in said if s)
+    return ""
+
+
+def atc_facility(kind, row):
+    """ATC_BASE: a tower, or a non-towered field's approach/departure control listing."""
+    ctl = control(row)
+    if row.get("FACILITY_TYPE", "").upper() == "NON-ATCT":
+        if kind == "added":
+            return (f"approach/departure control listed: {ctl}" if ctl
+                    else "new ATC facility entry, non-towered (it names no tower or approach control)")
+        return (f"approach/departure control no longer listed (was {ctl})" if ctl
+                else "ATC facility entry removed, non-towered (it named no tower or approach control)")
+    what = row.get("FACILITY_TYPE", "") or "tower"
+    bits = [b for b in (row.get("TWR_CALL", "") and f"call {row['TWR_CALL']}",
+                        row.get("TWR_HRS", "") and f"hours {row['TWR_HRS']}",
+                        ctl and f"approach {ctl}") if b]
+    tail = f" ({'; '.join(bits)})" if bits else ""
+    return f"new control tower: {what}{tail}" if kind == "added" else f"control tower {what}{tail}: removed"
+
+
+def atis(kind, row):
+    no = f" {row['ATIS_NO']}" if row.get("ATIS_NO") and row.get("ATIS_NO") != "1" else ""
+    bits = [b for b in (row.get("DESCRIPTION", ""), row.get("ATIS_HRS", "") and f"hours {row['ATIS_HRS']}",
+                        row.get("ATIS_PHONE_NO", "") and f"phone {row['ATIS_PHONE_NO']}") if b]
+    tail = f" ({'; '.join(bits)})" if bits else ""
+    return f"new ATIS{no}{tail}" if kind == "added" else f"ATIS{no}{tail}: removed"
+
+
+def atc_service(kind, row):
+    svc = row.get("CTL_SVC", "?")
+    return f"ATC service listed: {svc}" if kind == "added" else f"ATC service {svc}: no longer listed"
+
+
+def weather_station(kind, row):
+    t = row.get("ASOS_AWOS_TYPE", "") or "weather station"
+    ident = f" ({row['ASOS_AWOS_ID']})" if row.get("ASOS_AWOS_ID") else ""
+    phone = f", phone {row['PHONE_NO']}" if row.get("PHONE_NO") else ""
+    return f"new weather station: {t}{ident}{phone}" if kind == "added" else f"weather station {t}{ident}: removed"
+
+
+def airspace_row(kind, row):
+    """CLS_ARSP: 'new class D airspace: CLASS D SVC 0700-2100 ...' (hours kept as the FAA wrote them)."""
+    classes = [c for c in "BCDE" if row.get(f"CLASS_{c}_AIRSPACE") == "Y"]
+    what = f"class {'/'.join(classes)} airspace" if classes else "controlled airspace"
+    hrs = row.get("AIRSPACE_HRS", "")
+    if kind == "added":
+        return f"new {what}{': ' + hrs if hrs else ''}"
+    return f"{what} removed{f' (was {hrs})' if hrs else ''}"
+
+
+def radar(kind, row):
+    t = row.get("RADAR_TYPE", "") or "radar"
+    hrs = row.get("RADAR_HRS", "")
+    if kind == "added":
+        return f"new radar: {t}{', hours ' + hrs if hrs else ''}"
+    return f"radar {t}: removed{f' (was hours {hrs})' if hrs else ''}"
+
+
+def military_ops(kind, row):
+    """MIL_OPS: its REMARK starts with the column it's about, '(MIL_OPS_OPER_CODE) ARNG - OPR ...'."""
+    text = re.sub(r"^\([A-Z_]+\)\s*", "", row.get("REMARK", ""))
+    bits = [b for b in (row.get("MIL_OPS_CALL", ""), row.get("MIL_OPS_HRS", "") and f"hours {row['MIL_OPS_HRS']}",
+                        text) if b]
+    what = "military operations" + (f": {'; '.join(bits)}" if bits else "")
+    return f"new {what}" if kind == "added" else f"{what}: no longer listed"
+
+
+def jump_area_contact(kind, row):
+    who = " ".join(v for v in (row.get("FAC_NAME", "").title(), row.get("FAC_ID") and f"({row['FAC_ID']})") if v)
+    freq = row.get("COMMERCIAL_FREQ") or row.get("MIL_FREQ", "")
+    what = f"parachute jump area {row.get('PJA_ID', '')} contact: {who or 'facility'}{' ' + freq if freq else ''}"
+    return f"new {what}" if kind == "added" else f"{what}: removed"
+
+
+ROW_SUMMARIES = {
+    "ILS_BASE": lambda kind, row: ils(kind, row), "ILS_GS": ils_component("ILS_GS"),
+    "ILS_DME": ils_component("ILS_DME"), "ILS_MKR": ils_component("ILS_MKR"),
+    "APT_RWY": runway, "APT_RWY_END": runway_end, "APT_ARS": arresting_system,
+    "ATC_BASE": atc_facility, "ATC_ATIS": atis, "ATC_SVC": atc_service, "AWOS": weather_station,
+    "CLS_ARSP": airspace_row, "RDR": radar, "MIL_OPS": military_ops, "PJA_CON": jump_area_contact,
+}
 
 
 def procedure_name(rec):
@@ -250,3 +427,66 @@ def procedure_name(rec):
         if f["field"].endswith("COMPUTER_CODE") and f["new"]:
             return split_code(f["new"])[0]
     return "procedure"
+
+# --------------------------------------------------------------- checking a summary's values
+# every number and identifier a summary shows must be one the FAA record it describes has, so
+# a template bug can never print a runway, frequency or time the FAA didn't publish.
+_WORD = re.compile(r"[A-Za-z0-9./+\-]+")
+
+
+def _tokens(text, split=False):
+    """the tokens of a text that contain a digit, upper-cased. split: also every piece between
+    '/', '.' and '-' ('13/31' -> 13/31, 13, 31), so a summary may quote part of a value."""
+    out = set()
+    for w in _WORD.findall(text or ""):
+        w = w.strip("./-+").upper()
+        if not any(ch.isdigit() for ch in w):
+            continue
+        out.add(w)
+        if split:
+            out |= {p for p in re.split(r"[./\-]+", w) if p}
+    return out
+
+
+def record_values(rec):
+    """every FAA value a record carries: its row, context, changed fields, folded rows."""
+    vals = []
+    for d in [rec.get("row") or {}, rec.get("context") or {}] + [x["row"] for x in rec.get("folded", [])]:
+        vals += [str(v) for v in d.values()]
+    for f in rec.get("fields", []):
+        vals += [f["old"], f["new"], label(f["field"])]   # 'address1', 'far part 77 code'
+    for names in (rec.get("procedures") or {}).values():
+        vals += names
+    return vals + [str(v) for v in rec.get("values", [])]
+
+
+def _num(t):
+    """a plain decimal number ('193.5', '045'), else None ('28Y', '1E5', 'NAN' aren't)."""
+    return float(t) if re.fullmatch(r"\d+(?:\.\d+)?", t) else None
+
+
+def unsupported(summary, values):
+    """tokens with a digit in the summary that none of the values has. [] means it checks out.
+    '2546x60 ft' is two values, '1,234 ft' is one, '3°' is 3, a '34:1' slope is 34, and a
+    bearing may be the value rounded to a whole number (193.5 -> 194, 45 -> 045)."""
+    commas = lambda t: re.sub(r"(\d),(\d{3})\b", r"\1\2", t)
+    s = re.sub(r"(\d)x(\d)", r"\1 \2", commas(summary))
+    s = re.sub(r":1\b", "", s.replace("°", " "))
+    have = set()
+    for v in values:
+        have |= _tokens(commas(v), split=True)
+    nums = {_num(t) for t in have} - {None}
+    rounded = {float(round(n)) for n in nums}
+    return sorted(t for t in _tokens(s) - have
+                  if _num(t) is None or not (_num(t) in nums or (_num(t).is_integer() and _num(t) in rounded)))
+
+
+def plain_values(rec):
+    """the FAA values themselves, for a record whose summary didn't check out."""
+    b = base(rec["source"])
+    if rec.get("fields"):
+        body = "; ".join(f"{label(f['field'])}: {f['old'] or 'none'} -> {f['new'] or 'none'}"
+                         for f in rec["fields"])
+    else:
+        body = ", ".join(f"{label(k)} {v}" for k, v in (rec.get("row") or {}).items() if not k.startswith("_"))
+    return f"{b.lower()} {rec['kind']}: {body}"

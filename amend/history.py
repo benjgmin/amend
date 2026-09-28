@@ -8,11 +8,13 @@ import glob
 import json
 import os
 
-from . import SCHEMA_VERSION
+from . import ENGINE_VERSION, SCHEMA_VERSION
+from .audit import audit, report_to_actions
 from .cycles import (CYCLE, FIRST_ARCHIVED, airspace_path, dtpp_path, get_airspace_pair, get_cycle,
-                     get_dtpp, in_effect, zip_path)
+                     get_dtpp, in_effect, meta_path, zip_path)
 from .output import dump
 from .pipeline import run
+from .runlog import Run
 
 HIST = "history"
 STATE = os.path.join(HIST, "cycles.json")
@@ -33,7 +35,7 @@ def append(result):
         path = os.path.join(HIST, f"{apt}.json")
         h = _load(path, {"schema_version": SCHEMA_VERSION, "airport": apt, "entries": []})
         h["entries"] = [e for e in h["entries"] if e["cycle"] != new]  # re-runs stay idempotent
-        h["entries"] += [{"cycle": new, "from_cycle": old, **c} for c in changes]
+        h["entries"] += [{"cycle": new, "from_cycle": old, "engine": ENGINE_VERSION, **c} for c in changes]
         h["entries"].sort(key=lambda e: e["cycle"], reverse=True)
         h["first_cycle"] = h["entries"][-1]["cycle"]
         h["last_cycle"] = h["entries"][0]["cycle"]
@@ -70,32 +72,54 @@ def update(llm=False, keep=False):
         return
     print(f"{len(todo)} cycle(s) to add: {todo[0]} .. {todo[-1]}")
 
-    # resume from the newest cycle before the first missing one
+    # resume from the newest cycle before the first missing one. logged only if it crashes
     prev = None
-    for c in reversed([c for c in cycles if c < todo[0]]):
-        if c.isoformat() not in state["skipped"] and get_cycle(c):
-            prev = c
-            break
+    with Run("history"):
+        for c in reversed([c for c in cycles if c < todo[0]]):
+            if c.isoformat() not in state["skipped"] and get_cycle(c):
+                prev = c
+                break
 
     for new in todo:
-        if not get_cycle(new):   # a failed download raises instead: only a real 404 is a gap
-            print(f"  {new}: not in FAA archive, skipping (next cycle diffs across the gap)")
-            state["skipped"] = sorted(set(state["skipped"]) | {new.isoformat()})
-            continue
-        if prev is None:
-            prev = new
-            continue
-        print(f"\n=== {prev} -> {new} ===")
-        result = run(zip_path(prev), zip_path(new), None, get_dtpp(new), llm, log=lambda *_: None,
-                     airspace=get_airspace_pair(prev, new))
-        print(f"  {append(result)} changes at {len(result['airports'])} airports")
-        state["cycles"] = sorted(set(state["cycles"]) | {new.isoformat()})
-        with open(STATE, "w") as f:
-            json.dump(state, f, indent=1)
-        if not keep:  # only the newest zip is needed for the next step
-            for p in (zip_path(prev), dtpp_path(new), airspace_path(prev)):
-                if os.path.exists(p):
-                    os.remove(p)
-        prev = new
+        with Run("history") as log:
+            prev = _step(prev, new, state, llm, keep, log)
     write_index(state)
     print(f"\nhistory up to date through {prev}")
+
+
+def _step(prev, new, state, llm, keep, log):
+    """diff prev -> new into history (one run log record). returns the new prev."""
+    log.cycles(prev, new)
+    if not get_cycle(new):   # a failed download raises instead: only a real 404 is a gap
+        print(f"  {new}: not in FAA archive, skipping (next cycle diffs across the gap)")
+        state["skipped"] = sorted(set(state["skipped"]) | {new.isoformat()})
+        log.skip(f"{new} is not in the FAA archive")
+        return prev
+    if prev is None:         # nothing to diff against yet, nothing to log
+        return new
+    print(f"\n=== {prev} -> {new} ===")
+    dtpp, airspace = get_dtpp(new), get_airspace_pair(prev, new)
+    log.faa_sources(prev, new, dtpp, airspace)
+    result = run(zip_path(prev), zip_path(new), None, dtpp, llm, log=lambda *_: None,
+                 airspace=airspace)
+    log.result(result)
+    report = audit(result, HIST, gap_ok=True)
+    report["errors"] = log.problems + report["errors"]
+    report["warnings"] += log.engine_warning()
+    log.checks(report)
+    report_to_actions(report, f"{prev} -> {new}")
+    if report["errors"]:     # history is kept forever, so nothing unchecked goes in
+        msg = f"audit failed for {prev} -> {new}, not adding it to history"
+        log.block(msg)
+        raise SystemExit(msg)
+    print(f"  {append(result)} changes at {len(result['airports'])} airports")
+    state["cycles"] = sorted(set(state["cycles"]) | {new.isoformat()})
+    with open(STATE, "w") as f:
+        json.dump(state, f, indent=1)
+    log.done()
+    if not keep:  # only the newest zip is needed for the next step
+        for p in (zip_path(prev), dtpp_path(new), airspace_path(prev)):
+            for q in (p, meta_path(p)):
+                if os.path.exists(q):
+                    os.remove(q)
+    return new

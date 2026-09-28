@@ -1,0 +1,211 @@
+{
+ "from_cycle": "2026-09-03",
+ "to_cycle": "2026-10-01",
+ "errors": [],
+ "warnings": [],
+ "watchlists": {
+  "daytona-training": [
+   "DAB",
+   "OMN",
+   "DED",
+   "EVB",
+   "SFB",
+   "ORL",
+   "ISM",
+   "VRB"
+  ]
+ },
+ "airports": {
+  "SLC": [
+   {
+    "id": "cf83c2690035",
+    "priority": "action",
+    "category": "frequency",
+    "kind": "added",
+    "summary": "new frequency 128.55 (GRASSY MOUNTAIN RCAG)",
+    "source": "FRQ",
+    "fields": [
+     {
+      "field": "FACILITY",
+      "old": "",
+      "new": "GRASSY MOUNTAIN"
+     },
+     {
+      "field": "FAC_NAME",
+      "old": "",
+      "new": "GRASSY MOUNTAIN"
+     },
+     {
+      "field": "FACILITY_TYPE",
+      "old": "",
+      "new": "RCAG"
+     },
+     {
+      "field": "ARTCC_OR_FSS_ID",
+      "old": "",
+      "new": "ZLC"
+     },
+     {
+      "field": "SERVICED_FACILITY",
+      "old": "",
+      "new": "SLC"
+     },
+     {
+      "field": "SERVICED_FAC_NAME",
+      "old": "",
+      "new": "SALT LAKE CITY INTL"
+     },
+     {
+      "field": "SERVICED_SITE_TYPE",
+      "old": "",
+      "new": "AIRPORT"
+     },
+     {
+      "field": "SERVICED_CITY",
+      "old": "",
+      "new": "SALT LAKE CITY"
+     },
+     {
+      "field": "SERVICED_STATE",
+      "old": "",
+      "new": "UT"
+     },
+     {
+      "field": "SERVICED_COUNTRY",
+      "old": "",
+      "new": "US"
+     },
+     {
+      "field": "TOWER_OR_COMM_CALL",
+      "old": "",
+      "new": "SALT LAKE CITY"
+     },
+     {
+      "field": "PRIMARY_APPROACH_RADIO_CALL",
+      "old": "",
+      "new": "SALT LAKE CITY"
+     },
+     {
+      "field": "FREQ",
+      "old": "",
+      "new": "128.55"
+     },
+     {
+      "field": "SECTORIZATION",
+      "old": "",
+      "new": "LOW/HIGH"
+     },
+     {
+      "field": "FREQ_USE",
+      "old": "",
+      "new": "GRASSY MOUNTAIN RCAG"
+     },
+     {
+      "field": "REMARK",
+      "old": "",
+      "new": "SALT LAKE ARTCC (ZLC) FREQS 128.55/269.175 (GRASSY MOUNTAIN RCAG) USED FOR SKEES RNAV STAR AND YUTES RNAV STAR."
+     }
+    ]
+   },
+   {
+    "id": "3f537f413d6f",
+    "priority": "action",
+    "category": "frequency",
+    "kind": "added",
+    "summary": "new frequency 269.175 (GRASSY MOUNTAIN RCAG)",
+    "source": "FRQ",
+    "fields": [
+     {
+      "field": "FACILITY",
+      "old": "",
+      "new": "GRASSY MOUNTAIN"
+     },
+     {
+      "field": "FAC_NAME",
+      "old": "",
+      "new": "GRASSY MOUNTAIN"
+     },
+     {
+      "field": "FACILITY_TYPE",
+      "old": "",
+      "new": "RCAG"
+     },
+     {
+      "field": "ARTCC_OR_FSS_ID",
+      "old": "",
+      "new": "ZLC"
+     },
+     {
+      "field": "SERVICED_FACILITY",
+      "old": "",
+      "new": "SLC"
+     },
+     {
+      "field": "SERVICED_FAC_NAME",
+      "old": "",
+      "new": "SALT LAKE CITY INTL"
+     },
+     {
+      "field": "SERVICED_SITE_TYPE",
+      "old": "",
+      "new": "AIRPORT"
+     },
+     {
+      "field": "SERVICED_CITY",
+      "old": "",
+      "new": "SALT LAKE CITY"
+     },
+     {
+      "field": "SERVICED_STATE",
+      "old": "",
+      "new": "UT"
+     },
+     {
+      "field": "SERVICED_COUNTRY",
+      "old": "",
+      "new": "US"
+     },
+     {
+      "field": "TOWER_OR_COMM_CALL",
+      "old": "",
+      "new": "SALT LAKE CITY"
+     },
+     {
+      "field": "PRIMARY_APPROACH_RADIO_CALL",
+      "old": "",
+      "new": "SALT LAKE CITY"
+     },
+     {
+      "field": "FREQ",
+      "old": "",
+      "new": "269.175"
+     },
+     {
+      "field": "SECTORIZATION",
+      "old": "",
+      "new": "LOW/HIGH"
+     },
+     {
+      "field": "FREQ_USE",
+      "old": "",
+      "new": "GRASSY MOUNTAIN RCAG"
+     },
+     {
+      "field": "REMARK",
+      "old": "",
+      "new": "SALT LAKE ARTCC (ZLC) FREQS 128.55/269.175 (GRASSY MOUNTAIN RCAG) USED FOR SKEES RNAV STAR AND YUTES RNAV STAR."
+     }
+    ]
+   },
+   {
+    "id": "af80af68a6e7",
+    "priority": "action",
+    "category": "remark",
+    "kind": "added",
+    "summary": "new tower/ATC remark: Salt Lake ARTCC (ZLC) frequencies 128.55/269.175 (Grassy Mountain RCAG) are used for SKEES RNAV STAR and YUTES RNAV STAR.",
+    "source": "ATC_RMK",
+    "original": "SALT LAKE ARTCC (ZLC) FREQS 128.55/269.175 (GRASSY MOUNTAIN RCAG) USED FOR SKEES RNAV STAR AND YUTES RNAV STAR."
+   }
+  ]
+ }
+}
