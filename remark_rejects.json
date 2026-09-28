@@ -1,5 +1,5 @@
 {
- "engine": "1.3.0",
+ "engine": "1.3.1",
  "remarks": {
   "100LL AND JET-A FUEL AVBL 24 HRS SELF SVC W/ CREDIT CARD.": [
    "W is 'West or White' (CS), not what the translation says"
@@ -48,8 +48,7 @@
   ],
   "INDY APPCH - R, E 134.85 OR 377.1, TWR - 1200-0400Z++ EXCLD HOL. 126.2 OR 243.6 FSS-TERRE HAUTE HUF-NOTAM HUF.": [
    "INDY is not in the verified glossary; it must stay as written",
-   "R is 'right (runway identification)' (JO 2-1-1 (ICAO)), not what the translation says",
-   "E is 'East' (CS), not what the translation says"
+   "added 'indianapolis'"
   ],
   "MILITARY: ANG: OPR 1030-2100Z++ MON-THUR EXC HOL. PPR TSNT ACFT OFFL BUS ONLY. AFLD MGR C315-233-2399, AFT DUTY HR CTC C315-233-2399. PPR REQ FOR ALL TSNT ACFT DUE LTD TSNT SVC. NTFY AFLD MGR OF ETA DLA OVR 30 MIN OR MSN CNL IS RQR.": [
    "REQ is 'request' (CS), not what the translation says"
