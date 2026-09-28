@@ -1,1 +1,0 @@
-{"schema_version":1,"airport":"02KT","entries":[{"cycle":"2025-10-02","from_cycle":"2025-09-04","id":"fb5bffb182a4","priority":"fyi","category":"airport","kind":"changed","summary":"arpt psn source: OWNER -> ADO","source":"APT_BASE","fields":[{"field":"ARPT_PSN_SOURCE","old":"OWNER","new":"ADO"}]}],"first_cycle":"2025-10-02","last_cycle":"2025-10-02"}

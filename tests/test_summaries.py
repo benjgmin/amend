@@ -208,13 +208,14 @@ class TestOtherFiles(Rows):
         self.assertEqual(self.one({"PJA_CON.csv": [h]}, new, "BUF"), [
             ("fyi", "new parachute jump area PNY035 contact: Buffalo Niagara Intl (BUF) 126.5")])
 
-    def test_file_without_english_is_never_act(self):
-        """a file nobody wrote English for yet keeps the FAA's column names but can't top the
-        act list with them."""
+    def test_file_without_english_keeps_its_rank(self):
+        """a file nobody wrote English for yet shows the FAA's column names and values, and a
+        change that ranks act stays act: a missing template never hides one."""
         h = "ARPT_ID,SOMETHING_CLSD"
         ch = self.diff({"APT_BASE.csv": ["ARPT_ID", "DAB"], "APT_NEW.csv": [h]},
                        {"APT_BASE.csv": ["ARPT_ID", "DAB"], "APT_NEW.csv": [h, "DAB,RWY CLSD"]})["DAB"]
-        self.assertEqual([c["priority"] for c in ch], ["fyi"])
+        self.assertEqual([(c["priority"], c["summary"]) for c in ch],
+                         [("action", "added (apt_new): something clsd=RWY CLSD")])
 
 
 class TestColumns(Rows):
@@ -273,13 +274,15 @@ class TestColumns(Rows):
         make_zip(n, new)
         return run(o, n, None, log=lambda *_: None)
 
-    def test_unnamed_column_is_never_act_and_is_counted(self):
-        """a column the FAA layouts we read don't name: capped to fyi and counted in the run's
-        checks (TestRealCycle fails on any real one)."""
-        h = "ARPT_ID,RWY_ID,RWY_LEN,NEW_CLSD_COL"
+    def test_unnamed_column_keeps_act_and_is_counted(self):
+        """a column the FAA layouts we read don't name: shown as the FAA wrote it, still act if
+        it ranks act (never quietly demoted), and counted in the run's checks (TestRealCycle
+        fails on any real one)."""
+        h = "ARPT_ID,RWY_ID,RWY_LEN,NEW_LGT_COL"
         r = self.run_diff({"APT_BASE.csv": ["ARPT_ID", "DAB"], "APT_RWY.csv": [h, "DAB,07/25,4000,N"]},
                           {"APT_BASE.csv": ["ARPT_ID", "DAB"], "APT_RWY.csv": [h, "DAB,07/25,4000,Y"]})
-        self.assertEqual([c["priority"] for c in r["airports"]["DAB"]], ["fyi"])
+        self.assertEqual([(c["priority"], c["summary"]) for c in r["airports"]["DAB"]],
+                         [("action", "runway 07/25: NEW_LGT_COL: N -> Y")])
         self.assertEqual(r["checks"]["no_english"], {"APT_RWY changed": 1})
 
     def test_every_column_in_the_layouts_has_a_name(self):

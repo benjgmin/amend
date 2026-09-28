@@ -4,8 +4,9 @@ What each FAA column is called in English, and what its codes mean.
 Every name and code meaning here comes from the FAA's own data layouts (the "<FILE> DATA
 LAYOUT.pdf" in every NASR CSV zip: APT, ATC, AWOS, CLS_ARSP, FRQ, ILS, MIL_OPS, NAV, PJA, RDR),
 lowercased, never guessed. A code the layout doesn't define is shown exactly as the FAA wrote
-it. A column with no name here isn't described at all: the pipeline caps it to fyi and counts
-it in result["checks"]["no_english"], and the tests fail on any real cycle that has one.
+it. A column with no name here shows as the FAA wrote it ("NEW_COL: N -> Y") and keeps its
+rank; the pipeline counts it in result["checks"]["no_english"] (and the run log), and the
+tests fail on any real cycle or zip header that has one.
 """
 from .rules import base
 
@@ -413,7 +414,7 @@ def known(col, source):
 
 def name(col, source):
     s = spec(col, source)
-    return s[0] if s else col.replace("_", " ").lower()
+    return s[0] if s else col       # not in the layouts we read: the FAA column as written
 
 
 def _code(codes, v):

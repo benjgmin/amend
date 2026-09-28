@@ -108,11 +108,12 @@ def fix_fields(e):
     src, s = e["source"], e["summary"]
     who = "airport contact " if src == "APT_CON" else ""
     # 'visual glide path angle: 4 -> 3.5' is how today's '... 4 -> 3.5°' starts: already done
-    leaked = [f for f in e["fields"] if _at(s, fl.generic(f["field"], f["old"], f["new"])) >= 0
-              and _at(s, fl.phrase(f["field"], src, f["old"], f["new"], who)) < 0]
+    shown = [f for f in e["fields"] if _at(s, fl.generic(f["field"], f["old"], f["new"])) >= 0]
+    noise = [f for f in shown if is_noise_col(f["field"]) or f["field"] in IGNORE_COLS]
+    leaked = noise + [f for f in shown if f not in noise
+                      and _at(s, fl.phrase(f["field"], src, f["old"], f["new"], who)) < 0]
     if not leaked:
         return e
-    noise = [f for f in leaked if is_noise_col(f["field"]) or f["field"] in IGNORE_COLS]
     for f in noise:
         s = _cut(s, fl.generic(f["field"], f["old"], f["new"]))
     ctl = [f for f in leaked if f["field"] in fl.CONTROL_COLS]

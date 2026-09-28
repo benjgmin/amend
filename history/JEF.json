@@ -1,1 +1,0 @@
-{"schema_version":1,"airport":"JEF","entries":[{"cycle":"2024-10-31","from_cycle":"2024-10-03","id":"d5bb15db7d4b","priority":"action","category":"navaid","kind":"changed","summary":"runway 30: mag var hemis: E -> W","source":"ILS_BASE","fields":[{"field":"MAG_VAR_HEMIS","old":"E","new":"W"}]}],"first_cycle":"2024-10-31","last_cycle":"2024-10-31"}

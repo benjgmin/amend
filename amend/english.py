@@ -232,7 +232,7 @@ def summarize(rec, remarks):
 
     if kind == "changed":
         if any(not fl.known(f["field"], rec["source"]) for f in rec["fields"]):
-            rec["no_template"] = True     # a column the FAA layouts we read don't name
+            rec["no_template"] = True     # a column the FAA layouts we read don't name: counted
         where = ""
         if ctx.get("RWY_END_ID"):
             where = f"runway {ctx['RWY_END_ID']}: "

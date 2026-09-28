@@ -1,1 +1,0 @@
-{"schema_version":1,"airport":"LL84","entries":[{"cycle":"2025-09-04","from_cycle":"2025-08-07","id":"8950596854d9","priority":"fyi","category":"airport","kind":"changed","summary":"arpt psn source: FAA-EST IMAGERY -> ADO","source":"APT_BASE","fields":[{"field":"ARPT_PSN_SOURCE","old":"FAA-EST IMAGERY","new":"ADO"}]}],"first_cycle":"2025-09-04","last_cycle":"2025-09-04"}
