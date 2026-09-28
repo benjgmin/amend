@@ -94,8 +94,8 @@ the FAA doesn't keep older metafiles online.
  "airports": {"VRB": {"entries": 14, "last_cycle": "2025-07-10", "action": 6}}}
 ```
 ## Processing log (in the repo, not served)
-`audit/runs/<cycle>.json` holds one record per engine run (the site build and each history
-cycle): the FAA source files with checksums and retrieval times, rows read per file, changes
-by priority, the input checks and release audit, and whether the run was built, blocked or
+`audit/runs/<cycle>/` holds one file per engine run (the site build and each history cycle):
+the FAA source files with checksums and retrieval times, rows read per file, changes by
+priority, the input checks and release audit, and whether the run was built, blocked or
 failed. Its full shape is documented at the top of `amend/runlog.py`, and it has its own
 `runlog_version`.

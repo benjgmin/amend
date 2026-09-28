@@ -7,22 +7,24 @@ made, checks run). Nothing is estimated; a value the run couldn't know is null. 
 accuracy and engine-health pages are meant to be built from these records, so the shape below
 is a contract: add fields freely, but rename or remove one only with a RUNLOG_VERSION bump.
 
-audit/runs/<cycle>.json, one file per FAA cycle in effect when the run started (so a file
-covers 28 days of runs), oldest run first:
-
-  {"runlog_version": 1, "cycle": "2026-09-03", "runs": [Run, ...]}
+audit/runs/<cycle>/<started>-<mode>-<run>.json, one file per record, so two builds never
+write the same file: a build that queued behind another starts from a checkout without the
+other's data commit, and both still push cleanly. <cycle> is the FAA cycle in effect when the
+run started, <started> its start time (UTC, to the microsecond, so the files sort in start
+order), <run> the Actions run id and attempt ("36415457140-1") or "local". Each file is one Run.
 
 Run:
   runlog_version  int     shape of this record
   engine          string  amend.ENGINE_VERSION that made the changes
-  engine_hash     string  sha256 (16 hex) of the engine source files (ENGINE_MODULES), to catch
-                          an engine change shipped without an ENGINE_VERSION bump
+  engine_hash     string  sha256 (16 hex) of the engine's code and verified glossary
+                          (ENGINE_FILES), to catch an engine change shipped without an
+                          ENGINE_VERSION bump
   commit          string  git sha the run was built from (GITHUB_SHA), null locally
   run             object  {"id", "attempt", "trigger", "url"} of the GitHub Actions run;
                           trigger is the event (schedule, push, workflow_dispatch) or "local"
-  hash_seed       string  PYTHONHASHSEED the run used, null if random. the diff's row pairing
-                          still depends on set order, so output is only reproducible with the
-                          same engine, the same FAA files and the same seed
+  hash_seed       string  PYTHONHASHSEED the run used, null if random. the diff sorts before it
+                          pairs rows, so output shouldn't depend on it; the build pins it anyway
+                          and records it, so a rebuild can be reproduced exactly
   mode            string  "latest" (the site's current/upcoming diff) or "history" (one cycle
                           appended to history/)
   started_at, finished_at   ISO UTC timestamps; seconds: float, wall time
@@ -42,8 +44,15 @@ Run:
   changes         object  {"airports", "action", "ifr", "fyi", "hidden", "by_category": {}}
                           what the diff produced, before any gate
   remarks         object  {"texts": remarks needing plain English, "plain_english": shown
-                           translated, "raw_fallback": shown as FAA text, "ai": model usage
-                           if the remark code reports it, else null}
+                           translated, "raw_fallback": shown as FAA text, "ai": what the
+                           translator reported (remarks.STATS), else null: llm_calls,
+                           input_tokens, output_tokens, est_cost_usd, sent, translated,
+                           rejected (broke the no-guess check), bad_batches, cache_retired,
+                           unknown_terms {contraction: count} with no verified meaning}
+  summary_checks  object  {"no_english": {"<file> <kind>": n}, "summary_value_mismatches": n}:
+                          changes shown as FAA column names because no English template covers
+                          them, and summaries that named a number or identifier the FAA record
+                          doesn't have (those show the FAA values instead). null if not reported
   checks          object  {"errors": [...], "warnings": [...], "error_count", "warning_count"}:
                           input checks + the release audit (amend/audit.py), lists capped at 100
   outcome         string  latest: "built" (site written, handed to verify/deploy)
@@ -62,6 +71,7 @@ Run:
 import datetime as dt
 import glob
 import hashlib
+import itertools
 import json
 import os
 from collections import Counter
@@ -74,17 +84,20 @@ RUNLOG_VERSION = 1
 RUNS = os.path.join("audit", "runs")
 CAP = 100   # messages kept per list; the counts are always exact
 
-# the files that decide what a change says, how it's ranked and whether it shows up
-ENGINE_MODULES = ("airspace", "collapse", "diff", "dtpp", "english", "nasr", "pipeline",
-                  "procedures", "remarks", "rules")
+# the files that decide what a change says, how it's ranked and whether it shows up: the diff
+# (pipeline.py) and every module it imports (a test checks), plus the verified glossary, which
+# is data but decides what a remark's contractions may say in plain English
+ENGINE_FILES = ("airspace.py", "collapse.py", "diff.py", "dtpp.py", "english.py", "glossary.py",
+                "glossary.json", "nasr.py", "output.py", "pipeline.py", "procedures.py", "remarks.py",
+                "rules.py")
 
 
 def engine_hash():
     here = os.path.dirname(__file__)
     h = hashlib.sha256()
-    for m in ENGINE_MODULES:
-        with open(os.path.join(here, f"{m}.py"), "rb") as f:
-            h.update(m.encode() + b"\0" + hashlib.sha256(f.read()).digest())
+    for name in ENGINE_FILES:
+        with open(os.path.join(here, name), "rb") as f:
+            h.update(name.encode() + b"\0" + hashlib.sha256(f.read()).digest())
     return h.hexdigest()[:16]
 
 
@@ -160,8 +173,8 @@ class Run:
             "hash_seed": os.environ.get("PYTHONHASHSEED"),
             "started_at": _iso(self.t0), "finished_at": None, "seconds": None,
             "from_cycle": None, "to_cycle": None, "upcoming": None, "sources": [], "csv_rows": None,
-            "airspace_shapes": None,
-            "changes": None, "remarks": None, "checks": None, "outcome": None, "error": None,
+            "airspace_shapes": None, "changes": None, "remarks": None, "summary_checks": None,
+            "checks": None, "outcome": None, "error": None,
             "verified": None, "published": None}
 
     def __enter__(self):
@@ -213,6 +226,7 @@ class Run:
             stats = getattr(remarks, "STATS", None)
             self.rec["remarks"] = {**rm, "raw_fallback": rm["texts"] - rm["plain_english"],
                                    "ai": dict(stats) if isinstance(stats, dict) else None}
+        self.rec["summary_checks"] = result.get("checks")
 
     def checks(self, report):
         """report: {"errors", "warnings"}, the gate's full verdict. the caller adds
@@ -244,63 +258,91 @@ class Run:
     def write(self):
         end = _now()
         self.rec.update(finished_at=_iso(end), seconds=round((end - self.t0).total_seconds(), 1))
-        append(self.rec, self.cycle, self.dir)
+        migrate(self.dir)
+        save(self.rec, self.cycle, self.t0, self.dir)
 
 
-def _path(cycle, log_dir):
-    return os.path.join(log_dir, f"{cycle}.json")
+def _run_key(run):
+    """"36415457140-1" (Actions run id and attempt), or "local"."""
+    return "-".join(x for x in (run.get("id"), run.get("attempt")) if x) or "local"
+
+
+def save(rec, cycle, started, log_dir=RUNS):
+    """write one record to a new file of its own and return its path. never touches another
+    record's file, so records from two runs can't conflict when the workflow pushes them."""
+    folder = os.path.join(log_dir, cycle)
+    os.makedirs(folder, exist_ok=True)
+    stem = os.path.join(folder, f"{started:%Y%m%dT%H%M%S.%f}Z-{rec['mode']}-{_run_key(rec['run'])}")
+    for n in itertools.count(1):
+        path = stem + (f"-{n}" if n > 1 else "") + ".json"
+        try:
+            with open(path, "x", encoding="utf-8") as f:
+                _dump(rec, f)
+            return path
+        except FileExistsError:
+            continue
+
+
+def migrate(log_dir=RUNS):
+    """split files in the first layout (audit/runs/<cycle>.json holding {"runs": [...]}) into
+    one file per record. file names come from each record, so two builds that both migrate
+    write identical files and their pushes still agree."""
+    for path in sorted(glob.glob(os.path.join(log_dir, "*.json"))):
+        doc = _read(path)
+        if not (isinstance(doc, dict) and isinstance(doc.get("runs"), list)):
+            continue
+        cycle = os.path.basename(path)[:-len(".json")]
+        for rec in doc["runs"]:
+            save(rec, cycle, dt.datetime.fromisoformat(rec["started_at"]), log_dir)
+        os.remove(path)
+
+
+def _dump(rec, f):
+    json.dump(rec, f, indent=1, ensure_ascii=False)
+    f.write("\n")
 
 
 def _read(path):
     try:
         with open(path, encoding="utf-8") as f:
             return json.load(f)
-    except FileNotFoundError:
+    except (OSError, ValueError):
         return None
 
 
-def _write(doc, path):
-    os.makedirs(os.path.dirname(path), exist_ok=True)
-    with open(path, "w", encoding="utf-8") as f:
-        json.dump(doc, f, indent=1, ensure_ascii=False)
-        f.write("\n")
+def files(log_dir=RUNS, last_cycles=None):
+    """record files, oldest first (only the newest `last_cycles` cycle folders if given)."""
+    folders = sorted(d for d in glob.glob(os.path.join(log_dir, "*")) if os.path.isdir(d))
+    if last_cycles:
+        folders = folders[-last_cycles:]
+    return [p for d in folders for p in sorted(glob.glob(os.path.join(d, "*.json")))]
 
 
-def append(rec, cycle, log_dir=RUNS):
-    path = _path(cycle, log_dir)
-    doc = _read(path) or {"runlog_version": RUNLOG_VERSION, "cycle": cycle, "runs": []}
-    doc["runs"].append(rec)
-    _write(doc, path)
-    return path
-
-
-def files(log_dir=RUNS):
-    return sorted(glob.glob(os.path.join(log_dir, "*.json")))
-
-
-def runs(log_dir=RUNS, last_files=None):
-    """every record, oldest first (only the newest `last_files` files if given)."""
-    out = []
-    for path in files(log_dir)[-last_files:] if last_files else files(log_dir):
-        out += (_read(path) or {}).get("runs", [])
-    return out
+def runs(log_dir=RUNS, last_cycles=None):
+    """every record, oldest first."""
+    return [r for r in map(_read, files(log_dir, last_cycles)) if r]
 
 
 def last_run(log_dir=RUNS):
-    rs = runs(log_dir, last_files=2)
-    return rs[-1] if rs else None
+    for path in reversed(files(log_dir, last_cycles=2)):
+        rec = _read(path)
+        if rec:
+            return rec
+    return None
 
 
 def mark_verified(ok, problems=(), log_dir=RUNS):
-    """record `amend verify`'s result on this Actions run's latest record. False if there's none."""
-    rid = os.environ.get("GITHUB_RUN_ID")
-    for path in reversed(files(log_dir)[-2:]):
-        doc = _read(path)
-        for rec in reversed(doc["runs"]):
-            if rec["mode"] == "latest" and rec["run"].get("id") == rid and rec["outcome"] == "built":
-                rec["verified"] = rec["published"] = bool(ok)
-                if not ok:
-                    rec["error"] = "verify: " + "; ".join(problems)[:1000]
-                _write(doc, path)
-                return True
+    """record `amend verify`'s result on this Actions run's site build record (the newest
+    "built" latest record of this run and attempt). False if there's none."""
+    run = _actions_run()
+    pattern = os.path.join(log_dir, "*", f"*-latest-{_run_key(run)}*.json")
+    for path in sorted(glob.glob(pattern), key=os.path.basename, reverse=True):
+        rec = _read(path)
+        if rec and rec["outcome"] == "built" and (rec["run"]["id"], rec["run"]["attempt"]) == (run["id"], run["attempt"]):
+            rec["verified"] = rec["published"] = bool(ok)
+            if not ok:
+                rec["error"] = "verify: " + "; ".join(problems)[:1000]
+            with open(path, "w", encoding="utf-8") as f:
+                _dump(rec, f)
+            return True
     return False

@@ -7,7 +7,7 @@ import shutil
 from . import ENGINE_VERSION, SCHEMA_VERSION
 from . import audit, watchlists, web
 from .airports import directory
-from .cycles import CYCLE, get_airspace_pair, get_cycle, get_dtpp, in_effect, zip_path
+from .cycles import CYCLE, airspace_path, forget, get_airspace_pair, get_cycle, get_dtpp, in_effect, zip_path
 from .freshness import fingerprint
 from .output import dump, write_diff
 from .pipeline import run
@@ -45,6 +45,12 @@ def _build(llm, log):
     result = run(zip_path(old), zip_path(new), None, dtpp, llm and bool(os.environ.get("ANTHROPIC_API_KEY")),
                  airspace=airspace)
     log.result(result)
+    if result["airspace_error"]:
+        # meta.json says includes_airspace false, so the next scheduled check rebuilds. without
+        # this the Actions cache would hand it the same unreadable zips and it'd fail the same way
+        for d in (old, new):
+            forget(airspace_path(d))
+        print("  dropped the cached airspace zips, so the next build downloads them again")
     lists = watchlists.load_all()
     report = audit.audit(result, HISTORY)
     report["errors"] = log.problems + report["errors"]   # a cached file that isn't what was downloaded

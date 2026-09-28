@@ -10,8 +10,8 @@ import os
 
 from . import ENGINE_VERSION, SCHEMA_VERSION
 from .audit import audit, report_to_actions
-from .cycles import (CYCLE, FIRST_ARCHIVED, airspace_path, dtpp_path, get_airspace_pair, get_cycle,
-                     get_dtpp, in_effect, meta_path, zip_path)
+from .cycles import (CYCLE, FIRST_ARCHIVED, airspace_path, dtpp_path, forget, get_airspace_pair,
+                     get_cycle, get_dtpp, in_effect, zip_path)
 from .output import dump
 from .pipeline import run
 from .runlog import Run
@@ -119,7 +119,5 @@ def _step(prev, new, state, llm, keep, log):
     log.done()
     if not keep:  # only the newest zip is needed for the next step
         for p in (zip_path(prev), dtpp_path(new), airspace_path(prev)):
-            for q in (p, meta_path(p)):
-                if os.path.exists(q):
-                    os.remove(q)
+            forget(p)
     return new
