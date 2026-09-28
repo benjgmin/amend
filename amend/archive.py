@@ -27,10 +27,11 @@ import time
 import urllib.error
 import urllib.parse
 import urllib.request
+import zipfile
 
 from . import SCHEMA_VERSION
-from .cycles import (CSV_REQUIRED, CYCLE, FIRST_ARCHIVED, FetchError, airspace_url, csv_url,
-                     cycle_on_or_before, download, dtpp_id, dtpp_url, in_effect)
+from .cycles import (CSV_REQUIRED, CYCLE, FIRST_ARCHIVED, FetchError, _zip_names, airspace_url,
+                     csv_url, cycle_on_or_before, download, dtpp_id, dtpp_url, in_effect)
 
 API = "https://api.github.com"
 UPLOADS = "https://uploads.github.com"
@@ -260,10 +261,20 @@ def fetch_cycle(d, tmp):
     for kind, url_for, required in FILES:
         url = url_for(d)
         path = os.path.join(tmp, _name(url))
-        if download(url, path, required):   # FetchError (can't tell) propagates: stop this cycle
-            files.append({"name": _name(url), "kind": kind, "url": url,
-                          "bytes": os.path.getsize(path), "sha256": sha256(path),
-                          "retrieved_at": now(), "path": path})
+        # zips from before history's first cycle are kept as they are, even in an older layout
+        # (mid-2022 CSV zips have no ATC_BASE.csv); the manifest says which members they lack
+        need = required if d >= FIRST_ARCHIVED else ()
+        if download(url, path, need):   # FetchError (can't tell) propagates: stop this cycle
+            f = {"name": _name(url), "kind": kind, "url": url,
+                 "bytes": os.path.getsize(path), "sha256": sha256(path),
+                 "retrieved_at": now(), "path": path}
+            if required and not need:
+                with zipfile.ZipFile(path) as zf:
+                    have = {n.upper() for n in _zip_names(zf)}
+                lacks = [r for r in required if r.upper() not in have]
+                if lacks:
+                    f["lacks"] = lacks
+            files.append(f)
         else:
             missing.append({"kind": kind, "url": url, "reason": "the FAA wasn't serving it"})
     return files, missing
@@ -292,7 +303,10 @@ def archive_cycle(gh, d, at=None, log=print):
             return "exists"
 
         files, missing = fetch_cycle(d, tmp)
-        if not any(f["kind"] == "nasr_csv" for f in files):
+        # history is built from the CSV zip, so a cycle it covers is never archived without one:
+        # a stray 404 can't lock in a release missing it. older cycles keep whatever's left
+        # (the FAA still serves airspace zips for early 2022, after their CSV zips are gone)
+        if not any(f["kind"] == "nasr_csv" for f in files) and (d >= FIRST_ARCHIVED or not files):
             if rel:
                 raise ArchiveError(f"{t}: a draft exists but the FAA no longer serves the CSV zip")
             if d > in_effect(at):

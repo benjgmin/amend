@@ -89,17 +89,19 @@ def content(url):
 
 
 class FakeFAA:
-    def __init__(self, gone=(), broken=()):
+    def __init__(self, gone=(), broken=(), bodies=None):
         self.gone, self.broken, self.fetched = set(gone), set(broken), []
+        self.bodies, self.required = bodies or {}, {}
 
     def __call__(self, url, path, required=()):
         self.fetched.append(url)
+        self.required[url] = tuple(required)
         if any(g in url for g in self.broken):
             raise cycles.FetchError(f"{url}: HTTP 503")
         if any(g in url for g in self.gone):
             return False
         with open(path, "wb") as f:
-            f.write(content(url))
+            f.write(next((b for k, b in self.bodies.items() if k in url), None) or content(url))
         return True
 
 
@@ -161,7 +163,35 @@ class ArchiveTest(unittest.TestCase):
         self.assertIn("dtpp_metafile", self.gh.find_release("faa-2025-01-23")["body"])
 
     def test_cycle_without_csv_zip_makes_no_release(self):
+        # history is built from this cycle's CSV zip: never archive it without one
         self.assertEqual(self.run_cycle(PAST, FakeFAA(gone=["CSV.zip"])), "unavailable")
+        self.assertEqual(self.gh.releases, [])
+
+    def test_pre_history_cycle_keeps_its_airspace_without_a_csv_zip(self):
+        old = dt.date(2022, 3, 24)   # the FAA still serves this airspace zip, not the CSV zip
+        self.assertEqual(self.run_cycle(old, FakeFAA(gone=["CSV.zip", "d-tpp"])), "done")
+        man = self.gh.manifest("faa-2022-03-24")
+        self.assertEqual([f["kind"] for f in man["files"]], ["class_airspace"])
+        self.assertEqual([m["kind"] for m in man["missing"]], ["nasr_csv", "dtpp_metafile"])
+
+    def test_pre_history_csv_zip_in_an_older_layout_is_kept_as_is(self):
+        # mid-2022 CSV zips have no ATC_BASE.csv; history cycles still require it
+        from tests.test_pipeline_ops import zip_bytes
+        old = dt.date(2022, 5, 19)
+        faa = FakeFAA(gone=["d-tpp"], bodies={
+            "CSV.zip": zip_bytes([n for n in cycles.CSV_REQUIRED if n != "ATC_BASE.csv"])})
+        self.assertEqual(self.run_cycle(old, faa), "done")
+        self.assertEqual(faa.required[cycles.csv_url(old)], ())
+        csv = self.gh.manifest("faa-2022-05-19")["files"][0]
+        self.assertEqual((csv["kind"], csv["lacks"]), ("nasr_csv", ["ATC_BASE.csv"]))
+        self.run_cycle(PAST)
+        self.assertEqual(self.faa.required[cycles.csv_url(PAST)], cycles.CSV_REQUIRED)
+        self.assertNotIn("lacks", self.gh.manifest("faa-2025-01-23")["files"][0])
+
+    def test_pre_history_cycle_with_nothing_served_makes_no_release(self):
+        old = dt.date(2022, 1, 27)
+        self.assertEqual(self.run_cycle(old, FakeFAA(gone=["CSV.zip", "shape", "d-tpp"])),
+                         "unavailable")
         self.assertEqual(self.gh.releases, [])
 
     def test_upcoming_cycle_not_posted_at_all_waits(self):
