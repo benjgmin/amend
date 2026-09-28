@@ -1,11 +1,14 @@
 """
-site/status/: the public status page, built from the run log (audit/runs/, amend/runlog.py).
+site/status/: the public status page (status.amend.watch, see amend/subsite.py), built from the run
+log (audit/runs/, amend/runlog.py).
 
-It answers "is Amend current, and did the latest run pass every check?" at the top, then shows
-every stage each recent run went through: the FAA files it downloaded (with checksums), the
-rows it read, what the diff found, the remark translations, the checks, the pre-publish verify
-and whether it was published. Every value comes from a run record. A value the run didn't
-record shows as "not recorded"; nothing here is estimated.
+It's brief on purpose (master spec §62.2): a headline ("is Amend up to date?"), one line per part of
+the service with its state, the last 30 runs as a strip, and the blocked or crashed ones as the
+incident history. Every step of the latest build (the FAA files with their checksums, the rows
+read, what the diff found, the remark translations, the checks, the pre-publish verify) is folded
+away underneath. How the whole process works is on the docs page (amend/docspage.py). Every value
+comes from a run record. A value the run didn't record shows as "not recorded"; nothing here is
+estimated.
 
 The page is rebuilt with the site (web.build) and again by `amend verify` once it passes, so
 the run that deploys it shows its own verify result. A
@@ -19,7 +22,7 @@ import datetime as dt
 import json
 import os
 
-from . import runlog, web
+from . import runlog, subsite, web
 from .web import e, nice
 
 CYCLES = 3        # cycle folders of audit/runs/ to read (the in-effect cycle and the two before)
@@ -65,6 +68,32 @@ CSS = """<style>
 .run .stages{padding:0 16px 8px}
 .warn-row td{color:var(--am)}
 @media (max-width:479px){.stg{grid-template-columns:minmax(0,1fr)}.stg .more{grid-column:1}}
+.sx-hero{--c:var(--gn);--s:var(--gnS);display:flex;gap:14px;align-items:flex-start;padding:22px 22px 20px;border-radius:12px;
+background:var(--s);border:1px solid color-mix(in srgb,var(--c) 28%,transparent)}
+.sx-hero.is-info{--c:var(--cy);--s:var(--cyS)}.sx-hero.is-bad{--c:var(--am);--s:var(--amS)}.sx-hero.is-none{--c:var(--fn);--s:var(--gyS)}
+.sx-dot{width:12px;height:12px;border-radius:50%;background:var(--c);flex:none;margin-top:9px;
+box-shadow:0 0 0 5px color-mix(in srgb,var(--c) 18%,transparent)}
+.sx-hero h1{font:600 23px/1.3 var(--sans);letter-spacing:-.3px;margin:0}.sx-hero p{margin:4px 0 0;color:var(--dm)}
+.sx-list{margin-top:20px;border:1px solid var(--ln);border-radius:12px;background:var(--p)}
+.sx-row{display:flex;gap:16px;align-items:center;padding:15px 18px;border-top:1px solid var(--ln)}.sx-row:first-child{border-top:0}
+.sx-n{font-weight:600}.sx-d{color:var(--dm);font-size:13.5px;margin-top:1px}
+.sx-st{margin-left:auto;display:inline-flex;align-items:center;gap:7px;font-size:13.5px;font-weight:500;white-space:nowrap;color:var(--gn)}
+.sx-st::before{content:"";width:8px;height:8px;border-radius:50%;background:currentColor;flex:none}
+.sx-st.info{color:var(--cy)}.sx-st.bad{color:var(--am)}.sx-st.none{color:var(--fn)}
+.sx-bars{display:flex;gap:3px;height:36px}.sx-bars>*{flex:1;min-width:3px;border-radius:2px;background:var(--gn);opacity:.85}
+.sx-bars>*:hover{opacity:1;text-decoration:none}.sx-bars .info{background:var(--cy)}.sx-bars .bad{background:var(--am)}
+.sx-bars .none{background:var(--ln2)}
+.sx-legend{display:flex;justify-content:space-between;gap:12px;color:var(--fn);font-size:12px;margin-top:6px}
+.sx-none{color:var(--dm);margin:0}
+.sx-inc{list-style:none;margin:0;padding:0;border:1px solid var(--ln);border-radius:12px;background:var(--p)}
+.sx-inc li{display:flex;align-items:center;gap:16px;padding:13px 18px;border-top:1px solid var(--ln)}
+.sx-inc li:first-child{border-top:0}.sx-inc .sx-d{overflow-wrap:anywhere}
+.sx-full{margin-top:28px;border:1px solid var(--ln);border-radius:12px;background:var(--p);padding:0 18px}
+.sx-full>summary{cursor:pointer;padding:14px 0;font-weight:600}.sx-full[open]>summary{border-bottom:1px solid var(--ln)}
+.sx-full .stages{padding-bottom:10px}
+.sx-about{color:var(--fn);font-size:13px;margin-top:28px}
+@media (max-width:479px){.sx-row{flex-direction:column;align-items:flex-start;gap:6px}.sx-st{margin-left:0}
+.sx-hero{padding:18px}.sx-hero h1{font-size:20px}}
 </style>"""
 
 
@@ -420,99 +449,179 @@ def load(log_dir=runlog.RUNS):
     return out
 
 
+def ago(iso):
+    """"28 Sep 1850Z", which the page script turns into "12m ago" (the full time stays in its tooltip)."""
+    try:
+        t = dt.datetime.fromisoformat(iso).astimezone(dt.timezone.utc)
+    except (TypeError, ValueError):
+        return NR
+    return web.built_at(t)
+
+
+# the one-word state of each part of the service, and its colour: ok green, info blue, bad magenta, none grey
+def pill(cls, text, id_=""):
+    ident = f' id="{id_}"' if id_ else ""
+    return f'<span class="sx-st {cls}"{ident}>{text}</span>'
+
+
+def row(name, desc, state):
+    return f'<div class="sx-row"><div><div class="sx-n">{name}</div><div class="sx-d">{desc}</div></div>{state}</div>'
+
+
+def headline(top, later_bad):
+    """(css class, title, sentence) for the banner at the top."""
+    if top is None:
+        return "is-none", "No runs recorded yet", "The run log is empty, so there's nothing to show."
+    if later_bad:
+        b = later_bad[0]
+        how = "blocked by a check" if b.get("outcome") == "blocked" else "stopped by a crash"
+        return ("is-bad", "The latest run didn't publish",
+                f"A run at {when(b.get('started_at'))} was {how}, so the site stays on the last good build, from "
+                f"{ago(top.get('started_at'))}. Nothing unchecked was published.")
+    kind, _ = verdict(top)
+    if kind == "live":
+        return "is-ok", "Amend is up to date", f"The latest build passed every check, {ago(top.get('started_at'))}."
+    if kind == "warn":
+        n = (top.get("checks") or {}).get("warning_count")
+        return ("is-ok", "Amend is up to date", f"The latest build passed, {ago(top.get('started_at'))}, with "
+                f"{num(n)} warning{'s' if n != 1 else ''}. Warnings don't stop a build.")
+    if kind == "wait":
+        return "is-info", "The latest build is waiting on its pre-publish check", ""
+    return ("is-bad", "The latest build didn't publish",
+            "The site stays on the last good build until a run passes every check.")
+
+
+def components(top, pub, meta, now):
+    """spec §62.2: one line per part of the service, each with its state."""
+    if top is None:
+        return ""
+    kind, _ = verdict(top)
+    ok = kind in ("live", "warn")
+    rows = []
+
+    def cyc(up):
+        if not meta:
+            return "Not recorded."
+        if up:
+            return (f"In effect: {nice(meta['from_cycle'])}. The next cycle, {nice(meta['to_cycle'])}, is already on "
+                    f"Amend and takes effect {web.countdown(web.effective(meta['to_cycle']))}.")
+        nxt = (dt.date.fromisoformat(meta["to_cycle"]) + dt.timedelta(days=28)).isoformat()
+        return (f"In effect: {nice(meta['to_cycle'])}. The next one, {nice(nxt)}, shows up once the FAA posts it; "
+                "Amend checks for it every 10 minutes.")
+    rows.append(row("FAA cycle", web.flip(meta, now, cyc) if meta else cyc(False),
+                    pill("ok", "Up to date", "c-faa") if ok else pill("info", "Not updating", "c-faa")))
+    ch = top.get("changes")
+    found = (f" {num(sum(ch.get(p) or 0 for p in ('action', 'ifr', 'fyi')))} changes at {num(ch.get('airports'))} "
+             "airports." if ch else "")
+    state = {"live": ("ok", "Complete"), "warn": ("ok", "Complete"), "wait": ("info", "Verifying"),
+             "held": ("bad", "Blocked"), "fail": ("bad", "Crashed"), "skip": ("none", "Skipped")}.get(kind, ("none", "Unknown"))
+    rows.append(row("Processing", f"Latest build {ago(top.get('started_at'))}: compared {cycles(top)}.{found}",
+                    pill(*state)))
+    c = top.get("checks")
+    if c is None:
+        rows.append(row("Checks", "The run stopped before the checks.", pill("none", "Not run")))
+    else:
+        ne = c.get("error_count", len(c.get("errors") or []))
+        nw = c.get("warning_count", len(c.get("warnings") or []))
+        v = top.get("verified")
+        rows.append(row("Checks", f"Input checks, release audit and the pre-publish check: {num(ne)} "
+                        f"error{'s' if ne != 1 else ''}, {num(nw)} warning{'s' if nw != 1 else ''}.",
+                        pill("bad", "Failed") if ne or v is False else pill("info", "Warnings") if nw
+                        else pill("ok", "Passed") if v else pill("info", "Verifying")))
+    rm = top.get("remarks")
+    if rm is None:
+        rows.append(row("Plain-English remarks", "Not recorded for this build.", pill("none", "Not recorded")))
+    else:
+        ai = rm.get("ai") if isinstance(rm.get("ai"), dict) else {}
+        down = bool(ai.get("llm_errors")) or bool(ai.get("llm_stopped"))
+        rows.append(row("Plain-English remarks", f"{num(rm.get('plain_english'))} of {num(rm.get('texts'))} remarks read "
+                        f"in plain English. The other {num(rm.get('raw_fallback'))} show the FAA's own text, as "
+                        "every remark does when a translation doesn't pass the no-guess check.",
+                        pill("info", "Translator down") if down else pill("ok", "Working")))
+    rows.append(row("Website and data files", "amend.watch, the iPhone app's data and the public JSON files. "
+                    + (f"Last published {ago(pub.get('finished_at') or pub.get('started_at'))}." if pub else
+                       "No published build in the run log's last three cycles."),
+                    pill("ok", "Operational", "c-web") if pub else pill("none", "Not recorded", "c-web")))
+    return f'<div class="sx-list">{"".join(rows)}</div>'
+
+
+BAR = {"live": "ok", "warn": "ok", "wait": "info", "held": "bad", "fail": "bad", "skip": "none", "none": "none"}
+
+
+def bars(recs):
+    """the last SHOWN runs as a strip, oldest on the left; each opens its record on GitHub."""
+    shown = recs[:SHOWN][::-1]
+    if not shown:
+        return ""
+    out, tally = [], {}
+    for r in shown:
+        kind, label = verdict(r)
+        tally[label] = tally.get(label, 0) + 1
+        try:
+            t = dt.datetime.fromisoformat(r.get("started_at")).astimezone(dt.timezone.utc).strftime("%d %b %H%MZ")
+        except (TypeError, ValueError):
+            t = "time not recorded"
+        what = "history" if r.get("mode") == "history" else "site build"
+        tip = e(f"{t} · {what} · {label} · {cycles(r)}")
+        href = f'{web.REPO_URL}/blob/master/{e(r["_path"])}' if r.get("_path") else (e((r.get("run") or {}).get("url") or ""))
+        out.append(f'<a class="{BAR[kind]}" href="{href}" title="{tip}" aria-label="{tip}"></a>' if href
+                   else f'<span class="{BAR[kind]}" title="{tip}"></span>')
+    counts = ", ".join(f"{n} {k.lower()}" for k, n in sorted(tally.items(), key=lambda kv: -kv[1]))
+    return (f'<div class="sx-bars">{"".join(out)}</div><div class="sx-legend"><span>Older</span>'
+            f'<span>{len(shown)} runs: {e(counts)}</span><span>Newest</span></div>')
+
+
+def problems(recs):
+    """incident history: the blocked and crashed runs in the log (spec §62.2)."""
+    bad = [r for r in recs if r.get("outcome") in ("blocked", "failed") or r.get("verified") is False]
+    if not bad:
+        return f'<p class="sx-none">No blocked or crashed runs in the last {CYCLES} cycles.</p>'
+    def why(r):
+        errs = ((r.get("checks") or {}).get("errors") or [])[:3]
+        return (f'{e(r.get("error")) or "No reason recorded."}'
+                + ("".join(f"<br>· {e(m)}" for m in errs))
+                + " Nothing was published; the site stayed on the last good build.")
+    items = "".join(f'<li><div><div class="sx-n">{when(r.get("started_at"))}</div><div class="sx-d">{why(r)}</div></div>'
+                    f'{pill("bad", "Crashed" if r.get("outcome") == "failed" else "Blocked")}</li>' for r in bad[:10])
+    more_ = f'<p class="note">Showing 10 of {len(bad)}.</p>' if len(bad) > 10 else ""
+    return f'<ul class="sx-inc">{items}</ul>{more_}'
+
+
 def page(recs, meta, now):
     builds = [r for r in recs if r.get("mode") == "latest"]
     top = builds[0] if builds else (recs[0] if recs else None)
     later_bad = [r for r in recs if top is not None and str(r.get("started_at") or "") > str(top.get("started_at") or "")
                  and r.get("outcome") in ("blocked", "failed")]
-    rows = []
-
-    def cycle_rows(up):
-        """the in-effect and next cycle, before the changeover (up) or after it"""
-        if not meta:
-            return []
-        if up:
-            return [("FAA cycle in effect", nice(meta["from_cycle"])),
-                    ("Next cycle", f"{nice(meta['to_cycle'])}, takes effect "
-                                   f"{web.countdown(web.effective(meta['to_cycle']))} (already on Amend)")]
-        nxt = (dt.date.fromisoformat(meta["to_cycle"]) + dt.timedelta(days=28)).isoformat()
-        return [("FAA cycle in effect", nice(meta["to_cycle"])),
-                ("Next cycle", f"{nice(nxt)}: shows up here once the FAA posts it")]
-    if top is None:
-        ans = (chip("none"), "No runs recorded yet.", "The run log is empty, so there's nothing to show.")
-    else:
-        kind, label = verdict(top)
-        if later_bad:
-            ans = (chip("held"), "The latest run didn't publish.",
-                   f"A run at {when(later_bad[0].get('started_at'))} was "
-                   f"{'blocked' if later_bad[0].get('outcome') == 'blocked' else 'stopped by a crash'}, so the site "
-                   "is still on the last good build below. Nothing unchecked was published.")
-        elif kind == "live":
-            ans = (chip("pass"), "Amend is current, and the latest build passed every check.",
-                   "No errors, no warnings. Details for each step are below.")
-        elif kind == "warn":
-            ans = (chip("warn"), "Amend is current. The latest build passed with warnings.",
-                   "Warnings don't stop a build; they're listed under the checks below.")
-        elif kind == "wait":
-            ans = (chip("wait"), "The latest build is waiting on its pre-publish check.", "")
-        else:
-            ans = (chip("held"), "The latest build didn't publish.",
-                   "The site stays on the last good build until a run passes every check.")
-        rows += [("Latest build", when(top.get("started_at"))), ("Compared", cycles(top)),
-                 ("Result", chip(kind, label))]
-        if top.get("engine"):
-            rows.append(("Engine", e(top["engine"])))
+    cls, title, sentence = headline(top, later_bad)
     behind_attrs = ""
     if meta and top is not None and top.get("published") and top.get("started_at"):
         behind_attrs = (f' data-last="{e(top["started_at"])}" data-cyc="{e(meta["to_cycle"])}"'
                         f' data-hours="{BEHIND_HOURS}" data-log="{web.REPO_URL}/tree/master/audit/runs"'
                         # did that run find the next cycle posted? False: the FAA hadn't posted it yet
                         f' data-up="{"1" if top.get("upcoming") else "0" if top.get("upcoming") is False else ""}"')
-    # the cycle rows swap at 0901Z in the open page, like every other page (web.flip and app.js); all the rows go in
-    # both versions so the first row's divider rule holds in each
-    kvs = lambda up: "".join(f'<div class="kv"><span>{k}</span><span>{v}</span></div>' for k, v in cycle_rows(up) + rows)
-    kv = web.flip(meta, now, kvs) if meta else kvs(False)
-    body = [f"""<header class="full"><h1>Status</h1><p class="lede">Is Amend current, and did the latest run pass every check?
-Every number here comes from the run log Amend writes on each run. Nothing is estimated.</p></header>
-<section class="full card box st-top"><div class="st-ans" id="stans"{behind_attrs}>{ans[0]}<div><b>{ans[1]}</b>
-{f'<p class="note">{ans[2]}</p>' if ans[2] else ''}</div></div><div>{kv}</div></section>{BEHIND_JS if behind_attrs else ""}"""]
+    docs = web.sub_url("docs")
+    body = [f'<section class="sx-hero {cls}" id="stans"{behind_attrs}><span class="sx-dot" aria-hidden="true"></span>'
+            f'<div><h1>{title}</h1>{f"<p>{sentence}</p>" if sentence else ""}</div></section>'
+            + (BEHIND_JS if behind_attrs else ""),
+            components(top, next((r for r in builds if r.get("published")), None), meta, now)]
+    if recs:
+        body.append(f'<h2 class="sx-h">Recent runs</h2>{bars(recs)}')
+    body.append(f'<h2 class="sx-h">Problems</h2>{problems(recs)}')
     if top is not None:
-        body.append(f'<section class="full card box"><h3>Latest build, step by step</h3>'
-                    f'<p class="note">{run_meta(top)}</p><div class="stages">{stages(top)}</div></section>')
-    others = [r for r in recs if r is not top][:SHOWN]
-    if others:
-        items = []
-        for r in others:
-            kind, label = verdict(r)
-            items.append(f'<details class="card cycle run"><summary><span class="chev">▶</span>'
-                         f'<span class="when">{when(r.get("started_at"))}</span>'
-                         f'<span class="sub">{cycles(r)}</span><span class="chips">{chip(kind, label)}'
-                         f'</span></summary><div class="stages"><p class="note">{run_meta(r)}</p>{stages(r)}</div></details>')
-        body.append(f'<section class="full"><h2 class="h2" style="margin-bottom:10px">Earlier runs</h2>'
-                    f'<div class="hlist">{"".join(items)}</div></section>')
-    body.append(f"""<section class="full card box prose"><h3>How to read this page</h3>
-<p>Amend checks the FAA every 3 hours and rebuilds when there's new data or new code, and at least every 20 hours
-anyway. Each run downloads the FAA files, checks them, compares the cycles and runs every check before anything
-goes live. If any check fails, nothing is published and the site stays on the last good build.</p>
-<p>This page is published with the site, so a blocked run shows up here after the next run that passes. Its record
-is on GitHub as soon as it ends: every run, blocked ones included, is in
-<a href="{web.REPO_URL}/tree/master/audit/runs">audit/runs</a>, and the fields are described at the top of
-<a href="{web.REPO_URL}/blob/master/amend/runlog.py">runlog.py</a>. If this page itself is more than a day and a
-half old, a banner at the top says so, and the headline turns to "behind" on its own when no run has published for
-30 hours or the FAA's 28-day schedule has moved past what Amend shows. If the FAA simply hasn't posted a cycle yet,
-the headline says Amend is waiting on the FAA, not that Amend is down.</p>
-<p><b>Done</b> means a step ran and its numbers are shown. <b>Passed</b> means a check ran and found nothing wrong.
-<b>Not recorded</b> means the run didn't log that value, and <b>Not run</b> means the run stopped before that step.</p>
-</section>""")
-    return web.page("Status · Amend", "Is Amend current, and did the latest run pass every check? Every step of every "
-                    "recent run, from the run log.", f"{web.SITE_URL}status/", "".join(body), "../",
-                    image=f"{web.SITE_URL}assets/card.png", active="status", meta=meta, now=now, head=CSS)
+        body.append(f'<details class="sx-full"><summary>Every step of the latest build</summary>'
+                    f'<p class="note">{run_meta(top)}</p><div class="stages">{stages(top)}</div></details>')
+    body.append(f'<p class="sx-about">Every value on this page comes from the run log Amend writes on each run; nothing '
+                f'is estimated. <a href="{docs}#status">How this page works</a> · '
+                f'<a href="{web.REPO_URL}/tree/master/audit/runs">All run records</a></p>')
+    return subsite.page("status", "Amend Status", "Is Amend up to date? The FAA cycle, the latest build and its "
+                        "checks, from Amend's run log.", "".join(body), meta, now, head=CSS)
 
 
 BEHIND_JS = r"""<script>(()=>{const a=document.getElementById("stans");if(!a||!a.dataset.last)return;
 // the site's own clock (app.js AM.now: this device's, corrected by the server's Date header) when there is one, so
 // this page and the rest of the site agree on which cycle is in effect. checked again once that clock has synced
 const clock=()=>typeof AM!=="undefined"&&AM.now?AM.now():Date.now();
+const set=(id,cls,t)=>{const x=document.getElementById(id);if(x){x.className="sx-st "+cls;x.textContent=t}};
 function check(){if(!a.dataset.last)return;const D=86400000,now=clock(),last=Date.parse(a.dataset.last),to=Date.parse(a.dataset.cyc+"T09:01:00Z");
 const M="Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec".split(" "),p2=n=>String(n).padStart(2,"0"),
   day=t=>{const d=new Date(t);return p2(d.getUTCDate())+" "+M[d.getUTCMonth()]+" "+d.getUTCFullYear()},
@@ -522,18 +631,19 @@ const stale=now-last>+a.dataset.hours*36e5,esc=s=>s.replace(/[&<>"]/g,c=>({"&":"
   log='<a href="'+esc(a.dataset.log)+'">run log on GitHub</a>';
 // master spec §62.2: never show an FAA publication delay as an Amend outage. the last build (fresh, so it's the
 // last word) found the next cycle not posted: the FAA is late, not Amend
-if(eff>to&&!stale&&a.dataset.up==="0"){
-  a.innerHTML='<span class="ann ifr">Waiting on FAA</span><div><b>Waiting on the FAA.</b><p class="note">'+esc("The FAA's "+
+if(eff>to&&!stale&&a.dataset.up==="0"){a.className="sx-hero is-info";
+  a.innerHTML='<span class="sx-dot" aria-hidden="true"></span><div><h1>Waiting on the FAA</h1><p>'+esc("The FAA's "+
     "28-day schedule put the "+day(eff)+" cycle in effect at "+fmt(eff)+", but the FAA hadn't posted it when Amend last built "+
     "the site ("+fmt(last)+"). Amend keeps checking and shows the "+day(to)+" cycle until it does. This is a delay at the "+
-    "FAA, not an Amend outage.")+' The '+log+' has every check.</p></div>';delete a.dataset.last;return}
+    "FAA, not an Amend outage.")+' The '+log+' has every check.</p></div>';set("c-faa","info","Waiting on FAA");delete a.dataset.last;return}
 const why=[];
 if(eff>to)why.push("The "+day(eff)+" FAA cycle took effect "+fmt(eff)+" and isn't on Amend yet. Amend still shows the "+day(to)+" cycle.");
 if(stale)why.push("No run has published since "+fmt(last)+". Runs normally publish at least once a day, so either the FAA's "+
   "server is down or an Amend run failed.");
-if(!why.length)return;
-a.innerHTML='<span class="ann act">Behind</span><div><b>Amend is behind.</b><p class="note">'+why.map(esc).join(" ")+
-' The checks below are from that last published run. Every later run, including blocked ones, and which side it was, is in the '+log+'. Use official FAA sources until this clears.</p></div>';
+if(!why.length)return;a.className="sx-hero is-bad";
+if(eff>to)set("c-faa","bad","Behind");if(stale)set("c-web","bad","Behind");
+a.innerHTML='<span class="sx-dot" aria-hidden="true"></span><div><h1>Amend is behind</h1><p>'+why.map(esc).join(" ")+
+' The lines below are from that last published run. Every later run, including blocked ones, and which side it was, is in the '+log+'. Use official FAA sources until this clears.</p></div>';
 delete a.dataset.last}
 check();setTimeout(check,2000);setInterval(check,60000)})()</script>"""
 
@@ -545,7 +655,7 @@ def build(site, meta, now=None, log_dir=runlog.RUNS):
     os.makedirs(os.path.join(site, "status"), exist_ok=True)
     with open(os.path.join(site, "status", "index.html"), "w", encoding="utf-8") as f:
         f.write(page(recs, meta, now))
-    return min(len(recs), SHOWN + 1)
+    return min(len(recs), SHOWN)
 
 
 def rebuild(site="site", log_dir=runlog.RUNS):

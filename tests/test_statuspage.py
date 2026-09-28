@@ -55,12 +55,17 @@ class TestStatusPage(unittest.TestCase):
         r = good()
         html = self.render(r)
         t = text(html)
-        self.assertIn("Amend is current, and the latest build passed every check", t)
+        self.assertIn("Amend is up to date", t)
+        self.assertIn("The latest build passed every check", t)
+        for part in ("FAA cycle", "Processing", "Checks", "Plain-English remarks", "Website and data files"):
+            self.assertIn(f'<div class="sx-n">{part}</div>', html)      # spec §62.2: one line per part
+        self.assertIn(f"{r['remarks']['plain_english']:,} of {r['remarks']['texts']:,} remarks", t)
         for s in r["sources"]:                         # every checksum, in full
             self.assertIn(s["sha256"], html)
         self.assertIn(f"changes detected at {r['changes']['airports']:,} airports", t)
         self.assertIn("Pre-publish check", t)
         self.assertIn(r["run"]["url"], html)
+        self.assertIn("No blocked or crashed runs", t)
 
     def test_every_step_of_the_spec_outline_shows(self):
         """master spec §19: each step shows, with "Not recorded" where the run log has nothing for it"""
@@ -85,11 +90,11 @@ class TestStatusPage(unittest.TestCase):
         """before the changeover the page carries the in-effect rows too, for app.js to swap in at 0901Z"""
         html = self.render(good())            # NOW is 28 Sep; 01 Oct is upcoming
         self.assertIn('class="flip" data-after="', html)
-        m = [x for x in re.findall(r'data-after="([^"]*)"', html) if "FAA cycle in effect" in x]
+        m = [x for x in re.findall(r'data-after="([^"]*)"', html) if "In effect:" in x]
         self.assertEqual(len(m), 1)
         after = m[0].replace("&lt;", "<").replace("&gt;", ">").replace("&quot;", '"').replace("&amp;", "&")
-        self.assertIn("FAA cycle in effect</span><span>01 Oct 2026", after)
-        self.assertIn("29 Oct 2026: shows up here once the FAA posts it", after)
+        self.assertIn("In effect: 01 Oct 2026. The next one, 29 Oct 2026, shows up once the FAA posts it", after)
+        self.assertIn("In effect: 03 Sep 2026. The next cycle, 01 Oct 2026, is already on Amend", text(html))
 
     def test_zero_is_zero_not_blank(self):
         r = good()
@@ -115,8 +120,9 @@ class TestStatusPage(unittest.TestCase):
         html = self.render(r, b)
         t = text(html)
         self.assertIn("The latest run didn't publish", t)
-        self.assertNotIn("Amend is current", t)
-        self.assertIn("APT_RMK.csv went from 90009 to 100 rows", t)
+        self.assertNotIn("Amend is up to date", t)
+        self.assertIn("APT_RMK.csv went from 90009 to 100 rows", t)        # in Problems, with the reason
+        self.assertIn('class="bad" href=', html)                          # and a magenta bar in the strip
         self.assertIn("&lt;b&gt;", html)             # FAA/run text is escaped, never markup
         self.assertNotIn("-> 2026-10-01 <b>", html)
 
@@ -148,14 +154,18 @@ class TestStatusPage(unittest.TestCase):
     def test_empty_log(self):
         self.assertIn("No runs recorded yet", text(self.render()))
 
-    def test_earlier_runs_listed_newest_first(self):
+    def test_recent_runs_strip_oldest_first(self):
         a, b = good(), good()
         a["started_at"], b["started_at"] = "2026-09-27T10:00:00+00:00", "2026-09-27T20:00:00+00:00"
         c = good()
         c["started_at"] = "2026-09-28T10:00:00+00:00"
         html = self.render(a, b, c)
-        self.assertLess(html.index("27 Sep 2026 2000Z"), html.index("27 Sep 2026 1000Z"))
-        self.assertEqual(html.count('class="card cycle run"'), 2)
+        strip = html[html.index('class="sx-bars"'):html.index('class="sx-legend"')]
+        self.assertLess(strip.index("27 Sep 1000Z"), strip.index("27 Sep 2000Z"))
+        self.assertLess(strip.index("27 Sep 2000Z"), strip.index("28 Sep 1000Z"))
+        self.assertEqual(strip.count('class="ok"'), 3)
+        self.assertIn("3 runs: 3 published", text(html))
+        self.assertEqual(html.count("<summary>Every step of the latest build</summary>"), 1)
 
 
     def test_behind_check_only_on_a_published_headline(self):
@@ -170,7 +180,7 @@ def behind(now, last="2026-09-28T12:42:05+00:00", cyc="2026-10-01", up="1"):
     """run the headline's browser check in node at `now`; the new headline html, or "" if unchanged."""
     js = statuspage.BEHIND_JS.removeprefix("<script>").removesuffix("</script>")
     stub = (f"const a={{dataset:{{last:{json.dumps(last)},cyc:{json.dumps(cyc)},hours:'{statuspage.BEHIND_HOURS}',"
-            f"log:'L',up:'{up}'}},innerHTML:''}};const document={{getElementById:()=>a}};"
+            f"log:'L',up:'{up}'}},innerHTML:''}};const document={{getElementById:id=>id==='stans'?a:{{}}}};"
             f"Date.now=()=>Date.parse({json.dumps(now)});setTimeout=setInterval=()=>0;")
     out = subprocess.run(["node", "-e", stub + js + ";process.stdout.write(a.innerHTML)"],
                          capture_output=True, text=True, check=True)
@@ -213,6 +223,67 @@ class TestBehindCheck(unittest.TestCase):
 
     def test_several_cycles_behind(self):
         self.assertIn("The 24 Dec 2026 FAA cycle", behind("2026-12-25T00:00:00Z"))
+
+
+class TestSubdomains(unittest.TestCase):
+    """status.amend.watch and docs.amend.watch (amend/subsite.py, cloudflare/_worker.js)"""
+    def pages(self):
+        from amend import docspage
+        site = tempfile.mkdtemp()
+        statuspage.build(site, META, NOW, log_dir=tempfile.mkdtemp())
+        with open(os.path.join(site, "status", "index.html"), encoding="utf-8") as f:
+            return f.read(), docspage.page(META, NOW)
+
+    def test_off_until_the_names_work(self):
+        from amend import web
+        self.assertFalse(web.SUBDOMAINS)       # flip it only once both names open in a browser
+        status, docs = self.pages()
+        for html in (status, docs):
+            self.assertNotIn("location.replace", html.split("</head>")[0])
+            self.assertIn('href="https://amend.watch/docs/"', html)
+            self.assertIn('href="https://amend.watch/status/"', html)
+            # shared files from the page's own origin: the proxy passes /assets/ through to amend.watch
+            self.assertIn('href="/assets/style.css?v=', html)
+            self.assertIn('src="/assets/app.js?v=', html)
+        for anchor in ("how", "sources", "limits", "api", "open", "status"):   # linked from the site and the app
+            self.assertIn(f'<section id="{anchor}">', docs)
+
+    def test_on_forwards_the_old_pages_and_links(self):
+        from unittest import mock
+        from amend import web
+        with mock.patch.object(web, "SUBDOMAINS", True):
+            status, docs = self.pages()
+            about = web.about_page(META, {}, [], NOW)
+        self.assertIn('if(location.hostname==="amend.watch")location.replace("https://status.amend.watch/"'
+                      '+location.search+location.hash)', status)
+        self.assertIn('location.replace("https://docs.amend.watch/"', docs)
+        self.assertIn('<link rel="canonical" href="https://status.amend.watch/">', status)
+        self.assertIn('href="https://docs.amend.watch/#status"', status)
+        self.assertIn('"how": "https://docs.amend.watch/#how"', about)
+        self.assertIn('href="https://status.amend.watch/">Status</a>', about)
+        self.assertNotIn('href="../docs/"', about)
+
+
+@unittest.skipUnless(shutil.which("node"), "node isn't installed")
+class TestProxy(unittest.TestCase):
+    def test_worker_serves_each_page_and_only_fetches_amend_watch(self):
+        d = tempfile.mkdtemp()
+        shutil.copy(os.path.join("cloudflare", "_worker.js"), os.path.join(d, "w.mjs"))
+        js = """import w from "./w.mjs";const calls=[];
+globalThis.fetch=async(u,o)=>{calls.push(o.method+" "+u);return new Response("x",{status:200})};const out=[];
+for(const [u,m] of [["https://status.amend.watch/","GET"],["https://docs.amend.watch/","GET"],
+  ["https://docs.amend.watch/assets/style.css?v=1","GET"],["https://status.amend.watch/latest/meta.json","HEAD"],
+  ["https://status.amend.watch/VRB/","GET"],["https://x.pages.dev/","GET"],["https://docs.amend.watch/","POST"]]){
+  const r=await w.fetch(new Request(u,{method:m}));out.push(r.status+" "+(r.headers.get("location")||""))}
+process.stdout.write(JSON.stringify({out,calls}))"""
+        with open(os.path.join(d, "t.mjs"), "w") as f:
+            f.write(js)
+        res = json.loads(subprocess.run(["node", "t.mjs"], cwd=d, capture_output=True, text=True, check=True).stdout)
+        self.assertEqual(res["out"], ["200 ", "200 ", "200 ", "200 ", "301 https://amend.watch/VRB/",
+                                      "302 https://amend.watch/", "405 "])
+        self.assertEqual(res["calls"], ["GET https://amend.watch/status/", "GET https://amend.watch/docs/",
+                                        "GET https://amend.watch/assets/style.css?v=1",
+                                        "HEAD https://amend.watch/latest/meta.json"])
 
 
 class TestVerifyRefreshesThePage(unittest.TestCase):
