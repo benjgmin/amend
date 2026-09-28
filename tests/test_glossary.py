@@ -581,7 +581,7 @@ class TestWhatTheRemarkSays(unittest.TestCase):
                              remarks.problems("SOFT & RUTTED; IREG MRKD W CONES.", "Soft and rutted; irregular marked with cones.")[:3]),
                          "Kept in the FAA's words: the plain-English version didn't use the verified meaning for W "
                          "(west or white).")
-        self.assertEqual(why("SELF SVC FUEL H24.", None, ["lost number 24"]),
+        self.assertEqual(why("TIMBERED MOUTAIN SLOPE.", None, ["dropped MOUTAIN", "added 'mountain'"]),
                          "Kept in the FAA's words: the plain-English version didn't pass Amend's checks.")
 
     def test_a_meaning_may_change_form_to_read_as_english(self):
@@ -638,6 +638,11 @@ class TestWhatTheRemarkSays(unittest.TestCase):
         p = remarks.prompt_for(["RSTD: SOLO STU N/A.", "TIEDOWNS NA."])
         self.assertEqual(sorted(re.search(r"copy them exactly as written: (.*)\n", p).group(1).split(", ")),
                          ["N/A", "NA"])
+        # told only to copy them, the October build's model still wrote 'not available' for all 10
+        self.assertIn("\nRemarks use N/A and NA more than one way, so copy them even where the meaning looks "
+                      "plain: 'SNOW REMOVAL NA' is 'snow removal NA', never 'snow removal not available'.\n", p)
+        self.assertIn("\nRemarks use NA more than one way, so copy it ", remarks.prompt_for(["TIEDOWNS NA."]))
+        self.assertNotIn("more than one way", remarks.prompt_for(["TIEDOWNS AVBL."]))
 
     def test_per_after_hi_high_or_low_is_performance(self):
         """every HI PER, HIGH PER and LOW PER in NASR means performance, the FAA's PER (JO 7340.2); the
@@ -718,6 +723,23 @@ class TestWhatTheRemarkSays(unittest.TestCase):
                                           "10 foot trees 125-150 feet west of runway."), [])
         self.assertIn("dropped the sign of +10", remarks.problems("+10 FT BRUSH 30 FT DIST.",
                                                                   "Brush 10 feet high, 30 feet away."))
+
+    def test_a_number_inside_a_contraction_may_be_said_in_words(self):
+        """H24 is 'continuous operation' (CS). 3 remarks the October build asked were rejected for
+        'lost number 24' when the model said that. the number may go only when the meaning is said
+        in words: 'fuel 24 hours' can't be H24 and the 24 HR after it at once"""
+        for plain in ["Self service fuel continuous operation.", "Self service fuel around the clock.",
+                      "Self service fuel 24 hours.", "Self service fuel H24."]:
+            self.assertEqual(remarks.problems("SELF SVC FUEL H24.", plain), [], plain)
+        self.assertIn("lost number 24", remarks.problems("SELF SVC FUEL H24.", "Self service fuel."))
+        raw = "FUEL H24; 24 HR PPR."
+        self.assertEqual(remarks.problems(raw, "Fuel continuous operation; 24 hour prior permission required."), [])
+        self.assertEqual(remarks.problems(raw, "Fuel 24 hours; prior permission required."),
+                         ["numbers moved, dropped or repeated: 24"])
+        self.assertEqual(remarks.problems("RWY 18 H24 EXC 2200-0600.",
+                                          "Runway 18 continuous operation except 0600-2200."),
+                         ["numbers moved, dropped or repeated: 18 600 2200"])
+        self.assertIn("lost number 24", remarks.problems("CTC H24@X.COM.", "Contact @x.com."))
 
     def test_words_a_translation_may_write_differently(self):
         for raw, plain in [("TURN EAST AFT TKOF.", "Turn east after takeoff."),       # TKOF: take-off
@@ -867,6 +889,32 @@ class TestTranslateStats(unittest.TestCase):
         out = remarks.translate_remarks(["-3 FT DITCH 30 FT OUBD FM THLD.", "RWY 18 NOT LGTD."], use_llm=False)
         self.assertEqual(out, {"RWY 18 NOT LGTD.": "Runway 18 is not lighted."})
         self.assertEqual(remarks.STATS["cache_retired"], 1)
+
+    def test_the_faa_text_sent_back_is_not_kept(self):
+        """an answer that is the FAA text itself passes the checks, since it guesses at nothing, but for a
+        remark with contractions to expand nothing was translated: 93 cached answers were that on
+        2026-09-28 ('15 FT TREES 57 FT FM THR, 248 FT R.'). a PCR VALUE line or an email stays as written"""
+        trees, pcr, email = "15 FT TREES 57 FT FM THR, 248 FT R.", "PCR VALUE: 690/F/B/X/T", "WMRICHARDSON@COPPER.NET"
+        with open(remarks.CACHE_FILE, "w") as f:
+            json.dump({t: t for t in (trees, pcr, email)}, f)
+        texts = [trees, pcr, email, "RWY 18 NOT LGTD."]
+        out = self.run_with(texts, lambda batch: list(batch))           # every answer is the FAA text
+        self.assertEqual(out, {pcr: pcr, email: email})
+        s = remarks.STATS
+        self.assertEqual((s["cache_retired"], s["sent"], s["sent_back"], s["rejected"], s["translated"]),
+                         (1, 2, 2, 0, 0))
+        self.assertEqual(remarks.rejected(), {trees: [remarks.SENT_BACK], "RWY 18 NOT LGTD.": [remarks.SENT_BACK]})
+        self.assertEqual(remarks.untranslated(trees, None, [remarks.SENT_BACK]),
+                         "Kept in the FAA's words until it's translated.")
+        self.assertEqual(remarks.untranslated("14 FT HANGAR, 0 FT FROM RWY END, 66 FT RT.", None, [remarks.SENT_BACK]),
+                         "Kept in the FAA's words: Amend has no verified meaning for RT.")
+        self.prompts.clear()                                            # asked again only after an engine change
+        self.run_with(texts, lambda batch: list(batch))
+        self.assertEqual((self.prompts, remarks.STATS["rejects_skipped"]), ([], 2))
+        with mock.patch.object(remarks, "ENGINE_VERSION", "9.9.9"):
+            out = self.run_with(texts, lambda batch: ["15 feet trees 57 feet from threshold, 248 feet R." if t == trees
+                                                      else "Runway 18 not lighted." for t in batch])
+        self.assertEqual(out[trees], "15 feet trees 57 feet from threshold, 248 feet R.")
 
     def test_plus_plus_is_said_in_every_translation(self):
         """cached and new translations alike, and the cache keeps passing its own check"""

@@ -91,6 +91,10 @@ def prompt_for(batch):
     if copy:
         text += "These have no verified meaning; copy them exactly as written: " + ", ".join(
             f"{t} (anywhere but {where[t]})" if t in where else t for t in sorted(copy)) + "\n"
+    if uses := [t for t in sorted(copy) if _uses(t)]:     # the model reads NA as 'not available' anyway
+        it = "it" if len(uses) == 1 else "them"
+        text += (f"Remarks use {_either(uses, 'and')} more than one way, so copy {it} even where the meaning "
+                 "looks plain: 'SNOW REMOVAL NA' is 'snow removal NA', never 'snow removal not available'.\n")
     return text + "\nRemarks:\n" + json.dumps(batch, indent=1)
 
 
@@ -102,16 +106,17 @@ def translate_remarks(texts, use_llm, ids=frozenset(), states=frozenset()):
     down, a timeout) leaves that batch as FAA text, counts in STATS for the run log and shows as
     a warning on the Actions run, and after FAIL_LIMIT failures in a row the rest of the run shows
     FAA text too, so an outage can't hold a build past its time limit. those remarks are asked
-    again next build. a remark whose answer broke the checks isn't asked again until
-    ENGINE_VERSION changes (REJECTS_FILE), so a remark the model keeps getting wrong doesn't cost
-    a call every build."""
+    again next build. a remark whose answer broke the checks, or was the FAA text sent back
+    (sent_back), isn't asked again until ENGINE_VERSION changes (REJECTS_FILE), so a remark the
+    model keeps getting wrong doesn't cost a call every build."""
     STATS.clear()
     STATS.update(llm_calls=0, input_tokens=0, output_tokens=0, est_cost_usd=0.0, sent=0,
-                 translated=0, rejected=0, bad_batches=0, cache_retired=0, rejects_skipped=0,
+                 translated=0, rejected=0, sent_back=0, bad_batches=0, cache_retired=0, rejects_skipped=0,
                  llm_errors=0, llm_error=None, llm_stopped=False, unanswered=0, unknown_terms={})
     cache = _load(CACHE_FILE, {})
-    # re-check old entries too, so tightening faithful() retires translations made before it
-    kept = {t: readable(t, o) for t, o in cache.items() if faithful(t, o)}
+    # re-check old entries too, so tightening faithful() retires translations made before it, and an
+    # answer that was the FAA text sent back is asked again
+    kept = {t: readable(t, o) for t, o in cache.items() if faithful(t, o) and not sent_back(t, o)}
     STATS["cache_retired"] = len(cache) - len(kept)
     cache = kept
     STATS["unknown_terms"] = dict(Counter(t for raw in {x for x in texts if x}
@@ -154,13 +159,19 @@ def translate_remarks(texts, use_llm, ids=frozenset(), states=frozenset()):
             print("  warning: llm returned the wrong shape, skipping batch")
             continue
         STATS["sent"] += len(batch)
-        good = {t: readable(t, o) for t, o in zip(batch, out) if faithful(t, o)}
+        back = {t for t, o in zip(batch, out) if sent_back(t, o)}
+        good = {t: readable(t, o) for t, o in zip(batch, out) if t not in back and faithful(t, o)}
         STATS["translated"] += len(good)
-        STATS["rejected"] += len(batch) - len(good)
+        STATS["sent_back"] += len(back)
+        STATS["rejected"] += len(batch) - len(good) - len(back)
         cache.update(good)
-        rejects.update({t: problems(t, o)[:3] for t, o in zip(batch, out) if t not in good})
+        rejects.update({t: [SENT_BACK] if t in back else problems(t, o)[:3]
+                        for t, o in zip(batch, out) if t not in good})
     if STATS["rejected"]:
         print(f"  {STATS['rejected']} translations broke the no-guess check; showing the FAA text for those")
+    if STATS["sent_back"]:
+        print(f"  {STATS['sent_back']} answers were the FAA text sent back; showing it until the next engine "
+              "version asks again")
     if STATS["llm_errors"]:
         print(f"::warning title=remark translation::{STATS['llm_errors']} of {STATS['llm_calls'] + STATS['llm_errors']} "
               f"calls failed ({STATS['llm_error']}); {STATS['unanswered']} remarks show the FAA text until a later build")
@@ -194,10 +205,10 @@ def untranslated(raw, plain=None, why=(), ids=frozenset(), states=frozenset()):
             unknown.append(m[1])
         elif m := re.match(r"(\S+) is '(.+?)' \(.*\), not what the translation says$", p):
             misread.append((m[1], m[2].lower()))
-    if plain == raw:        # the model gave the FAA text back: say what in it has no verified meaning
+    if plain == raw or SENT_BACK in why:    # the FAA text came back: say what in it has no verified meaning
         unknown = review_terms(raw, ids, states)
         if not unknown:
-            return None
+            return None if plain == raw else "Kept in the FAA's words until it's translated."
     unknown = list(dict.fromkeys(unknown))
     parts = [f"{t} {_can_mean(t)}" for t in unknown if _uses(t)]
     if other := [t for t in unknown if not _uses(t)][:3]:
@@ -321,6 +332,29 @@ def faithful(raw, plain):
     return isinstance(plain, str) and not problems(raw, plain)
 
 
+# an answer that is the FAA text itself, for a remark with a contraction the model is told the meaning
+# of: nothing was translated. it isn't cached, and it's asked again when ENGINE_VERSION changes
+SENT_BACK = "came back as the FAA text"
+
+
+def sent_back(raw, plain):
+    """the answer is the FAA text itself, though the remark has a contraction the model is told the
+    meaning of: '15 FT TREES 57 FT FM THR, 248 FT R.' came back as written (93 of the cache's 3,900
+    answers on 2026-09-28). the checks pass it, since it guesses at nothing, so it would be kept for
+    good. a PCR VALUE line (kept as written on purpose, see PROMPT), an email, a name or a number has
+    nothing to translate"""
+    if plain != raw:
+        return False
+    pcr = PCR_CODE.search(raw.upper())
+    for t in terms(raw):
+        if t in PLAIN_WORDS or t in NEGATIONS or (pcr and t == "PCR"):
+            continue
+        entry = glossary.lookup(t)
+        if entry and entry["verified"] and entry["prompt"] and not entry.get("english"):
+            return True
+    return False
+
+
 def readable(raw, plain):
     """a checked translation said the same way every time: each ++ after a UTC time the way the Chart
     Supplement's legend explains it (see DAYLIGHT), a runway side the way the FAA writes it (see
@@ -435,10 +469,11 @@ def problems(raw, plain):
             out.append(f"changed the pavement code {code}")
     if PCL.search(raw) and CALL_PCL.search(low):
         out.append("says to contact the frequency; pilot-controlled lighting means click the mic")
-    have, want = _numbers(plain), _numbers(raw)
-    out += [f"lost number {n}" for n in sorted(want - have)]
+    have, numbered = _numbers(plain), _numbered(raw, plain)
+    want, need = {n for n, _ in numbered}, {n for n, inside in numbered if not inside}
+    out += [f"lost number {n}" for n in sorted(need - have)]
     out += [f"added number {n}" for n in sorted(have - want)]
-    if have == want and not _same_order(raw, plain):
+    if need <= have <= want and not _same_order(raw, plain):
         out.append("numbers moved, dropped or repeated: " + " ".join(_sequence(plain)))
     if re.search(r"\bOR\b", raw.upper()) and not re.search(r"\bor\b", low):
         out.append("dropped OR")
@@ -797,8 +832,12 @@ def _mark_problems(raw, plain):
 
 # numbers keep their order and count: "+22 FT FENCE 62 FT R" isn't "a 62-foot fence 22 feet
 # away", and "RWY 35, 21 INCH LIGHT BASES" isn't "runways 35 and 21". a phone number with a second
-# ending (901-368-8453/8449) may be said as two numbers
+# ending (901-368-8453/8449) may be said as two numbers. a number inside a contraction with a
+# verified meaning is part of the contraction: "SELF SVC FUEL H24" may be "self service fuel
+# continuous operation". only when the meaning is said in words, though: "FUEL H24; 24 HR PPR"
+# isn't "fuel 24 hours; prior permission required"
 PHONE_PAIR = re.compile(r"(?<!\d)(\d{3}-(?:\d{3}-)?)(\d{4})/(\d{4})\b")
+TOKEN_OR_ADDRESS = re.compile(rf"(?P<address>{ADDRESS.pattern})|(?P<token>{TOKEN.pattern})", re.I)
 
 
 def _sequence(text):
@@ -806,9 +845,34 @@ def _sequence(text):
     return [n.lstrip("0") or "0" for n in re.findall(r"\d*\.\d+|\d+", text)]
 
 
+def _numbered(raw, plain):
+    """a remark's numbers in order, each with True when it's inside a contraction with a verified
+    meaning that the translation says in words (the 24 of H24, said 'continuous operation')."""
+    text = re.sub(r"(?<=\d),(?=\d{3}(?!\d))", "", raw.upper())
+    low = re.sub(r"\d", " ", plain.lower())
+    words = re.findall(r"[a-z]+", low)
+    pairs = [a + b for a, b in zip(words, words[1:])]
+    inside = []
+    for m in TOKEN_OR_ADDRESS.finditer(text):
+        entry = m["token"] and re.search(r"\d", m["token"]) and glossary.lookup(m["token"])
+        if entry and entry["verified"] and not entry.get("english") and _says(entry, low, words, pairs):
+            inside.append(m.span())
+    return [(m[0].lstrip("0") or "0", any(a <= m.start() < b for a, b in inside))
+            for m in re.finditer(r"\d*\.\d+|\d+", text)]
+
+
+def _fits(have, want):
+    """have is want's numbers, with none, some or all of the ones inside a contraction left out"""
+    if not want:
+        return not have
+    (n, inside), rest = want[0], want[1:]
+    return bool(have) and have[0] == n and _fits(have[1:], rest) or inside and _fits(have, rest)
+
+
 def _same_order(raw, plain):
     have = _sequence(plain)
-    return have in (_sequence(raw), _sequence(PHONE_PAIR.sub(lambda m: f"{m[1]}{m[2]} {m[1]}{m[3]}", raw)))
+    return any(_fits(have, _numbered(r, plain))
+               for r in (raw, PHONE_PAIR.sub(lambda m: f"{m[1]}{m[2]} {m[1]}{m[3]}", raw)))
 
 
 # every word of a translation has to come from somewhere: the remark itself, the FAA meaning of one
