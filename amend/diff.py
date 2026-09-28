@@ -6,9 +6,10 @@ from collections import defaultdict
 from .rules import (ACTION_COL_WORDS, ACTION_PREFIXES, ACTION_TEXT_WORDS, ATC_SERVICE_WORDS,
                     COL_CATEGORY, CONTEXT_COLS, DECLARED_ACTION_FT, DECLARED_ACTION_PCT,
                     DECLARED_DISTANCES, DECLINATION_COLS, DECLINATION_NAV_TYPES, FSS_OUTLET,
-                    FSS_OUTLET_NOT, HIDDEN_FILES, HIDDEN_ONLY_COLS, ID_COLS, IFR_REMARK_FILES, PAIR_KEYS,
-                    REWORD_ALIASES, REWORD_BLOCKERS, REWORD_PHRASES, ROW_ACTION, ROW_FYI, base, is_fyi_col,
-                    is_hours_col, is_noise_col, small_change)
+                    FSS_OUTLET_NOT, HIDDEN_FILES, HIDDEN_ONLY_COLS, ID_COLS, IFR_REMARK_FILES,
+                    NON_ATCT_CONTROL, PAIR_KEYS, REWORD_ALIASES, REWORD_BLOCKERS, REWORD_PHRASES,
+                    ROW_ACTION, ROW_FYI, ROW_TIER, SURVEY_REMARK_FILES, base, is_fyi_col,
+                    is_helipad, is_hours_col, is_noise_col, small_change)
 
 
 def keyed(fname, a):
@@ -318,6 +319,57 @@ def pcl_priority(old, new):
     return "action" if o_f != n_f or lost else "fyi"
 
 
+def schedule_text(rows):
+    """an airport's attendance schedule (APT_ATT rows) as the FAA wrote it, one part per row in
+    SKED_SEQ_NO order: 'MON-FRI 0800-1700; SAT 0800-1200'. ALL is left out of a part unless
+    the whole part is ALL."""
+    def seq(r):
+        try:
+            return float(r.get("SKED_SEQ_NO") or 0)
+        except ValueError:
+            return 0
+    parts = []
+    for r in sorted(rows, key=lambda r: (seq(r), sorted(r.items()))):
+        vals = [r.get(c, "").strip() for c in ("MONTH", "DAY", "HOUR")]
+        vals = [v for i, v in enumerate(vals) if v not in vals[:i]]   # 'ON CALL' in all three
+        part = " ".join(v for v in vals if v and v != "ALL") or ("ALL" if any(vals) else "")
+        if part and part not in parts:
+            parts.append(part)
+    return "; ".join(parts)
+
+
+def attendance(apt, fname, old_rows, new_rows):
+    """an airport's attendance schedule, old vs new, as one record. its rows are numbered parts
+    of one schedule, so a row added, dropped or renumbered only means something next to the
+    others: the FAA dropping 'SAT-SUN 0700-1900' and adding 'SAT- SUN 0700-1900' is nothing."""
+    old, new = schedule_text(old_rows), schedule_text(new_rows)
+    if old == new:
+        return None
+    if not old and new == "UNATNDD":
+        pri = "fyi"      # newly listed as unattended: nothing you could count on went away
+    elif old and new and same_hours(old, new):
+        pri = "fyi"
+    else:
+        pri = priority(fname, "changed", ["MONTH", "DAY", "HOUR"], [old, new])
+    kind = "added" if not old else "removed" if not new else "changed"
+    return {"airport": apt, "source": fname, "kind": kind, "priority": pri,
+            "fields": [{"field": "ATTENDANCE", "old": old, "new": new}]}
+
+
+def row_priority(fname, kind, r, pri):
+    """tier for a whole row added or removed, after the file-wide rules (rules.ROW_TIER)."""
+    b = base(fname)
+    if pri == "hidden":
+        return pri
+    if b in SURVEY_REMARK_FILES and r.get("REF_COL_NAME", "").endswith("_SOURCE_CODE"):
+        return "hidden"
+    if b in ("APT_RWY", "APT_RWY_END") and is_helipad(r.get("RWY_ID")):
+        return "fyi"     # a helipad at a hospital or ranch: not a runway you'd plan around
+    if b == "ATC_BASE" and r.get("FACILITY_TYPE", "").upper() == "NON-ATCT" and not empty_non_atct(fname, r):
+        return NON_ATCT_CONTROL
+    return ROW_TIER.get((b, kind), pri)
+
+
 def diff(old, new):
     """old/new: output of nasr.load(). returns a list of raw change records."""
     records = []
@@ -329,6 +381,11 @@ def diff(old, new):
             n[apt][tuple(sorted(r.items()))] = r
 
         for apt in sorted(set(o) | set(n)):
+            if base(fname) == "APT_ATT":
+                rec = attendance(apt, fname, list(o[apt].values()), list(n[apt].values()))
+                if rec:
+                    records.append(rec)
+                continue
             # sorted, never set order: the output must not depend on Python's hash seed or on
             # the order the FAA happened to write the rows in
             removed = [o[apt][k] for k in sorted(o[apt].keys() - n[apt].keys())]
@@ -390,6 +447,7 @@ def diff(old, new):
                         pri = "fyi"
                     if pri == "action" and (empty_non_atct(fname, r) or fss_outlet_note(fname, r)):
                         pri = "fyi"
+                    pri = row_priority(fname, kind, r, pri)
                     if base(fname) in IFR_REMARK_FILES and pri == "action":
                         pri = "ifr"
                     records.append({
