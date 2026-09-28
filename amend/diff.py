@@ -9,7 +9,8 @@ from .rules import (ACTION_COL_WORDS, ACTION_PREFIXES, ACTION_TEXT_WORDS, ATC_SE
                     FSS_OUTLET_NOT, HIDDEN_FILES, HIDDEN_ONLY_COLS, ID_COLS, IFR_REMARK_FILES,
                     NON_ATCT_CONTROL, PAIR_KEYS, PHONE, PHONE_FILLER, REWORD_ALIASES,
                     REWORD_BLOCKERS, REWORD_PHRASES, ROW_ACTION, ROW_FYI, ROW_TIER,
-                    SURVEY_REMARK_FILES, base, blank_fill, is_fyi_col, is_helipad, is_hours_col, is_noise_col, small_change)
+                    SURVEY_REMARK_FILES, base, blank_fill, is_fyi_col, is_helipad,
+                    is_hours_col, is_noise_col, phone_format, small_change)
 
 
 def keyed(fname, a):
@@ -413,6 +414,7 @@ def diff(old, new):
                               and (not is_noise_col(c) or c in keep)
                               and not c.startswith("_")
                               and not blank_fill(c, r.get(c), best.get(c))
+                              and not phone_format(c, r.get(c), best.get(c))
                               and small_change(c, r.get(c), best.get(c)) != "drop")
                 soft = {c for c in cols if small_change(c, r.get(c), best.get(c)) == "fyi"}
                 vals = [r.get(c, "") for c in cols] + [best.get(c, "") for c in cols]
