@@ -87,7 +87,7 @@ Data is public at `https://amend.watch/`, documented in [SCHEMA.md](SCHEMA.md).
 | `amend/pipeline.py` | the whole diff in one call, public JSON shape |
 | `amend/history.py`, `latest.py`, `airports.py` | history timeline, the published site, airport directory |
 | `amend/web.py` | the web pages: one per airport plus search, watchlists, guide, about and 404 |
-| `amend/brand.py`, `amend/fonts/` | the logo (one geometry for the site, favicons, link cards and app icon) and the Geist fonts |
+| `amend/brand.py`, `amend/fonts/` | the logo (one geometry for the site, favicons, link cards and app icon) and the IBM Plex fonts |
 | `docs/brand/` | the logo as SVG and a 1024 px icon |
 | `tests/` | regression tests built from real cases found in FAA data |
 | `SCHEMA.md` | the JSON format the app relies on |
@@ -127,4 +127,4 @@ NASR data comes from the [FAA 28-Day NASR Subscription](https://www.faa.gov/air_
 
 ## License
 
-MIT. FAA data is public domain. Geist and Geist Mono are under the SIL Open Font License ([amend/fonts/OFL.txt](amend/fonts/OFL.txt)).
+MIT. FAA data is public domain. IBM Plex Sans and IBM Plex Mono are under the SIL Open Font License ([amend/fonts/OFL.txt](amend/fonts/OFL.txt)).

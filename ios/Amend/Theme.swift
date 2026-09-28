@@ -1,19 +1,25 @@
 import SwiftUI
 import UIKit
 
-/// The app's look, the same as amend.watch: calm neutrals that follow light and dark mode, with
-/// amber = action, cyan = IFR, grey = FYI and green = nothing changed.
+/// The app's look, the same as amend.watch: calm neutrals that follow light and dark mode, and colour only
+/// where it means something, as on a sectional chart: magenta = action, blue = IFR (and links), grey = FYI,
+/// green = nothing changed. The names are older than the colours: `amber` is the action magenta, `cyan` the blue.
 enum EFB {
-    static let bg = Color(light: 0xF6F7F9, dark: 0x0D1015)
-    static let panel = Color(light: 0xFFFFFF, dark: 0x151920)
-    static let panelHi = Color(light: 0xEFF1F4, dark: 0x1C212A)
-    static let line = Color(light: 0xE3E6EB, dark: 0x262C36)
-    static let text = Color(light: 0x0F1216, dark: 0xECEEF1)
-    static let dim = Color(light: 0x5B6573, dark: 0x9AA3AF)
-    static let faint = Color(light: 0x848E9A, dark: 0x6E7885)
-    static let amber = Color(light: 0xB25E00, dark: 0xF5B040)
-    static let cyan = Color(light: 0x0969B8, dark: 0x5CC2FF)
-    static let green = Color(light: 0x15803D, dark: 0x4ADE80)
+    static let bg = Color(light: 0xF6F8FA, dark: 0x09121C)
+    static let panel = Color(light: 0xFFFFFF, dark: 0x0E1926)
+    static let panelHi = Color(light: 0xEEF2F6, dark: 0x152233)
+    static let line = Color(light: 0xDDE3EA, dark: 0x1F3044)
+    static let lineStrong = Color(light: 0xC3CCD7, dark: 0x2E4460)
+    static let text = Color(light: 0x0D1B2A, dark: 0xE6EDF5)
+    static let dim = Color(light: 0x4B5B6E, dark: 0x9DAEC2)
+    static let faint = Color(light: 0x667385, dark: 0x7A8DA4)
+    static let amber = Color(light: 0xA3186E, dark: 0xE26BB2)
+    static let cyan = Color(light: 0x1A5EA6, dark: 0x7FB2EC)
+    static let green = Color(light: 0x2D7A4B, dark: 0x67C08B)
+    /// text on a solid colour (the action label)
+    static let onColor = Color(light: 0xFFFFFF, dark: 0x09121C)
+    /// corners of panels and change rows
+    static let radius: CGFloat = 10
 
     static func mono(_ size: CGFloat, _ weight: Font.Weight = .regular) -> Font {
         .system(size: size, weight: weight, design: .monospaced)
@@ -56,27 +62,26 @@ extension Priority {
     }
 }
 
-/// small rounded label with a colored dot ("ACT 2", "In effect")
+/// small label in capitals, like the site's ("ACT 2", "IN EFFECT"): solid for action, outlined for the rest
 struct Annunciator: View {
     let text: String
     let color: Color
-    var dot = true
+    var solid: Bool? = nil           // nil: solid only in the action colour
 
     var body: some View {
-        HStack(spacing: 5) {
-            if dot {
-                Circle().fill(color).frame(width: 6, height: 6)
-            }
-            Text(text)
-                .font(.system(size: 12, weight: .medium))
-                .lineLimit(1)
-        }
-        .fixedSize()                     // labels never wrap onto two lines
-        .foregroundStyle(color)
-        .padding(.leading, dot ? 7 : 8)
-        .padding(.trailing, 8)
-        .padding(.vertical, 3)
-        .background(color.opacity(0.13), in: Capsule())
+        let filled = solid ?? (color == EFB.amber)
+        let edge = filled || !(color == EFB.dim || color == EFB.faint) ? color : EFB.lineStrong
+        Text(text)
+            .font(.system(size: 11, weight: .semibold))
+            .tracking(0.6)
+            .textCase(.uppercase)
+            .lineLimit(1)
+            .fixedSize()                 // labels never wrap onto two lines
+            .foregroundStyle(filled ? EFB.onColor : color)
+            .padding(.horizontal, 6)
+            .padding(.vertical, 2)
+            .background(filled ? color : Color.clear, in: RoundedRectangle(cornerRadius: 3))
+            .overlay(RoundedRectangle(cornerRadius: 3).strokeBorder(edge, lineWidth: 1))
     }
 }
 
@@ -107,14 +112,16 @@ struct CountAnnunciators: View {
     }
 }
 
-/// section title, sentence case
+/// section title in small capitals, like the site's
 struct EFBHeader: View {
     let text: String
     var color: Color = EFB.dim
 
     var body: some View {
         Text(text)
-            .font(.system(size: 14, weight: .semibold))
+            .font(.system(size: 12, weight: .semibold))
+            .tracking(0.7)
+            .textCase(.uppercase)
             .foregroundStyle(color)
     }
 }
@@ -124,8 +131,8 @@ struct PanelModifier: ViewModifier {
         content
             .padding(14)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .background(EFB.panel, in: RoundedRectangle(cornerRadius: 14))
-            .overlay(RoundedRectangle(cornerRadius: 14).stroke(EFB.line, lineWidth: 1))
+            .background(EFB.panel, in: RoundedRectangle(cornerRadius: EFB.radius))
+            .overlay(RoundedRectangle(cornerRadius: EFB.radius).stroke(EFB.line, lineWidth: 1))
     }
 }
 

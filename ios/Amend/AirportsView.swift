@@ -231,7 +231,7 @@ private struct AirportTile: View {
                 .foregroundStyle(EFB.faint)
         }
         .efbPanel()
-        .overlay(RoundedRectangle(cornerRadius: 14)
+        .overlay(RoundedRectangle(cornerRadius: EFB.radius)
             .stroke(isHome ? EFB.cyan.opacity(0.5) : Color.clear, lineWidth: 1))
     }
 }

@@ -12,12 +12,14 @@ struct ChangeRow: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             HStack(spacing: 6) {
-                Circle()                          // priority dot
+                RoundedRectangle(cornerRadius: 1)   // priority bar
                     .fill(change.level.color)
-                    .frame(width: 7, height: 7)
+                    .frame(width: 3, height: 11)
                     .accessibilityHidden(true)
                 Text(displayCategory)
-                    .font(.system(size: 12.5))
+                    .font(.system(size: 11.5))
+                    .tracking(0.55)
+                    .textCase(.uppercase)
                     .foregroundStyle(EFB.faint)
             }
             Text(displaySummary)
@@ -29,7 +31,7 @@ struct ChangeRow: View {
             if hasMore || change.chart?.amdtLabel != nil || change.chart?.pdf != nil {
                 HStack(spacing: 12) {
                     if let amdt = change.chart?.amdtLabel {
-                        Annunciator(text: amdt, color: EFB.dim, dot: false)
+                        Annunciator(text: amdt, color: EFB.dim)
                     }
                     if let pdf = change.chart?.pdf, let url = URL(string: pdf) {
                         Button {
@@ -83,8 +85,8 @@ struct ChangeRow: View {
         .padding(.horizontal, 14)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(EFB.panel)
-        .clipShape(RoundedRectangle(cornerRadius: 12))
-        .overlay(RoundedRectangle(cornerRadius: 12).stroke(EFB.line, lineWidth: 1))
+        .clipShape(RoundedRectangle(cornerRadius: EFB.radius))
+        .overlay(RoundedRectangle(cornerRadius: EFB.radius).stroke(EFB.line, lineWidth: 1))
         .fullScreenCover(item: $plate) { PlateView(plate: $0) }
     }
 

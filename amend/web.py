@@ -43,28 +43,34 @@ TIERS = {
 NO_CHG_TIP = "Nothing changed at this airport between the two cycles"
 
 
-# Geist and Geist Mono (SIL OFL, amend/fonts/OFL.txt), served from amend.watch itself so a page view never
-# touches Google. Variable fonts split like Google Fonts does: latin, and latin-ext only when a page needs it.
+# IBM Plex Sans and IBM Plex Mono (SIL OFL, amend/fonts/OFL.txt), served from amend.watch itself so a page view
+# never touches Google. Split the way Google Fonts does: Plex Sans is variable, latin plus a latin-ext file a page
+# loads only when it needs it; Plex Mono (airport IDs, FAA text) is latin at the three weights the site uses.
 LATIN = ("U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,"
          "U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD")
 LATIN_EXT = ("U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,"
              "U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF")
-WEB_FONTS = [("Geist", "geist-latin.woff2", LATIN), ("Geist", "geist-latin-ext.woff2", LATIN_EXT),
-             ("Geist Mono", "geist-mono-latin.woff2", LATIN), ("Geist Mono", "geist-mono-latin-ext.woff2", LATIN_EXT)]
-FONT_FACES = "".join(f'@font-face{{font-family:"{fam}";font-style:normal;font-weight:100 900;font-display:swap;'
+WEB_FONTS = [("IBM Plex Sans", "plex-sans-latin.woff2", "100 700", LATIN),
+             ("IBM Plex Sans", "plex-sans-latin-ext.woff2", "100 700", LATIN_EXT),
+             ("IBM Plex Mono", "plex-mono-400.woff2", "400", LATIN), ("IBM Plex Mono", "plex-mono-500.woff2", "500", LATIN),
+             ("IBM Plex Mono", "plex-mono-600.woff2", "600", LATIN)]
+FONT_FACES = "".join(f'@font-face{{font-family:"{fam}";font-style:normal;font-weight:{wght};font-display:swap;'
                      f'src:url(fonts/{file}) format("woff2");unicode-range:{rng}}}\n'
-                     for fam, file, rng in WEB_FONTS)
-# clean look: light and dark follow the device. amber = action, cyan = IFR, grey = FYI, green = nothing changed,
-# the same meaning as the iOS app.
+                     for fam, file, wght, rng in WEB_FONTS)
+# light and dark follow the device. Neutrals carry the page and colour only ever means something, as on a
+# sectional chart: magenta = action, blue = IFR (and links), grey = FYI, green = nothing changed, the same as the
+# iOS app. The tokens keep their older names (--am was amber, --cy cyan). --on is text on a solid colour.
 CSS = FONT_FACES + """
-:root{--bg:#F6F7F9;--p:#FFFFFF;--p2:#EFF1F4;--ln:#E3E6EB;--tx:#0F1216;--dm:#5B6573;--fn:#848E9A;
---am:#B25E00;--amS:#FFF1DC;--cy:#0969B8;--cyS:#E4F0FB;--gy:#5B6573;--gyS:#EDEFF2;--gn:#15803D;--gnS:#E6F5EA;
---amber:var(--am);--cyan:var(--cy);--dim:var(--dm);--shadow:0 1px 2px rgba(16,24,40,.05);--mk:#11151B;
---sans:"Geist",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
---mono:"Geist Mono",ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,monospace;color-scheme:light}
-@media (prefers-color-scheme:dark){:root{--bg:#0D1015;--p:#151920;--p2:#1C212A;--ln:#262C36;--tx:#ECEEF1;
---dm:#9AA3AF;--fn:#6E7885;--am:#F5B040;--amS:rgba(245,176,64,.13);--cy:#5CC2FF;--cyS:rgba(92,194,255,.13);
---gy:#A3ACB8;--gyS:rgba(163,172,184,.12);--gn:#4ADE80;--gnS:rgba(74,222,128,.12);--shadow:none;--mk:#28303B;color-scheme:dark}}
+:root{--bg:#F6F8FA;--p:#FFFFFF;--p2:#EEF2F6;--ln:#DDE3EA;--ln2:#C3CCD7;--tx:#0D1B2A;--dm:#4B5B6E;--fn:#667385;
+--am:#A3186E;--amS:#F8E6F0;--cy:#1A5EA6;--cyS:#E3EDF8;--gy:#4B5B6E;--gyS:#EEF2F6;--gn:#2D7A4B;--gnS:#E4F2E9;--on:#FFFFFF;
+--amber:var(--am);--cyan:var(--cy);--dim:var(--dm);--shadow:none;
+--mk:#FFFFFF;--mkl:#C3CCD7;--mko:#AAB5C3;--mks:#A3186E;--mkn:#0D1B2A;
+--sans:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+--mono:"IBM Plex Mono",ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,monospace;color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--bg:#09121C;--p:#0E1926;--p2:#152233;--ln:#1F3044;--ln2:#2E4460;--tx:#E6EDF5;
+--dm:#9DAEC2;--fn:#7A8DA4;--am:#E26BB2;--amS:rgba(226,107,178,.14);--cy:#7FB2EC;--cyS:rgba(127,178,236,.14);
+--gy:#9DAEC2;--gyS:rgba(157,174,194,.12);--gn:#67C08B;--gnS:rgba(103,192,139,.13);--on:#09121C;--shadow:none;
+--mk:#0E1926;--mkl:#2E4460;--mko:#4F627B;--mks:#E26BB2;--mkn:#E6EDF5;color-scheme:dark}}
 *{box-sizing:border-box}html{background:var(--bg)}[hidden]{display:none!important}
 body{margin:0;color:var(--tx);background:var(--bg);font:15px/1.5 var(--sans);-webkit-font-smoothing:antialiased}
 a{color:var(--cy);text-decoration:none}a:hover{text-decoration:underline}
@@ -73,37 +79,36 @@ b,strong{font-weight:600}
 .app{display:grid;grid-template-columns:minmax(0,1fr);min-height:100vh}
 .sb{display:none}
 .mtop{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;border-bottom:1px solid var(--ln);background:var(--p);position:sticky;top:0;z-index:5}
-.brand{font:600 17px var(--sans);letter-spacing:-.35px;color:var(--tx);display:inline-flex;align-items:center;gap:8px}
+.brand{font:600 17px var(--sans);letter-spacing:-.2px;color:var(--tx);display:inline-flex;align-items:center;gap:8px}
 .brand:hover{text-decoration:none}
-.brand svg{width:22px;height:22px;flex:none}.brand .mk{fill:var(--mk)}
+.brand svg{width:24px;height:24px;flex:none}.brand .mk{fill:var(--mk);stroke:var(--mkl)}.brand .mo{fill:var(--mko)}
+.brand .ms{fill:var(--mks)}.brand .mn{fill:var(--mkn)}
 .nav{display:flex;gap:16px;font-size:14px}.nav a{color:var(--dm)}.nav a.on{color:var(--tx);font-weight:500}
 .main{padding:20px 16px 48px;display:grid;gap:20px;grid-template-columns:minmax(0,1fr);align-content:start;width:100%;max-width:1400px;margin:0 auto}
 .col,.rail{display:grid;gap:16px;align-content:start;min-width:0}
 .rail .hist{display:none}
 .full{min-width:0}
-.eyebrow{font-size:13px;color:var(--dm)}
-h1{font:600 36px/1.1 var(--sans);letter-spacing:-.9px;margin:2px 0 0;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
-h1 .icao{font:500 15px var(--mono);color:var(--fn);letter-spacing:0}
+.eyebrow{font-size:12px;color:var(--dm);text-transform:uppercase;letter-spacing:.06em}
+h1{font:600 36px/1.1 var(--sans);letter-spacing:-.6px;margin:2px 0 0;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+h1 .icao{font:500 15px var(--mono);color:var(--fn);letter-spacing:.02em}
 .aname{color:var(--dm);font-size:16px;margin-top:2px}
-.h2{font:600 18px/1.3 var(--sans);letter-spacing:-.3px;margin:14px 0 0}
-.hero{font:600 32px/1.15 var(--sans);letter-spacing:-.9px;margin:0;text-wrap:balance}
+.h2{font:600 18px/1.3 var(--sans);letter-spacing:-.2px;margin:14px 0 0}
+.hero{font:600 32px/1.15 var(--sans);letter-spacing:-.6px;margin:0;text-wrap:balance}
 .lede{color:var(--dm);font-size:16px;max-width:62ch;margin:8px 0 0}
-.big{font:600 26px/1.2 var(--sans);letter-spacing:-.6px}
+.big{font:600 26px/1.2 var(--sans);letter-spacing:-.4px}
 .note{font-size:14px;color:var(--dm);margin:6px 0 0}
 .foot{font-size:12.5px;color:var(--fn);margin:8px 0 0}.foot a{color:var(--dm)}.foot a:hover{color:var(--cy)}
-.card{background:var(--p);border:1px solid var(--ln);border-radius:14px;box-shadow:var(--shadow)}
-.box{padding:14px 16px}.box>h3{margin:0 0 8px;font:600 14px var(--sans)}
+.card{background:var(--p);border:1px solid var(--ln);border-radius:8px;box-shadow:var(--shadow)}
+.box{padding:14px 16px}.box>h3{margin:0 0 8px;font:600 12px var(--sans);text-transform:uppercase;letter-spacing:.06em}
 .kv{display:flex;justify-content:space-between;gap:12px;padding:7px 0;font-size:14px;border-top:1px solid var(--ln)}
-.kv:first-of-type{border-top:0}.kv>span:first-child{color:var(--dm)}.kv>span:last-child{text-align:right}
-.ann{display:inline-flex;align-items:center;gap:6px;font:500 12.5px/1.6 var(--sans);padding:1px 9px 1px 8px;border-radius:999px;white-space:nowrap;color:var(--gy);background:var(--gyS)}
-.ann::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor;flex:none}
-.ann.plain::before{display:none}.ann.plain{padding:1px 8px}
-.act{color:var(--am);background:var(--amS)}.ifr{color:var(--cy);background:var(--cyS)}
-.fyi{color:var(--gy);background:var(--gyS)}.ok{color:var(--gn);background:var(--gnS)}
+.kv:first-of-type{border-top:0}.kv>span:first-child{color:var(--dm)}.kv>span:last-child{text-align:right;font-variant-numeric:tabular-nums}
+.ann{display:inline-flex;align-items:center;gap:5px;font:600 10.5px/1.6 var(--sans);letter-spacing:.06em;text-transform:uppercase;padding:0 6px;border:1px solid var(--ln2);border-radius:3px;white-space:nowrap;color:var(--gy)}
+.act{color:var(--on);background:var(--am);border-color:var(--am)}.ifr{color:var(--cy);border-color:var(--cy)}
+.fyi{color:var(--dm);border-color:var(--ln2)}.ok{color:var(--gn);border-color:var(--gn)}
 .ann[title]{cursor:help}
-.ann.new{color:var(--bg);background:var(--tx);padding:1px 8px}.ann.new::before{display:none}
+.ann.new{color:var(--p);background:var(--tx);border-color:var(--tx)}
 .it.new{box-shadow:inset 3px 0 0 var(--tx)}
-.sbi .ann.new{font:600 11px/1.5 var(--sans);padding:0 6px}
+.sbi .ann.new{font-size:10px;padding:0 5px}
 time[data-until],time[data-ago]{font-variant-numeric:tabular-nums;white-space:nowrap}
 .pfresh{padding:7px 16px;font-size:12.5px;color:var(--dm);border-bottom:1px solid var(--ln);background:var(--p)}
 .is-stale .fresh{color:var(--am)}.stale{border-color:var(--am)}
@@ -116,19 +121,19 @@ a.src{color:var(--dm)}a.src:hover{color:var(--cy)}
 .nxq{padding:11px 16px;border-top:1px solid var(--ln);font-size:13.5px;color:var(--dm)}.nxq:first-child{border-top:0}
 .chips{display:flex;gap:4px;flex-wrap:wrap}
 .toolbar{display:flex;gap:12px;flex-wrap:wrap;align-items:center;justify-content:space-between}
-.seg{display:flex;gap:2px;background:var(--p2);border-radius:10px;padding:3px;max-width:100%;overflow-x:auto}
-.seg a{font:500 13.5px var(--sans);padding:5px 12px;border-radius:7px;color:var(--dm);white-space:nowrap}
-.seg a b{margin-left:5px;color:var(--tx)}.seg a:hover{text-decoration:none;color:var(--tx)}
-.seg a.on{background:var(--p);color:var(--tx);box-shadow:0 1px 2px rgba(0,0,0,.1)}
+.seg{display:flex;gap:24px;box-shadow:inset 0 -1px 0 var(--ln);max-width:100%;overflow-x:auto}.toolbar .seg{flex:1}
+.seg a{font:500 14px var(--sans);padding:9px 0 7px;border-bottom:2px solid transparent;color:var(--dm);white-space:nowrap}
+.seg a b{margin-left:5px;font-weight:500;color:var(--fn)}.seg a:hover{text-decoration:none;color:var(--tx)}
+.seg a.on{color:var(--tx);border-bottom-color:var(--tx)}.seg a.on b{color:var(--tx)}
 .banner{display:flex;gap:10px;align-items:flex-start;flex-wrap:wrap;padding:12px 14px;font-size:14px;color:var(--dm)}
 .banner .ann{margin-top:1px}.banner span:last-child{flex:1;min-width:200px}
-.lst{background:var(--p);border:1px solid var(--ln);border-radius:14px;overflow:hidden;box-shadow:var(--shadow)}
-.gh{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 16px 10px;font:600 14px var(--sans)}
+.lst{background:var(--p);border:1px solid var(--ln);border-radius:8px;overflow:hidden;box-shadow:var(--shadow)}
+.gh{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 16px 10px;font:600 12px var(--sans);text-transform:uppercase;letter-spacing:.06em}
 .gh .n{color:var(--fn);font-weight:500}
-.dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:8px;background:var(--fn);vertical-align:1px}
+.dot{width:3px;height:12px;border-radius:1px;display:inline-block;margin-right:9px;background:var(--fn);vertical-align:-1px}
 .d-action{background:var(--am)}.d-ifr{background:var(--cy)}
 .it{display:grid;grid-template-columns:minmax(0,1fr);gap:2px 16px;padding:11px 16px;border-top:1px solid var(--ln)}
-.it .k{font-size:12.5px;color:var(--fn)}
+.it .k{font-size:11.5px;color:var(--fn);text-transform:uppercase;letter-spacing:.05em}
 .it .s{font-size:15px;overflow-wrap:anywhere}
 .it .m{display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:13.5px;white-space:nowrap}
 .it .m:empty{display:none}
@@ -136,7 +141,7 @@ a.src{color:var(--dm)}a.src:hover{color:var(--cy)}
 .more>summary{cursor:pointer;list-style:none;font-size:13.5px;color:var(--cy);display:inline-block}
 .more>summary::-webkit-details-marker{display:none}
 .more>summary::after{content:" \\25BE";font-size:11px}.more[open]>summary::after{content:" \\25B4"}
-.more pre{white-space:pre-wrap;font:12px/1.55 var(--mono);color:var(--dm);background:var(--p2);border-radius:8px;padding:9px 11px;margin:6px 0 0}
+.more pre{white-space:pre-wrap;font:12px/1.55 var(--mono);color:var(--dm);background:var(--p2);border-radius:6px;padding:9px 11px;margin:6px 0 0}
 .cycle>summary{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:12px 16px;cursor:pointer;list-style:none;font:600 14px var(--sans)}
 .cycle>summary::-webkit-details-marker{display:none}
 .cycle>summary .chips{margin-left:auto}
@@ -150,14 +155,14 @@ a.src{color:var(--dm)}a.src:hover{color:var(--cy)}
 .legend{display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px;font-size:13.5px;color:var(--dm)}
 .legend>span{display:inline-flex;align-items:center;gap:8px}
 .rail .legend{flex-direction:column;align-items:flex-start;gap:8px}
-.search{display:flex;align-items:center;gap:10px;background:var(--p);border:1px solid var(--ln);border-radius:12px;padding:0 14px;box-shadow:var(--shadow);color:var(--fn)}
+.search{display:flex;align-items:center;gap:10px;background:var(--p);border:1px solid var(--ln2);border-radius:8px;padding:0 14px;box-shadow:var(--shadow);color:var(--fn)}
 .search:focus-within{border-color:var(--cy)}
 .search input{flex:1;border:0;background:transparent;color:var(--tx);font:16px var(--sans);padding:13px 0;outline:none;min-width:0}
 .search input::placeholder{color:var(--fn)}
-kbd{font:500 12px var(--mono);border:1px solid var(--ln);border-radius:5px;padding:0 6px;color:var(--fn)}
+kbd{font:500 12px var(--mono);border:1px solid var(--ln);border-radius:3px;padding:0 6px;color:var(--fn)}
 .sec{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:4px 0 8px}
 .hdr{font:600 14px var(--sans);color:var(--tx)}
-.rows{background:var(--p);border:1px solid var(--ln);border-radius:14px;overflow:hidden;box-shadow:var(--shadow)}
+.rows{background:var(--p);border:1px solid var(--ln);border-radius:8px;overflow:hidden;box-shadow:var(--shadow)}
 .wrow{display:flex;align-items:stretch;border-top:1px solid var(--ln)}.wrow:first-child{border-top:0}
 .wrow>a{flex:1;display:flex;align-items:center;gap:12px;padding:10px 14px;color:var(--tx);min-width:0}
 .wrow>a[href]:hover{background:var(--p2);text-decoration:none}
@@ -165,9 +170,9 @@ kbd{font:500 12px var(--mono);border:1px solid var(--ln);border-radius:5px;paddi
 .x{background:transparent;border:0;border-left:1px solid var(--ln);color:var(--cy);min-width:48px;font:500 20px var(--sans);cursor:pointer}
 .x.on{color:var(--gn)}.x:hover{background:var(--p2)}
 .btns{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 0}
-.btn{display:inline-flex;align-items:center;background:var(--tx);color:var(--bg);border:1px solid var(--tx);border-radius:9px;padding:8px 14px;font:500 14px var(--sans);cursor:pointer}
+.btn{display:inline-flex;align-items:center;background:var(--cy);color:var(--on);border:1px solid var(--cy);border-radius:6px;padding:8px 14px;font:500 14px var(--sans);cursor:pointer}
 .btn:hover{text-decoration:none;opacity:.88}.btn:disabled{opacity:.5;cursor:default}
-.btn.ghost{background:var(--p);color:var(--tx);border-color:var(--ln)}
+.btn.ghost{background:var(--p);color:var(--tx);border-color:var(--ln2)}
 .cards{display:grid;grid-template-columns:minmax(0,1fr);gap:10px}
 .ac{display:grid;gap:8px;align-content:start;padding:12px 14px;color:var(--tx)}
 .ac:hover{text-decoration:none;border-color:var(--fn)}
@@ -191,11 +196,11 @@ kbd{font:500 12px var(--mono);border:1px solid var(--ln);border-radius:5px;paddi
 .welcome .wfoot .btns{margin:0}
 .dots{display:flex;gap:6px}.dots i{width:8px;height:6px;border-radius:3px;background:var(--ln);transition:width .15s}
 .dots i.on{width:22px;background:var(--tx)}
-.sbh{font:500 12px var(--sans);color:var(--fn);margin:18px 8px 4px}
-.sbi{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:6px 8px;border-radius:8px;font-size:14px;color:var(--tx)}
+.sbh{font:600 11px var(--sans);color:var(--fn);margin:18px 8px 4px;text-transform:uppercase;letter-spacing:.07em}
+.sbi{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:6px 8px;border-radius:6px;font-size:14px;color:var(--tx)}
 a.sbi:hover{background:var(--p2);text-decoration:none}.sbi.on{background:var(--p2);font-weight:500}
 .sbi b{font:600 13px var(--mono)}.sbi.sub{color:var(--dm);font-size:13.5px}
-.sb .search{margin:14px 0 0;border-radius:9px;padding:0 10px;box-shadow:none}.sb .search input{font-size:14px;padding:7px 0}
+.sb .search{margin:14px 0 0;border-radius:6px;padding:0 10px;box-shadow:none}.sb .search input{font-size:14px;padding:7px 0}
 .sbfoot{margin-top:auto;padding:16px 8px 0;font-size:12.5px;color:var(--fn)}.sbfoot a{color:var(--dm)}
 .prose p{margin:10px 0 0}.prose ul{margin:10px 0 0;padding-left:18px}.prose li{margin:6px 0}.prose li::marker{color:var(--fn)}
 .log{display:grid;grid-template-columns:minmax(0,1fr);gap:2px 16px;margin:10px 0 0;font-size:14.5px}
@@ -213,14 +218,16 @@ a.sbi:hover{background:var(--p2);text-decoration:none}.sbi.on{background:var(--p
  .main.two>.full{grid-column:1/-1}
  .rail{position:sticky;top:24px}.rail .hist{display:block}
  .it{grid-template-columns:104px minmax(0,1fr) auto;align-items:baseline}
- .it .k{font-size:13.5px;color:var(--dm)}.it .m{justify-content:flex-end}
+ .it .k{font-size:11.5px;color:var(--dm)}.it .m{justify-content:flex-end}
  .cards{grid-template-columns:repeat(3,minmax(0,1fr))}
  .ggrid{grid-template-columns:repeat(2,minmax(0,1fr))}.ggrid>.wide{grid-column:1/-1}
  .feats{grid-template-columns:repeat(3,minmax(0,1fr))}
  h1{font-size:40px}.hero{font-size:36px}
 }
-@media print{:root{--bg:#fff;--p:#fff;--p2:#F2F3F5;--ln:#D5D9DF;--tx:#000;--dm:#444;--fn:#666;--am:#8A4600;--amS:#FFF1DC;
---cy:#0A5A9C;--cyS:#E4F0FB;--gy:#444;--gyS:#EDEFF2;--gn:#15803D;--gnS:#E6F5EA;--shadow:none;--mk:#11151B;color-scheme:light}
+@media print{:root{--bg:#fff;--p:#fff;--p2:#F2F4F7;--ln:#D5DBE2;--ln2:#B8C2CE;--tx:#000;--dm:#444;--fn:#666;--am:#8E1560;
+--amS:#F8E6F0;--cy:#15508F;--cyS:#E3EDF8;--gy:#444;--gyS:#EEF2F6;--gn:#2D7A4B;--gnS:#E4F2E9;--on:#fff;--shadow:none;
+--mk:#fff;--mkl:#B8C2CE;--mko:#AAB5C3;--mks:#A3186E;--mkn:#000;color-scheme:light}
+ .act{color:var(--am);background:none}.ann.new{color:var(--tx);background:none}
  .sb,.mtop,.rail,.seg,.btns,.search,#res,#welcome,#newnote,#next .nxm{display:none!important}
  .app{display:block}.main{display:block;padding:0;max-width:none}.main>*,.col>*{margin-bottom:12px}
  body{font-size:12.5px}a{color:inherit}.it,.apthead,.nx{break-inside:avoid}.it.new{box-shadow:none}}
@@ -230,19 +237,18 @@ a.sbi:hover{background:var(--p2);text-decoration:none}.sbi.on{background:var(--p
 # never pairs it with new HTML
 CSS_VERSION = hashlib.sha1(CSS.encode()).hexdigest()[:10]
 
-FONT_PATHS = {  # the site's own Geist first; DejaVu (GitHub's Ubuntu runners) and Helvetica (Macs) as fallbacks
-    "sans": [os.path.join(brand.FONTS, "Geist-SemiBold.ttf"), "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
+FONT_PATHS = {  # the site's own IBM Plex Sans first; DejaVu (GitHub's Ubuntu runners) and Helvetica (Macs) as fallbacks
+    "sans": [os.path.join(brand.FONTS, "IBMPlexSans-SemiBold.ttf"), "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
              "/System/Library/Fonts/Helvetica.ttc"],
-    "med": [os.path.join(brand.FONTS, "Geist-Medium.ttf"), "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+    "med": [os.path.join(brand.FONTS, "IBMPlexSans-Medium.ttf"), "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
             "/System/Library/Fonts/Helvetica.ttc"],
-    "reg": [os.path.join(brand.FONTS, "Geist-Regular.ttf"), "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+    "reg": [os.path.join(brand.FONTS, "IBMPlexSans-Regular.ttf"), "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
             "/System/Library/Fonts/Helvetica.ttc"],
 }
-# the site's light palette: key -> (text, soft background) for the chips
-COLORS = {"bg": (246, 247, 249), "panel": (255, 255, 255), "line": (227, 230, 235), "text": (15, 18, 22),
-          "dim": (91, 101, 115), "faint": (132, 142, 154)}
-CHIP_COLORS = {"action": ((178, 94, 0), (255, 241, 220)), "ifr": ((9, 105, 184), (228, 240, 251)),
-               "fyi": ((91, 101, 115), (237, 239, 242)), "ok": ((21, 128, 61), (230, 245, 234))}
+# the site's light palette, and each label's colour: action is a solid tag, the rest are outlined like on the site
+COLORS = {"bg": (246, 248, 250), "panel": (255, 255, 255), "line": (221, 227, 234), "text": (13, 27, 42),
+          "dim": (75, 91, 110), "faint": (102, 115, 133)}
+CHIP_COLORS = {"action": (163, 24, 110), "ifr": (26, 94, 166), "fyi": (195, 204, 215), "ok": (45, 122, 75)}
 
 
 def _font(kind, size):
@@ -271,7 +277,7 @@ def card(path, big, name, loc, chip_list, line, footer):
     W, H, P = 1200, 630, 64
     img = Image.new("RGB", (W, H), COLORS["bg"])
     d = ImageDraw.Draw(img)
-    d.rounded_rectangle([P - 24, P - 24, W - P + 24, H - P + 24], radius=28, fill=COLORS["panel"],
+    d.rounded_rectangle([P - 24, P - 24, W - P + 24, H - P + 24], radius=16, fill=COLORS["panel"],
                         outline=COLORS["line"], width=2)
     # the logo: the mark, then "amend" centred on it the way the site header sets it
     mark = brand.draw(48)
@@ -292,14 +298,20 @@ def card(path, big, name, loc, chip_list, line, footer):
     if loc:
         d.text((P, y), loc, font=small, fill=COLORS["dim"])
         y += 50
-    x, cf = P, _font("med", 30)
+    x, cf, track = P, _font("sans", 25), 2      # the site's labels: semibold capitals, tracked out a little
     for text, key in chip_list:
-        tw = d.textlength(text, font=cf)
-        col, soft = CHIP_COLORS[key]
-        d.rounded_rectangle([x, y, x + tw + 64, y + 52], radius=26, fill=soft)
-        d.ellipse([x + 20, y + 20, x + 32, y + 32], fill=col)
-        d.text((x + 44, y + 26), text, font=cf, fill=col, anchor="lm")
-        x += tw + 80
+        text = text.upper()
+        tw = sum(d.textlength(ch, font=cf) for ch in text) + track * (len(text) - 1)
+        col = CHIP_COLORS[key]
+        solid = key == "action"
+        d.rounded_rectangle([x, y, x + tw + 36, y + 50], radius=6, fill=col if solid else None, outline=col,
+                            width=3)
+        ink = COLORS["panel"] if solid else COLORS["dim"] if key == "fyi" else col
+        cx = x + 18
+        for ch in text:
+            d.text((cx, y + 26), ch, font=cf, fill=ink, anchor="lm")
+            cx += d.textlength(ch, font=cf) + track
+        x += tw + 52
     if line:
         d.text((P, y + 78), _fit(d, line, _font("reg", 32), W - 2 * P), font=_font("reg", 32),
                fill=COLORS["dim"])
@@ -611,8 +623,8 @@ def tier_rows(full):
 
 
 def logo(root):
-    """the mark and the lowercase wordmark, linking home. The tile lifts a shade in dark mode (--mk)."""
-    return f'<a class="brand" href="{root}" aria-label="Amend home">{brand.svg(tile_class="mk")}amend</a>'
+    """the mark and the lowercase wordmark, linking home. The CSS recolours the mark for dark mode (--mk...)."""
+    return f'<a class="brand" href="{root}" aria-label="Amend home">{brand.svg(classes=True)}amend</a>'
 
 
 def head_links(root, url):
@@ -623,7 +635,7 @@ def head_links(root, url):
             f'<link rel="icon" href="{root}assets/icon.svg" type="image/svg+xml">\n'
             f'<link rel="apple-touch-icon" href="{root}assets/apple-touch-icon.png">'
             f'<link rel="manifest" href="{root}site.webmanifest"><meta name="apple-mobile-web-app-title" content="Amend">\n'
-            f'<link rel="preload" href="{root}assets/fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin>'
+            f'<link rel="preload" href="{root}assets/fonts/plex-sans-latin.woff2" as="font" type="font/woff2" crossorigin>'
             + (f'<link rel="canonical" href="{e(url)}">' if url else "") + beacon)
 
 
@@ -670,8 +682,8 @@ def page(title, description, url, body, root, og_title=None, image=None, active=
 <meta property="og:type" content="website"><meta property="og:site_name" content="Amend">
 <meta property="og:title" content="{e(og_title or title)}"><meta property="og:description" content="{e(description)}">
 {f'<meta property="og:url" content="{e(url)}">' if url else ''}{img}
-<meta name="theme-color" content="#F6F7F9" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#0D1015" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#F6F8FA" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#09121C" media="(prefers-color-scheme: dark)">
 {head_links(root, url)}
 <link rel="stylesheet" href="{root}assets/style.css?v={CSS_VERSION}">
 </head><body data-root="{root}" data-cyc="{e(meta['to_cycle'] if meta else '')}" data-built="{(now or dt.datetime.now(dt.timezone.utc)):%Y-%m-%dT%H:%M:%SZ}"><script>{SEEN_JS.replace("__STALE__", str(STALE_HOURS))}</script><div class="app">{sidebar(root, active, meta, now, on)}
@@ -944,8 +956,8 @@ def named_watch_page(slug, wl, meta, info, latest, now, has_card):
 # what shipped, newest first, for the about page. Add a line when something people can see changes.
 UPDATES = [
     ("Sep 2026", [
-        "A new logo, and this page now says how Amend works, what it doesn't cover, what it stores and how to report "
-        "a problem.",
+        "A new logo and a cleaner look, and this page now says how Amend works, what it doesn't cover, what it "
+        "stores and how to report a problem.",
         "New FAA data is picked up within hours of being posted, and a failed download can no longer publish a "
         "half-built site.",
         "Survey bookkeeping, like a glide slope elevation rounded by a tenth of a foot, no longer counts as an action "
