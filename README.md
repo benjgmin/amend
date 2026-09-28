@@ -26,10 +26,12 @@ VRB  Vero Beach Rgnl
 ## On the web
 
 **[amend.watch](https://amend.watch/)**: search any airport, or go straight to one, like
-[amend.watch/VRB](https://amend.watch/VRB/). Watchlists live under /list/, like
+[amend.watch/VRB](https://amend.watch/VRB/). Keep as many lists of airports as you like (one for your training area,
+one per trip), saved in your browser, and share any of them as one link. Named lists live under /list/, like
 [amend.watch/list/daytona-training](https://amend.watch/list/daytona-training/), and [amend.watch/about](https://amend.watch/about/)
 explains the whole thing. Every airport with changes gets its own page, styled like the app, with link previews so a
-page shared in iMessage or a group chat shows what changed.
+page shared in iMessage or a group chat shows what changed. Every airport and named list also has an RSS feed
+(like [amend.watch/VRB/feed.xml](https://amend.watch/VRB/feed.xml)) with one update per FAA cycle, action items first.
 
 ## The app
 
@@ -44,7 +46,7 @@ SwiftUI, iOS 17+, styled like an EFB.
 
 ## How it works
 
-A GitHub Action checks the FAA every 3 hours and rebuilds when there's something new (or at least daily). It downloads the FAA NASR 28-day subscription and d-TPP chart metadata, diffs every US airport (about 15 seconds, with 28 regression tests guarding the rules), and publishes static JSON to GitHub Pages. The app reads that JSON; there is no server.
+A GitHub Action checks the FAA every 3 hours and rebuilds when there's something new (or at least daily). It downloads the FAA NASR 28-day subscription and d-TPP chart metadata, diffs every US airport (about 15 seconds, with regression tests built from real FAA cases guarding the rules; they run on every pull request and before every deploy), and publishes static JSON to GitHub Pages. The app reads that JSON; there is no server.
 
 - **Airports and airspace:** tower and Class D hours, frequencies, runways (renumbering from magnetic drift, replacements, declared distances), attendance hours, contacts, new and closed airports, remarks
 - **Airspace shapes:** class B, C, D and E surface area floors, ceilings and boundaries from the FAA class airspace shapefiles, told from each airport's point of view ("Orlando class B over the field: 3,000-10,000 ft MSL -> 2,500-10,000 ft MSL"). Re-digitized boundaries are ignored; class E5 is skipped
@@ -52,6 +54,7 @@ A GitHub Action checks the FAA every 3 hours and rebuilds when there's something
 - **Charts:** added, amended and removed approaches, departures, STARs and airport diagrams, with links to the new PDF plates
 - **Arrivals and departures down to the waypoint:** when a STAR or DP is amended, Amend compares the old and new routes and says what moved ("MINEE6 (was MINEE5): waypoints removed FUPGE, LBV, RINSE; transitions removed LBV")
 - **Plain-English remarks:** FAA contractions ("RSCD NOT MNT 2300-0600 M-F") are translated with Claude using a fixed glossary. Unknown abbreviations are left as-is rather than guessed, and the original FAA text is always kept
+- **Checked before it ships:** every cycle is audited before it's published. Dates off the FAA 28-day schedule, duplicated items, a translation that drops or changes a number or gets a known contraction wrong, a chart link from the wrong cycle, or an action count wildly off from past cycles stop the build, and the last good version stays up. Impossible-looking values (a runway 16/37, a frequency in the FM broadcast band) are flagged. The action and IFR items at watched and busy airports are written to `audit/<cycle>.json` for a review against the FAA text
 - **Noise filtering:** survey dates, pavement codes, coordinate rounding, duplicate files and reworded remarks are hidden or demoted, and one real-world event (a renumbered runway, a new airport, a new STAR version) becomes one line instead of dozens of raw rows
 
 Data is public at `https://amend.watch/`, documented in [SCHEMA.md](SCHEMA.md).
@@ -68,6 +71,7 @@ Data is public at `https://amend.watch/`, documented in [SCHEMA.md](SCHEMA.md).
 | `amend/dtpp.py` | approach plate / chart changes |
 | `amend/airspace.py` | class airspace shapefile: floors, ceilings, boundaries |
 | `amend/procedures.py` | waypoint-level STAR / DP comparisons |
+| `amend/audit.py` | sanity checks that stop a bad cycle from publishing, and the review packet in `audit/` |
 | `amend/pipeline.py` | the whole diff in one call, public JSON shape |
 | `amend/history.py`, `latest.py`, `airports.py` | history timeline, the published site, airport directory |
 | `amend/web.py` | the web pages: one per airport plus the search page |
