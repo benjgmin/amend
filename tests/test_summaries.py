@@ -11,11 +11,11 @@ import re
 import tempfile
 import unittest
 
-from amend import backfill, english, gold, remarks
+from amend import backfill, english, fields, gold, remarks
 from amend.diff import schedule_text
 from amend.english import unsupported
 from amend.pipeline import run
-from tests.test_amend import Case
+from tests.test_amend import Case, make_zip
 
 HISTORY = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "history")
 RAW_DUMP = r"^(added|removed|changed) \(|^[a-z_]+ (added|removed|changed): "
@@ -195,7 +195,7 @@ class TestOtherFiles(Rows):
             ("action", "new class D airspace: CLASS D SVC 0700-2100 MON-FRI; 0800-1700 SAT & SUN; OTHER TIMES CLASS G")])
         h = "FACILITY_ID,FACILITY_TYPE,RADAR_TYPE,RADAR_NO,RADAR_HRS"
         self.assertEqual(self.one({"RDR.csv": [h, "ALO,AIRPORT,ASR,1,0600-2300"]}, {"RDR.csv": [h]}, "ALO"),
-                         [("action", "radar ASR: removed (was hours 0600-2300)")])
+                         [("action", "radar airport surveillance radar (ASR): removed (was hours 0600-2300)")])
         h = "ARPT_ID,MIL_OPS_OPER_CODE,REMARK"
         new = {"MIL_OPS.csv": [h, 'TUL,R,"(MIL_OPS_OPER_CODE) ARNG - OPR 1230-2300Z++ TUE-FRI, EXC HOL."']}
         self.assertEqual(self.one({"MIL_OPS.csv": [h]}, new, "TUL"),
@@ -208,13 +208,102 @@ class TestOtherFiles(Rows):
         self.assertEqual(self.one({"PJA_CON.csv": [h]}, new, "BUF"), [
             ("fyi", "new parachute jump area PNY035 contact: Buffalo Niagara Intl (BUF) 126.5")])
 
-    def test_file_without_english_is_never_act(self):
-        """a file nobody wrote English for yet keeps the FAA's column names but can't top the
-        act list with them."""
+    def test_file_without_english_keeps_its_rank(self):
+        """a file nobody wrote English for yet shows the FAA's column names and values, and a
+        change that ranks act stays act: a missing template never hides one."""
         h = "ARPT_ID,SOMETHING_CLSD"
         ch = self.diff({"APT_BASE.csv": ["ARPT_ID", "DAB"], "APT_NEW.csv": [h]},
                        {"APT_BASE.csv": ["ARPT_ID", "DAB"], "APT_NEW.csv": [h, "DAB,RWY CLSD"]})["DAB"]
-        self.assertEqual([c["priority"] for c in ch], ["fyi"])
+        self.assertEqual([(c["priority"], c["summary"]) for c in ch],
+                         [("action", "added (apt_new): something clsd=RWY CLSD")])
+
+
+class TestColumns(Rows):
+    """a changed column reads as the FAA layout's English, never its column name, and a code
+    reads with the meaning the layout gives it. real rows, trimmed."""
+
+    def test_approach_control_listed(self):
+        """4AK 2026-10-01: the homepage card said 'apch p prov type cd: (none) -> C'."""
+        h = ("FACILITY_ID,FACILITY_TYPE,PRIMARY_APCH_RADIO_CALL,APCH_P_PROVIDER,APCH_P_PROV_TYPE_CD,"
+             "PRIMARY_DEP_RADIO_CALL,DEP_P_PROVIDER,DEP_P_PROV_TYPE_CD")
+        self.assertEqual(self.one({"ATC_BASE.csv": [h, "4AK,NON-ATCT,,,,,,"]},
+                                  {"ATC_BASE.csv": [h, "4AK,NON-ATCT,ANCHORAGE ARTCC,ZAN,C,ANCHORAGE ARTCC,ZAN,C"]},
+                                  "4AK"),
+                         [("action", "approach/departure control: none -> ANCHORAGE ARTCC (ZAN)")])
+
+    def test_provider_type_is_decoded(self):
+        h = "FACILITY_ID,FACILITY_TYPE,APCH_P_PROVIDER,APCH_P_PROV_TYPE_CD"
+        (_, s), = self.one({"ATC_BASE.csv": [h, "X01,NON-ATCT,ZSE,C"]},
+                           {"ATC_BASE.csv": [h, "X01,NON-ATCT,S46,T"]}, "X01")
+        self.assertEqual(s, "approach control: ZSE (ARTCC) -> S46 (TRACON)")
+
+    def test_codes_read_with_their_meaning(self):
+        h = "ARPT_ID,RWY_ID,RWY_END_ID,VGSI_CODE,RWY_END_LGTS_FLAG,FAR_PART_77_CODE"
+        (_, s), = self.one({"APT_RWY_END.csv": [h, "DAB,07/25,07,P2L,N,PIR"]},
+                           {"APT_RWY_END.csv": [h, "DAB,07/25,07,P4L,Y,PIR"]}, "DAB")
+        self.assertEqual(s, "runway 07: runway end identifier lights (REIL): no -> yes; visual glide slope "
+                            "indicator: 2-light PAPI on left side of runway (P2L) -> 4-light PAPI on left "
+                            "side of runway (P4L)")
+
+    def test_a_code_the_layout_doesnt_define_stays_as_written(self):
+        """ILS_GS G_S_TYPE_CODE is 'GS'/'GD' in the data, but the layout only lists 'GLIDE SLOPE'
+        and 'GLIDE SLOPE/DME': no guessing which is which."""
+        self.assertEqual(fields.say("G_S_TYPE_CODE", "ILS_GS", "GD"), "GD")
+        self.assertEqual(fields.say("OBSTN_MRKD_CODE", "APT_RWY_END", "LM"), "LM")
+        self.assertEqual(fields.say("SURFACE_TYPE_CODE", "APT_RWY", "GRVL"), "GRVL")
+        self.assertEqual(fields.say("SURFACE_TYPE_CODE", "APT_RWY", "ASPH-TURF"),
+                         "asphalt or bituminous concrete / grass; sod (ASPH-TURF)")
+
+    def test_lists_say_what_came_and_went(self):
+        h = "ARPT_ID,FUEL_TYPES,OTHER_SERVICES"
+        (_, s), = self.one({"APT_BASE.csv": [h, "DAB,100LL,INSTR"]},
+                           {"APT_BASE.csv": [h, "DAB,\"100LL,A\",\"INSTR,RNTL\""]}, "DAB")
+        self.assertEqual(s, "fuel: added Jet A, kerosene, without FS-II (A); "
+                            "services: added aircraft rental (RNTL)")
+
+    def test_whose_column_it_is(self):
+        h = "ARPT_ID,TITLE,NAME,ADDRESS1"
+        (_, s), = self.one({"APT_CON.csv": [h, "DAB,MANAGER,JO SMITH,1 MAIN ST"]},
+                           {"APT_CON.csv": [h, "DAB,MANAGER,JO SMITH,2 MAIN ST"]}, "DAB")
+        self.assertEqual(s, "airport manager address: 1 MAIN ST -> 2 MAIN ST")
+
+    def run_diff(self, old, new):
+        d = tempfile.mkdtemp()
+        o, n = os.path.join(d, "2026-09-03_CSV.zip"), os.path.join(d, "2026-10-01_CSV.zip")
+        make_zip(o, old)
+        make_zip(n, new)
+        return run(o, n, None, log=lambda *_: None)
+
+    def test_unnamed_column_keeps_act_and_is_counted(self):
+        """a column the FAA layouts we read don't name: shown as the FAA wrote it, still act if
+        it ranks act (never quietly demoted), and counted in the run's checks (TestRealCycle
+        fails on any real one)."""
+        h = "ARPT_ID,RWY_ID,RWY_LEN,NEW_LGT_COL"
+        r = self.run_diff({"APT_BASE.csv": ["ARPT_ID", "DAB"], "APT_RWY.csv": [h, "DAB,07/25,4000,N"]},
+                          {"APT_BASE.csv": ["ARPT_ID", "DAB"], "APT_RWY.csv": [h, "DAB,07/25,4000,Y"]})
+        self.assertEqual([(c["priority"], c["summary"]) for c in r["airports"]["DAB"]],
+                         [("action", "runway 07/25: NEW_LGT_COL: N -> Y")])
+        self.assertEqual(r["checks"]["no_english"], {"APT_RWY changed": 1})
+
+    def test_every_column_in_the_layouts_has_a_name(self):
+        """every column of every file the engine reads, from the real zip's headers."""
+        import csv, io, zipfile
+        from amend.rules import HIDDEN_FILES, base as fbase, is_noise_col
+        zips = [z for z in ZIPS if os.path.exists(z)]
+        if not zips:
+            self.skipTest("needs the FAA NASR zips in data/")
+        missing = set()
+        with zipfile.ZipFile(zips[-1]) as z:
+            for n in z.namelist():
+                b = fbase(n.split("/")[-1])
+                if (not n.endswith(".csv") or b.startswith(HIDDEN_FILES) or "DATA_STRUCTURE" in b
+                        or b.startswith(("STAR", "DP", "PFR", "AWY", "ARB", "MAA", "WXL", "FSS"))):
+                    continue
+                with z.open(n) as f:
+                    header = next(csv.reader(io.TextIOWrapper(f, encoding="latin-1")))
+                missing |= {f"{b}.{c}" for c in header if not fields.known(c, b)
+                            and c not in ("EFF_DATE", "LAST_INFO_RESPONSE") and not is_noise_col(c)}
+        self.assertEqual(sorted(missing), [])
 
 
 class TestValues(Case):
@@ -237,7 +326,7 @@ class TestValues(Case):
                            {"APT_BASE.csv": ["ARPT_ID", "DAB"], "APT_RWY.csv": [h, "DAB,18/36,2546"]})["DAB"]
         finally:
             english.ROW_SUMMARIES["APT_RWY"] = real
-        self.assertEqual([c["summary"] for c in ch], ["apt_rwy added: rwy id 18/36, rwy len 2546"])
+        self.assertEqual([c["summary"] for c in ch], ["apt_rwy added: runway 18/36, length 2546"])
 
     def test_rows_publish_their_fields(self):
         h = "ARPT_ID,RWY_ID,RWY_LEN"
@@ -317,6 +406,16 @@ class TestBackfill(unittest.TestCase):
 
 
 class TestHistory(unittest.TestCase):
+    def test_no_column_names_in_history(self):
+        """after python -m amend.backfill: no changed entry shows an FAA column name."""
+        left = []
+        for name in sorted(os.listdir(HISTORY)):
+            if name.endswith(".json") and name not in ("index.json", "cycles.json"):
+                with open(os.path.join(HISTORY, name), encoding="utf-8") as f:
+                    left += [(name, e["summary"]) for e in json.load(f)["entries"] if backfill.leaks(e)]
+        self.assertEqual(left[:5], [], f"{len(left)} history entries show FAA column names: "
+                                       f"run python -m amend.backfill")
+
     def test_no_raw_dumps_in_history(self):
         """after python -m amend.backfill. a merge that brings old history back: run it again."""
         dumps = []
@@ -343,6 +442,9 @@ class TestRealCycle(unittest.TestCase):
                  if re.search(RAW_DUMP, c["summary"])]
         self.assertEqual(dumps, [])
         self.assertEqual(r["checks"], {"no_english": {}, "summary_value_mismatches": 0})
+        leaked = [(apt, c["summary"]) for apt, ch in r["airports"].items() for c in ch
+                  if backfill.leaks({**c, "fields": c.get("fields") or []})]
+        self.assertEqual(leaked, [])
 
 
 if __name__ == "__main__":

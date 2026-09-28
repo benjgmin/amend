@@ -150,10 +150,10 @@ def run(old_zip, new_zip, ids=None, dtpp_path=None, llm=False, log=print, airspa
         s = summarize(r, remarks)
         r["_phrases"] = s if isinstance(s, list) else [s]
         if r.pop("no_template", False):
-            # no English written for this file yet: FAA column names aren't an alert
+            # no English for this file or column yet: it keeps its rank and says what the FAA
+            # wrote (column name and value as written). a change that ranks act stays act; a
+            # missing template must never hide it. counted here and in the run log.
             no_template[f"{base(r['source'])} {r['kind']}"] += 1
-            if r["priority"] in ("action", "ifr"):
-                r["priority"] = "fyi"
         if r["priority"] == "hidden":
             hidden[r["airport"]] += 1
         else:
