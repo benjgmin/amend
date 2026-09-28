@@ -78,15 +78,26 @@ all-airports mode like the site, in a child process with a random `PYTHONHASHSEE
 FAA files must give the same output on every run (the engine used to pair rows in set order,
 so it didn't).
 
-The test needs the two NASR zips named in `snapshot.json` in `data/`, checked by sha256, and
-skips without them. The FAA's links roll off its site after a while, but both files are kept
-byte for byte on this repo's releases:
+The test needs the two NASR zips named in `snapshot.json` in `data/`, checked by sha256. The
+FAA's links roll off its site after a while, but both files are kept byte for byte on this
+repo's releases (the `archive` urls in `snapshot.json`):
 
 ```
-curl -L --create-dirs -o data/2026-08-06_CSV.zip https://github.com/benjgmin/amend/releases/download/faa-2026-08-06/06_Aug_2026_CSV.zip
-curl -L --create-dirs -o data/2026-09-03_CSV.zip https://github.com/benjgmin/amend/releases/download/faa-2026-09-03/03_Sep_2026_CSV.zip
+python -m amend.gold --fetch                  # both zips into data/, sha256-checked
 python -m unittest tests.test_snapshot -v     # about a minute
 ```
+
+Every PR's tests do the same (`.github/workflows/tests.yml`), so a PR that changes what the
+engine says at these airports fails there until the snapshot is updated in the same PR. Locally
+the test skips without the zips; in PR tests (`AMEND_SNAPSHOT=required`) it fails instead. The
+deploy (`update.yml`) runs its tests before it restores any FAA files, so the snapshot never
+blocks an FAA update. If `--fetch` can't verify certificates (some macOS Pythons), `curl -L
+--create-dirs -o data/<file> <archive url>` does the same, and the test checks the sha256.
+
+Moving the snapshot to a newer cycle pair: both cycles need a `faa-<cycle>` release (the
+"archive raw FAA files" workflow makes them). Put the new pair's cycles, files, urls, archive
+urls, sha256 and bytes in `snapshot.json` (the release's `manifest.json` has them), run
+`--fetch` and `--update-snapshot`, delete the old snapshot file, and commit both.
 
 Output no longer depends on Python's string hashing at all, so it gives the same file on any
 seed and any Python version (checked on 3.10, which hashes strings differently from 3.11+).

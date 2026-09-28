@@ -2,6 +2,7 @@ name: tests
 
 # every pull request runs the same test suite the deploy runs (update.yml), so a broken rule or
 # summary shows up on the PR instead of after the merge, when the scheduled build refuses to deploy.
+# it also runs the engine snapshot, which the deploy never does (see below).
 # read-only: no secrets, no FAA downloads, nothing published
 on:
   pull_request:
@@ -28,5 +29,14 @@ jobs:
       - name: install Pillow (link-preview images; the web tests draw them)
         run: pip install pillow
 
+      # the snapshot test (tests/test_snapshot.py) needs the two real NASR zips it was recorded
+      # from. they're on this repo's releases, sha256-checked against tests/gold/snapshot.json, so
+      # a PR that changes what the engine says at those airports shows the diff here. the deploy
+      # runs its tests before restoring any FAA files, so a stale snapshot can't block an update
+      - name: NASR zips for the snapshot test
+        run: python -m amend.gold --fetch
+
       - name: tests
+        env:
+          AMEND_SNAPSHOT: required     # fail rather than skip if the zips above aren't there
         run: python -m unittest discover -s tests -t .
