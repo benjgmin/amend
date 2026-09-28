@@ -71,8 +71,18 @@ engine's output depends on Python's hash seed (rows get paired in set order), so
 fixed seed two runs on the same zips can disagree.
 
 The test needs the two NASR zips named in `snapshot.json` in `data/`, checked by sha256, and
-skips without them. The FAA URLs are in `snapshot.json`; they roll off the FAA site after a
-while, so the raw archive (GitHub releases, once that's merged) is the long-term source.
+skips without them. The FAA's links roll off its site after a while, but both files are kept
+byte for byte on this repo's releases:
+
+```
+curl -L --create-dirs -o data/2026-08-06_CSV.zip https://github.com/benjgmin/amend/releases/download/faa-2026-08-06/06_Aug_2026_CSV.zip
+curl -L --create-dirs -o data/2026-09-03_CSV.zip https://github.com/benjgmin/amend/releases/download/faa-2026-09-03/03_Sep_2026_CSV.zip
+python -m unittest tests.test_snapshot -v     # about a minute
+```
+
+It needs Python 3.11 or newer, like the rest of the backend. The fixed seed only pins the
+order for one string hash algorithm, and 3.10 and older use a different one, so a few rows at
+CLT and IAD pair differently there. The test skips on those, and `--update-snapshot` refuses.
 
 After a change you meant to make, `python -m amend.gold --update-snapshot` rewrites the file.
 Review its diff like code: every line that moved is a change in what pilots see.
