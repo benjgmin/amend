@@ -198,6 +198,8 @@ a.src{color:var(--dm)}a.src:hover{color:var(--cy)}
 .cycle:not([open])>summary:hover{background:var(--p2)}
 .chev{width:12px;color:var(--fn);transition:transform .15s;display:inline-block;font-size:11px}
 .cycle[open] .chev{transform:rotate(90deg)}
+.fold{background:none;border:0;padding:2px 0;cursor:pointer;display:inline-flex;align-items:center;gap:6px}.fold[aria-expanded=true] .chev{transform:rotate(90deg)}
+.fold:hover .chev{color:var(--tx)}
 .hlist{display:grid;gap:10px}
 .hrow{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:7px 0;border-top:1px solid var(--ln);font-size:14px;color:var(--tx)}
 .hrow:first-of-type{border-top:0}.hrow .chips{flex-wrap:nowrap}.hrow:hover{text-decoration:none;color:var(--cy)}
@@ -252,7 +254,9 @@ a.sbi{color:var(--dm);transition:color .15s}a.sbi:hover{color:var(--tx);text-dec
 .sbi.on,a.sbi.on{background:var(--p2);color:var(--tx);font-weight:500}
 .sbi b{font:600 13px var(--mono)}.sbi.sub{color:var(--dm);font-size:13.5px}
 .sbt{display:flex;align-items:center;gap:8px;width:100%;padding:6px 8px;border:0;border-radius:6px;background:none;color:var(--dm);font:14px var(--sans);text-align:left;cursor:pointer;transition:color .15s}
-.sbt:hover,.sbl.open>.sbt{color:var(--tx);text-decoration:none}.sbl.open>.sbt{font-weight:500}.sbl.on>.sbt{background:var(--p2);color:var(--tx)}
+.sbt:hover,.sbl.cur>.sbt{color:var(--tx);text-decoration:none}.sbl.cur>.sbt{font-weight:500}
+.sbl{position:relative}.sbl.cur>.sbt{padding-right:30px}.sbf{display:none;position:absolute;right:2px;top:3px;width:26px;height:26px;border:0;border-radius:5px;background:none;cursor:pointer;align-items:center;justify-content:center}
+.sbl.cur>.sbf{display:flex}.sbf:hover{background:var(--p2)}.sbf:hover .chev{color:var(--tx)}.sbf[aria-expanded=true] .chev{transform:rotate(90deg)}.sbl.on>.sbt{background:var(--p2);color:var(--tx)}
 .sbt .n{margin-left:auto;font:12px var(--mono);color:var(--fn)}.sbt .nw{margin-left:auto}.sbt .nw+.n{display:none}
 .sbl.open .sbt .nw{display:none}.sbl.open .sbt .nw+.n{display:inline}
 .sbp{display:grid;grid-template-rows:0fr;transition:grid-template-rows .22s ease}.sbl.open>.sbp{grid-template-rows:1fr}
@@ -430,12 +434,14 @@ function renderSearch(){const s=q.value.trim().toUpperCase();if(!s){r.innerHTML=
 function renderLists(){const w=document.getElementById("watch");if(w.querySelector("form"))return;   // never wipe a name being typed
   const ls=LS.all(),l=LS.active();
   if(!l){w.innerHTML='<div class="sec"><span class="hdr">Your lists</span><button class="lnk" id="newlist">+ New list</button></div><div id="nf" hidden></div><div class="card box note" style="margin:0">Search above and tap <b>+</b> to start a list of your airports. Lists are saved in this browser, and you can share each one as a link.</div>';return}
-  w.innerHTML='<div class="sec"><span class="hdr">'+(ls.length>1?'Your lists':esc(l.name)+' · '+l.ids.length)+'</span><button class="lnk" id="newlist">+ New list</button></div><div id="nf" hidden></div>'+
+  // the chevron folds the list shown down to its header and tabs; each list remembers it
+  const open=!LS.folded(l.id);
+  w.innerHTML='<div class="sec"><button class="hdr fold" id="fold" aria-expanded="'+open+'" aria-controls="lbody" title="'+(open?'Fold':'Show')+' '+esc(l.name)+'"><span class="chev" aria-hidden="true">▶</span>'+(ls.length>1?'Your lists':esc(l.name)+' · '+l.ids.length)+'</button><button class="lnk" id="newlist">+ New list</button></div><div id="nf" hidden></div>'+
     (ls.length>1?'<nav class="seg tabs" aria-label="Your lists">'+ls.map(x=>'<button class="'+(x.id===l.id?'on':'')+'" data-use="'+esc(x.id)+'" aria-pressed="'+(x.id===l.id)+'">'+esc(x.name)+'<b>'+x.ids.length+'</b></button>').join("")+'</nav>':'')+
-    (l.ids.length?'<div class="rows">'+[...l.ids].sort((x,y)=>act(y)-act(x)).map(id=>airportRow(id,xBtn(id,l,"rm"))).join("")+'</div>'+
+    '<div id="lbody"'+(open?'':' hidden')+'>'+(l.ids.length?'<div class="rows">'+[...l.ids].sort((x,y)=>act(y)-act(x)).map(id=>airportRow(id,xBtn(id,l,"rm"))).join("")+'</div>'+
       '<div class="btns"><a class="btn" href="list/?l='+encodeURIComponent(l.id)+'">View all changes</a><button class="btn ghost" id="share">Copy share link</button><button class="btn ghost" id="rename">Rename</button></div>'
      :'<div class="card box note" style="margin:0">No airports on '+esc(l.name)+' yet. Search above and tap <b>+</b> to add some.</div>'+
-      '<div class="btns"><button class="btn ghost" id="rename">Rename</button><button class="btn ghost" id="dellist">Delete list</button></div>')}
+      '<div class="btns"><button class="btn ghost" id="rename">Rename</button><button class="btn ghost" id="dellist">Delete list</button></div>')+'</div>'}
 // "coming up at your airports": the top changes at every airport on your lists, with the countdown to 0901Z
 const got=new Map();
 const latestOf=id=>{if(!got.has(id))got.set(id,fetch("latest/"+id+".json").then(r=>r.ok?r.json():null).catch(()=>null));return got.get(id)};
@@ -467,10 +473,12 @@ async function renderNext(){const el=document.getElementById("next"),l=LS.union(
   AM.tick();renderLists();renderSearch();if(window.AMside)AMside()}
 function update(){renderLists();renderSearch();if(window.AMside)AMside();renderNext()}
 document.addEventListener("amend:flip",()=>renderNext());
+document.addEventListener("amend:fold",()=>renderLists());
 document.addEventListener("click",ev=>{const b=ev.target.closest("button");if(!b||b.closest("form,#welcome"))return;const l=LS.active();
   if(b.dataset.add)LS.set((l||LS.create("My airports",[])).id,[b.dataset.add],true);
   else if(b.dataset.rm&&l)LS.set(l.id,[b.dataset.rm],false);
   else if(b.dataset.use)LS.use(b.dataset.use);
+  else if(b.id==="fold"&&l){LS.fold(l.id,!LS.folded(l.id));renderLists();if(window.AMside)AMside();return document.getElementById("fold").focus()}
   else if(b.id==="share"&&l)return AM.copy(LS.link(l),b);
   else if(b.id==="rename"&&l)return AM.form(document.getElementById("nf"),{value:l.name},n=>{LS.rename(l.id,n);update()});
   else if(b.id==="newlist")return AM.form(document.getElementById("nf"),{label:"Create",ph:"Name, e.g. Club SVFR or Bahamas trip"},n=>{LS.create(n,[]);update();q.focus()});
@@ -662,10 +670,14 @@ const rename=(id,n)=>edit(id,(l,ls)=>{l.name=uname(ls,n,id)});
 const set=(id,apts,on)=>edit(id,l=>{l.ids=on?[...l.ids,...apts]:l.ids.filter(x=>!apts.includes(x))});
 function remove(id){const ls=all().filter(l=>l.id!==id);write(ls);if(get(ON)===id&&ls[0])use(ls[0].id)}
 const union=()=>[...new Set(all().flatMap(l=>l.ids))];
+// lists folded shut on the home page, by id; every list starts open
+const FOLD="amend.lists.folded",shut=()=>{try{const v=JSON.parse(get(FOLD));return Array.isArray(v)?v.map(String):[]}catch(e){return[]}};
+const folded=id=>shut().includes(id);
+function fold(id,on){const v=shut().filter(x=>x!==id&&all().some(l=>l.id===x));if(on)v.push(id);try{localStorage.setItem(FOLD,JSON.stringify(v))}catch(e){}}
 // a saved list with exactly these airports, the same name first
 function same(ids,name){const s=new Set(ids),m=all().filter(l=>l.ids.length===s.size&&l.ids.every(x=>s.has(x)));return m.find(l=>l.name===name)||m[0]||null}
 const link=l=>new URL((document.body.dataset.root||"")+"list/?w="+l.ids.join(",")+"&n="+encodeURIComponent(l.name),location.href).href;
-return{all,active,use,create,rename,set,remove,union,same,link}})();
+return{all,active,use,create,rename,set,remove,union,same,link,folded,fold}})();
 // the sidebar: every list, with the one that matches the page open. On a list's page that's the list shown, on an
 // airport page a list with that airport (the one in use first), anywhere else the list in use. Clicking a list's
 // name opens its page, so the sidebar and the page never disagree. The page runs SB.side() right after the
@@ -682,11 +694,17 @@ function side(){const el=document.getElementById("sbw");if(!el)return;const B=do
     el.innerHTML=ls.length?'<div class="sbh">Your lists</div>'+ls.map(l=>{const n=l.ids.reduce((s,x)=>s+(nc[x]||0),0),u=R+'list/?l='+encodeURIComponent(l.id);
       return '<div class="sbl" data-l="'+esc(l.id)+'"><a class="sbt" href="'+u+'">'+
         '<span class="nm">'+esc(l.name)+'</span>'+(n?'<span class="nw">'+AM.pill(n)+'</span>':'')+'<span class="n">'+l.ids.length+'</span></a>'+
+        '<button class="sbf" type="button" aria-label="Fold '+esc(l.name)+'"><span class="chev" aria-hidden="true">▶</span></button>'+
         '<div class="sbp"><div class="sbq">'+l.ids.slice(0,12).map(x=>'<a class="sba'+(x===el.dataset.on?' on':'')+'" href="'+R+x+'/"><b>'+x+'</b>'+(nc[x]?AM.pill(nc[x]):'')+'</a>').join("")+
         (l.ids.length?'':'<div class="sba sub">No airports yet</div>')+
         (l.ids.length>12?'<a class="sba go" href="'+u+'">All '+l.ids.length+' airports ›</a>':'')+'</div></div></div>'}).join(""):""}
-  el.querySelectorAll(".sbl").forEach(b=>{const o=b.dataset.l===op;b.classList.toggle("open",o);b.classList.toggle("on",o&&b.dataset.l===B.list);
-    b.firstChild.setAttribute("aria-current",o&&b.dataset.l===B.list?"page":"false");b.lastChild.inert=!o})}
+  // the list that matches the page shows its airports unless it's folded (the same fold as the home page's arrow)
+  el.querySelectorAll(".sbl").forEach(b=>{const c=b.dataset.l===op,o=c&&!LS.folded(op),f=b.querySelector(".sbf");
+    b.classList.toggle("cur",c);b.classList.toggle("open",o);b.classList.toggle("on",c&&b.dataset.l===B.list);
+    f.setAttribute("aria-expanded",o);f.setAttribute("aria-label",(o?"Fold ":"Show ")+b.querySelector(".nm").textContent);
+    b.firstChild.setAttribute("aria-current",c&&b.dataset.l===B.list?"page":"false");b.lastChild.inert=!o});
+  if(!el.dataset.wired){el.dataset.wired=1;el.addEventListener("click",ev=>{const f=ev.target.closest(".sbf");if(!f)return;const id=f.parentNode.dataset.l;
+    LS.fold(id,!LS.folded(id));side();document.dispatchEvent(new Event("amend:fold"))})}}
 return{side}})();
 addEventListener("DOMContentLoaded",()=>{AM.sync();const R=document.body.dataset.root||"",B=document.body.dataset,el=document.getElementById("sbw");
 const short=(s,n)=>s.length>n?s.slice(0,n-1)+"…":s;
@@ -1282,6 +1300,8 @@ data-name="{e(wl['name'])}">Save to my lists</a><button class="btn ghost" id="co
 # what shipped, newest first, for /changelog/. Add a line when something people can see changes.
 UPDATES = [
     ("Sep 2026", [
+        "The arrow next to Your lists on the home page, and next to the open list in the sidebar, folds that "
+        "list down to its name. Each list remembers whether it's folded, in this browser.",
         "W stays as the FAA wrote it in remark translations. The FAA's lists give W two meanings, west and "
         "white, and remarks also write W/ for with, so the check couldn't tell a wrong pick from a right one: "
         "\"W RWY MRKG CONES EV 300 FT\", on both ends of one runway, read \"West runway markings\". Where the "
