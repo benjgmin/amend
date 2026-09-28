@@ -33,7 +33,12 @@ ROLES = {"nasr_old": "NASR, older cycle", "nasr_new": "NASR, newer cycle", "dtpp
 AI_KEYS = [("sent", "sent to the translator"), ("translated", "came back and passed the no-guess check"),
            ("rejected", "rejected by the no-guess check"), ("bad_batches", "batches that came back unreadable"),
            ("cache_retired", "old cached translations retired"), ("llm_calls", "translator calls"),
-           ("input_tokens", "input tokens"), ("output_tokens", "output tokens")]
+           ("input_tokens", "input tokens"), ("output_tokens", "output tokens"),
+           ("rejects_skipped", "not asked again: this engine version already rejected their answer"),
+           ("llm_errors", "translator calls that failed (translation service unavailable)"),
+           ("unanswered", "left as FAA text because a call failed or came back unreadable")]
+# llm_error is the translation API's own error text: never shown on a public page (llm_errors counts it)
+AI_HIDDEN = {"llm_error"}
 NR = '<span class="nr">not recorded</span>'
 # the page is only redeployed by a run that passes, so on the day a run is blocked it would still
 # read green. the visitor's browser checks two things against the clock instead (BEHIND_JS), with
@@ -250,7 +255,10 @@ def s_remarks(r):
             cost = ai["est_cost_usd"]
             cost = f"${cost:,.4f}" if isinstance(cost, (int, float)) else NR
             parts.append(f'<tr><td>estimated translator cost</td><td class="n">{cost}</td></tr>')
-        seen = {k for k, _ in AI_KEYS} | {"est_cost_usd", "unknown_terms"}
+        if "llm_stopped" in ai:
+            parts.append(f'<tr><td>translator stopped after repeated failures</td><td class="n">'
+                         f'{num(ai["llm_stopped"]) if ai["llm_stopped"] is not None else NR}</td></tr>')
+        seen = {k for k, _ in AI_KEYS} | {"est_cost_usd", "unknown_terms", "llm_stopped"} | AI_HIDDEN
         parts += [f'<tr><td>{e(k)}</td><td class="n">{generic(v)}</td></tr>' for k, v in ai.items() if k not in seen]
         unk = ai.get("unknown_terms") or {}
         if unk:

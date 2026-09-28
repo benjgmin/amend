@@ -71,6 +71,15 @@ class TestStatusPage(unittest.TestCase):
         self.assertIn("Translator cost $", t)
         self.assertIn("contractions with no verified meaning", t)
 
+    def test_translator_failures_show_as_counts_not_api_text(self):
+        r = good()
+        r["remarks"]["ai"].update(llm_errors=3, llm_stopped=True, unanswered=40, rejects_skipped=5,
+                                  llm_error="HTTP 400: Your credit balance is too low")
+        t = text(self.render(r))
+        self.assertIn("translator calls that failed (translation service unavailable) 3", t)
+        self.assertIn("translator stopped after repeated failures yes", t)
+        self.assertNotIn("credit balance", t)
+
     def test_zero_is_zero_not_blank(self):
         r = good()
         r["checks"] = {"errors": [], "warnings": [], "error_count": 0, "warning_count": 0}
