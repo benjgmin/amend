@@ -8,6 +8,7 @@ command line:
   python -m amend set-key                store your Anthropic API key in .env
   python -m amend check                  scheduled runs: is a rebuild needed? (build=true/false)
   python -m amend verify [DIR]           refuse to deploy an empty or half-built site/
+  python -m amend archive [CYCLE ...] [--backfill] [--list]   keep raw FAA files as GitHub Releases
 """
 import argparse
 import sys
@@ -97,6 +98,11 @@ def main(argv=None):
     v = sub.add_parser("verify", help="check a built site before it's deployed")
     v.add_argument("site", nargs="?", default="site")
 
+    ar = sub.add_parser("archive", help="keep each cycle's raw FAA files as a GitHub Release")
+    ar.add_argument("cycles", nargs="*", help="cycle dates, e.g. 2024-08-08 (default: in effect + next)")
+    ar.add_argument("--backfill", action="store_true", help="every cycle since Aug 2024")
+    ar.add_argument("--list", action="store_true", help="show what the FAA still serves; download nothing")
+
     wl = sub.add_parser("watchlist", help="create or list named watchlists (watchlists/*.json)")
     wl.add_argument("action", choices=["create", "list"])
     wl.add_argument("slug", nargs="?", help="link name, e.g. clubsvfr -> amend.watch/list/clubsvfr")
@@ -126,6 +132,9 @@ def main(argv=None):
         if bad:
             sys.exit(f"{a.site}/ failed {len(bad)} check(s); not deploying, the live site stays as it was")
         print(f"{a.site}/ looks complete")
+    elif a.cmd == "archive":
+        from .archive import main as archive
+        archive(a)
     elif a.cmd == "watchlist":
         from . import watchlists
         if a.action == "list":
