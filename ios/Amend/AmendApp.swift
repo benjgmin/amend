@@ -28,6 +28,8 @@ struct AmendApp: App {
         }
         .onChange(of: scenePhase) { _, phase in
             if phase == .background { NotificationManager.scheduleRefresh() }
+            // back from the background after 0901Z: "Upcoming" becomes "Latest" without a refresh
+            if phase == .active { CycleClock.shared.recheck(store.meta?.toCycle) }
         }
         .backgroundTask(.appRefresh(NotificationManager.taskID)) {
             await NotificationManager.scheduleRefresh()

@@ -1,4 +1,5 @@
 import Foundation
+import Observation
 
 // Mirrors SCHEMA.md (schema_version 1). Decoded with .convertFromSnakeCase.
 
@@ -145,6 +146,28 @@ enum ServerClock {
     }()
 }
 
+/// redraws every view that asked Cycle.isInEffect / daysUntil: when the app comes back to the
+/// foreground, when new meta loads, and at the 0901Z changeover itself while a screen is open
+@Observable
+final class CycleClock {
+    static let shared = CycleClock()
+    private(set) var tick = 0
+    @ObservationIgnored private var wait: Task<Void, Never>?
+
+    func recheck(_ cycle: String?) {
+        tick += 1
+        wait?.cancel()
+        wait = nil
+        guard let cycle, let t = Cycle.effectiveInstant(cycle) else { return }
+        let seconds = t.timeIntervalSince(ServerClock.now)
+        guard seconds > 0, seconds < 2 * 86400 else { return }
+        wait = Task { [weak self] in
+            try? await Task.sleep(for: .seconds(seconds + 0.05))
+            if !Task.isCancelled { self?.recheck(cycle) }
+        }
+    }
+}
+
 /// FAA cycle dates ("2026-10-01"). Everything in UTC so a cycle never shows as the day before.
 enum Cycle {
     private static let utc = TimeZone(identifier: "UTC")!
@@ -195,12 +218,14 @@ enum Cycle {
     }
 
     static func isInEffect(_ cycle: String) -> Bool {
+        _ = CycleClock.shared.tick   // so SwiftUI redraws when it moves
         guard let t = effectiveInstant(cycle) else { return true }
         return ServerClock.now >= t
     }
 
     /// days from today until the cycle takes effect (negative = already effective)
     static func daysUntil(_ cycle: String) -> Int? {
+        _ = CycleClock.shared.tick
         guard let d = date(cycle) else { return nil }
         var cal = Calendar(identifier: .gregorian)
         cal.timeZone = utc
