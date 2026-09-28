@@ -102,16 +102,17 @@ def translate_remarks(texts, use_llm, ids=frozenset(), states=frozenset()):
     down, a timeout) leaves that batch as FAA text, counts in STATS for the run log and shows as
     a warning on the Actions run, and after FAIL_LIMIT failures in a row the rest of the run shows
     FAA text too, so an outage can't hold a build past its time limit. those remarks are asked
-    again next build. a remark whose answer broke the checks isn't asked again until
-    ENGINE_VERSION changes (REJECTS_FILE), so a remark the model keeps getting wrong doesn't cost
-    a call every build."""
+    again next build. a remark whose answer broke the checks, or was the FAA text sent back
+    (sent_back), isn't asked again until ENGINE_VERSION changes (REJECTS_FILE), so a remark the
+    model keeps getting wrong doesn't cost a call every build."""
     STATS.clear()
     STATS.update(llm_calls=0, input_tokens=0, output_tokens=0, est_cost_usd=0.0, sent=0,
-                 translated=0, rejected=0, bad_batches=0, cache_retired=0, rejects_skipped=0,
+                 translated=0, rejected=0, sent_back=0, bad_batches=0, cache_retired=0, rejects_skipped=0,
                  llm_errors=0, llm_error=None, llm_stopped=False, unanswered=0, unknown_terms={})
     cache = _load(CACHE_FILE, {})
-    # re-check old entries too, so tightening faithful() retires translations made before it
-    kept = {t: readable(t, o) for t, o in cache.items() if faithful(t, o)}
+    # re-check old entries too, so tightening faithful() retires translations made before it, and an
+    # answer that was the FAA text sent back is asked again
+    kept = {t: readable(t, o) for t, o in cache.items() if faithful(t, o) and not sent_back(t, o)}
     STATS["cache_retired"] = len(cache) - len(kept)
     cache = kept
     STATS["unknown_terms"] = dict(Counter(t for raw in {x for x in texts if x}
@@ -154,13 +155,19 @@ def translate_remarks(texts, use_llm, ids=frozenset(), states=frozenset()):
             print("  warning: llm returned the wrong shape, skipping batch")
             continue
         STATS["sent"] += len(batch)
-        good = {t: readable(t, o) for t, o in zip(batch, out) if faithful(t, o)}
+        back = {t for t, o in zip(batch, out) if sent_back(t, o)}
+        good = {t: readable(t, o) for t, o in zip(batch, out) if t not in back and faithful(t, o)}
         STATS["translated"] += len(good)
-        STATS["rejected"] += len(batch) - len(good)
+        STATS["sent_back"] += len(back)
+        STATS["rejected"] += len(batch) - len(good) - len(back)
         cache.update(good)
-        rejects.update({t: problems(t, o)[:3] for t, o in zip(batch, out) if t not in good})
+        rejects.update({t: [SENT_BACK] if t in back else problems(t, o)[:3]
+                        for t, o in zip(batch, out) if t not in good})
     if STATS["rejected"]:
         print(f"  {STATS['rejected']} translations broke the no-guess check; showing the FAA text for those")
+    if STATS["sent_back"]:
+        print(f"  {STATS['sent_back']} answers were the FAA text sent back; showing it until the next engine "
+              "version asks again")
     if STATS["llm_errors"]:
         print(f"::warning title=remark translation::{STATS['llm_errors']} of {STATS['llm_calls'] + STATS['llm_errors']} "
               f"calls failed ({STATS['llm_error']}); {STATS['unanswered']} remarks show the FAA text until a later build")
@@ -194,10 +201,10 @@ def untranslated(raw, plain=None, why=(), ids=frozenset(), states=frozenset()):
             unknown.append(m[1])
         elif m := re.match(r"(\S+) is '(.+?)' \(.*\), not what the translation says$", p):
             misread.append((m[1], m[2].lower()))
-    if plain == raw:        # the model gave the FAA text back: say what in it has no verified meaning
+    if plain == raw or SENT_BACK in why:    # the FAA text came back: say what in it has no verified meaning
         unknown = review_terms(raw, ids, states)
         if not unknown:
-            return None
+            return None if plain == raw else "Kept in the FAA's words until it's translated."
     unknown = list(dict.fromkeys(unknown))
     parts = [f"{t} {_can_mean(t)}" for t in unknown if _uses(t)]
     if other := [t for t in unknown if not _uses(t)][:3]:
@@ -319,6 +326,29 @@ def faithful(raw, plain):
     """false if the translation guessed at a contraction, dropped a word or changed a number.
     the raw text is shown instead, and the remark isn't asked again until ENGINE_VERSION changes."""
     return isinstance(plain, str) and not problems(raw, plain)
+
+
+# an answer that is the FAA text itself, for a remark with a contraction the model is told the meaning
+# of: nothing was translated. it isn't cached, and it's asked again when ENGINE_VERSION changes
+SENT_BACK = "came back as the FAA text"
+
+
+def sent_back(raw, plain):
+    """the answer is the FAA text itself, though the remark has a contraction the model is told the
+    meaning of: '15 FT TREES 57 FT FM THR, 248 FT R.' came back as written (93 of the cache's 3,900
+    answers on 2026-09-28). the checks pass it, since it guesses at nothing, so it would be kept for
+    good. a PCR VALUE line (kept as written on purpose, see PROMPT), an email, a name or a number has
+    nothing to translate"""
+    if plain != raw:
+        return False
+    pcr = PCR_CODE.search(raw.upper())
+    for t in terms(raw):
+        if t in PLAIN_WORDS or t in NEGATIONS or (pcr and t == "PCR"):
+            continue
+        entry = glossary.lookup(t)
+        if entry and entry["verified"] and entry["prompt"] and not entry.get("english"):
+            return True
+    return False
 
 
 def readable(raw, plain):

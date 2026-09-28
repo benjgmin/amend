@@ -34,7 +34,8 @@ KNOWN = {"runlog_version", "engine", "engine_hash", "commit", "run", "mode", "ha
 ROLES = {"nasr_old": "NASR, older cycle", "nasr_new": "NASR, newer cycle", "dtpp": "d-TPP chart index",
          "airspace_old": "Class airspace, older cycle", "airspace_new": "Class airspace, newer cycle"}
 AI_KEYS = [("sent", "sent to the translator"), ("translated", "came back and passed the no-guess check"),
-           ("rejected", "rejected by the no-guess check"), ("bad_batches", "batches that came back unreadable"),
+           ("rejected", "rejected by the no-guess check"),
+           ("sent_back", "came back as the FAA text, so not kept"), ("bad_batches", "batches that came back unreadable"),
            ("cache_retired", "old cached translations retired"), ("llm_calls", "translator calls"),
            ("input_tokens", "input tokens"), ("output_tokens", "output tokens"),
            ("rejects_skipped", "not asked again: this engine version already rejected their answer"),

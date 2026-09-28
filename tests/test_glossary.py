@@ -868,6 +868,32 @@ class TestTranslateStats(unittest.TestCase):
         self.assertEqual(out, {"RWY 18 NOT LGTD.": "Runway 18 is not lighted."})
         self.assertEqual(remarks.STATS["cache_retired"], 1)
 
+    def test_the_faa_text_sent_back_is_not_kept(self):
+        """an answer that is the FAA text itself passes the checks, since it guesses at nothing, but for a
+        remark with contractions to expand nothing was translated: 93 cached answers were that on
+        2026-09-28 ('15 FT TREES 57 FT FM THR, 248 FT R.'). a PCR VALUE line or an email stays as written"""
+        trees, pcr, email = "15 FT TREES 57 FT FM THR, 248 FT R.", "PCR VALUE: 690/F/B/X/T", "WMRICHARDSON@COPPER.NET"
+        with open(remarks.CACHE_FILE, "w") as f:
+            json.dump({t: t for t in (trees, pcr, email)}, f)
+        texts = [trees, pcr, email, "RWY 18 NOT LGTD."]
+        out = self.run_with(texts, lambda batch: list(batch))           # every answer is the FAA text
+        self.assertEqual(out, {pcr: pcr, email: email})
+        s = remarks.STATS
+        self.assertEqual((s["cache_retired"], s["sent"], s["sent_back"], s["rejected"], s["translated"]),
+                         (1, 2, 2, 0, 0))
+        self.assertEqual(remarks.rejected(), {trees: [remarks.SENT_BACK], "RWY 18 NOT LGTD.": [remarks.SENT_BACK]})
+        self.assertEqual(remarks.untranslated(trees, None, [remarks.SENT_BACK]),
+                         "Kept in the FAA's words until it's translated.")
+        self.assertEqual(remarks.untranslated("14 FT HANGAR, 0 FT FROM RWY END, 66 FT RT.", None, [remarks.SENT_BACK]),
+                         "Kept in the FAA's words: Amend has no verified meaning for RT.")
+        self.prompts.clear()                                            # asked again only after an engine change
+        self.run_with(texts, lambda batch: list(batch))
+        self.assertEqual((self.prompts, remarks.STATS["rejects_skipped"]), ([], 2))
+        with mock.patch.object(remarks, "ENGINE_VERSION", "9.9.9"):
+            out = self.run_with(texts, lambda batch: ["15 feet trees 57 feet from threshold, 248 feet R." if t == trees
+                                                      else "Runway 18 not lighted." for t in batch])
+        self.assertEqual(out[trees], "15 feet trees 57 feet from threshold, 248 feet R.")
+
     def test_plus_plus_is_said_in_every_translation(self):
         """cached and new translations alike, and the cache keeps passing its own check"""
         with open(remarks.CACHE_FILE, "w") as f:

@@ -218,11 +218,14 @@ class TestWhyFaaWords(Case):
 
     def test_each_remark_change_says_why(self):
         rmk = "ARPT_ID,LEGACY_ELEMENT_NUMBER,REMARK"
-        texts = ["TIEDOWNS NA.", "RWY 21L CALM WIND RWY.", "66 FT RT.", "SOFT & RUTTED; IREG MRKD W CONES.", "RWY 03 CLSD."]
+        texts = ["TIEDOWNS NA.", "RWY 21L CALM WIND RWY.", "66 FT RT.", "SOFT & RUTTED; IREG MRKD W CONES.", "RWY 03 CLSD.",
+                 "46 FT POLE 200 FT FM THLD.", "WMRICHARDSON@COPPER.NET"]
         cache = {"TIEDOWNS NA.": "Tiedowns NA.", "RWY 21L CALM WIND RWY.": "Runway 21 Left is the calm wind runway.",
-                 "66 FT RT.": "66 FT RT."}
+                 "46 FT POLE 200 FT FM THLD.": "46 FT POLE 200 FT FM THLD.",       # sent back: asked again
+                 "WMRICHARDSON@COPPER.NET": "WMRICHARDSON@COPPER.NET"}              # nothing to translate
         rejects = {"engine": ENGINE_VERSION, "remarks": {
-            "SOFT & RUTTED; IREG MRKD W CONES.": ["W is 'West or White' (CS), not what the translation says"]}}
+            "SOFT & RUTTED; IREG MRKD W CONES.": ["W is 'West or White' (CS), not what the translation says"],
+            "66 FT RT.": [remarks.SENT_BACK]}}
         with open(remarks.CACHE_FILE, "w") as f:
             json.dump(cache, f)
         with open(remarks._rejects_file(), "w") as f:
@@ -243,7 +246,10 @@ class TestWhyFaaWords(Case):
             "SOFT & RUTTED; IREG MRKD W CONES.": (
                 "new remark: SOFT & RUTTED; IREG MRKD W CONES.",
                 "Kept in the FAA's words: the plain-English version didn't use the verified meaning for W (west or white)."),
-            "RWY 03 CLSD.": ("new remark: RWY 03 CLSD.", "Kept in the FAA's words until it's translated.")})
+            "RWY 03 CLSD.": ("new remark: RWY 03 CLSD.", "Kept in the FAA's words until it's translated."),
+            "46 FT POLE 200 FT FM THLD.": ("new remark: 46 FT POLE 200 FT FM THLD.",
+                                           "Kept in the FAA's words until it's translated."),
+            "WMRICHARDSON@COPPER.NET": ("new remark: WMRICHARDSON@COPPER.NET", None)})
 
     def test_the_page_shows_it(self):
         from amend import web
