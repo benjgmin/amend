@@ -59,7 +59,7 @@ class TestGlossary(unittest.TestCase):
                 self.assertEqual(e["expansion"], " to ".join(p["expansion"] for p in parts))
                 continue
             cur = glossary.CURATED.get(term, {})
-            rows = faa_rows(cur.get("root", term))
+            rows = faa_rows(e.get("derived_from") or e.get("spelling_of") or cur.get("root", term))
             if term not in glossary.CURATED:     # weather-report meanings are used only when picked
                 rows = [r for r in rows if r[0] == "CS" or r[1] in glossary.JO_USED]
             self.assertTrue(e["meanings"], term)
@@ -150,6 +150,25 @@ class TestGlossary(unittest.TestCase):
             e = glossary.lookup(t)
             self.assertTrue(e and e["verified"], t)
             self.assertTrue(e.get("derived_from") or t in glossary.load(), t)
+
+    def test_a_remarks_own_spelling_takes_the_faa_forms_meaning(self):
+        """APRCH and APPCH are how some remarks write the FAA's APCH, and EXTNDD its EXTDD (EXTD + D).
+        TEMP isn't one: the FAA lists it as temperature, and remarks use it for that too"""
+        for term, form, meaning in [("APRCH", "APCH", "approach"), ("APPCH", "APCH", "approach"),
+                                    ("EXTNDD", "EXTDD", "extend")]:
+            e = glossary.lookup(term)
+            self.assertEqual((e["verified"], e["expansion"], e["spelling_of"], e["prompt"]),
+                             (True, meaning, form, True), term)
+            self.assertEqual(e["meanings"], glossary.lookup(form)["meanings"], term)
+            self.assertTrue(e["source"].endswith(f"spelled {form}"), term)
+            self.assertIn(f"the FAA writes {form}.", e["note"], term)
+        self.assertFalse(glossary.lookup("TEMP")["verified"])
+        self.assertIn("both ways", glossary.lookup("TEMP")["note"])
+        for bad in ({"APCH": ("APRCH", "")},        # the FAA lists APCH itself
+                    {"TEMPY": ("TEMP", "")},        # TEMP has no verified meaning to give
+                    {"QZXWDD": ("QZXWD", "")}):     # not a reviewed derived form
+            with mock.patch.dict(glossary.SPELLINGS, bad), self.assertRaises(ValueError, msg=bad):
+                glossary.build()
 
     def test_sources_carry_provenance(self):
         cs, jo = SOURCES["chart_supplement"], SOURCES["jo_7340_2"]
@@ -528,6 +547,26 @@ class TestWhatTheRemarkSays(unittest.TestCase):
             self.assertTrue(remarks._family(noun, verb) and remarks._family(verb, noun), (noun, verb))
         for noun, word in [("tension", "tend"), ("session", "set"), ("version", "vert"), ("extension", "extent")]:
             self.assertFalse(remarks._family(noun, word), (noun, word))
+
+    def test_a_remarks_own_spelling_reads_as_the_faa_form(self):
+        """what the site showed for this cycle's APRCH and EXTNDD remarks, and what it may show
+        now. copied as written still passes; TEMP still has to stay as written"""
+        for raw, was, now in [
+                ("RWY 33 APRCH 34:1 TO AER", "Runway 33 APRCH 34:1 to approach end runway.",
+                 "Runway 33 approach 34:1 to approach end of runway."),
+                ("10 FT TREES EXTNDD CNTRLN.", "10 foot trees EXTNDD centerline.",
+                 "10 foot trees on the extended centerline.")]:
+            self.assertEqual(remarks.problems(raw, was), [], was)
+            self.assertEqual(remarks.problems(raw, now), [], now)
+            self.assertEqual(remarks.unverified(raw), [], raw)
+        self.assertIn("EXTNDD is 'extend'", remarks.problems("10 FT TREES EXTNDD CNTRLN.",
+                                                              "10 foot trees on external centerline.")[0])
+        p = remarks.prompt_for(["RWY 33 APRCH 34:1 TO AER", "INDY APPCH - R, E 134.85", "HELIPAD TEMP CLSD."])
+        for line in ("APRCH = approach", "APPCH = approach"):
+            self.assertIn(f"\n{line}\n", p)
+        self.assertIn("TEMP", re.search(r"copy them exactly as written: (.*)\n", p).group(1).split(", "))
+        self.assertEqual(remarks.problems("HELIPAD TEMP CLSD.", "Helipad TEMP closed."), [])
+        self.assertTrue(remarks.problems("HELIPAD TEMP CLSD.", "Helipad temporarily closed."))
 
     def test_signs_and_ranges(self):
         self.assertEqual(remarks.problems("10 FT TREES 125 -150 FT W OF RWY.",

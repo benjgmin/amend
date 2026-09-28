@@ -6,7 +6,9 @@ faa_abbreviations.json:
     in the Chart Supplement, so where its list and JO 7340.2 disagree, its meaning wins.
   - "JO": FAA Order JO 7340.2 (Contractions), 2-1-1 Decode, the FAA-wide list.
 A term neither list defines is unverified: remarks.problems() rejects any translation that
-doesn't copy it exactly as written, and the FAA text is shown instead.
+doesn't copy it exactly as written, and the FAA text is shown instead. The exception is a remark's
+own spelling of an FAA contraction (SPELLINGS: APRCH for the FAA's APCH), which takes the FAA
+form's meaning once every remark that uses it has been read.
 
 glossary.json holds one entry per term:
   expansion  the meaning shown to the model and to readers. always FAA text, never reworded
@@ -19,6 +21,7 @@ glossary.json holds one entry per term:
   accept     optional regexes a translation may match instead of a meaning's own words
   parts      for a pair like SS-SR: the terms it joins, which have to come out in that order
   english    an everyday English word in remarks (END, MUST), never expanded as a contraction
+  spelling_of for a remark's own spelling (APRCH): the FAA contraction whose meaning it takes
 
 refresh the FAA lists and rebuild (needs faa.gov access and pypdf):
     python -m amend.glossary --refresh
@@ -167,7 +170,11 @@ CURATED = {
     "FRM": {"expansion": None, "note": "the FAA lists 'form'; remarks use FRM for from"},
     "MTUS": {"expansion": None, "note": "MTU + S would read as 'metric units'; remarks use MTUS for mountains"},
     "REQD": {"expansion": None, "note": "REQ + D would read as 'requested'; remarks use REQD for required"},
-    "TEMP": {"expansion": None, "note": "the FAA lists 'temperature'; remarks use TEMP for temporarily (TMPRY)"},
+    "TEMP": {"expansion": None,
+             "note": "the FAA lists 'temperature' (its temporary is TMPRY), and remarks use TEMP both ways: "
+                     "'HELIPAD TEMP CLSD' is temporary, 'WIND, TEMP, & ALTM INFO' and 'AWOS TEMP UNRELBL' "
+                     "are temperature (10 and 8 of NASR's 18 on 2026-10-01). a check can't tell which one "
+                     "a translation picked"},
     "TO": {"expansion": None, "note": "the FAA lists 'travel order'; remarks use TO for 'to', and for takeoff "
                                       "('TO AND LDG NA')"},
     "UNSBL": {"expansion": None, "note": "JO 7340.2 lists 'unseasonable' (NWS); remarks use it for unusable"},
@@ -353,6 +360,19 @@ DERIVED = {
     "WKS", "WNDS", "WTS", "XNGS", "YDS", "YRS"
 }
 
+# remarks that spell an FAA contraction their own way: APRCH where the FAA writes APCH. each takes
+# the meaning of the FAA form it names, and only after every remark in NASR that uses it was read
+# and meant that (2026-10-01 cycle, all remark fields). a translation may still copy it as written.
+# not TEMP: the FAA lists it as temperature, and remarks use it for that too (see CURATED)
+SPELLINGS = {
+    "APPCH": ("APCH", "22 remarks in NASR (2026-10-01) write APPCH, all for approach: "
+                      "'APPCH SLP 26:1 TO MKD DTHR', 'INDY APPCH - R, E 134.85'"),
+    "APRCH": ("APCH", "20 remarks in NASR (2026-10-01) write APRCH, all for approach: "
+                      "'RWY 33 APRCH 34:1 TO AER', 'APRCH END OF ALL RWYS'"),
+    "EXTNDD": ("EXTDD", "35 remarks in NASR (2026-10-01) write EXTNDD, all for extended: "
+                        "'10 FT TREES EXTNDD CNTRLN', 'ON EXTNDD RY CNTRLN'. EXTDD is EXTD + D (JO 1-2-3)"),
+}
+
 
 # ---------------------------------------------------------------- reading the glossary
 _GLOSSARY = None
@@ -372,16 +392,23 @@ def lookup(term):
     terms = load()
     if term in terms or term in ENGLISH:
         return terms.get(term)
-    if term not in DERIVED:
+    found = term in DERIVED and derivation(term, terms)
+    if not found:
         return None
+    root, suffix = found
+    return {**terms[root], "derived_from": root, "prompt": False,
+            "source": f"{terms[root]['source']} + JO 1-2-3 suffix {suffix}"}
+
+
+def derivation(term, terms):
+    """(root, suffix) of a derived form whose root has one verified meaning: HRS is ("HR", "S")."""
     for suffix in sorted(SUFFIXES, key=len):      # the longest root first: MINS is MIN + S
         root = term[:-len(suffix)]
         if not term.endswith(suffix) or len(root) < (2 if suffix == "S" else 3):
             continue
         base = terms.get(root)
         if base and base["verified"] and not base.get("parts"):
-            return {**base, "derived_from": root, "prompt": False,
-                    "source": f"{base['source']} + JO 1-2-3 suffix {suffix}"}
+            return root, suffix
     return None
 
 
@@ -521,6 +548,18 @@ def build(sources=None):
             if k in cur:
                 entry[k] = cur[k]
         terms[term] = entry
+    for term, (form, seen) in SPELLINGS.items():
+        if term in terms or term in ENGLISH:
+            raise ValueError(f"{term} is an FAA term or an English word, not a spelling of {form}")
+        root, suffix = (form, None) if form in terms else \
+            (form in DERIVED and derivation(form, terms)) or (None, None)
+        base = terms.get(root)
+        if not (base and base["verified"]) or base.get("parts"):
+            raise ValueError(f"{term}: {form} has no verified meaning")
+        terms[term] = {**base, "source": base["source"] + (f" + JO 1-2-3 suffix {suffix}" if suffix else "")
+                       + f", spelled {form}", "faa": [f"{root}: {f}" for f in base["faa"]], "prompt": True,
+                       "spelling_of": form, "note": f"the FAA writes {form}. {seen}",
+                       **({"derived_from": root} if suffix else {})}
     for term in ENGLISH:
         entry = terms.get(term)
         terms[term] = {"expansion": None, "verified": False, "source": None,
