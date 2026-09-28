@@ -5,6 +5,7 @@ run:  python -m unittest -v
 import io
 import json
 import os
+import re
 import tempfile
 import unittest
 import zipfile
@@ -614,6 +615,64 @@ class TestWeb(unittest.TestCase):
                            capture_output=True, text=True, timeout=60)
         self.assertEqual(r.returncode, 0, r.stderr)
 
+    def test_brand_and_trust(self):
+        from amend import brand
+        site, _ = self.build()
+        for f in ("favicon.ico", "site.webmanifest", "404.html", "assets/icon.svg", "assets/apple-touch-icon.png",
+                  "assets/icon-512.png", "assets/icon-maskable-512.png", "assets/fonts/plex-sans-latin.woff2",
+                  "assets/fonts/OFL.txt"):
+            self.assertTrue(os.path.exists(os.path.join(site, f)), f)
+        page = open(os.path.join(site, "VRB", "index.html")).read()
+        self.assertNotIn("fonts.googleapis.com", page)                  # fonts come from amend.watch
+        self.assertIn('href="../assets/fonts/plex-sans-latin.woff2" as="font"', page)
+        self.assertIn('<link rel="icon" href="../favicon.ico"', page)
+        self.assertIn('<link rel="canonical" href="https://amend.watch/VRB/">', page)
+        self.assertIn('static.cloudflareinsights.com/beacon.min.js', page)   # the about page's privacy note says so
+        self.assertIn('class="mk"', page)                               # the logo, tile coloured by the theme
+        self.assertIn("not affiliated with the FAA", page)
+        self.assertIn("issues/new?title=VRB%3A%20", page)               # report a wrong change
+        self.assertIn('url(fonts/plex-sans-latin.woff2)', open(os.path.join(site, "assets", "style.css")).read())
+        about = open(os.path.join(site, "about", "index.html")).read()
+        for text in ('id="how"', 'id="limits"', 'id="privacy"', 'id="report"', "Cloudflare Web Analytics",
+                     "NOTAMs.</b>"):
+            self.assertIn(text, about)
+        self.assertNotIn("coming soon", about.lower())
+        missing = open(os.path.join(site, "404.html")).read()
+        self.assertIn('href="/assets/style.css?v=', missing)              # served at any depth
+        self.assertIn('replace(/^K(?=[A-Z]{3}$)/,"")', missing)          # /kvrb goes on to /VRB/
+        self.assertNotIn('rel="canonical"', missing)
+        manifest = json.load(open(os.path.join(site, "site.webmanifest")))
+        self.assertEqual(manifest["name"], "Amend")
+        # the red pen: both a's inside the tile, the strike across the old a and clear of the new one, on whole
+        # pixels at 16 px
+        xs, ys = [], []
+        for cmd, args in re.findall(r"([MLHVQZ])([^MLHVQZ]*)", brand.A_PATH):
+            v = [float(n) for n in args.split()]
+            if cmd == "H":
+                xs += v
+            elif cmd == "V":
+                ys += v
+            else:
+                xs, ys = xs + v[0::2], ys + v[1::2]
+        ink = lambda x, base, s: (x + min(xs) * s, x + max(xs) * s, base - max(ys) * s, base - min(ys) * s)
+        old, new = ink(*brand.OLD), ink(*brand.NEW)
+        for left, right, top, bottom in (old, new):
+            self.assertTrue(2 < left < right < 62 and 2 < top < bottom < 62)
+        x0, y0, x1, y1 = brand.STRIKE
+        self.assertTrue(x0 < old[0] and old[1] < x1 < new[0])
+        self.assertTrue(old[2] < y0 < y1 < old[3] and y0 % 4 == 0 and y1 % 4 == 0)
+        icon = open(os.path.join(site, "assets", "icon.svg")).read()
+        self.assertIn(brand.LIGHT["strike"], icon)
+        self.assertIn(brand.DARK["strike"], icon)                      # the favicon follows dark mode
+
+    def test_logo_matches_font(self):
+        from amend import brand
+        try:
+            import fontTools  # noqa: F401  (a dev tool: CI only has Pillow)
+        except ImportError:
+            self.skipTest("needs fontTools")
+        self.assertEqual(brand._a_path(), brand.A_PATH)
+
 
 # runs assets/app.js with a fake localStorage: the lists saved in the browser, and the old single watchlist
 LISTS_TEST = r"""
@@ -728,7 +787,6 @@ class TestFeeds(unittest.TestCase):
         self.assertIn('action="https://buttondown.com/api/emails/embed-subscribe/x"', page)
         self.assertIn('name="tag" value="list:club"', page)
         self.assertNotIn('name="email"', open(os.path.join(site, "VRB", "index.html")).read())   # lists only
-
 
 class TestWatchlists(unittest.TestCase):
     def test_validation(self):

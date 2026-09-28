@@ -25,7 +25,7 @@ struct GuideView: View {
                 section("Remarks") {
                     Text("Remarks are the free-text notes in the FAA Chart Supplement (the old A/FD) for an airport: things like PPR requirements, runway restrictions, wildlife, noise abatement, when services aren't available.")
                         .guideBody()
-                    Text("The FAA writes them in contractions (RSCD NOT MNT 2300-0600 M-F). Amend translates them to plain English with AI using a fixed FAA glossary; unknown abbreviations are left as-is instead of guessed. Tap FAA text on any remark to see the original, and trust the original if they ever disagree.")
+                    Text("The FAA writes them in contractions (RSCD NOT MNT 2300-0600 M-F). Amend translates them to plain English with AI using a fixed FAA glossary; unknown abbreviations are left as-is instead of guessed. A translation that changes a number or gets a known contraction wrong is thrown out, and the FAA text shows instead. Tap FAA text on any remark to see the original, and trust the original if they ever disagree.")
                         .guideBody()
                 }
 
