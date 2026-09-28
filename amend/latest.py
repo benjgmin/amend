@@ -65,7 +65,7 @@ def _build(llm, log):
     n = write_diff(result, out)
     dump({"schema_version": SCHEMA_VERSION, "engine": ENGINE_VERSION,
           "from_cycle": old.isoformat(), "to_cycle": new.isoformat(),
-          "upcoming": upcoming, "includes_charts": bool(dtpp),
+          "upcoming": upcoming, "effective": f"{new.isoformat()}T09:01:00Z", "includes_charts": bool(dtpp),
           "includes_airspace": result["includes_airspace"], "changed_airports": n,
           "generated": dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds")},
          os.path.join(out, "meta.json"))

@@ -154,7 +154,7 @@ struct SettingsView: View {
         Section {
             if let meta = store.meta {
                 row("Cycle", "\(Cycle.efb(meta.fromCycle)) → \(Cycle.efb(meta.toCycle))")
-                row("Status", meta.upcoming ? "Upcoming" : "Current")
+                row("Status", Cycle.isInEffect(meta.toCycle) ? "Current" : "Upcoming")
                 row("Charts", meta.includesCharts ? "Included" : "Not available")
                 row("Updated", updated(meta.generated))
             }
