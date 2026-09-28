@@ -3,7 +3,7 @@
 What happens from the FAA posting a file to a change showing on amend.watch, as the code does it
 today. The module map is in [architecture.md](architecture.md).
 
-Line references are against `master` at `8b18fdf`.
+Line references are against `master` at `8b18fdf`, except sections 1, 2 and 8 and the table below, which were updated on 2026-09-28 and name functions and workflow steps instead of lines.
 
 ## Sources
 
@@ -23,41 +23,51 @@ cycle in the FAA archive, but the FAA still serves NASR zips back to 2022-05-19 
 
 `.github/workflows/update.yml` runs:
 
-- **every 3 hours** at :17 past the hour (`update.yml:9`). GitHub can delay or skip scheduled runs;
-- on every push to `master`, except changes only to `ios/`, `docs/`, Markdown or `LICENSE`
-  (`update.yml:11-17`);
-- by hand from the Actions tab (`update.yml:10`).
+- **every 10 minutes**, started by a Cloudflare Worker cron that calls `workflow_dispatch` with
+  `check_only: true` (setup kept outside the repo). GitHub's own schedule (`cron: "3-59/10 * * * *"`)
+  is still in the file, but GitHub stopped firing it for this repo on 2026-09-28, so the Worker is
+  what actually runs the checks;
+- on every push to `master`, except changes only to `ios/`, `docs/`, Markdown or `LICENSE` (`on: push`);
+- by hand from the Actions tab (`workflow_dispatch` with `check_only` off always builds).
 
-A new FAA cycle is therefore usually live **within a few hours** of the FAA posting it, not minutes.
+A check notices a newly posted FAA file within about 10 minutes. The build and deploy that follow
+took 4 to 7 minutes on 2026-09-28, so new data is usually live within about 20 minutes of the FAA
+posting it, as long as Cloudflare and GitHub start the runs on time. The switch from "upcoming" to
+"in effect" doesn't wait for a run at all: pages and the app flip at 0901Z by the clock, checked
+against the server's `Date` header (`web.py` `flip()`, iOS `ServerClock`).
+
+Each check prints one `faa:` line per FAA file it looked at, with the file's `Last-Modified` and how
+long before the check that was (`freshness.faa_log`). The run log keeps each source's
+`last_modified` next to our first-download `retrieved_at`.
 
 ## 2. Check: is a rebuild needed?
 
-Scheduled runs start with `python -m amend check` (`update.yml:41-49`, `freshness.py:78-104`). It
+Scheduled and `check_only` runs start with `python -m amend check` (the `check` job, `freshness.check`). It
 reads the live `latest/meta.json` and `build.json` from amend.watch and requests the first 16 bytes
-of each FAA file (`cycles.py:183-195`), so it takes seconds. It rebuilds when any of these is true
-(`freshness.py:45-75`):
+of each FAA file (`cycles.probe_info`), so it takes seconds. It rebuilds when any of these is true
+(`freshness.decide`):
 
 - the live site can't be read;
 - the repo's inputs (`amend/*.py`, watchlists, history, remark cache) hash differently from the
-  deployed `build.json` (`freshness.py:26-36`), meaning a merge or data commit isn't live yet;
+  deployed `build.json` (`freshness.fingerprint`), meaning a merge or data commit isn't live yet;
 - `history/` doesn't have the cycle in effect yet;
 - the live site shows a different cycle than the FAA has, including a newly posted upcoming cycle;
 - charts or airspace shapes were missing from the last build and may be posted now;
-- the last build is more than 20 hours old (`freshness.py:23`);
+- the last build is more than 20 hours old (`freshness.MAX_AGE`);
 - it can't tell whether the next cycle is posted.
 
-If the check itself throws, it says build (`freshness.py:97-98`). Pushes and manual runs always
+If the check itself throws, it says build ("check failed" in `freshness.check`). Pushes and manual runs always
 build.
 
 ## 3. Tests
 
-`python -m unittest discover -s tests -t .` with Pillow installed (`update.yml:63-67`). A failing
+`python -m unittest discover -s tests -t .` with Pillow installed (the `tests` step). A failing
 test stops the run before anything is downloaded. The same suite runs on every pull request
 (`.github/workflows/tests.yml`).
 
 ## 4. Download and file checks
 
-Raw files land in `data/`, restored from the Actions cache (`update.yml:69-75`). `cycles.download`
+Raw files land in `data/`, restored from the Actions cache. `cycles.download`
 (`cycles.py:139-180`):
 
 - skips the download if a valid file is already there (`cycles.py:143-147`);
@@ -74,11 +84,11 @@ A NASR zip must contain `APT_BASE`, `APT_RWY`, `APT_RWY_END`, `APT_RMK`, `FRQ`, 
 `ATC_BASE` (`cycles.py:62-63`), because a missing file would make every one of its rows read as
 removed.
 
-Nothing records when a file was retrieved, its checksum, or how many files and rows it had.
+Each download writes `data/<file>.json` next to it (url, `retrieved_at`, sha256, the FAA's `Last-Modified` and ETag), and the run log (`amend/runlog.py`, `audit/runs/`) records every source file, its checksum and the rows read.
 
 ## 5. History: new cycles
 
-`python -m amend history --llm` (`update.yml:77-80`, `history.py:58-101`):
+`python -m amend history --llm` (the `append new cycles to history` step, `history.py:58-101`):
 
 1. List every cycle from 2024-08-08 to the one in effect (`history.py:61-65`) and keep the ones not
    yet in `history/cycles.json` (`history.py:66`).
@@ -94,11 +104,11 @@ Nothing records when a file was retrieved, its checksum, or how many files and r
    (`history.py:95-98`), so only the newest raw data stays in `data/`.
 7. Rewrite `history/index.json` (`history.py:45-55`).
 
-History entries don't record the engine version that produced them.
+Each history entry records the `engine` version that produced it (`amend.ENGINE_VERSION`).
 
 ## 6. Latest: the current or upcoming diff
 
-`python -m amend latest` (`update.yml:82-85`, `latest.py:18-60`):
+`python -m amend latest` (the `build site` step, `latest.py:18-60`):
 
 1. If the FAA has posted the next cycle, compare the cycle in effect with it (upcoming). Otherwise
    compare the previous cycle with the one in effect (`latest.py:22-28`). If either NASR zip can't be
@@ -228,17 +238,17 @@ Records are sorted `action`, `ifr`, `fyi` and turned into the public change obje
 
 ## 8. Verify, commit, deploy
 
-1. `python -m amend verify site` (`update.yml:89-90`, `freshness.py:110-158`) refuses a site where
+1. `python -m amend verify site` (the `check the site before it goes live` step, `freshness.verify`) refuses a site where
    `index.html` is missing or nearly empty, `meta.json` compares a cycle to itself or an older one,
    `latest/index.json` lists no airports or disagrees with `meta.json`, an airport in the index has
    no JSON file or no page, `airports.json` has fewer than 5,000 airports, history has no cycles, or
    `build.json` is missing.
-2. Commit `history/` and `remark_cache.json` to `master` as amend-bot (`update.yml:94-100`). If the
+2. Commit `history/` and `remark_cache.json` to `master` as amend-bot (the `commit history, remark translations, audit packet and run log` step). If the
    push still fails after three rebase attempts, stop without deploying so the site never gets ahead
-   of the repo (`update.yml:101-107`).
+   of the repo (same step).
 3. Trim `data/` to the newest three files of each kind and save it to the Actions cache
-   (`update.yml:109-120`).
-4. Upload `site/` and deploy it to GitHub Pages (`update.yml:122-135`).
+   (the `trim old FAA files from cache` step).
+4. Upload `site/` and deploy it to GitHub Pages (the `deploy` job).
 
 Any failing step stops everything after it. Nothing is committed or deployed, and the last good
 site stays live.
@@ -253,22 +263,17 @@ site stays live.
 | The cycle in effect or the previous one isn't posted | Stops the run | `latest.py:29-31` |
 | An old cycle is gone from the FAA archive | History skips it and diffs across the gap | `history.py:81-84` |
 | d-TPP or airspace files not posted yet | Built without them; `meta.json` says so; a later check rebuilds | `latest.py:32-33`, `41-42`, `freshness.py:64-68` |
-| Airspace shapefile can't be parsed | Logged and skipped. **`meta.json` still says `includes_airspace: true`**, so the check never retries | `pipeline.py:129-133`, `latest.py:42` |
-| A CSV has a parse error partway through | **Warning only; the rest of that file is dropped and its rows read as removed** | `nasr.py:160-161` |
-| Two files with the same name in the zip | **The second is skipped silently** | `nasr.py:130` |
+| Airspace shapefile can't be parsed | Built without it; `meta.json` says `includes_airspace: false` and the cached zips are dropped, so the next check re-downloads and retries | `latest.build` (`airspace_error`) |
+| A CSV has a parse error partway through | Stops the run (`InputError`), recorded as blocked in the run log | `nasr.load` |
+| Two different files with the same name in the zip | Stops the run (`InputError`) | `nasr.load` |
 | No API key, API error, wrong-length batch, or a failed translation check | Raw FAA remark text is shown | `remarks.py:97-115` |
-| A test fails | Stops before downloading anything | `update.yml:66-67` |
-| The built site fails `verify` | Not deployed | `update.yml:89-90`, `cli.py:121-127` |
-| History can't be pushed | Not deployed | `update.yml:101-107` |
-| The freshness check itself errors | Builds anyway | `freshness.py:97-98` |
+| A test fails | Stops before downloading anything | `tests` step |
+| The built site fails `verify` | Not deployed | `check the site before it goes live` step |
+| History can't be pushed | Not deployed | commit step |
+| The freshness check itself errors | Builds anyway | `freshness.check` |
 
 ## Known weak spots
 
-The ones in bold in the table above, plus:
-
-- **Raw data isn't kept.** Zips are deleted after diffing (`history.py:95-98`) and the cache holds
-  three (`update.yml:109-114`). If the FAA drops old cycles, history can't be rebuilt or audited.
-- **No input-side anomaly checks.** Per-file row counts aren't compared with the previous cycle.
 - **Pairing is greedy.** Removed rows are paired in iteration order, first come first served
   (`diff.py:162-173`), so the result can depend on row order. Exact duplicate rows collapse into one
   (`diff.py:151-155`).
@@ -277,4 +282,4 @@ The ones in bold in the table above, plus:
   (`diff.py:78-86`).
 - **Unstable ids.** Rewording a summary or re-translating a remark changes the change id
   (`pipeline.py:48-50`), which resets "seen" state.
-- **No engine version, processing log, token or cost tracking.**
+
