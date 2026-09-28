@@ -1230,6 +1230,10 @@ data-name="{e(wl['name'])}">Save to my lists</a><button class="btn ghost" id="co
 # what shipped, newest first, for /changelog/. Add a line when something people can see changes.
 UPDATES = [
     ("Sep 2026", [
+        "A ++ after a time in a remark now reads \"(one hour earlier during daylight saving time)\". The FAA's "
+        "data writes ++ where the Chart Supplement prints ‡, and the Chart Supplement's legend says those "
+        "hours are one hour earlier during daylight saving time. Translations may also change a word's form "
+        "to read as English: \"WHEN TWR HR EXTN\" can read \"when tower hours are extended\".",
         "FOD in remarks now reads \"foreign object debris\", the meaning in the FAA's contractions list, "
         "since remarks use it for loose material on the pavement. The translator is also told to write in "
         "normal capitalization instead of leaving plain words in capitals.",
