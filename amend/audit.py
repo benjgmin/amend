@@ -33,7 +33,7 @@ BUSIEST = ["ATL", "BOS", "BWI", "CLT", "DCA", "DEN", "DFW", "DTW", "EWR", "FLL",
 # the action count is compared with the median of recent cycles. a real cycle has never
 # been more than ~2x off; a broken classifier or a half-read zip is
 ACT_WARN, ACT_FAIL = 2.5, 5.0
-MIN_AIRPORTS = 100          # every cycle since 2024 changed 450+ airports
+MIN_AIRPORTS = 100          # every cycle since 2024 changed 440+ airports (fewest: 448, 2025-03-20)
 
 # rows per FAA input file, old cycle vs new cycle. a truncated or half-read file shows up here
 # before it shows up as thousands of "removed" changes. measured on all 28 cycle pairs from
@@ -188,7 +188,7 @@ def check_counts(airports, past_actions):
     n_apt = len(airports)
     act = sum(c["priority"] == "action" for ch in airports.values() for c in ch)
     if n_apt < MIN_AIRPORTS:
-        errors.append(f"only {n_apt} airports changed (every cycle since 2024 had 450+): "
+        errors.append(f"only {n_apt} airports changed (every cycle since 2024 had 440+): "
                       f"probably a truncated or half-read FAA file")
     if not act:
         errors.append("no action items at all")
@@ -220,13 +220,13 @@ def check_inputs(csv_rows, airspace_shapes=None):
             errors.append(f"{f} was in the old cycle ({a} rows) and is missing from the new one: "
                           f"every row would read as removed")
             continue
-        if a is None:
+        if not a:                  # new this cycle, or empty last cycle (a header-only file)
             if b:
                 warnings.append(f"{f} is new this cycle ({b} rows): every row reads as added")
             continue
-        change = (b - a) / a if a else (1.0 if b else 0.0)
+        change = (b - a) / a
         msg = f"{f} went from {a} to {b} rows ({change:+.0%})"
-        if a and not b:
+        if not b:
             errors.append(f"{msg}: the FAA file is empty")
         elif max(a, b) < MIN_ROWS:
             continue

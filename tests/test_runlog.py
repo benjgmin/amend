@@ -107,6 +107,13 @@ class TestInputChecks(unittest.TestCase):
         self.assertEqual(e, [])
         self.assertIn("NEW.csv is new this cycle (500 rows)", w[0])
 
+    def test_file_empty_last_cycle_is_new_not_doubled(self):
+        # a header-only file that gets rows is a new file, not "+100%, packed twice"
+        e, w = self.check({"APT_BASE.csv": 10, "NEW.csv": 0}, {"APT_BASE.csv": 10, "NEW.csv": 120})
+        self.assertEqual(e, [])
+        self.assertIn("NEW.csv is new this cycle (120 rows)", w[0])
+        self.assertEqual(self.check({"NEW.csv": 0}, {"NEW.csv": 0}), ([], []))
+
     def test_nothing_read_fails(self):
         self.assertEqual(self.check({"APT_BASE.csv": 10}, {})[0], ["no FAA files were read from the new cycle"])
 
