@@ -161,7 +161,21 @@ class ArchiveTest(unittest.TestCase):
         self.assertIn("dtpp_metafile", self.gh.find_release("faa-2025-01-23")["body"])
 
     def test_cycle_without_csv_zip_makes_no_release(self):
+        # history is built from this cycle's CSV zip: never archive it without one
         self.assertEqual(self.run_cycle(PAST, FakeFAA(gone=["CSV.zip"])), "unavailable")
+        self.assertEqual(self.gh.releases, [])
+
+    def test_pre_history_cycle_keeps_its_airspace_without_a_csv_zip(self):
+        old = dt.date(2022, 3, 24)   # the FAA still serves this airspace zip, not the CSV zip
+        self.assertEqual(self.run_cycle(old, FakeFAA(gone=["CSV.zip", "d-tpp"])), "done")
+        man = self.gh.manifest("faa-2022-03-24")
+        self.assertEqual([f["kind"] for f in man["files"]], ["class_airspace"])
+        self.assertEqual([m["kind"] for m in man["missing"]], ["nasr_csv", "dtpp_metafile"])
+
+    def test_pre_history_cycle_with_nothing_served_makes_no_release(self):
+        old = dt.date(2022, 1, 27)
+        self.assertEqual(self.run_cycle(old, FakeFAA(gone=["CSV.zip", "shape", "d-tpp"])),
+                         "unavailable")
         self.assertEqual(self.gh.releases, [])
 
     def test_upcoming_cycle_not_posted_at_all_waits(self):

@@ -292,7 +292,10 @@ def archive_cycle(gh, d, at=None, log=print):
             return "exists"
 
         files, missing = fetch_cycle(d, tmp)
-        if not any(f["kind"] == "nasr_csv" for f in files):
+        # history is built from the CSV zip, so a cycle it covers is never archived without one:
+        # a stray 404 can't lock in a release missing it. older cycles keep whatever's left
+        # (the FAA still serves airspace zips for early 2022, after their CSV zips are gone)
+        if not any(f["kind"] == "nasr_csv" for f in files) and (d >= FIRST_ARCHIVED or not files):
             if rel:
                 raise ArchiveError(f"{t}: a draft exists but the FAA no longer serves the CSV zip")
             if d > in_effect(at):
