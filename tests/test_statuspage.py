@@ -80,6 +80,16 @@ class TestStatusPage(unittest.TestCase):
         self.assertIn("translator stopped after repeated failures yes", t)
         self.assertNotIn("credit balance", t)
 
+    def test_cycle_rows_flip_at_0901z(self):
+        """before the changeover the page carries the in-effect rows too, for app.js to swap in at 0901Z"""
+        html = self.render(good())            # NOW is 28 Sep; 01 Oct is upcoming
+        self.assertIn('class="flip" data-after="', html)
+        m = [x for x in re.findall(r'data-after="([^"]*)"', html) if "FAA cycle in effect" in x]
+        self.assertEqual(len(m), 1)
+        after = m[0].replace("&lt;", "<").replace("&gt;", ">").replace("&quot;", '"').replace("&amp;", "&")
+        self.assertIn("FAA cycle in effect</span><span>01 Oct 2026", after)
+        self.assertIn("29 Oct 2026: shows up here once the FAA posts it", after)
+
     def test_zero_is_zero_not_blank(self):
         r = good()
         r["checks"] = {"errors": [], "warnings": [], "error_count": 0, "warning_count": 0}

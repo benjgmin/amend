@@ -425,16 +425,18 @@ def page(recs, meta, now):
     later_bad = [r for r in recs if top is not None and str(r.get("started_at") or "") > str(top.get("started_at") or "")
                  and r.get("outcome") in ("blocked", "failed")]
     rows = []
-    if meta:
-        upcoming, _ = web.status(meta, now)
-        cur = meta["from_cycle"] if upcoming else meta["to_cycle"]
-        rows.append(("FAA cycle in effect", nice(cur)))
-        if upcoming:
-            rows.append(("Next cycle", f"{nice(meta['to_cycle'])}, takes effect {web.countdown(web.effective(meta['to_cycle']))}"
-                         " (already on Amend)"))
-        else:
-            rows.append(("Next cycle", f"{nice((dt.date.fromisoformat(meta['to_cycle']) + dt.timedelta(days=28)).isoformat())}:"
-                         " shows up here once the FAA posts it"))
+
+    def cycle_rows(up):
+        """the in-effect and next cycle, before the changeover (up) or after it"""
+        if not meta:
+            return []
+        if up:
+            return [("FAA cycle in effect", nice(meta["from_cycle"])),
+                    ("Next cycle", f"{nice(meta['to_cycle'])}, takes effect "
+                                   f"{web.countdown(web.effective(meta['to_cycle']))} (already on Amend)")]
+        nxt = (dt.date.fromisoformat(meta["to_cycle"]) + dt.timedelta(days=28)).isoformat()
+        return [("FAA cycle in effect", nice(meta["to_cycle"])),
+                ("Next cycle", f"{nice(nxt)}: shows up here once the FAA posts it")]
     if top is None:
         ans = (chip("none"), "No runs recorded yet.", "The run log is empty, so there's nothing to show.")
     else:
@@ -465,7 +467,10 @@ def page(recs, meta, now):
                         f' data-hours="{BEHIND_HOURS}" data-log="{web.REPO_URL}/tree/master/audit/runs"'
                         # did that run find the next cycle posted? False: the FAA hadn't posted it yet
                         f' data-up="{"1" if top.get("upcoming") else "0" if top.get("upcoming") is False else ""}"')
-    kv = "".join(f'<div class="kv"><span>{k}</span><span>{v}</span></div>' for k, v in rows)
+    # the cycle rows swap at 0901Z in the open page, like every other page (web.flip and app.js); all the rows go in
+    # both versions so the first row's divider rule holds in each
+    kvs = lambda up: "".join(f'<div class="kv"><span>{k}</span><span>{v}</span></div>' for k, v in cycle_rows(up) + rows)
+    kv = web.flip(meta, now, kvs) if meta else kvs(False)
     body = [f"""<header class="full"><h1>Status</h1><p class="lede">Is Amend current, and did the latest run pass every check?
 Every number here comes from the run log Amend writes on each run. Nothing is estimated.</p></header>
 <section class="full card box st-top"><div class="st-ans" id="stans"{behind_attrs}>{ans[0]}<div><b>{ans[1]}</b>
