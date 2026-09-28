@@ -364,8 +364,8 @@ def run(gh, days, at=None, log=print):
 # ---------------------------------------------------------------- what the FAA still serves
 
 def remote_size(url):
-    """(served?, bytes) without downloading: HEAD, then a 16-byte Range read. served is None
-    when we couldn't tell."""
+    """(served?, bytes) without downloading: HEAD, then a 16-byte Range read (nfdc.faa.gov's
+    Akamai storage answers every HEAD with 503). served is None when we couldn't tell."""
     for method, extra in (("HEAD", {}), ("GET", {"Range": "bytes=0-15"})):
         req = urllib.request.Request(url, method=method, headers={"User-Agent": "amend", **extra})
         try:
@@ -383,10 +383,12 @@ def remote_size(url):
                     head.startswith(b"<") and not head.lower().startswith((b"<!doctype", b"<html")))
                 return ok, int(size) if ok and (size or "").isdigit() else 0
         except urllib.error.HTTPError as e:
-            if method == "HEAD" and e.code in (403, 405):
+            if method == "HEAD":
                 continue
             return (False, 0) if e.code in (403, 404, 410) else (None, 0)
         except Exception:
+            if method == "HEAD":
+                continue
             return None, 0
     return None, 0
 
