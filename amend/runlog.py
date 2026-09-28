@@ -8,10 +8,11 @@ accuracy and engine-health pages are meant to be built from these records, so th
 is a contract: add fields freely, but rename or remove one only with a RUNLOG_VERSION bump.
 
 audit/runs/<cycle>/<started>-<mode>-<run>.json, one file per record, so two builds never
-write the same file: a build that queued behind another starts from a checkout without the
-other's data commit, and both still push cleanly. <cycle> is the FAA cycle in effect when the
-run started, <started> its start time (UTC, to the microsecond, so the files sort in start
-order), <run> the Actions run id and attempt ("36415457140-1") or "local". Each file is one Run.
+write the same file. (a build that queued behind another checks out the branch when it
+starts, so it has the other's data commit: update.yml.) <cycle> is the FAA cycle in effect
+when the run started, <started> its start time (UTC, to the microsecond, so the files sort in
+start order), <run> the Actions run id and attempt ("36415457140-1") or "local". Each file is
+one Run.
 
 Run:
   runlog_version  int     shape of this record
@@ -19,7 +20,8 @@ Run:
   engine_hash     string  sha256 (16 hex) of the engine's code and verified glossary
                           (ENGINE_FILES), to catch an engine change shipped without an
                           ENGINE_VERSION bump
-  commit          string  git sha the run was built from (GITHUB_SHA), null locally
+  commit          string  git sha the run was built from (AMEND_COMMIT, the branch tip the
+                          workflow checked out; GITHUB_SHA if that isn't set), null locally
   run             object  {"id", "attempt", "trigger", "url"} of the GitHub Actions run;
                           trigger is the event (schedule, push, workflow_dispatch) or "local"
   hash_seed       string  PYTHONHASHSEED the run used, null if random. the diff sorts before it
@@ -116,6 +118,13 @@ def _iso(t):
     return t.isoformat(timespec="seconds")
 
 
+def built_commit():
+    """the commit the run built. the workflow checks out the branch when the run starts and
+    records it as AMEND_COMMIT; GITHUB_SHA is the commit the run was queued on, older when a
+    deploy's data commit landed while it waited. null locally"""
+    return os.environ.get("AMEND_COMMIT") or os.environ.get("GITHUB_SHA") or None
+
+
 def _actions_run():
     env = os.environ.get
     rid = env("GITHUB_RUN_ID")
@@ -176,7 +185,7 @@ class Run:
         self.cycle = in_effect(self.t0).isoformat()
         self.rec = {
             "runlog_version": RUNLOG_VERSION, "engine": ENGINE_VERSION, "engine_hash": engine_hash(),
-            "commit": os.environ.get("GITHUB_SHA") or None, "run": _actions_run(), "mode": mode,
+            "commit": built_commit(), "run": _actions_run(), "mode": mode,
             "hash_seed": os.environ.get("PYTHONHASHSEED"),
             "started_at": _iso(self.t0), "finished_at": None, "seconds": None,
             "from_cycle": None, "to_cycle": None, "upcoming": None, "sources": [], "csv_rows": None,

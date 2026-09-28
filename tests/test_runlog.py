@@ -24,8 +24,9 @@ IDS = {"VRB", "DAB"}
 
 def actions_env(test, **env):
     """run the test as if in the Actions run `env` describes: the GITHUB_* variables of the
-    runner the tests themselves run on (run id, attempt, step summary) are taken out first."""
-    keep = {k: v for k, v in os.environ.items() if not k.startswith("GITHUB_")}
+    runner the tests themselves run on (run id, attempt, step summary) and the deploy's
+    AMEND_COMMIT are taken out first."""
+    keep = {k: v for k, v in os.environ.items() if not k.startswith("GITHUB_") and k != "AMEND_COMMIT"}
     p = mock.patch.dict(os.environ, {**keep, **env}, clear=True)
     p.start()
     test.addCleanup(p.stop)
@@ -219,6 +220,16 @@ class TestRunLog(unittest.TestCase):
         self.assertTrue(runlog.mark_verified(True, [], self.dir))
         [rec] = self.records()
         self.assertEqual((rec["verified"], rec["published"]), (True, True))
+
+    def test_commit_is_the_one_built(self):
+        """a run queued behind a deploy builds the branch as it is when it starts (AMEND_COMMIT),
+        newer than the commit it was queued on (GITHUB_SHA) once that deploy's data commit lands"""
+        os.environ["AMEND_COMMIT"] = "def5678"
+        with runlog.Run("latest", self.dir) as r:
+            r.done()
+        self.assertEqual(self.records()[0]["commit"], "def5678")
+        del os.environ["AMEND_COMMIT"], os.environ["GITHUB_SHA"]
+        self.assertIsNone(runlog.built_commit())          # a local run
 
     def test_failed_verify_is_recorded(self):
         with runlog.Run("latest", self.dir) as r:

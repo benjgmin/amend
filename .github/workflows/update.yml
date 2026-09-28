@@ -39,7 +39,13 @@ jobs:
     outputs:
       build: ${{ steps.check.outputs.build }}
     steps:
+      # the branch as it is when the run starts, not the commit it was queued on. a run that
+      # waited behind a deploy would otherwise check the repo from before that deploy's data
+      # commit, see a remark cache the live site doesn't match, rebuild for nothing (asking the
+      # translator again what that deploy just asked) and bounce on push: the 18:00Z run, 28 Sep
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
 
       - uses: actions/setup-python@v5
         with:
@@ -67,7 +73,14 @@ jobs:
     env:
       PYTHONHASHSEED: "0"
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4      # the branch as it is now, like the check job
+        with:
+          ref: ${{ github.ref }}
+
+      # the commit this run builds, for the run log and build.json. GITHUB_SHA is the commit the
+      # run was queued on, which is older when a deploy's data commit landed while it waited
+      - name: record the commit being built
+        run: echo "AMEND_COMMIT=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
 
       - uses: actions/setup-python@v5
         with:

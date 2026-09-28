@@ -263,6 +263,22 @@ class TestCheck(unittest.TestCase):
         with open(out) as f:
             self.assertEqual(f.read(), "build=true\n")
 
+    def test_runs_check_and_build_the_branch_as_it_is_when_they_start(self):
+        """a run waits for the one before it (concurrency group pages). checked out at the commit
+        it was queued on, it missed that run's data commit, so its remark cache didn't match the
+        live build: it rebuilt for nothing, re-asked the translator and bounced on push (the 18:00Z
+        run on 28 Sep). both jobs check out the branch, and the build records the commit it built"""
+        with open(os.path.join(os.path.dirname(__file__), "..", ".github", "workflows", "update.yml")) as f:
+            wf = f.read()
+        lines = wf.splitlines()
+        at = [i for i, line in enumerate(lines) if "uses: actions/checkout@" in line]
+        self.assertEqual(len(at), 2)                      # the check job's and the build job's
+        for i in at:
+            self.assertEqual([lines[i + 1].strip(), lines[i + 2].strip()], ["with:", "ref: ${{ github.ref }}"])
+        build = wf[wf.index("\n  build:"):]
+        self.assertLess(build.index('echo "AMEND_COMMIT=$(git rev-parse HEAD)" >> "$GITHUB_ENV"'),
+                        build.index("python -m amend history"))
+
     def test_fingerprint_changes_with_inputs(self):
         d = tempfile.mkdtemp()
         os.makedirs(os.path.join(d, "amend"))
