@@ -56,7 +56,7 @@ Only exists if the airport changed. **A 404 means no changes**, not an error.
 | field | type | always? | notes |
 |---|---|---|---|
 | `id` | string | yes | 12-char stable id (airport + cycle + the FAA file, kind and values behind the change, not its wording). Use it to remember what's been seen |
-| `priority` | string | yes | `action` (changes how you fly), `ifr` (procedures/charts/routes), `fyi` |
+| `priority` | string | yes | `action` (may change what you do there), `ifr` (procedures/charts/routes), `fyi` |
 | `category` | string | yes | `tower`, `airspace`, `frequency`, `navaid`, `runway`, `remark`, `procedure`, `route`, `chart`, `weather`, `airport`, `other` |
 | `kind` | string | yes | `added`, `removed`, `changed` |
 | `summary` | string | yes | plain-English, ready to display |

@@ -14,7 +14,7 @@
   <a href="https://github.com/benjgmin/amend/issues/new">Report a problem</a>
 </p>
 
-Every 28 days the FAA publishes a new cycle of airport, airspace, frequency and chart data. The changes that matter (tower hours, a decommissioned VOR, a renumbered runway, an amended approach) are buried among tens of thousands of rows of bookkeeping noise. Amend diffs every cycle for every US airport, filters out the noise, and explains what's left in plain English, ranked by whether it changes how you fly. It shows upcoming changes up to three weeks before they take effect.
+Every 28 days the FAA publishes a new cycle of airport, airspace, frequency and chart data. The changes that matter (tower hours, a decommissioned VOR, a renumbered runway, an amended approach) are buried among tens of thousands of rows of bookkeeping noise. Amend diffs every cycle for every US airport, filters out the noise, and explains what's left in plain English, ranked by how much it matters when you fly there. It shows upcoming changes up to three weeks before they take effect.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/web/airport-dark.png">
@@ -48,7 +48,7 @@ and what it doesn't cover, and [amend.watch/privacy](https://amend.watch/privacy
 
 In testing, not on the App Store yet. SwiftUI, iOS 17+, light and dark.
 
-- **Your airports** with a home field pinned on top, each showing counts: `ACT` (changes how you fly it), `IFR` (approaches, STARs, departures, routes), `FYI`, or `No change`
+- **Your airports** with a home field pinned on top, each showing counts: `ACT` (may change what you do there), `IFR` (approaches, STARs, departures, routes), `FYI`, or `No change`
 - **Search** by FAA id, ICAO, name or city across ~20,000 airports
 - **Upcoming** and **History** (back to Aug 2024) for every airport, clearly marked as not in effect yet until the 0901Z changeover, with the original FAA text behind every translated remark
 - **Approach plates in the app:** amended charts open right inside Amend, with zoom and a share button to save them or open them in another EFB

@@ -157,7 +157,7 @@ def sections():
             "The changes that matter, like new tower hours, a decommissioned VOR, a renumbered runway or an amended "
             "approach, are buried among tens of thousands of rows that changed for bookkeeping reasons.</p>"
             "<p>Amend compares every cycle with the one before for every US airport, hides the bookkeeping, and "
-            "explains what's left in plain English, sorted by whether it changes how you fly. The FAA posts each "
+            "explains what's left in plain English, sorted by how much it matters when you fly there. The FAA posts each "
             "cycle before it takes effect, so Amend shows changes before they happen.</p>"
             "<p>What changed and how much it matters are decided by fixed rules, the same way every cycle.</p>")),
         ("cycle", "FAA cycles", (
@@ -174,7 +174,7 @@ def sections():
             f'<ol class="dx-steps">{how}</ol>')),
         ("labels", "ACT, IFR and FYI", (
             "<p>Every change gets one label, from fixed rules in the code:</p><ul>"
-            "<li><b>ACT</b>: changes how you fly the airport. Tower and Class D hours, frequencies, runways opened, "
+            "<li><b>ACT</b>: may change what you do there. Tower and Class D hours, frequencies, runways opened, "
             "closed or renumbered, lighting, pattern altitude, attendance, navaids removed, airspace, and remarks "
             "with words like closed, PPR or not available.</li>"
             "<li><b>IFR</b>: instrument procedures. Approaches, STARs and departures added, amended or removed, and "
