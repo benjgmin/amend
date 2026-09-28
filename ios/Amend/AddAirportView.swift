@@ -1,17 +1,20 @@
 import SwiftUI
 
+/// search every US airport. Tapping a result opens its page (look without adding, like amend.watch);
+/// + / ✓ puts it on or takes it off your airports. Opened to choose a home field (welcome screen), a tap picks it.
 struct AddAirportView: View {
     @Environment(AirportStore.self) private var store
     @Environment(\.dismiss) private var dismiss
     /// true when opened to choose the home airport (welcome screen); otherwise adding never sets home
     var makeHome = false
+    @State private var path: [String] = []
     @State private var query = ""
     @FocusState private var focused: Bool
 
     private var results: [AirportInfo] { store.search(query) }
 
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $path) {
             VStack(spacing: 0) {
                 HStack(spacing: 10) {
                     Image(systemName: "magnifyingglass").foregroundStyle(EFB.dim)
@@ -30,13 +33,19 @@ struct AddAirportView: View {
 
                 List {
                     ForEach(results) { apt in
-                        Button { add(apt.id) } label: { ResultRow(apt: apt, saved: store.isSaved(apt.id)) }
-                            .efbRow(top: 2, bottom: 2)
+                        HStack(spacing: 8) {
+                            Button { open(apt.id) } label: {
+                                ResultRow(apt: apt, counts: store.counts(for: apt.id), indexLoaded: store.index != nil)
+                            }
+                            .buttonStyle(.plain)
+                            if !makeHome { toggle(apt.id) }
+                        }
+                        .efbRow(top: 2, bottom: 2)
                     }
                     // not in the directory (or directory not loaded yet): allow adding the raw id
                     if results.isEmpty, let id = AirportStore.normalize(query) {
-                        Button { add(id) } label: {
-                            Text("Add \(id)")
+                        Button { makeHome ? pick(id) : open(id) } label: {
+                            Text(makeHome ? "Make \(id) home" : "Open \(id)")
                                 .font(.system(size: 15, weight: .semibold))
                                 .foregroundStyle(EFB.cyan)
                                 .efbPanel()
@@ -52,33 +61,58 @@ struct AddAirportView: View {
             .toolbarBackground(EFB.bg, for: .navigationBar)
             .toolbar {
                 ToolbarItem(placement: .principal) {
-                    Text(makeHome ? "Choose home airport" : "Add airport")
+                    Text(makeHome ? "Choose home airport" : "Search airports")
                         .font(.system(size: 16, weight: .semibold))
                         .foregroundStyle(EFB.text)
                 }
                 ToolbarItem(placement: .cancellationAction) { Button("Done") { dismiss() } }
             }
-            .onAppear { focused = true }
+            .navigationDestination(for: String.self) { AirportDetailView(id: $0) }
+            .onAppear { if path.isEmpty { focused = true } }
         }
     }
 
-    private func add(_ id: String) {
-        if let id = store.add(id), makeHome { store.setHome(id) }
+    /// + adds to your airports, ✓ takes it off again
+    private func toggle(_ id: String) -> some View {
+        let saved = store.isSaved(id)
+        return Button {
+            if saved { store.remove(id) } else { store.add(id) }
+        } label: {
+            Image(systemName: saved ? "checkmark" : "plus")
+                .font(.system(size: 15, weight: .semibold))
+                .foregroundStyle(saved ? EFB.green : EFB.cyan)
+                .frame(width: 44, height: 44)
+                .background(EFB.panel, in: RoundedRectangle(cornerRadius: 6))
+        }
+        .buttonStyle(.borderless)
+        .accessibilityLabel(saved ? "Remove \(id) from my airports" : "Add \(id) to my airports")
+    }
+
+    private func open(_ id: String) {
+        if makeHome { return pick(id) }
+        focused = false
+        path.append(id)
+    }
+
+    private func pick(_ id: String) {
+        if let id = store.add(id) { store.setHome(id) }
         dismiss()
     }
 
+    /// return key: open the top result (or pick it as home)
     private func addTopResult() {
         if let first = results.first {
-            add(first.id)
+            open(first.id)
         } else if let id = AirportStore.normalize(query) {
-            add(id)
+            open(id)
         }
     }
 }
 
 private struct ResultRow: View {
     let apt: AirportInfo
-    let saved: Bool
+    let counts: Counts?
+    let indexLoaded: Bool
 
     var body: some View {
         HStack(spacing: 12) {
@@ -98,13 +132,14 @@ private struct ResultRow: View {
                     .foregroundStyle(EFB.dim)
                     .lineLimit(1)
             }
-            Spacer()
-            if saved {
-                Image(systemName: "checkmark").foregroundStyle(EFB.green)
+            Spacer(minLength: 6)
+            if indexLoaded {
+                CountAnnunciators(counts: counts)
             }
         }
         .padding(.vertical, 8)
         .padding(.horizontal, 12)
         .background(EFB.panel, in: RoundedRectangle(cornerRadius: 6))
+        .contentShape(Rectangle())
     }
 }

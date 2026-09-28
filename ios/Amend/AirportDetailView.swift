@@ -24,6 +24,24 @@ struct AirportDetailView: View {
                 Text(id).font(EFB.mono(16, .semibold)).foregroundStyle(EFB.text)
             }
             ToolbarItem(placement: .topBarTrailing) {
+                // the same page on amend.watch (airports with no changes on record get the site's "no changes" page)
+                if let url = URL(string: "\(API.base.absoluteString)\(id)/") {
+                    ShareLink(item: url, subject: Text("\(id) on Amend"),
+                              message: Text("What's changing at \(id) this FAA cycle")) {
+                        Image(systemName: "square.and.arrow.up")
+                    }
+                    .accessibilityLabel("Share \(id)")
+                }
+            }
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    if store.isSaved(id) { store.remove(id) } else { store.add(id) }
+                } label: {
+                    Image(systemName: store.isSaved(id) ? "checkmark.circle.fill" : "plus.circle")
+                }
+                .accessibilityLabel(store.isSaved(id) ? "Remove from my airports" : "Add to my airports")
+            }
+            ToolbarItem(placement: .topBarTrailing) {
                 Button {
                     store.setHome(store.home == id ? nil : id)
                 } label: {
