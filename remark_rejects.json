@@ -1,5 +1,5 @@
 {
- "engine": "1.2.4",
+ "engine": "1.2.5",
  "remarks": {
   "100LL AND JET-A FUEL AVBL 24 HRS SELF SVC W/ CREDIT CARD.": [
    "W is 'West or White' (CS), not what the translation says"
@@ -35,12 +35,14 @@
    "added 'overrun'"
   ],
   "CTLG OBSTN 150 FT TREE  0 FT, 170 FT RT; TREES 100 FT, ARND RWY END 19.": [
+   "CTLG is 'control' (CS + JO 1-2-3 suffix G), not what the translation says",
    "RT has no verified meaning (the FAA lists more than one meaning; copied as written until one is picked); it must stay as written",
-   "added 'right'"
+   "added 'calculating'"
   ],
   "CTLG OBSTN EXCEEDS A 45 DEG SLP. APCH SLP 17:1 TO DTHR OVR +93 FT TREES, 1588 FT DIST, 0 FT B.": [
+   "CTLG is 'control' (CS + JO 1-2-3 suffix G), not what the translation says",
    "B has no verified meaning (the FAA lists more than one meaning; copied as written until one is picked); it must stay as written",
-   "added 'below'"
+   "added 'calculating'"
   ],
   "HEL SELF SVC NA, FUEL 24 HR CREDIT CARD SVC AVBL.": [
    "NA is 'Not Authorized' (CS), not what the translation says",
@@ -48,6 +50,7 @@
   ],
   "INDY APPCH - R, E 134.85 OR 377.1, TWR - 1200-0400Z++ EXCLD HOL. 126.2 OR 243.6 FSS-TERRE HAUTE HUF-NOTAM HUF.": [
    "INDY is not in the verified glossary; it must stay as written",
+   "EXCLD is 'exclude' (CS), not what the translation says",
    "added 'indianapolis'"
   ],
   "MILITARY: ANG: OPR 1030-2100Z++ MON-THUR EXC HOL. PPR TSNT ACFT OFFL BUS ONLY. AFLD MGR C315-233-2399, AFT DUTY HR CTC C315-233-2399. PPR REQ FOR ALL TSNT ACFT DUE LTD TSNT SVC. NTFY AFLD MGR OF ETA DLA OVR 30 MIN OR MSN CNL IS RQR.": [
@@ -77,13 +80,12 @@
   ],
   "RSTD: PPR WITH 72 HR NTC AND BILLETING CONFIRMATION NR REQ FOR ALL ACFT. EMERG DIVERT ACFT TO BUCHOLZ AAF OUTSIDE OF REG AFLD OPR HR, CTC FAA CONTROLLER AT OAKLAND CNTR TO AMG BASE OPS/TWR PERS RECALL. ALL ACFT TRNSPG XPLOS CARGO RQR A PPR. CTC BASE OPS, PACIFIC DSN 480-2131, C808-580-2131. ACFT AVOID OVER FLT E END OF ISLAND BLW 1500 FT AGL. TWY E IS WT RSTD FOR FOLLOWING ACFT B737, B757, B767, C-5, C-17, C-130. BT AND 180 DEG TURN ON RWY WILL BE RQR FOR EITHER ARR OR DEPT. EXCEPTIONS MAY BE GRANTED FOR TWY A, IN ORDER TO ACCESS XPLOS CARGO PRKG LOC.": [
    "REQ is 'request' (CS), not what the translation says",
-   "DEPT is 'department' (JO 2-1-1 (GEN)), not what the translation says",
-   "LOC is 'Localizer' (CS), not what the translation says"
+   "dropped OVER",
+   "FLT is 'flight' (CS), not what the translation says"
   ],
   "RWY 03 CALM WIND RWY. RDC D/II/5000; APRC B/II/5000; DPRC B/II. MIDFIELD DEP & STOP & GO LNDG NA. TGL NA 2130-0600.": [
-   "RDC is 'reduce' (JO 2-1-1 (GEN)), not what the translation says",
-   "APRC is not in the verified glossary; it must stay as written",
-   "DPRC is not in the verified glossary; it must stay as written"
+   "NA is 'Not Authorized' (CS), not what the translation says",
+   "added 'available'"
   ],
   "RWY 07/25 NOT PLOWED FOR SN,  OPN TO SKI EQUIPED ACFT.": [
    "dropped EQUIPED"
@@ -128,9 +130,6 @@
   "TSNT PRKG WINGSPAN LESS THAN 79 FT E RAMP. TSNT PRKG W RAMP NA. LTD TSNT FLOAT PLANE PRKG - 907-455-4571. MEDIVAC & TSNT HEL PRKG - 907-750-0890.": [
    "NA is 'Not Authorized' (CS), not what the translation says",
    "added 'available'"
-  ],
-  "TURB ON HOT DAYS LNDG W IN TRSN EAST APCH.": [
-   "W is 'West or White' (CS), not what the translation says"
   ],
   "WX SVC H24 EXC AFLD/TWR CLOSURE - D317-377-1160/3140/C907-377-1160/3140; AN/FMQ-19 AUTOMATED OBS SYS AUGMENTED BY HUMAN OBSN.": [
    "lost number 24"
