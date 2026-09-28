@@ -53,9 +53,10 @@ jobs:
     if: needs.check.outputs.build == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 30
-    # the diff pairs rows in set order, which Python randomizes per process: two runs on the
-    # same FAA files differed at ~20 of 10.7k airports (Sep 2026 cycle), ids included. a fixed
-    # seed makes a rebuild give the same output; the run log records it (runlog.py hash_seed)
+    # belt and braces: the diff used to pair rows in set order, which Python randomizes per
+    # process (two runs on the same FAA files differed at ~20 of 10.7k airports, ids included).
+    # it sorts now; a fixed seed keeps any set order that's left out of rebuilds, and the run
+    # log records it (runlog.py hash_seed)
     env:
       PYTHONHASHSEED: "0"
     steps:
@@ -79,8 +80,9 @@ jobs:
           key: faa-data-restore
           restore-keys: faa-data-
 
-      # every diff (here and in the build) adds a record to the run log, audit/runs/<cycle>.json
-      # (amend/runlog.py): sources and checksums, rows read, changes, checks, outcome
+      # every diff (here and in the build) adds a record to the run log, one file per record
+      # under audit/runs/<cycle>/ (amend/runlog.py): sources and checksums, rows read, changes,
+      # checks, outcome. one file each, so a build queued behind another can't conflict with it
       - name: append new cycles to history
         id: history
         env:

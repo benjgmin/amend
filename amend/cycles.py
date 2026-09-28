@@ -143,6 +143,13 @@ def meta_path(path):
     return path + ".json"
 
 
+def forget(path):
+    """delete a downloaded file and its download record, so the next run fetches it again."""
+    for p in (path, meta_path(path)):
+        if os.path.exists(p):
+            os.remove(p)
+
+
 def download(url, path, required=()):
     """download url to path unless it's already there.
     True: we have it. False: the FAA hasn't posted it (404/403/410, or an HTML page instead

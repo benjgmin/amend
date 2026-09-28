@@ -4,9 +4,13 @@ a record built from what it actually read, and an FAA file that wasn't read comp
 the run instead of publishing its missing rows as removals.
 run:  python -m unittest tests.test_runlog -v
 """
+import ast
+import contextlib
 import io
 import json
 import os
+import shutil
+import subprocess
 import tempfile
 import unittest
 import zipfile
@@ -16,6 +20,15 @@ from amend import ENGINE_VERSION, audit, cycles, history, nasr, runlog
 from tests.test_pipeline_ops import REQ, FetchCase, zip_bytes
 
 IDS = {"VRB", "DAB"}
+
+
+def actions_env(test, **env):
+    """run the test as if in the Actions run `env` describes: the GITHUB_* variables of the
+    runner the tests themselves run on (run id, attempt, step summary) are taken out first."""
+    keep = {k: v for k, v in os.environ.items() if not k.startswith("GITHUB_")}
+    p = mock.patch.dict(os.environ, {**keep, **env}, clear=True)
+    p.start()
+    test.addCleanup(p.stop)
 
 
 def nasr_zip(path, files):
@@ -167,11 +180,8 @@ class TestDownloadRecord(FetchCase):
 class TestRunLog(unittest.TestCase):
     def setUp(self):
         self.dir = tempfile.mkdtemp()
-        env = mock.patch.dict(os.environ, {"GITHUB_RUN_ID": "77", "GITHUB_RUN_ATTEMPT": "2", "GITHUB_SHA": "abc1234",
-                                           "GITHUB_EVENT_NAME": "schedule", "GITHUB_REPOSITORY": "o/r",
-                                           "PYTHONHASHSEED": "0"})
-        env.start()
-        self.addCleanup(env.stop)
+        actions_env(self, GITHUB_RUN_ID="77", GITHUB_RUN_ATTEMPT="1", GITHUB_SHA="abc1234",
+                    GITHUB_EVENT_NAME="schedule", GITHUB_REPOSITORY="o/r", PYTHONHASHSEED="0")
 
     def records(self):
         return runlog.runs(self.dir)
@@ -180,7 +190,8 @@ class TestRunLog(unittest.TestCase):
               "airports": {"VRB": [{"priority": "action", "category": "tower"},
                                    {"priority": "fyi", "category": "remark"}]},
               "csv_rows": {"old": {"APT_BASE.csv": 5}, "new": {"APT_BASE.csv": 6}},
-              "remarks": {"texts": 3, "plain_english": 2}}
+              "remarks": {"texts": 3, "plain_english": 2},
+              "checks": {"no_english": {"FRQ add": 2}, "summary_value_mismatches": 1}}
 
     def test_built_run(self):
         with runlog.Run("latest", self.dir) as r:
@@ -192,8 +203,9 @@ class TestRunLog(unittest.TestCase):
         self.assertEqual((rec["engine"], rec["commit"], rec["hash_seed"]), (ENGINE_VERSION, "abc1234", "0"))
         self.assertEqual((rec["mode"], rec["outcome"], rec["verified"], rec["published"]),
                          ("latest", "built", None, None))
-        self.assertEqual(rec["run"], {"id": "77", "attempt": "2", "trigger": "schedule",
+        self.assertEqual(rec["run"], {"id": "77", "attempt": "1", "trigger": "schedule",
                                       "url": "https://github.com/o/r/actions/runs/77"})
+        self.assertEqual(rec["summary_checks"], {"no_english": {"FRQ add": 2}, "summary_value_mismatches": 1})
         self.assertEqual(rec["changes"], {"airports": 1, "action": 1, "ifr": 0, "fyi": 1, "hidden": 4,
                                           "by_category": {"remark": 1, "tower": 1}})
         ai = rec["remarks"].pop("ai")
@@ -225,12 +237,14 @@ class TestRunLog(unittest.TestCase):
         self.assertEqual(rec["error"], "FetchError: https://faa: HTTP 503")
 
     def test_unreadable_faa_file_is_a_blocked_run(self):
-        with self.assertRaises(nasr.InputError):
+        out = io.StringIO()     # the annotation it prints would land on this test job's own run
+        with self.assertRaises(nasr.InputError), contextlib.redirect_stdout(out):
             with runlog.Run("history", self.dir):
                 raise nasr.InputError("APT_RMK.csv: csv parse error")
         [rec] = self.records()
         self.assertEqual((rec["outcome"], rec["published"]), ("blocked", False))
         self.assertEqual(rec["checks"]["errors"], ["APT_RMK.csv: csv parse error"])
+        self.assertIn("::error title=input check::APT_RMK.csv: csv parse error", out.getvalue())
 
     def test_gate_block_keeps_its_reason(self):
         with self.assertRaises(SystemExit):
@@ -246,15 +260,57 @@ class TestRunLog(unittest.TestCase):
             pass
         self.assertEqual(self.records(), [])
 
-    def test_runs_append_to_the_file_of_the_cycle_in_effect(self):
+    def test_each_run_gets_its_own_file_in_the_folder_of_the_cycle_in_effect(self):
         for _ in range(3):
             with runlog.Run("latest", self.dir) as r:
                 r.done()
-        [path] = runlog.files(self.dir)
-        with open(path) as f:
-            doc = json.load(f)
-        self.assertEqual(os.path.basename(path), f"{doc['cycle']}.json")
-        self.assertEqual((doc["runlog_version"], len(doc["runs"])), (1, 3))
+        paths = runlog.files(self.dir)
+        self.assertEqual(len(paths), 3)
+        self.assertEqual({os.path.dirname(p) for p in paths},
+                         {os.path.join(self.dir, cycles.in_effect().isoformat())})
+        self.assertTrue(all(p.endswith("-latest-77-1.json") for p in paths))
+        recs = self.records()
+        self.assertEqual([r["runlog_version"] for r in recs], [1, 1, 1])
+        self.assertEqual([r["started_at"] for r in recs], sorted(r["started_at"] for r in recs))
+
+    def test_the_first_layout_is_split_into_one_file_per_record(self):
+        """#25 shipped one file per cycle ({"runs": [...]}); the next record written moves those
+        records into files of their own, named from the records, so every build that migrates
+        writes the same files."""
+        old = [{"runlog_version": 1, "mode": "latest", "run": {"id": "5", "attempt": "1"},
+                "started_at": "2026-09-20T11:35:22+00:00", "outcome": "built"},
+               {"runlog_version": 1, "mode": "history", "run": {"id": "6", "attempt": "1"},
+                "started_at": "2026-09-21T14:20:01+00:00", "outcome": "appended"}]
+        other = tempfile.mkdtemp()
+        for d in (self.dir, other):
+            with open(os.path.join(d, "2026-09-03.json"), "w") as f:
+                json.dump({"runlog_version": 1, "cycle": "2026-09-03", "runs": old}, f)
+        with runlog.Run("latest", self.dir) as r:
+            r.done()
+        runlog.migrate(other)
+        self.assertFalse(os.path.exists(os.path.join(self.dir, "2026-09-03.json")))
+        recs = self.records()
+        self.assertEqual(recs[:2], old)
+        self.assertEqual(recs[2]["run"]["id"], "77")
+        migrated = runlog.files(self.dir)[:2]
+        self.assertEqual([os.path.relpath(p, self.dir) for p in migrated],
+                         [os.path.relpath(p, other) for p in runlog.files(other)])
+        self.assertEqual(os.path.basename(migrated[0]), "20260920T113522.000000Z-latest-5-1.json")
+
+    def test_verify_marks_its_own_attempt_not_another_runs_build(self):
+        with runlog.Run("latest", self.dir) as r:       # run 77, attempt 1
+            r.done()
+        with mock.patch.dict(os.environ, {"GITHUB_RUN_ATTEMPT": "2"}):
+            with runlog.Run("latest", self.dir) as r:   # "re-run failed jobs": attempt 2
+                r.done()
+            with mock.patch.dict(os.environ, {"GITHUB_RUN_ID": "78", "GITHUB_RUN_ATTEMPT": "1"}):
+                with runlog.Run("latest", self.dir) as r:
+                    r.done()
+            self.assertTrue(runlog.mark_verified(True, [], self.dir))
+        marked = {(r["run"]["id"], r["run"]["attempt"]): r["verified"] for r in self.records()}
+        self.assertEqual(marked, {("77", "1"): None, ("77", "2"): True, ("78", "1"): None})
+        with mock.patch.dict(os.environ, {"GITHUB_RUN_ID": "79"}):
+            self.assertFalse(runlog.mark_verified(True, [], self.dir))
 
     def test_engine_change_without_a_version_bump_is_flagged(self):
         with runlog.Run("latest", self.dir) as r:
@@ -263,6 +319,67 @@ class TestRunLog(unittest.TestCase):
         self.assertEqual(r.engine_warning(), [])
         r.rec["engine_hash"] = "0" * 16
         self.assertIn("ENGINE_VERSION is still", r.engine_warning()[0])
+
+    def test_engine_files_cover_everything_the_diff_imports(self):
+        """a new engine module left out of ENGINE_FILES would change output without the
+        forgotten-bump warning ever firing."""
+        here = os.path.dirname(runlog.__file__)
+        todo, seen = ["pipeline"], set()
+        while todo:
+            m = todo.pop()
+            if m in seen:
+                continue
+            seen.add(m)
+            with open(os.path.join(here, f"{m}.py")) as f:
+                tree = ast.parse(f.read())
+            for node in ast.walk(tree):
+                if isinstance(node, ast.ImportFrom) and node.level == 1:
+                    names = [node.module] if node.module else [a.name for a in node.names]
+                    todo += [n for n in names if os.path.exists(os.path.join(here, f"{n}.py"))]
+        self.assertEqual({f"{m}.py" for m in seen}, {f for f in runlog.ENGINE_FILES if f.endswith(".py")})
+        self.assertIn("glossary.json", runlog.ENGINE_FILES)     # decides what a remark may say
+
+
+@unittest.skipUnless(shutil.which("git"), "needs git")
+class TestTwoBuildsPushCleanly(unittest.TestCase):
+    """the workflow pushes run records with git pull --rebase. a build that queued behind another
+    starts from a checkout without the other's data commit; when every build appended to one
+    shared file per cycle, the rebase conflicted and that merge never deployed."""
+
+    def git(self, cwd, *args):
+        return subprocess.run(["git", "-c", "user.name=t", "-c", "user.email=t@t", "-c", "commit.gpgsign=false",
+                               *args], cwd=cwd, check=True, capture_output=True, text=True)
+
+    def test_records_from_two_builds_on_one_checkout_both_push(self):
+        root = tempfile.mkdtemp()
+        seed = os.path.join(root, "seed")
+        self.git(root, "init", "-q", "-b", "master", seed)
+        os.makedirs(os.path.join(seed, "audit", "runs"))
+        with open(os.path.join(seed, "audit", "runs", "2026-09-03.json"), "w") as f:   # the first layout
+            json.dump({"runlog_version": 1, "cycle": "2026-09-03", "runs": [
+                {"runlog_version": 1, "mode": "latest", "run": {"id": "100", "attempt": "1"},
+                 "started_at": "2026-09-28T11:35:22+00:00", "outcome": "built"}]}, f)
+        self.git(seed, "add", "audit")
+        self.git(seed, "commit", "-q", "-m", "start")
+        self.git(root, "clone", "-q", "--bare", seed, "origin.git")
+        clones = []
+        for run_id in ("101", "102"):             # both check out the same commit
+            clone = os.path.join(root, run_id)
+            self.git(root, "clone", "-q", "origin.git", clone)
+            actions_env(self, GITHUB_RUN_ID=run_id, GITHUB_RUN_ATTEMPT="1")
+            with runlog.Run("latest", os.path.join(clone, "audit", "runs")) as r:
+                r.done()
+            self.git(clone, "add", "audit")
+            self.git(clone, "commit", "-q", "-m", "data: run log")
+            clones.append(clone)
+        self.git(clones[0], "push", "-q", "origin", "HEAD:master")
+        self.git(clones[1], "pull", "-q", "--rebase", "origin", "master")    # used to conflict here
+        self.git(clones[1], "push", "-q", "origin", "HEAD:master")
+        check = os.path.join(root, "check")
+        self.git(root, "clone", "-q", "origin.git", check)
+        self.assertEqual(sorted(r["run"]["id"] for r in runlog.runs(os.path.join(check, "audit", "runs"))),
+                         ["100", "101", "102"])
+        self.assertFalse(os.path.exists(os.path.join(check, "audit", "runs", "2026-09-03.json")))
 
 
 class TestHistoryIsStamped(unittest.TestCase):
@@ -295,6 +412,41 @@ class TestAirspaceLeftOutIsSaid(unittest.TestCase):
 
         result = run(o, n, {"VRB"}, log=lambda *_: None)
         self.assertEqual((result["includes_airspace"], result["airspace_error"]), (False, None))
+
+    def test_the_retry_downloads_the_airspace_zips_again(self):
+        """includes_airspace false makes the next scheduled check rebuild. the unreadable zips
+        must leave the cache, or that build reads the same files and fails the same way."""
+        from amend import latest
+        old_cwd = os.getcwd()
+        os.chdir(tempfile.mkdtemp())
+        self.addCleanup(os.chdir, old_cwd)
+        actions_env(self)
+        cur = cycles.in_effect()
+        nxt = cur + cycles.CYCLE
+        os.makedirs(cycles.DATA)
+        for p in (cycles.zip_path(cur), cycles.zip_path(nxt), cycles.airspace_path(cur), cycles.airspace_path(nxt)):
+            with open(p, "wb") as f:
+                f.write(b"PK")
+            with open(cycles.meta_path(p), "w") as f:
+                json.dump({"url": "u", "sha256": "s"}, f)
+        result = {"from_cycle": cur.isoformat(), "to_cycle": nxt.isoformat(), "airports": {}, "hidden": {},
+                  "csv_rows": {"old": {"APT_BASE.csv": 100}, "new": {"APT_BASE.csv": 100}},
+                  "includes_airspace": False, "airspace_shapes": None,
+                  "airspace_error": "couldn't read the class airspace shapefile (ValueError: x)"}
+        pair = (cycles.airspace_path(cur), cycles.airspace_path(nxt))
+        with mock.patch("amend.latest.get_cycle", return_value=True), \
+                mock.patch("amend.latest.get_dtpp", return_value=None), \
+                mock.patch("amend.latest.get_airspace_pair", return_value=pair), \
+                mock.patch("amend.latest.run", return_value=result), \
+                contextlib.redirect_stdout(io.StringIO()), self.assertRaises(SystemExit):
+            latest.build(llm=False)                   # an empty diff: the audit stops it
+        for d in (cur, nxt):
+            self.assertFalse(os.path.exists(cycles.airspace_path(d)))
+            self.assertFalse(os.path.exists(cycles.meta_path(cycles.airspace_path(d))))
+            self.assertTrue(os.path.exists(cycles.zip_path(d)))          # NASR zips stay cached
+        [rec] = runlog.runs()
+        self.assertEqual([s["role"] for s in rec["sources"]],           # logged before they went
+                         ["nasr_old", "nasr_new", "airspace_old", "airspace_new"])
 
 
 if __name__ == "__main__":
