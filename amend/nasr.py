@@ -1,11 +1,17 @@
 """Reading FAA NASR 28-day CSV zips."""
 import csv
+import hashlib
 import io
 import math
 import zipfile
 from collections import defaultdict
 
 from .rules import ATTRIB_COLS, HIDDEN_FILES, IGNORE_COLS, STRICT_FILES, base
+
+
+class InputError(ValueError):
+    """an FAA file that can't be read completely. the run must stop: the unread rows would
+    otherwise publish as removals."""
 
 
 def iter_csvs(zf):
@@ -120,20 +126,30 @@ def _nm(lat1, lon1, lat2, lon2):
     return 3440.065 * 2 * math.asin(math.sqrt(a))
 
 
-def load(zip_path, ids, strict=False, near=None, proc_airports=None):
-    """return {filename: [(airport, row), ...]} for rows about the given airports."""
+def load(zip_path, ids, strict=False, near=None, proc_airports=None, rows=None):
+    """return {filename: [(airport, row), ...]} for rows about the given airports.
+    rows: optional dict, filled with {filename: data rows read} for every file loaded (all
+    rows, not just the matched ones), for the run log and the input checks.
+    raises InputError on a csv parse error or two different files with the same name."""
     out = defaultdict(list)
-    seen = set()
+    seen = {}
     with zipfile.ZipFile(zip_path) as zf:
         for fname, raw in iter_csvs(zf):
             up = fname.upper()
-            if ("_CHG_RPT" in up or "DATA_STRUCTURE" in up or fname in seen
+            if ("_CHG_RPT" in up or "DATA_STRUCTURE" in up
                     or base(fname).startswith(HIDDEN_FILES)):
                 continue
-            seen.add(fname)
+            digest = hashlib.sha256(raw).digest()
+            if fname in seen:   # the same file packed twice is harmless; two versions are not
+                if seen[fname] != digest:
+                    raise InputError(f"{fname} appears twice in {zip_path} with different contents")
+                continue
+            seen[fname] = digest
             reader = csv.DictReader(io.StringIO(decode(raw), newline=""))
+            n = 0
             try:
                 for row in reader:
+                    n += 1
                     vals = {(v or "").strip().upper() for v in row.values() if isinstance(v, str)}
                     is_route = base(fname) in ("STAR_RTE", "DP_RTE")
                     if not vals & ids and not (near and base(fname).startswith("NAV")) and not is_route:
@@ -158,5 +174,8 @@ def load(zip_path, ids, strict=False, near=None, proc_airports=None):
                             if apt in ids:
                                 out[fname].append((apt, {**clean, "_NEAR_NM": f"{nm:.0f}"}))
             except csv.Error as e:
-                print(f"  warning: skipped rest of {fname}: {e}")
+                # used to warn and carry on: every row after the bad one then read as removed
+                raise InputError(f"{fname} in {zip_path}: csv parse error after row {n}: {e}") from e
+            if rows is not None:
+                rows[fname] = n
     return out

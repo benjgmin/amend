@@ -123,9 +123,10 @@ def run(old_zip, new_zip, ids=None, dtpp_path=None, llm=False, log=print, airspa
     log(f"loading {old_zip} ...")
     near = NearIndex.from_zip(new_zip) if all_mode else None
     proc_airports = airports_by_procedure(old_zip, new_zip)
-    old = load(old_zip, ids, strict=all_mode, near=near, proc_airports=proc_airports)
+    rows = {"old": {}, "new": {}}   # data rows per FAA file, for the run log and input checks
+    old = load(old_zip, ids, strict=all_mode, near=near, proc_airports=proc_airports, rows=rows["old"])
     log(f"loading {new_zip} ...")
-    new = load(new_zip, ids, strict=all_mode, near=near, proc_airports=proc_airports)
+    new = load(new_zip, ids, strict=all_mode, near=near, proc_airports=proc_airports, rows=rows["new"])
     log(f"  loaded in {time.time() - t0:.0f}s, diffing ...")
 
     records = diff(old, new)
@@ -137,6 +138,8 @@ def run(old_zip, new_zip, ids=None, dtpp_path=None, llm=False, log=print, airspa
         elif is_frq_remark(r):
             texts.append(r["fields"][0]["new"])
     remarks = translate_remarks(texts, llm)
+    wanted = {t for t in texts if t}
+    remark_stats = {"texts": len(wanted), "plain_english": sum(remarks.get(t, t) != t for t in wanted)}
     routes = (load_routes(old_zip), load_routes(new_zip))
     records = merge_freq_uses(collapse(records, routes))
 
@@ -177,15 +180,21 @@ def run(old_zip, new_zip, ids=None, dtpp_path=None, llm=False, log=print, airspa
             by_apt[apt].extend(recs)
         log(f"  {sum(len(v) for v in charts.values())} chart changes at {len(charts)} airports")
 
+    # a surprise in the shapefile must never stop the daily run: publish without airspace
+    # shapes, but say so (includes_airspace false, so the next scheduled check retries) and
+    # hand the reason to the audit, which flags it and puts it in the run log
+    airspace_error, airspace_shapes = None, None
     if airspace:
         try:
             old_a, new_a = (arsp.load(p) for p in airspace)
-        except Exception as e:     # a surprise in the shapefile must never stop the daily run
-            log(f"  couldn't read the class airspace shapefile ({e}), skipping airspace shapes")
-            old_a = new_a = None
-        if old_a is None or new_a is None:
-            log("  no class airspace shapefile in one of the airspace zips, skipping airspace shapes")
+            if old_a is None or new_a is None:
+                airspace_error = "no class airspace shapefile in one of the airspace zips"
+        except Exception as e:
+            airspace_error = f"couldn't read the class airspace shapefile ({type(e).__name__}: {e})"
+        if airspace_error:
+            log(f"  {airspace_error}, skipping airspace shapes")
         else:
+            airspace_shapes = {"old": len(old_a), "new": len(new_a)}
             recs = arsp.diff(old_a, new_a, near or NearIndex.from_zip(new_zip), ids)
             for r in recs:
                 by_apt[r["airport"]].append(r)
@@ -212,7 +221,10 @@ def run(old_zip, new_zip, ids=None, dtpp_path=None, llm=False, log=print, airspa
         airports[apt] = out
     return {"from_cycle": from_cycle, "to_cycle": to_cycle, "airports": airports,
             "hidden": dict(hidden), "seconds": time.time() - t0,
-            "checks": {"no_english": dict(no_template), "summary_value_mismatches": mismatched}}
+            "checks": {"no_english": dict(no_template), "summary_value_mismatches": mismatched},
+            "csv_rows": {k: dict(sorted(v.items())) for k, v in rows.items()}, "remarks": remark_stats,
+            "includes_airspace": bool(airspace) and not airspace_error, "airspace_error": airspace_error,
+            "airspace_shapes": airspace_shapes}
 
 
 def counts(changes):

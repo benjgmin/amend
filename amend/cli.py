@@ -133,9 +133,11 @@ def main(argv=None):
         check()
     elif a.cmd == "verify":
         from .freshness import verify
+        from .runlog import mark_verified
         bad = verify(a.site)
         for b in bad:
             print(f"  {b}")
+        mark_verified(not bad, bad)     # the run log says whether the build got past this
         if bad:
             sys.exit(f"{a.site}/ failed {len(bad)} check(s); not deploying, the live site stays as it was")
         print(f"{a.site}/ looks complete")
