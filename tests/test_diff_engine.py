@@ -124,6 +124,17 @@ class TestRewordedOrNot(unittest.TestCase):
             "APCH/DEP CTL SVC PRVDD BY SALT LAKE ARTCC (ZLC) ON 128.55/269.175 GRASSY MOUNTAIN RCAG).",
             "APCH/DEP SVC PRVDD BY SALT LAKE ARTCC (ZLC) ON FREQS 128.55/269.175 (GRASSY MOUNTAIN RCAG) "
             "WHEN CLOVER APCH CLSD."))
+        self.assertTrue(d.just_reworded("45 FT UNLIGHTED TWR 500 FT 'SW'  OF LNDG AREA.",   # 02NJ
+                                        "45 FT UNLIT TWR 500 FT SW OF LNDG AREA."))
+        self.assertTrue(d.just_reworded(   # AKN
+            "GS AUTOPILOT COUPLED APPROACH NOT AUTHORIZED BELOW 700 FT MSL.",
+            "GS AUTOPILOT COUPLED APCH NA BLW 700 FT MSL."))
+        self.assertTrue(d.just_reworded("BRYANT TWR - 907-428-6850, DURING OPERATING HOURS.",   # FRN
+                                        "BRYANT ATCT - 907-428-6850."))
+        # LRU: a real closure, spelled wrong, is not a rewording
+        self.assertFalse(d.just_reworded(
+            "BLOCK CRACKING UP TO 3 IN WIDE CRACKS, RAVELING, AND WEATHERING.",
+            "BLOCK CRACKING UP TO 3 IN WIDE CRACKS, RAVELING, AND WEATHERING.  RWY PERM CLSD EXECEPT FOR TAXIING."))
         # a real closure still isn't a rewording
         self.assertFalse(d.just_reworded("RWY 11/29 CLSD FOR NIGHT OPS.", "RWY 11/29 CLSD."))
         self.assertFalse(d.just_reworded("TWY A OPEN.", "TWY A CLSD."))
@@ -156,7 +167,10 @@ class TestHours(unittest.TestCase):
                 ("0700-2100 MON-FRI, CLSD SAT", "0700-2100 MON-FRI, CLSD SUN"),
                 ("0700-2100", "0700-2100Z"),                                    # local -> zulu
                 ("1200-0200Z", "1200-0200Z++"),                                 # DST shift
-                ("SEE RMK", "ON REQUEST"), ("UNATNDD", "")]:                     # no times at all
+                ("SEE RMK", "ON REQUEST"), ("UNATNDD", ""),                      # no times at all
+                ("CLASS D SVC 1400-0500Z++ MON-THU; OTHER TIMES CLASS E.",        # NGW: E -> G
+                 "CLASS D SVC 1400-0500Z++ MON-THU; OTHER TIMES CLASS G"),
+                ("0800-1700", "0800-1700, OTHER TIMES PPR")]:
             with self.subTest(old=old, new=new):
                 self.assertFalse(d.same_hours(old, new))
 
@@ -185,9 +199,10 @@ class TestLighting(unittest.TestCase):
         # renumbered, but a REIL was dropped along the way
         self.assertEqual(d.pcl_priority("ACTVT MIRL RWY 07/25; REIL RWY 07 - CTAF.",
                                          "ACTVT MIRL RWY 08/26 - CTAF."), "action")
-        # on all night before, now you have to key it
-        self.assertEqual(d.pcl_priority("ACTVT HIRL RWY 02/20 - CTAF. PAPI RWY 02 OPER CONT.",
-                                        "ACTVT HIRL RWY 02/20; PAPI RWY 02 - CTAF."), "action")
+        # EAN: on all night before, now it comes on with the rest when you key CTAF
+        self.assertEqual(d.pcl_priority(
+            "ACTVT REIL RWY 26; MIRL RWY 08/26 - CTAF. PAPI RWY 08 & 26 OPR CONSLY.",
+            "ACTVT REIL RWY 26; PAPI RWY 08 & 26; MIRL RWY 08/26 - CTAF."), "fyi")
         # all day continuous, no pilot control left for the PAPI
         self.assertEqual(d.pcl_priority("ACTVT HIRL RWY 02/20; PAPI RWY 02 - CTAF.",
                                          "ACTVT HIRL RWY 02/20 - CTAF. PAPI RWY 02 OPER CONT."), "fyi")
@@ -206,6 +221,10 @@ class TestPriorityRules(Case):
         ch = self.one("APT_RMK.csv", h, [], ['DFW,A110-98,"ACFT USING SOUTH RAMP MUST OBTAIN APVL FM '
                                              'RAMP 129.825 PRIOR TO ENTERING RAMP AND PRIOR TO PUSHBACK."'], "DFW")
         self.assertEqual([c["priority"] for c in ch], ["action"])
+        # HAI: an approval letter from 2009 is history, not a requirement
+        ch = self.one("APT_RMK.csv", h, ['HAI,A1,"RWY 5 15 FT VERT CLNC OVR ROAD WAIVED BY FAA '
+                                         '(10/06/2009 ALP APVL LTR)."'], [], "HAI")
+        self.assertEqual([c["priority"] for c in ch], ["fyi"])
 
     def test_one_foot_displaced_threshold_is_survey(self):   # g013 BNA
         h = "ARPT_ID,RWY_ID,RWY_END_ID,DISPLACED_THR_LEN"

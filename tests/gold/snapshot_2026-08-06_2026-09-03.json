@@ -132,15 +132,6 @@
     "summary": "new tower/ATC remark: DENVER ARTCC (ZDV) FREQS 128.325/377.075 (HAYDEN RCAG) USED FOR PINNR RNAV STAR 27000 FT AND ABV."
    },
    {
-    "category": "remark",
-    "id": "20fc6185351c",
-    "kind": "removed",
-    "original": "COMMUNICATIONS PRVDD BY DENVER RADIO ON FREQ 122.2 (DENVER RCO).",
-    "priority": "action",
-    "source": "ATC_RMK",
-    "summary": "removed tower/ATC remark: COMMUNICATIONS PRVDD BY DENVER RADIO ON FREQ 122.2 (DENVER RCO)."
-   },
-   {
     "category": "procedure",
     "details": [
      "BRNKO4: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart",
@@ -221,6 +212,15 @@
     "priority": "fyi",
     "source": "FRQ",
     "summary": "frequency 363.25: also listed for PINNR RNAV STAR"
+   },
+   {
+    "category": "remark",
+    "id": "20fc6185351c",
+    "kind": "removed",
+    "original": "COMMUNICATIONS PRVDD BY DENVER RADIO ON FREQ 122.2 (DENVER RCO).",
+    "priority": "fyi",
+    "source": "ATC_RMK",
+    "summary": "removed tower/ATC remark: COMMUNICATIONS PRVDD BY DENVER RADIO ON FREQ 122.2 (DENVER RCO)."
    }
   ],
   "ATL": [
@@ -967,35 +967,15 @@
     "fields": [
      {
       "field": "FREQ_USE",
-      "new": "KNIGHTS DP",
-      "old": "KERMIT DP"
-     },
-     {
-      "field": "SECTORIZATION",
-      "new": "FLYYN, CEGAL TRANSITIONS RWY 01L, 01R, 36",
-      "old": "235-055"
-     }
-    ],
-    "id": "e90b8e1ef09a",
-    "kind": "changed",
-    "priority": "fyi",
-    "source": "FRQ",
-    "summary": "frequency 120.5 use: KERMIT DP -> KNIGHTS DP; sectorization: 235-055 -> FLYYN, CEGAL TRANSITIONS RWY 01L, 01R, 36"
-   },
-   {
-    "category": "frequency",
-    "fields": [
-     {
-      "field": "FREQ_USE",
       "new": "",
-      "old": "KNIGHTS DP"
+      "old": "KERMIT DP"
      }
     ],
-    "id": "ba781dce6d4b",
+    "id": "06480f543621",
     "kind": "changed",
     "priority": "fyi",
     "source": "FRQ",
-    "summary": "frequency 120.5 use: KNIGHTS DP -> none"
+    "summary": "frequency 120.5 use: KERMIT DP -> none"
    },
    {
     "category": "frequency",
@@ -1067,39 +1047,19 @@
      {
       "field": "FREQ_USE",
       "new": "BATTA DP",
-      "old": "BEAVY DP"
-     },
-     {
-      "field": "SECTORIZATION",
-      "new": "",
-      "old": "RWY 18L, 19L, 19R, 36R"
-     }
-    ],
-    "id": "bf79f8b9ae7a",
-    "kind": "changed",
-    "priority": "fyi",
-    "source": "FRQ",
-    "summary": "frequency 307.8 use: BEAVY DP -> BATTA DP; sectorization: RWY 18L, 19L, 19R, 36R -> (none)"
-   },
-   {
-    "category": "frequency",
-    "fields": [
-     {
-      "field": "FREQ_USE",
-      "new": "BEAVY DP",
       "old": "KERMIT DP"
      },
      {
       "field": "SECTORIZATION",
-      "new": "RWY 18, 19R, 19L, 36",
+      "new": "",
       "old": "055-235"
      }
     ],
-    "id": "1925a0862d8c",
+    "id": "f9e547d50b5c",
     "kind": "changed",
     "priority": "fyi",
     "source": "FRQ",
-    "summary": "frequency 307.8 use: KERMIT DP -> BEAVY DP; sectorization: 055-235 -> RWY 18, 19R, 19L, 36"
+    "summary": "frequency 307.8 use: KERMIT DP -> BATTA DP"
    },
    {
     "category": "frequency",
@@ -1208,15 +1168,30 @@
     "fields": [
      {
       "field": "SECTORIZATION",
-      "new": "GANTS, LILLS, RUNIE, BUCKL TRANSITIONS",
+      "new": "055-235",
       "old": "BUCKL TRANSITION, RWY 18L, 19L, 19R, 36R"
      }
     ],
-    "id": "1d15dcfd14f8",
+    "id": "333534a213b2",
     "kind": "changed",
     "priority": "fyi",
     "source": "FRQ",
-    "summary": "sectorization: BUCKL TRANSITION, RWY 18L, 19L, 19R, 36R -> GANTS, LILLS, RUNIE, BUCKL TRANSITIONS"
+    "summary": "sectorization: BUCKL TRANSITION, RWY 18L, 19L, 19R, 36R -> 055-235"
+   },
+   {
+    "category": "frequency",
+    "fields": [
+     {
+      "field": "SECTORIZATION",
+      "new": "FLYYN, CEGAL TRANSITIONS RWY 01L, 01R, 36",
+      "old": "FLYYN, CEGAL TRANSITIONS RWY 01L, 01R, 36R"
+     }
+    ],
+    "id": "a2f42c27f797",
+    "kind": "changed",
+    "priority": "fyi",
+    "source": "FRQ",
+    "summary": "sectorization: FLYYN, CEGAL TRANSITIONS RWY 01L, 01R, 36R -> FLYYN, CEGAL TRANSITIONS RWY 01L, 01R, 36"
    },
    {
     "category": "frequency",
@@ -1238,15 +1213,15 @@
     "fields": [
      {
       "field": "SECTORIZATION",
-      "new": "055-235",
+      "new": "GANTS, LILLS, RUNIE, BUCKL TRANSITIONS",
       "old": "GANTS, LILLS & RUNIE TRANSITIONS"
      }
     ],
-    "id": "b9afe9ac0308",
+    "id": "4fcc1a0bc025",
     "kind": "changed",
     "priority": "fyi",
     "source": "FRQ",
-    "summary": "sectorization: GANTS, LILLS & RUNIE TRANSITIONS -> 055-235"
+    "summary": "sectorization: GANTS, LILLS & RUNIE TRANSITIONS -> GANTS, LILLS, RUNIE, BUCKL TRANSITIONS"
    },
    {
     "category": "frequency",
@@ -2372,23 +2347,23 @@
     "fields": [
      {
       "field": "FREQ_USE",
-      "new": "WAYNZ STAR",
+      "new": "HYPER STAR",
       "old": "WAYNE STAR"
      }
     ],
-    "id": "6de98250929e",
+    "id": "4ba3e0e4c2a8",
     "kind": "changed",
     "priority": "fyi",
     "source": "FRQ",
-    "summary": "frequency 126.1 use: WAYNE STAR -> WAYNZ STAR"
+    "summary": "frequency 126.1 use: WAYNE STAR -> HYPER STAR"
    },
    {
     "category": "frequency",
-    "id": "a85f4df9192c",
+    "id": "039cf8c9c073",
     "kind": "added",
     "priority": "fyi",
     "source": "FRQ",
-    "summary": "frequency 126.1: also listed for HYPER STAR"
+    "summary": "frequency 126.1: also listed for WAYNZ STAR"
    },
    {
     "category": "frequency",
@@ -2425,23 +2400,23 @@
     "fields": [
      {
       "field": "FREQ_USE",
-      "new": "WAYNZ STAR",
+      "new": "HYPER STAR",
       "old": "WAYNE STAR"
      }
     ],
-    "id": "26c109421113",
+    "id": "c1f7c1c2f8a5",
     "kind": "changed",
     "priority": "fyi",
     "source": "FRQ",
-    "summary": "frequency 338.25 use: WAYNE STAR -> WAYNZ STAR"
+    "summary": "frequency 338.25 use: WAYNE STAR -> HYPER STAR"
    },
    {
     "category": "frequency",
-    "id": "b6c317edb2c8",
+    "id": "d62720385d86",
     "kind": "added",
     "priority": "fyi",
     "source": "FRQ",
-    "summary": "frequency 338.25: also listed for HYPER STAR"
+    "summary": "frequency 338.25: also listed for WAYNZ STAR"
    }
   ],
   "IAH": [

@@ -7,7 +7,7 @@ from .rules import (ACTION_COL_WORDS, ACTION_PREFIXES, ACTION_TEXT_WORDS, ATC_SE
                     COL_CATEGORY, CONTEXT_COLS, DECLARED_ACTION_FT, DECLARED_ACTION_PCT,
                     DECLARED_DISTANCES, DECLINATION_COLS, DECLINATION_NAV_TYPES, FSS_OUTLET,
                     HIDDEN_FILES, HIDDEN_ONLY_COLS, ID_COLS, IFR_REMARK_FILES, PAIR_KEYS,
-                    REWORD_ALIASES, REWORD_BLOCKERS, ROW_ACTION, ROW_FYI, base, is_fyi_col,
+                    REWORD_ALIASES, REWORD_BLOCKERS, REWORD_PHRASES, ROW_ACTION, ROW_FYI, base, is_fyi_col,
                     is_hours_col, is_noise_col, small_change)
 
 
@@ -139,7 +139,10 @@ WHEN_CLOSED = re.compile(r"\b(?:WHEN|IF|WHILE)\s+(?:[A-Z]+\s+){0,3}?"
 
 
 def _words(s):
-    return {REWORD_ALIASES.get(w, w) for w in re.findall(r"[A-Z]+", WHEN_CLOSED.sub(" ", s))}
+    s = WHEN_CLOSED.sub(" ", s)
+    for phrase, short in REWORD_PHRASES.items():
+        s = re.sub(rf"\b{phrase}\b", short, s)
+    return {REWORD_ALIASES.get(w, w) for w in re.findall(r"[A-Z]+", s)}
 
 
 def just_reworded(old, new):
@@ -165,7 +168,7 @@ _HOURS_ALIASES = [(r"\bWEEKENDS?\b|\bWKENDS?\b", "SAT-SUN"), (r"\bWEEKDAYS\b|\bW
 _HOURS_TOKEN = re.compile(
     r"(?P<time>(?:\d{4}|SR|SS|DUSK|DAWN)-(?:\d{4}|SR|SS|DUSK|DAWN)Z?\+*)"
     rf"|(?P<days>\b(?:{_DAY})(?:\s*-\s*(?:{_DAY}))?\b)|(?P<hol>\bHOL\b)|(?P<closed>\bCLSD\b|\bEXC\b)"
-    r"|(?P<num>\d+)|(?P<word>[A-Z]+)")
+    r"|(?P<keep>\bCLASS [B-G]\b|\bPPR\b|\bO/R\b)|(?P<num>\d+)|(?P<word>[A-Z]+)")
 # words that don't qualify a schedule ("OPR 0700-2100" = "0700-2100")
 _HOURS_FILLER = {"OPR", "OPS", "OPEN", "SVC", "HRS", "HR", "FROM", "TO", "THE", "Z", "LCL"}
 
@@ -178,7 +181,8 @@ def _days(tok):
 
 def _schedule(text):
     """what an hours text says, order and spelling aside: {(days, time range, qualifier
-    words)} when open, the days/holidays/times after CLSD or EXC, and every other number."""
+    words)} when open, the days/holidays/times after CLSD or EXC, and every other number,
+    airspace class, PPR or O/R."""
     t = _canon(text)
     t = re.sub(r"\b(\d{4})Z\s*-\s*(\d{4})Z", r"\1-\2Z", t)   # 1330Z-0530Z -> 1330-0530Z
     for pat, rep in _HOURS_ALIASES:
@@ -196,7 +200,7 @@ def _schedule(text):
             for kind, tok in toks:
                 if kind == "closed":
                     closing = True
-                elif kind == "num":
+                elif kind in ("num", "keep"):     # NGW "OTHER TIMES CLASS E" -> "CLASS G"
                     nums.add(tok)
                 elif closing:
                     if kind == "days":
@@ -285,10 +289,10 @@ def _renumbered(old_pairs, new_pairs):
 
 
 def pcl_priority(old, new):
-    """a lighting remark only matters if you now key a different frequency, a light no longer
-    comes on when you key it, or a light that was on all night now needs keying. more lights
-    on the same frequency, or the same lights after a runway renumbering, is fyi. None: not a
-    lighting remark, or it says something else that needs the normal rules (closed, PPR...)."""
+    """a lighting remark only matters if you now key a different frequency or a light no longer
+    comes on when you key it. more lights on the same frequency, lights now on all night, or
+    the same lights after a runway renumbering, is fyi. None: not a lighting remark, or it
+    says something else that needs the normal rules (closed, PPR...)."""
     o, n = _pcl(old), _pcl(new)
     if not (o and n):
         return None
@@ -301,10 +305,10 @@ def pcl_priority(old, new):
         return None
     (o_pcl, o_on, o_f), (n_pcl, n_on, n_f) = o, n
     now = n_pcl | n_on
-    # an always-on light the remark stops mentioning (JWY) isn't known to be gone
+    # an always-on light the remark stops mentioning (JWY) isn't known to be gone, and one
+    # that now comes on with the rest when you key the frequency (EAN, M44) isn't lost either
     lost = _renumbered(o_pcl, now) - now
-    now_keyed = _renumbered(o_on, now) & n_pcl
-    return "action" if o_f != n_f or lost or now_keyed else "fyi"
+    return "action" if o_f != n_f or lost else "fyi"
 
 
 def diff(old, new):

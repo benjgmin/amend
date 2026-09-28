@@ -64,20 +64,24 @@ ACTION_COL_WORDS = {"NAV", "PROVIDER", "HRS", "HOURS", "FREQ", "CLASS", "AIRSPAC
                     "STATUS", "LGT", "LIGHT", "LIGHTS", "LEN", "WIDTH", "TPA", "ATTEND"}
 ACTION_TEXT_WORDS = ("CLSD", "CLOSED", "TWR", "PPR", "NOT AVBL", "UNAVBL", "UNUSBL", "CTAF", "TPA",
                      "PROHIBITED", "RSTD", "NOISE", "TRANSPONDER",
-                     # DFW: "MUST OBTAIN APVL FM RAMP 129.825 PRIOR TO ENTERING RAMP"
-                     "APVL")
+                     # DFW: "MUST OBTAIN APVL FM RAMP 129.825 PRIOR TO ENTERING RAMP". not APVL
+                     # alone: "WAIVED BY FAA (10/06/2009 ALP APVL LTR)" is history
+                     "OBTAIN APVL", "PRIOR APVL")
 
 # a remark that only got reworded is fyi (diff.just_reworded). these words change what it
 # means, so a remark that gains or loses one was not just reworded: OKM "ILS UNMONITORED" ->
 # "ILS MONITORED AT MOCC", EVY "RWY 11/29 CLSD FOR NIGHT OPS" -> "...; DAYTIME VFR USE ONLY".
 # spellings in REWORD_ALIASES count as the same word first (EXCP -> EXC).
-REWORD_BLOCKERS = {w for p in ACTION_TEXT_WORDS for w in p.split()} | {
-    "NOT", "NO", "NON", "ONLY", "EXC", "UNMON", "MONITORED", "UNLGTD", "LGTD", "UNLIT", "LIT",
-    "DAY", "DAYTIME", "NIGHT", "NGT", "VFR", "IFR", "AVBL", "OTS", "USBL", "RQRD", "REQD",
+REWORD_BLOCKERS = {w for w in ACTION_TEXT_WORDS if " " not in w} | {
+    "NOT", "NO", "NON", "NA", "ONLY", "EXC", "UNMON", "MONITORED", "UNLGTD", "LGTD", "APVL",
+    "DAY", "DAYTIME", "NIGHT", "NGT", "VFR", "IFR", "AVBL", "OTS", "USBL", "REQD",
     "MANDATORY", "UNATNDD", "ATNDD", "PERMITTED", "AUTH", "UNAUTH"}
 REWORD_ALIASES = {"EXCP": "EXC", "EXCEPT": "EXC", "CLOSED": "CLSD", "UNMONITORED": "UNMON",
-                  "TOWER": "TWR", "REQUIRED": "REQD", "RQRD": "REQD", "UNAVAILABLE": "UNAVBL",
-                  "AVAILABLE": "AVBL", "UNUSABLE": "UNUSBL", "OPNS": "OPS"}
+                  "TOWER": "TWR", "ATCT": "TWR", "REQUIRED": "REQD", "RQRD": "REQD",
+                  "UNAVAILABLE": "UNAVBL", "AVAILABLE": "AVBL", "UNUSABLE": "UNUSBL", "OPNS": "OPS",
+                  "UNLIGHTED": "UNLGTD", "UNLIT": "UNLGTD", "LIGHTED": "LGTD", "LIT": "LGTD"}
+# ... and phrases, before the words are split: AKN "APPROACH NOT AUTHORIZED" = "APCH NA"
+REWORD_PHRASES = {"NOT AUTHORIZED": "NA", "NOT AUTH": "NA"}
 
 # a whole row appearing or disappearing in these files is act even though no column name or
 # value says so: a runway, a decommissioned navaid, approach radar. other files' rows carry
