@@ -6,10 +6,11 @@ engine says about one real cycle pair.
   python -m amend.gold -v                  ... and print every case that doesn't pass
   python -m amend.gold --snapshot          re-run the snapshot pair and diff it against the file
   python -m amend.gold --update-snapshot   rewrite the snapshot after a change you meant to make
+  python -m amend.gold --fetch             download the snapshot's two NASR zips into data/
 
 The gold set needs nothing downloaded: every case carries the real FAA rows it came from, and
 runs through the whole pipeline (diff, collapse, summaries) as a two-cycle zip of those rows.
-The snapshot needs the two NASR zips in data/ (see tests/gold/README.md).
+The snapshot needs the two NASR zips in data/, kept on this repo's releases (--fetch).
 """
 import argparse
 import contextlib
@@ -24,7 +25,7 @@ import sys
 import tempfile
 import zipfile
 
-from . import remarks
+from . import cycles, remarks
 from .pipeline import run
 
 HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -234,6 +235,18 @@ def snapshot_inputs(meta, data=DATA):
     return tuple(paths)
 
 
+def fetch(meta, data=DATA):
+    """download the snapshot's NASR zips from this repo's releases (the "archive" urls in
+    snapshot.json) into data/, unless they're already there. returns (old zip, new zip), each
+    checked against snapshot.json's sha256. raises FileNotFoundError if a release no longer has
+    its file, cycles.FetchError if the download keeps failing, ValueError on a different file."""
+    for side in ("from", "to"):
+        z = meta["zips"][side]
+        # the same retries and zip checks the build's FAA downloads get
+        if not cycles.download(z["archive"], os.path.join(data, z["file"]), cycles.CSV_REQUIRED):
+            raise FileNotFoundError(f"{z['archive']} is gone from the release")
+    return snapshot_inputs(meta, data)
+
 # the engine's output used to depend on Python's string hash seed (diff.py paired rows in set
 # order). it doesn't anymore, so the snapshot runs under a random seed: every run on the real
 # zips is also a check that the same FAA files give the same output.
@@ -297,7 +310,18 @@ def main(argv=None):
     p.add_argument("--snapshot", action="store_true", help="diff the snapshot pair too")
     p.add_argument("--update-snapshot", action="store_true", help="rewrite the snapshot file")
     p.add_argument("--data", default=DATA, help="where the snapshot's NASR zips are")
+    p.add_argument("--fetch", action="store_true",
+                   help="download the snapshot's NASR zips from the repo's releases into --data")
     a = p.parse_args(argv)
+
+    if a.fetch:
+        try:
+            for path in fetch(snapshot_meta(), a.data):
+                print(f"{path}: sha256 matches snapshot.json")
+        except (OSError, ValueError, cycles.FetchError) as e:
+            sys.exit(f"fetch: {e}")
+        if not (a.snapshot or a.update_snapshot):
+            return
 
     if a.snapshot or a.update_snapshot:
         meta = snapshot_meta()
