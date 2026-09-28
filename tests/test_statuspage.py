@@ -58,9 +58,18 @@ class TestStatusPage(unittest.TestCase):
         self.assertIn("Amend is current, and the latest build passed every check", t)
         for s in r["sources"]:                         # every checksum, in full
             self.assertIn(s["sha256"], html)
-        self.assertIn(f"{r['changes']['airports']:,} airports changed", t)
+        self.assertIn(f"changes detected at {r['changes']['airports']:,} airports", t)
         self.assertIn("Pre-publish check", t)
         self.assertIn(r["run"]["url"], html)
+
+    def test_every_step_of_the_spec_outline_shows(self):
+        """master spec §19: each step shows, with "Not recorded" where the run log has nothing for it"""
+        t = text(self.render(good()))
+        for step in ("Ingestion", "Parsing", "Normalization", "Diff", "Classification", "AI", "Validation",
+                     "Publishing", "Processing", "Engine"):
+            self.assertIn(f" {step} ", t)
+        self.assertIn("Translator cost $", t)
+        self.assertIn("contractions with no verified meaning", t)
 
     def test_zero_is_zero_not_blank(self):
         r = good()
@@ -131,14 +140,17 @@ class TestStatusPage(unittest.TestCase):
 
     def test_behind_check_only_on_a_published_headline(self):
         self.assertIn('data-hours="30"', self.render(good()))
+        r = good()
+        r["upcoming"] = False
+        self.assertIn('data-up="0"', self.render(r))
         self.assertNotIn("data-last=", self.render(failed("2026-09-28T12:00:00+00:00")))
 
 
-def behind(now, last="2026-09-28T12:42:05+00:00", cyc="2026-10-01"):
+def behind(now, last="2026-09-28T12:42:05+00:00", cyc="2026-10-01", up="1"):
     """run the headline's browser check in node at `now`; the new headline html, or "" if unchanged."""
     js = statuspage.BEHIND_JS.removeprefix("<script>").removesuffix("</script>")
     stub = (f"const a={{dataset:{{last:{json.dumps(last)},cyc:{json.dumps(cyc)},hours:'{statuspage.BEHIND_HOURS}',"
-            f"log:'L'}},innerHTML:''}};const document={{getElementById:()=>a}};"
+            f"log:'L',up:'{up}'}},innerHTML:''}};const document={{getElementById:()=>a}};"
             f"Date.now=()=>Date.parse({json.dumps(now)});setTimeout=setInterval=()=>0;")
     out = subprocess.run(["node", "-e", stub + js + ";process.stdout.write(a.innerHTML)"],
                          capture_output=True, text=True, check=True)
@@ -165,6 +177,19 @@ class TestBehindCheck(unittest.TestCase):
     def test_upcoming_cycle_before_and_after_changeover(self):
         self.assertEqual(behind("2026-10-01T09:00:00Z", last="2026-10-01T08:00:00+00:00"), "")
         self.assertEqual(behind("2026-10-01T09:02:00Z", last="2026-10-01T08:00:00+00:00"), "")
+
+    def test_faa_late_is_not_an_amend_outage(self):
+        """§62.2: the last build (fresh) found the next cycle not posted yet, so the FAA is late"""
+        h = behind("2026-10-29T12:00:00Z", last="2026-10-29T08:00:00+00:00", up="0")
+        self.assertIn("Waiting on the FAA", h)
+        self.assertIn("hadn't posted it when Amend last built the site (29 Oct 2026 0800Z)", h)
+        self.assertIn("not an Amend outage", h)
+        self.assertNotIn("Amend is behind", h)
+
+    def test_faa_late_but_no_recent_build_is_still_behind(self):
+        h = behind("2026-10-30T20:00:00Z", last="2026-10-29T08:00:00+00:00", up="0")
+        self.assertIn("Amend is behind", h)
+        self.assertIn("either the FAA's server is down or an Amend run failed", h)
 
     def test_several_cycles_behind(self):
         self.assertIn("The 24 Dec 2026 FAA cycle", behind("2026-12-25T00:00:00Z"))

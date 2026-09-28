@@ -48,7 +48,7 @@ CSS = """<style>
 .st-ans .ann{margin-top:6px}.st-ans b{font:600 20px/1.3 var(--sans);letter-spacing:-.3px}
 .stg{display:grid;grid-template-columns:104px minmax(0,1fr);gap:4px 12px;padding:11px 0;border-top:1px solid var(--ln);font-size:14px}
 .stg:first-child{border-top:0}.stg>.ann{justify-self:start;margin-top:2px}
-.stg .t{font-weight:600}.stg .d{color:var(--dm);overflow-wrap:anywhere}.stg .more{grid-column:2}
+.stg .t{font-weight:600}.stg .k{font-size:11px;color:var(--fn);text-transform:uppercase;letter-spacing:.06em}.stg .d{color:var(--dm);overflow-wrap:anywhere}.stg .more{grid-column:2}
 .nr{color:var(--fn);font-style:italic}
 .tw{overflow-x:auto;margin-top:6px;border:1px solid var(--ln);border-radius:6px}
 .tb{border-collapse:collapse;width:100%;font-size:12.5px;font-variant-numeric:tabular-nums}
@@ -104,8 +104,17 @@ def more(label, inner):
     return f'<details class="more"><summary>{label}</summary>{inner}</details>'
 
 
+# which step of the engine-health outline in the master spec (§19) each stage is
+STEPS = {"Downloaded the FAA files": "Ingestion", "Read the FAA data": "Parsing", "Normalized the records": "Normalization",
+         "Compared the two cycles": "Diff", "Sorted the changes": "Classification", "Remarks in plain English": "AI",
+         "Regression tests": "Validation", "Checked the change summaries": "Validation",
+         "Input checks and release audit": "Validation", "Pre-publish check": "Publishing", "Published": "Publishing",
+         "History": "Publishing", "Processing time": "Processing", "Engine version": "Engine"}
+
+
 def stage(kind, title, detail, extra=""):
-    return (f'<div class="stg">{chip(kind)}<div><div class="t">{title}</div>'
+    step = f'<div class="k">{STEPS[title]}</div>' if title in STEPS else ""
+    return (f'<div class="stg">{chip(kind)}<div>{step}<div class="t">{title}</div>'
             f'<div class="d">{detail}</div></div>{extra}</div>')
 
 
@@ -163,25 +172,59 @@ def s_rows(r):
     return stage("done", "Read the FAA data", detail, more("Rows per table", table))
 
 
+def s_norm(r):
+    if not reached(r):
+        return stage("skip", "Normalized the records", "The run stopped before this step.")
+    return stage("none", "Normalized the records", "The run log doesn't count normalized records separately yet.")
+
+
 def s_diff(r):
     ch = r.get("changes")
-    eng = (f"Engine {e(r.get('engine')) or NR} (code hash <code>{e(r.get('engine_hash')) or 'not recorded'}</code>)")
+    if ch is None:
+        return stage("skip" if not reached(r) else "none", "Compared the two cycles",
+                     "The run stopped before the comparison." if not reached(r) else "Not recorded.")
+    shown = sum(ch.get(p) or 0 for p in ("action", "ifr", "fyi"))
+    return stage("done", "Compared the two cycles",
+                 f"{num(shown + (ch.get('hidden') or 0))} changes detected at {num(ch.get('airports'))} airports: "
+                 f"{num(shown)} shown, {num(ch.get('hidden'))} hidden as bookkeeping (survey dates, rounding, "
+                 "duplicate rows).")
+
+
+def s_classify(r):
+    ch = r.get("changes")
+    if ch is None:
+        return stage("skip" if not reached(r) else "none", "Sorted the changes",
+                     "The run stopped before the comparison." if not reached(r) else "Not recorded.")
+    cat = ch.get("by_category") or {}
+    table = ('<div class="tw"><table class="tb"><tr><th>Category</th><th>Changes</th></tr>'
+             + "".join(f'<tr><td>{e(k)}</td><td class="n">{num(v)}</td></tr>' for k, v in cat.items())
+             + "</table></div>") if cat else ""
+    return stage("done", "Sorted the changes",
+                 f"{num(ch.get('action'))} ACT, {num(ch.get('ifr'))} IFR, {num(ch.get('fyi'))} FYI, by fixed rules "
+                 "(no AI).", more("Changes by category", table) if table else "")
+
+
+def s_tests(r):
+    return stage("none", "Regression tests", "The tests (gold set and snapshot included) run before every build, "
+                 "and a failure stops the run before this log starts, but the run log doesn't record the count yet.")
+
+
+def s_time(r):
+    sec = r.get("seconds")
+    if sec is None:
+        return stage("none", "Processing time", "Not recorded.")
+    return stage("done", "Processing time", f"{sec:,.0f} seconds ({sec / 60:,.1f} minutes), from "
+                 f"{when(r.get('started_at'))} to {when(r.get('finished_at'))}.")
+
+
+def s_engine(r):
+    eng = f"{e(r.get('engine')) or NR}, code hash <code>{e(r.get('engine_hash')) or 'not recorded'}</code>"
     commit = r.get("commit")
     if commit:
         eng += f', built from commit <a href="{web.REPO_URL}/commit/{e(commit)}"><code>{e(commit[:7])}</code></a>'
     if r.get("hash_seed") is not None:
         eng += f", hash seed {e(r['hash_seed'])}"
-    if ch is None:
-        return stage("skip" if not reached(r) else "none", "Compared the two cycles",
-                     ("The run stopped before the comparison. " if not reached(r) else "") + eng + ".")
-    cat = ch.get("by_category") or {}
-    table = ('<div class="tw"><table class="tb"><tr><th>Category</th><th>Changes</th></tr>'
-             + "".join(f'<tr><td>{e(k)}</td><td class="n">{num(v)}</td></tr>' for k, v in cat.items())
-             + "</table></div>") if cat else ""
-    return stage("done", "Compared the two cycles",
-                 f"{num(ch.get('airports'))} airports changed: {num(ch.get('action'))} ACT, {num(ch.get('ifr'))} IFR, "
-                 f"{num(ch.get('fyi'))} FYI, and {num(ch.get('hidden'))} bookkeeping changes hidden. {eng}.",
-                 more("Changes by category", table) if table else "")
+    return stage("done" if r.get("engine") else "none", "Engine version", eng + ".")
 
 
 def s_remarks(r):
@@ -192,6 +235,15 @@ def s_remarks(r):
     detail = (f"{num(rm.get('texts'))} remarks needed plain English: {num(rm.get('plain_english'))} shown translated, "
               f"{num(rm.get('raw_fallback'))} shown as the FAA's own text.")
     ai, parts = rm.get("ai"), []
+    if isinstance(ai, dict):
+        fails = [ai.get(k) for k in ("rejected", "bad_batches")]
+        cost = ai.get("est_cost_usd")
+        detail += (f" {len(ai.get('unknown_terms') or {})} contractions with no verified meaning. "
+                   + (f"{num(sum(fails))} translations failed the no-guess check or came back unreadable. "
+                      if all(isinstance(x, int) for x in fails) else "Failures: not recorded. ")
+                   + (f"Translator cost ${cost:,.4f}." if isinstance(cost, (int, float)) else "Cost: not recorded."))
+    else:
+        detail += " Unknown terms, failures and cost: not recorded."
     if isinstance(ai, dict):
         parts = [f'<tr><td>{label}</td><td class="n">{num(ai.get(k))}</td></tr>' for k, label in AI_KEYS if k in ai]
         if "est_cost_usd" in ai:
@@ -312,8 +364,8 @@ def stages(r):
     if (r.get("runlog_version") or 0) > runlog.RUNLOG_VERSION:
         head = (f'<p class="note">This record is format {e(r["runlog_version"])}; the page knows format '
                 f'{runlog.RUNLOG_VERSION}, so some fields may show as "not recorded".</p>')
-    return head + "".join(f(r) for f in (s_sources, s_rows, s_diff, s_remarks, s_summaries, s_checks,
-                                          s_verify, s_outcome, s_other))
+    return head + "".join(f(r) for f in (s_sources, s_rows, s_norm, s_diff, s_classify, s_remarks, s_tests,
+                                          s_summaries, s_checks, s_verify, s_outcome, s_time, s_engine, s_other))
 
 
 def verdict(r):
@@ -402,7 +454,9 @@ def page(recs, meta, now):
     behind_attrs = ""
     if meta and top is not None and top.get("published") and top.get("started_at"):
         behind_attrs = (f' data-last="{e(top["started_at"])}" data-cyc="{e(meta["to_cycle"])}"'
-                        f' data-hours="{BEHIND_HOURS}" data-log="{web.REPO_URL}/tree/master/audit/runs"')
+                        f' data-hours="{BEHIND_HOURS}" data-log="{web.REPO_URL}/tree/master/audit/runs"'
+                        # did that run find the next cycle posted? False: the FAA hadn't posted it yet
+                        f' data-up="{"1" if top.get("upcoming") else "0" if top.get("upcoming") is False else ""}"')
     kv = "".join(f'<div class="kv"><span>{k}</span><span>{v}</span></div>' for k, v in rows)
     body = [f"""<header class="full"><h1>Status</h1><p class="lede">Is Amend current, and did the latest run pass every check?
 Every number here comes from the run log Amend writes on each run. Nothing is estimated.</p></header>
@@ -430,7 +484,9 @@ goes live. If any check fails, nothing is published and the site stays on the la
 is on GitHub as soon as it ends: every run, blocked ones included, is in
 <a href="{web.REPO_URL}/tree/master/audit/runs">audit/runs</a>, and the fields are described at the top of
 <a href="{web.REPO_URL}/blob/master/amend/runlog.py">runlog.py</a>. If this page itself is more than a day and a
-half old, a banner at the top says so.</p>
+half old, a banner at the top says so, and the headline turns to "behind" on its own when no run has published for
+30 hours or the FAA's 28-day schedule has moved past what Amend shows. If the FAA simply hasn't posted a cycle yet,
+the headline says Amend is waiting on the FAA, not that Amend is down.</p>
 <p><b>Done</b> means a step ran and its numbers are shown. <b>Passed</b> means a check ran and found nothing wrong.
 <b>Not recorded</b> means the run didn't log that value, and <b>Not run</b> means the run stopped before that step.</p>
 </section>""")
@@ -448,13 +504,22 @@ const M="Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec".split(" "),p2=n=>Strin
   day=t=>{const d=new Date(t);return p2(d.getUTCDate())+" "+M[d.getUTCMonth()]+" "+d.getUTCFullYear()},
   fmt=t=>{const d=new Date(t);return day(t)+" "+p2(d.getUTCHours())+p2(d.getUTCMinutes())+"Z"};
 let eff=to;while(eff+28*D<=now)eff+=28*D;   // the newest 0901Z changeover on the FAA's 28-day grid that has passed
+const stale=now-last>+a.dataset.hours*36e5,esc=s=>s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])),
+  log='<a href="'+esc(a.dataset.log)+'">run log on GitHub</a>';
+// master spec §62.2: never show an FAA publication delay as an Amend outage. the last build (fresh, so it's the
+// last word) found the next cycle not posted: the FAA is late, not Amend
+if(eff>to&&!stale&&a.dataset.up==="0"){
+  a.innerHTML='<span class="ann ifr">Waiting on FAA</span><div><b>Waiting on the FAA.</b><p class="note">'+esc("The FAA's "+
+    "28-day schedule put the "+day(eff)+" cycle in effect at "+fmt(eff)+", but the FAA hadn't posted it when Amend last built "+
+    "the site ("+fmt(last)+"). Amend keeps checking and shows the "+day(to)+" cycle until it does. This is a delay at the "+
+    "FAA, not an Amend outage.")+' The '+log+' has every check.</p></div>';delete a.dataset.last;return}
 const why=[];
 if(eff>to)why.push("The "+day(eff)+" FAA cycle took effect "+fmt(eff)+" and isn't on Amend yet. Amend still shows the "+day(to)+" cycle.");
-if(now-last>+a.dataset.hours*36e5)why.push("No run has published since "+fmt(last)+". Runs normally publish at least once a day.");
+if(stale)why.push("No run has published since "+fmt(last)+". Runs normally publish at least once a day, so either the FAA's "+
+  "server is down or an Amend run failed.");
 if(!why.length)return;
-const esc=s=>s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 a.innerHTML='<span class="ann act">Behind</span><div><b>Amend is behind.</b><p class="note">'+why.map(esc).join(" ")+
-' The checks below are from that last published run. Every later run, including blocked ones, is in the <a href="'+esc(a.dataset.log)+'">run log on GitHub</a>. Use official FAA sources until this clears.</p></div>';
+' The checks below are from that last published run. Every later run, including blocked ones, and which side it was, is in the '+log+'. Use official FAA sources until this clears.</p></div>';
 delete a.dataset.last}
 check();setTimeout(check,2000);setInterval(check,60000)})()</script>"""
 
