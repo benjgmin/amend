@@ -106,6 +106,7 @@ CURATED = {
             "note": "'ACC COMD POST', 'ACC FAMILY DAYS' at Air Force bases. not area control center"},
     "ADS": {"expansion": "address", "note": "'EMAIL ADS:'. ADS-B is its own term"},
     "ASP": {"expansion": "airspace", "note": "'CLASS B ASP'. not airport system plan"},
+    "AP": {"expansion": ["airport", "Area Planning"], "note": "both occur: 'AP OPS', 'FLIP AP/1'"},
     "CAP": {"expansion": ["capacity", "Civil Air Patrol"], "note": "both occur: 'GARBAGE CAP NA', 'CAP HANGAR'"},
     "CAT": {"expansion": "category", "note": "'CAT A ACFT', 'NFPA CAT'. not clear air turbulence"},
     "CRC": {"expansion": "circle", "note": "'44 FT DIAM CRC'. not cyclic redundancy check"},
@@ -149,7 +150,6 @@ CURATED = {
     "OPNS": {"root": "OPN", "expansion": "operation",
              "note": "OPN + S (JO 7340.2 1-2-3). OPN is open or operation; OPNS only reads as operations"},
     # the FAA meaning doesn't fit how remarks use the term: copied as written
-    "AP": {"expansion": None, "note": "remarks use it for airport ('AP OPS') and for Area Planning ('FLIP AP/1')"},
     "EMS": {"expansion": None, "note": "not an FAA contraction: EM + S would read as 'emission', but "
                                        "remarks use EMS for emergency medical services"},
     "ARNG": {"expansion": None, "note": "the FAA lists 'arrange'; military remarks use ARNG for Army National Guard"},
