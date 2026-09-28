@@ -25,7 +25,7 @@ struct AirportsView: View {
                     } description: {
                         Text("Add the airports you fly to. Amend shows what changes at each one every FAA cycle. To make one your home field, open it and tap the house.")
                     } actions: {
-                        Button("Add airport") { showingAdd = true }
+                        Button("Search airports") { showingAdd = true }
                             .buttonStyle(.borderedProminent)
                     }
                     .efbRow(top: 24, bottom: 8)
@@ -46,6 +46,25 @@ struct AirportsView: View {
                         .swipeActions { removeButton(id) }
                 }
                 .onMove { store.moveOthers(from: $0, to: $1) }
+
+                // the site's "Most action items this cycle": the busiest airports nationally, to browse
+                if !store.busiest.isEmpty, let meta = store.meta {
+                    HStack {
+                        EFBHeader(text: "Most action items this cycle")
+                        Spacer()
+                        Text("\(meta.changedAirports.formatted()) airports \(Cycle.isInEffect(meta.toCycle) ? "changed" : "change")")
+                            .font(.system(size: 12.5))
+                            .foregroundStyle(EFB.faint)
+                    }
+                    .efbRow(top: 20, bottom: 2)
+                    ForEach(store.busiest, id: \.self) { id in
+                        ZStack {
+                            NavigationLink(value: id) { EmptyView() }.opacity(0)
+                            BusyTile(id: id, info: store.info(for: id), counts: store.counts(for: id))
+                        }
+                        .efbRow(top: 3, bottom: 3)
+                    }
+                }
 
                 Text("Not for navigation. Always check official FAA publications and NOTAMs.")
                     .font(.footnote)
@@ -75,8 +94,8 @@ struct AirportsView: View {
                         .accessibilityLabel("Settings")
                 }
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button { showingAdd = true } label: { Image(systemName: "plus") }
-                        .accessibilityLabel("Add airport")
+                    Button { showingAdd = true } label: { Image(systemName: "magnifyingglass") }
+                        .accessibilityLabel("Search airports")
                 }
                 ToolbarItem(placement: .topBarTrailing) {
                     if let url = watchlistURL {
@@ -238,5 +257,43 @@ private struct AirportTile: View {
         .efbPanel()
         .overlay(RoundedRectangle(cornerRadius: EFB.radius)
             .stroke(isHome ? EFB.cyan.opacity(0.5) : Color.clear, lineWidth: 1))
+    }
+}
+
+/// one of the busiest airports this cycle: id, where it is, its counts, and its top change
+private struct BusyTile: View {
+    let id: String
+    let info: AirportInfo?
+    let counts: Counts?
+    @State private var top: String?
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack(alignment: .firstTextBaseline, spacing: 8) {
+                Text(id).font(EFB.mono(16, .semibold)).foregroundStyle(EFB.text)
+                Text([info?.name, info?.location].compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: " · "))
+                    .font(.system(size: 13))
+                    .foregroundStyle(EFB.dim)
+                    .lineLimit(1)
+                Spacer(minLength: 4)
+            }
+            CountAnnunciators(counts: counts)
+            if let top {
+                Text(top)
+                    .font(.system(size: 14))
+                    .foregroundStyle(EFB.text.opacity(0.85))
+                    .lineLimit(2)
+            }
+        }
+        .efbPanel()
+        .task(id: id) {
+            // the first action item (or the first change), like the site's cards
+            guard top == nil, let data = try? await API.latest(id) else { return }
+            let first = data.changes.first { $0.level == .action } ?? data.changes.first
+            top = first.map { c in
+                let s = c.summary.replacingOccurrences(of: " -> ", with: " → ")
+                return s.prefix(1).uppercased() + s.dropFirst()
+            }
+        }
     }
 }

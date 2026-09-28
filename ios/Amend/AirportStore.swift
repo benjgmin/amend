@@ -32,6 +32,19 @@ final class AirportStore {
     func info(for id: String) -> AirportInfo? { byID[id] }
     func isSaved(_ id: String) -> Bool { saved.contains(id) }
 
+    /// the airports with the most action items this cycle, as on the site's home page (most changes breaks ties)
+    private(set) var busiest: [String] = []
+
+    private static func rank(_ index: LatestIndex?) -> [String] {
+        guard let index else { return [] }
+        return index.airports
+            .sorted { a, b in
+                (-a.value.action, -a.value.total, a.key) < (-b.value.action, -b.value.total, b.key)
+            }
+            .prefix(12)
+            .map(\.key)
+    }
+
     /// saved airports except home, in the user's order
     var others: [String] { saved.filter { $0 != home } }
 
@@ -73,6 +86,7 @@ final class AirportStore {
             let newIndex = try await i
             meta = newMeta
             index = newIndex
+            busiest = Self.rank(newIndex)
             CycleClock.shared.recheck(newMeta?.toCycle)
             errorMessage = nil
             if let newMeta { NotificationManager.markSeen(newMeta.toCycle) }
