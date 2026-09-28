@@ -1282,6 +1282,10 @@ data-name="{e(wl['name'])}">Save to my lists</a><button class="btn ghost" id="co
 # what shipped, newest first, for /changelog/. Add a line when something people can see changes.
 UPDATES = [
     ("Sep 2026", [
+        "W stays as the FAA wrote it in remark translations. The FAA's lists give W two meanings, west and "
+        "white, and remarks also write W/ for with, so the check couldn't tell a wrong pick from a right one: "
+        "\"W RWY MRKG CONES EV 300 FT\", on both ends of one runway, read \"West runway markings\". Where the "
+        "translator still spells W out, the remark shows the FAA's words, with a line saying what W can mean.",
         "The docs are now four pages: getting started, using Amend, how it works, and API and data, which "
         "documents every public JSON file and field. The status page shows when Amend last checked the FAA for "
         "new data, with the recent checks, one every 10 minutes.",

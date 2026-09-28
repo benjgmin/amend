@@ -267,7 +267,7 @@ RIGHT = [
     ("OT CALL (515) 291-5094 OR (515) 460-3892.", "Other times, call (515) 291-5094 or (515) 460-3892."),
     ("30 FT TREES ABM RWY END 450 FT L OF CNTRLN.", "30 foot trees abeam the runway end, 450 feet left of centerline."),
     ("APCH RWY 31 ALG E SIDE OF VALLEY; DEP RWY 13 ALG W SIDE OF VALLEY; WITH LNDG LGT ON; OPDT.",
-     "Approach runway 31 along the east side of the valley; depart runway 13 along the west side of the valley; "
+     "Approach runway 31 along the east side of the valley; depart runway 13 along the W side of the valley; "
      "with landing lights on; opposite direction traffic."),
     ("NO INT DEP AUTH WO PPR FM AMGR.",
      "No intersection departures authorized without prior permission from the airport manager."),
@@ -431,7 +431,7 @@ SAID_RIGHT = [
     ("+22 FT FENCE 62 FT R & 515 FT FM RWY END; PENETRATES APCH SFC.",
      "+22 foot fence 62 feet right and 515 feet from runway end; penetrates approach surface."),
     ("RWY 35, 21 INCH CONCRETE LIGHT BASES, 28 FT FROM W. RWY EDGE, 1300 FM RWY END.",
-     "Runway 35, 21 inch concrete light bases, 28 feet from west runway edge, 1300 from runway end."),
+     "Runway 35, 21 inch concrete light bases, 28 feet from W. runway edge, 1300 from runway end."),
     ("OTS UFN.", "Out of service until further notice."),
     ("TWY L SOUTH OF TWY L3 NOT VSB TO ATCT.",
      "Taxiway L south of taxiway L3 not visible to airport traffic control tower."),
@@ -579,8 +579,7 @@ class TestWhatTheRemarkSays(unittest.TestCase):
                          "Kept in the FAA's words: Amend has no verified meaning for RT.")
         self.assertEqual(why("SOFT & RUTTED; IREG MRKD W CONES.", None,
                              remarks.problems("SOFT & RUTTED; IREG MRKD W CONES.", "Soft and rutted; irregular marked with cones.")[:3]),
-                         "Kept in the FAA's words: the plain-English version didn't use the verified meaning for W "
-                         "(west or white).")
+                         "Kept in the FAA's words: W can mean west, white or with, and Amend doesn't guess which.")
         self.assertEqual(why("TIMBERED MOUTAIN SLOPE.", None, ["dropped MOUTAIN", "added 'mountain'"]),
                          "Kept in the FAA's words: the plain-English version didn't pass Amend's checks.")
 
@@ -643,6 +642,40 @@ class TestWhatTheRemarkSays(unittest.TestCase):
                       "plain: 'SNOW REMOVAL NA' is 'snow removal NA', never 'snow removal not available'.\n", p)
         self.assertIn("\nRemarks use NA more than one way, so copy it ", remarks.prompt_for(["TIEDOWNS NA."]))
         self.assertNotIn("more than one way", remarks.prompt_for(["TIEDOWNS AVBL."]))
+
+    def test_w_stays_as_written(self):
+        """the FAA lists W as West and White, and remarks write W/ for with. the check took either
+        meaning for any W, so the October preview's 'W RWY MRKG CONES EV 300 FT', on both ends of one
+        runway, read 'West runway markings' (2026-09-28). copied as written passes, each time the
+        remark has it; any reading of it fails"""
+        self.assertFalse(glossary.lookup("W")["verified"])
+        for raw, wrong, kept in [
+                ("W RWY MRKG CONES EV 300 FT", "West runway markings have cones every 300 feet.",
+                 "W runway markings have cones every 300 feet."),
+                ("RWY 18/36 MKD WITH W CONES.", "Runway 18/36 marked with white cones.", "Runway 18/36 marked with W cones."),
+                ("FUEL AVBL 24 HRS W/CREDIT CARD", "Fuel available 24 hours with credit card.",
+                 "Fuel available 24 hours W/credit card."),
+                ("50 FT PLINE 35 FT W; 45 FT TREES 125 FT W OF RWY.",
+                 "50 foot power line 35 feet W; 45 foot trees 125 feet west of runway.",
+                 "50 foot power line 35 feet W; 45 foot trees 125 feet W of runway."),
+                ("RWY E/W USEABLE FROM END OF APRIL THROUGH NOVEMBER.",
+                 "Runway east/west is useable from the end of April through November.",
+                 "Runway E/W is useable from the end of April through November.")]:
+            self.assertTrue(remarks.problems(raw, wrong), wrong)
+            self.assertEqual(remarks.problems(raw, kept), [], kept)
+        self.assertIn("W has no verified meaning; the FAA text has it 2 times, the translation 1",
+                      remarks.problems("50 FT PLINE 35 FT W; 45 FT TREES 125 FT W OF RWY.",
+                                       "50 foot power line 35 feet W; 45 foot trees 125 feet west of runway."))
+        self.assertEqual(remarks.problems("TWY W CLSD.", "Taxiway W closed."), [])
+        self.assertEqual(remarks.untranslated("RWY 18/36 MKD WITH W CONES.", None,
+                                              remarks.problems("RWY 18/36 MKD WITH W CONES.", "Runway 18/36 marked with white cones.")),
+                         "Kept in the FAA's words: W can mean west, white or with, and Amend doesn't guess which.")
+        # a letter is a name to unverified() (TWY C), so W is added to the prompt's copy list on its own
+        p = remarks.prompt_for(["RWY 18/36 MKD WITH W CONES.", "TWY C CLSD."])
+        self.assertEqual(re.search(r"copy them exactly as written: (.*)\n", p).group(1), "W")
+        self.assertIn("\nRemarks use W more than one way, so copy it even where the meaning looks plain: 'TREES 300 FT "
+                      "W' is 'trees 300 feet W', never 'trees 300 feet west', and 'SNOW REMOVAL NA' is 'snow removal "
+                      "NA', never 'snow removal not available'.\n", p)
 
     def test_per_after_hi_high_or_low_is_performance(self):
         """every HI PER, HIGH PER and LOW PER in NASR means performance, the FAA's PER (JO 7340.2); the
@@ -718,9 +751,9 @@ class TestWhatTheRemarkSays(unittest.TestCase):
 
     def test_signs_and_ranges(self):
         self.assertEqual(remarks.problems("10 FT TREES 125 -150 FT W OF RWY.",
-                                          "10 foot trees 125 to 150 feet west of runway."), [])
+                                          "10 foot trees 125 to 150 feet W of runway."), [])
         self.assertEqual(remarks.problems("10 FT TREES 125 -150 FT W OF RWY.",
-                                          "10 foot trees 125-150 feet west of runway."), [])
+                                          "10 foot trees 125-150 feet W of runway."), [])
         self.assertIn("dropped the sign of +10", remarks.problems("+10 FT BRUSH 30 FT DIST.",
                                                                   "Brush 10 feet high, 30 feet away."))
 

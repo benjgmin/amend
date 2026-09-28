@@ -84,6 +84,7 @@ def prompt_for(batch):
                 where[term] = _where(side, rule)
                 meanings[f"{term} {where[term]}"] = rule["meaning"]
         copy.update(unverified(raw))
+        copy.update(t for t in terms(raw) if len(t) == 1 and _uses(t))  # a letter is a name to unverified() (TWY C)
     text = PROMPT
     if meanings:
         text += ("Meanings (from the FAA Chart Supplement and FAA Order JO 7340.2):\n"
@@ -94,7 +95,9 @@ def prompt_for(batch):
     if uses := [t for t in sorted(copy) if _uses(t)]:     # the model reads NA as 'not available' anyway
         it = "it" if len(uses) == 1 else "them"
         text += (f"Remarks use {_either(uses, 'and')} more than one way, so copy {it} even where the meaning "
-                 "looks plain: 'SNOW REMOVAL NA' is 'snow removal NA', never 'snow removal not available'.\n")
+                 "looks plain: " + ("'TREES 300 FT W' is 'trees 300 feet W', never 'trees 300 feet west', and "
+                                    if "W" in uses else "")
+                 + "'SNOW REMOVAL NA' is 'snow removal NA', never 'snow removal not available'.\n")
     return text + "\nRemarks:\n" + json.dumps(batch, indent=1)
 
 
@@ -441,6 +444,9 @@ def problems(raw, plain):
                            "not what the translation says")
                 continue
         elif _kept(term, plain) or _inflected(term, words):
+            kept, n = len(_kept_re(term).findall(plain)), ts.count(term)
+            if _uses(term) and kept < n:    # "300 FT W; 100 FT W OF RWY" isn't "300 feet W; 100 feet west of runway"
+                out.append(f"{term} has no verified meaning; the FAA text has it {n} times, the translation {kept}")
             continue
         if term in NEGATIONS:       # counted below; a case NO. has to stay a number
             numbered = term == "NO" and not re.search(r"\bNO\b", NUMBER_NO.sub(" ", raw.upper()))

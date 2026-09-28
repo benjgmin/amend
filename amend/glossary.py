@@ -184,8 +184,6 @@ CURATED = {
     "SN": {"expansion": "snow", "note": "'SN REMOVAL'. not strategic or systems navigation"},
     "UNMON": {"expansion": "unmonitored", "note": "'FLD CONDS UNMON 2400-0400'"},
     "WTR": {"expansion": "Water", "note": "'WTR TWR', 'OVR WTR'. JO 7340.2 (NWS); well to right doesn't occur in remarks"},
-    "W": {"expansion": ["West", "White"], "prompt": False,
-          "note": "both occur: '30 FT W', 'W CONES'. the Chart Supplement also lists Warning Area and Watts"},
     # plain words JO 7340.2 lists only under NWS
     **{t: {"expansion": m, "note": "JO 7340.2 lists it only under NWS; the meaning is the plain word"}
        for t, m in [("BNDRY", "boundary"), ("BTWN", "between"), ("EXTRM", "extreme"),
@@ -213,6 +211,12 @@ CURATED = {
                      "'HELIPAD TEMP CLSD' is temporary, 'WIND, TEMP, & ALTM INFO' and 'AWOS TEMP UNRELBL' "
                      "are temperature (10 and 8 of NASR's 18 on 2026-10-01). a check can't tell which one "
                      "a translation picked"},
+    "W": {"expansion": None, "remarks_use": ["west", "white", "with"],
+          "note": "the Chart Supplement lists West and White (and Warning Area, Watts), and NASR's 1,489 on "
+                  "2026-10-01 are mostly west ('300 FT W OF PAD', 'W SIDE'), some white ('MKD WITH W CONES', "
+                  "'RED & W A-FRAMES'), about 220 written W/ mean with ('FUEL AVBL 24 HRS W/CREDIT CARD', 'MKD "
+                  "W/ ORANGE CONES'), and a few name a taxiway (TWY W). a check can't tell which one a "
+                  "translation picked: 'W RWY MRKG CONES EV 300 FT', on both ends of one runway, read as west"},
     "N/A": {"expansion": None, "remarks_use": ["not authorized", "not available", "not applicable"],
             "note": "the FAA lists 'not applicable', and remarks use N/A three ways: not authorized "
                     "('AUTOPILOT COUPLED APCH N/A BLW 1570 FT', 'RSTD: SOLO STU N/A', 'TOUCH AND GO'S N/A'), "
