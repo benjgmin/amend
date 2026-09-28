@@ -287,13 +287,50 @@ class TestNoGuess(unittest.TestCase):
         self.assertTrue(remarks.problems("ACFT ONLY ABV 50 FT.", "Aircraft above 50 feet."))
 
     def test_negations_survive(self):
-        self.assertEqual(remarks.problems("RWY 18 NOT LGTD.", "Runway 18 is not lighted."), [])
-        self.assertEqual(remarks.problems("RWY 18 NOT LGTD.", "Runway 18 is unlighted."), [])
-        self.assertEqual(remarks.problems("RWY 18 NOT LGTD.", "Runway 18 lighted."), ["dropped NOT"])
-        self.assertEqual(remarks.problems("NO FUEL AVBL.", "Fuel available."), ["dropped NO"])
+        dropped = ["dropped a negation: the FAA text has 1, the translation 0"]
+        added = ["added a negation: the FAA text has 0, the translation 1"]
+        for raw, plain in [("RWY 18 NOT LGTD.", "Runway 18 is not lighted."),
+                           ("RWY 18 NOT LGTD.", "Runway 18 is unlighted."),
+                           ("RWY NOT CLSD.", "Runway not closed."),
+                           ("RWY 18 UNAVBL.", "Runway 18 is not available."),
+                           ("NO FUEL AVBL.", "Fuel isn't available."),
+                           ("NO TGL.", "Touch-and-go landings prohibited."),
+                           ("TKOF NA.", "Takeoffs not authorized."), ("TKOF NA.", "Takeoff NA."),
+                           ("CAUTION: RWY 30 PAPI U/S UFN.", "Caution: runway 30 PAPI out of service until further notice.")]:
+            self.assertEqual(remarks.problems(raw, plain), [], plain)
+        self.assertEqual(remarks.problems("RWY 18 NOT LGTD.", "Runway 18 lighted."), dropped)
+        self.assertEqual(remarks.problems("RWY NOT CLSD.", "Runway closed."), dropped)
+        self.assertEqual(remarks.problems("NO FUEL AVBL.", "Fuel available."), dropped)
+        self.assertIn(dropped[0], remarks.problems("RWY 18 UNAVBL.", "Runway 18 available."))
+        self.assertEqual(remarks.problems("TWY A LGTD.", "Taxiway A is not lighted."), added)
+        self.assertEqual(remarks.problems("RWY 18 PPR.", "Runway 18 no prior permission required."), added)
+        # real ones: a clause with NOT left out, and an N (north) read as non-
+        self.assertIn("dropped a negation: the FAA text has 3, the translation 2", remarks.problems(
+            "MKD WITH 20 FT HIGH NRS; NO CNTRLN STRIPES. NRS NOT AT DSPLCD THR; NO DSPLCD THR MARKINGS.",
+            "The runway is marked with 20 foot high numbered markers with no centerline stripes and no "
+            "displaced threshold markings."))
+        self.assertIn(added[0], remarks.problems("N GA APN MAX WINGSPAN 104 FT.",
+                                                 "Non-GA aircraft maximum wingspan 104 feet."))
         # except NO before a case number
         self.assertEqual(remarks.problems("SEE AIRSPACE CASE NO. 2024-ASW-7785-NRA.",
                                           "See airspace case number 2024-ASW-7785-NRA."), [])
+
+    def test_meanings_from_other_fields(self):
+        self.assertTrue(remarks.problems("100 LL AVBL.", "100 landline available."))
+        self.assertEqual(remarks.problems("100 LL AVBL.", "100LL available."), [])
+        self.assertTrue(remarks.problems("GOV ACFT ONLY.", "Governor aircraft only."))
+        self.assertEqual(remarks.problems("GOV ACFT ONLY.", "GOV aircraft only."), [])
+
+    def test_a_contraction_is_not_a_plain_word(self):
+        """a plain word may change its ending or be split, but a contraction isn't filled out."""
+        self.assertEqual(remarks.problems("COMM RQRD.", "Commercial required."), ["dropped COMM"])
+        self.assertEqual(remarks.problems("APPROX 200 FT.", "Approach 200 feet."), ["dropped APPROX"])
+        self.assertEqual(remarks.problems("APPROX 200 FT.", "APPROX 200 feet."), [])
+        for raw, plain in [("20 FT DROPOFF 300 FT FM APCH END.", "There is a 20 foot drop-off 300 feet from the approach end."),
+                           ("PHONE AVBL 24 HRS.", "Telephone available 24 hours."),
+                           ("ALTITUDE CORRECTION REQUIRED.", "Altitude corrections are required."),
+                           ("CONTROLLING OBSTN.", "Controlled obstruction.")]:
+            self.assertEqual(remarks.problems(raw, plain), [], plain)
 
     def test_compass_points(self):
         self.assertEqual(remarks.problems("115' LGTD/MKD RADIO TOWER 190' NNE.",

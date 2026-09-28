@@ -130,13 +130,15 @@ PLAIN_WORDS = {"A", "AN", "THE", "OF", "TO", "IN", "ON", "AT", "BY", "FOR", "WIT
                "ITS", "THIS", "THAT", "THESE", "THOSE", "THEN", "THAN", "THERE", "WHICH", "WHO",
                "IF", "SO", "HAS", "HAVE", "HAD", "DO", "DOES", "WILL", "SHALL", "ALSO", "PLEASE",
                "MISC"}
-# negations may be reworded ("NOT AVBL" -> "unavailable") but never lost
-NEGATIONS = {"NOT", "NO", "NON", "NONE", "NEVER", "CANNOT", "WITHOUT"}
+# negations may be reworded ("NOT AVBL" -> "unavailable", "NO FUEL" -> "fuel not available"), but a
+# translation has to say as many as the FAA text does: "RWY NOT CLSD" isn't "runway closed", and
+# "TWY A LGTD" isn't "taxiway A is not lighted". UN- and NON- words count (UNAVBL, "unmarked",
+# "non-standard"), and so does a contraction whose FAA meaning is one (NA, NLT, NSTD)
+NEGATIONS = {"NOT", "NO", "NON", "NONE", "NEVER", "CANNOT", "WITHOUT", "NOR", "UNLESS"}
+NOT_NEGATIVE = ("UNDER", "UNTIL", "UNIT", "UNICOM", "UNION", "UNIFORM", "UNIFIED", "UNIVERS", "UNIQUE")
 # except NO before a case number: "SEE AIRSPACE CASE NO. 2024-ASW-7785-NRA"
-NUMBER_NO = re.compile(r"\bNO\.\s*(?:[A-Z]+:\s*)?\d")
-SAYS_NOT = re.compile(r"\b(not|no|non|none|never|cannot|without|unable|prohibited|closed|except"
-                      r"|un(available|usable|monitored|attended|lighted|lit|marked|authorized|paved))\b|n't\b"
-                      r"|\bnon-?[a-z]{3,}")
+NUMBER_NO = re.compile(r"\bNO\.\s*(?:[A-Z]+:\s*)?\d", re.I)
+SAYS_NOT = re.compile(r"\b(not|no|non|none|never|cannot|without)\b|n['’]t\b")
 STOP = {"of", "the", "and", "or", "to", "a", "an", "in", "on", "at", "by", "for", "with"}
 
 
@@ -157,13 +159,18 @@ def problems(raw, plain):
     words += [w[2:] for w in words if w.startswith("un") and len(w) > 5]   # "unlighted" says "lighted"
     words += [w[3:] for w in words if w.startswith("non") and len(w) > 6]  # "nonstandard" says "standard"
     pairs = [a + b for a, b in zip(words, words[1:])]                      # "center line" says "centerline"
+    ts = terms(raw)
+    joined = {}                                                            # RAIL ROAD said as "railroad"
+    for a, b in zip(ts, ts[1:]):
+        joined.setdefault(a, set()).add((a + b).lower())
+        joined.setdefault(b, set()).add((a + b).lower())
     out = []
-    for term in dict.fromkeys(terms(raw)):
+    for term in dict.fromkeys(ts):
         if term in PLAIN_WORDS or _kept(term, plain) or _inflected(term, words):
             continue
-        if term in NEGATIONS:
+        if term in NEGATIONS:       # counted below; a case NO. has to stay a number
             numbered = term == "NO" and not re.search(r"\bNO\b", NUMBER_NO.sub(" ", raw.upper()))
-            if not ("number" in words if numbered else SAYS_NOT.search(low)):
+            if numbered and "number" not in words:
                 out.append(f"dropped {term}")
             continue
         entry = glossary.lookup(term)
@@ -177,8 +184,12 @@ def problems(raw, plain):
             out.append(f"{term} has no verified meaning ({entry.get('note') or 'unverified'}); it must stay as written")
         elif not english and _looks_contracted(term):
             out.append(f"{term} is not in the verified glossary; it must stay as written")
-        elif not _reworded(term, words):
+        elif not _reworded(term, words + pairs, joined.get(term, ())):
             out.append(f"dropped {term}")
+    least, most, said = _negations(raw, plain)
+    if not least <= said <= most:
+        out.append(f"{'dropped' if said < least else 'added'} a negation: the FAA text has "
+                   f"{least if said < least else most}, the translation {said}")
     for code in PCR_CODE.findall(raw.upper()):
         if code.lower() not in low.replace(" / ", "/"):
             out.append(f"changed the pavement code {code}")
@@ -224,11 +235,12 @@ def _looks_contracted(term):
 
 
 def _kept(term, plain):
-    """copied as written, maybe made plural: 'MIRL' -> 'MIRLs', 'E-MAIL' -> 'email', 'US' -> 'U.S.'"""
+    """copied as written, maybe made plural or joined to its number: 'MIRL' -> 'MIRLs', 'E-MAIL' ->
+    'email', 'US' -> 'U.S.', '100 LL' -> '100LL'"""
     spelled = re.escape(term).replace(r"\-", "[- ]?")
     if term.isalpha() and len(term) <= 3:
         spelled = r"\.?".join(term)
-    return re.search(r"(?<![A-Za-z0-9])" + spelled + r"(?:'?s|es)?(?![A-Za-z0-9])", plain, re.I) is not None
+    return re.search(r"(?<![A-Za-z])" + spelled + r"(?:'?s|es)?(?![A-Za-z0-9])", plain, re.I) is not None
 
 
 def _inflected(term, words):
@@ -292,11 +304,52 @@ def _close(want, have):
     return len(os.path.commonprefix([want, have])) >= need
 
 
-def _reworded(term, words):
-    """a plain word the translation changed the ending of, or joined to another:
-    REQUIRED -> 'requires', PHONE -> 'telephone', RAIL ROAD -> 'railroad'."""
+# endings a plain word may trade for another: REQUIRED said as 'requires', CONTROLLING as
+# 'controlled', OPERATIONS as 'operating'
+WORD_ENDINGS = {"", "e", "s", "es", "d", "ed", "ing", "ings", "er", "ers", "ly", "y", "ies", "ied", "al",
+                "ion", "ions", "ation", "ations", "ment", "ments", "ance", "ence", "ity", "ive"}
+
+
+def _reworded(term, words, joined=()):
+    """a plain word the translation changed the ending of, split, or joined to its neighbor:
+    REQUIRED -> 'requires', DROPOFF -> 'drop-off', RAIL ROAD -> 'railroad'. not a contraction
+    filled out: COMM isn't 'commercial', APPROX isn't 'approach'."""
     t = term.lower()
-    return (len(t) >= 5 and any(_close(t, w) for w in words)) or (len(t) >= 4 and any(t in w for w in words))
+    return len(t) >= 4 and any(_one_word(x, w) for x in (t, *joined) for w in words)
+
+
+def _one_word(a, b):
+    """the same word with different endings (a shared stem, and only an ending after it on each
+    side), or the end of a longer one: PHONE in 'telephone', STRIP in 'airstrip'."""
+    k = len(os.path.commonprefix([a, b]))
+    return (any(a[i:] in WORD_ENDINGS and b[i:] in WORD_ENDINGS for i in range(max(k - 2, 3), k + 1))
+            or (len(a) >= 5 and b.endswith(a)))
+
+
+def _negations(raw, plain):
+    """(fewest, most) negations a translation may say, and how many it does. NOT, NO, UNAVBL and
+    'unmarked' count wherever they are. a contraction whose FAA meaning is a negation (NA is 'not
+    authorized', U/S is 'unserviceable') may be said with one or not ('out of service'): the check
+    of its meaning covers it."""
+    ts = terms(NUMBER_NO.sub(" ", raw.upper()))
+    least = sum(map(_negative, ts))
+    most = least + sum(1 for t in ts if not _negative(t) and _negates(t))
+    words = re.findall(r"[a-z]+", NUMBER_NO.sub(" ", plain).lower())
+    said = sum(_negative(w.upper()) for w in words) + len(re.findall(r"[a-z]n['’]t\b", plain.lower()))
+    return least, most, said
+
+
+def _negates(term):
+    entry = glossary.lookup(term)
+    return bool(entry and entry["verified"] and not entry.get("english") and entry.get("expansion")
+                and any(map(_negative, re.findall(r"[A-Z]+", entry["expansion"].upper()))))
+
+
+def _negative(word):
+    """1 for NOT, NONE, WITHOUT, UNAVBL, UNMARKED, NONSTANDARD, PROHIBITED; 0 for UNDER, UNTIL, UNICOM."""
+    if word in NEGATIONS or (word.startswith("NON") and len(word) > 3) or word.startswith("PROHIB"):
+        return 1
+    return int(word.startswith("UN") and len(word) >= 4 and not word.startswith(NOT_NEGATIVE))
 
 
 def _numbers(text):
