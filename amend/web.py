@@ -1275,9 +1275,10 @@ data-name="{e(wl['name'])}">Save to my lists</a><button class="btn ghost" id="co
 # what shipped, newest first, for /changelog/. Add a line when something people can see changes.
 UPDATES = [
     ("Sep 2026", [
-        "A remark the translator sent back untranslated, like \"90 FT TREES BOTH SIDES OF RWY\", is now asked "
-        "again instead of kept. Until it's translated, a line under it says so. 13 remarks in the October "
-        "preview were stuck that way.",
+        "A remark the translator sent back untranslated, like \"4 IN LOOSE GRVL, RUTS & DIPS FULL LEN.\", is "
+        "now asked again instead of kept. Until it's translated, a line under it says so. 13 remarks in the "
+        "October preview were stuck that way. H24 may read \"continuous operation\", its meaning in the Chart "
+        "Supplement, where the check used to reject it for dropping the 24.",
         "In this cycle's and the next cycle's changes, a remark kept in the FAA's words because of a "
         "contraction Amend can't verify, or a translation that failed its checks, now says why under it. NA "
         "and N/A stay as the FAA wrote them, with a line saying what they can mean: the FAA's lists say not "

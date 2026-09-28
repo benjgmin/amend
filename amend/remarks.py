@@ -91,6 +91,10 @@ def prompt_for(batch):
     if copy:
         text += "These have no verified meaning; copy them exactly as written: " + ", ".join(
             f"{t} (anywhere but {where[t]})" if t in where else t for t in sorted(copy)) + "\n"
+    if uses := [t for t in sorted(copy) if _uses(t)]:     # the model reads NA as 'not available' anyway
+        it = "it" if len(uses) == 1 else "them"
+        text += (f"Remarks use {_either(uses, 'and')} more than one way, so copy {it} even where the meaning "
+                 "looks plain: 'SNOW REMOVAL NA' is 'snow removal NA', never 'snow removal not available'.\n")
     return text + "\nRemarks:\n" + json.dumps(batch, indent=1)
 
 
@@ -465,10 +469,11 @@ def problems(raw, plain):
             out.append(f"changed the pavement code {code}")
     if PCL.search(raw) and CALL_PCL.search(low):
         out.append("says to contact the frequency; pilot-controlled lighting means click the mic")
-    have, want = _numbers(plain), _numbers(raw)
-    out += [f"lost number {n}" for n in sorted(want - have)]
+    have, numbered = _numbers(plain), _numbered(raw, plain)
+    want, need = {n for n, _ in numbered}, {n for n, inside in numbered if not inside}
+    out += [f"lost number {n}" for n in sorted(need - have)]
     out += [f"added number {n}" for n in sorted(have - want)]
-    if have == want and not _same_order(raw, plain):
+    if need <= have <= want and not _same_order(raw, plain):
         out.append("numbers moved, dropped or repeated: " + " ".join(_sequence(plain)))
     if re.search(r"\bOR\b", raw.upper()) and not re.search(r"\bor\b", low):
         out.append("dropped OR")
@@ -827,8 +832,12 @@ def _mark_problems(raw, plain):
 
 # numbers keep their order and count: "+22 FT FENCE 62 FT R" isn't "a 62-foot fence 22 feet
 # away", and "RWY 35, 21 INCH LIGHT BASES" isn't "runways 35 and 21". a phone number with a second
-# ending (901-368-8453/8449) may be said as two numbers
+# ending (901-368-8453/8449) may be said as two numbers. a number inside a contraction with a
+# verified meaning is part of the contraction: "SELF SVC FUEL H24" may be "self service fuel
+# continuous operation". only when the meaning is said in words, though: "FUEL H24; 24 HR PPR"
+# isn't "fuel 24 hours; prior permission required"
 PHONE_PAIR = re.compile(r"(?<!\d)(\d{3}-(?:\d{3}-)?)(\d{4})/(\d{4})\b")
+TOKEN_OR_ADDRESS = re.compile(rf"(?P<address>{ADDRESS.pattern})|(?P<token>{TOKEN.pattern})", re.I)
 
 
 def _sequence(text):
@@ -836,9 +845,34 @@ def _sequence(text):
     return [n.lstrip("0") or "0" for n in re.findall(r"\d*\.\d+|\d+", text)]
 
 
+def _numbered(raw, plain):
+    """a remark's numbers in order, each with True when it's inside a contraction with a verified
+    meaning that the translation says in words (the 24 of H24, said 'continuous operation')."""
+    text = re.sub(r"(?<=\d),(?=\d{3}(?!\d))", "", raw.upper())
+    low = re.sub(r"\d", " ", plain.lower())
+    words = re.findall(r"[a-z]+", low)
+    pairs = [a + b for a, b in zip(words, words[1:])]
+    inside = []
+    for m in TOKEN_OR_ADDRESS.finditer(text):
+        entry = m["token"] and re.search(r"\d", m["token"]) and glossary.lookup(m["token"])
+        if entry and entry["verified"] and not entry.get("english") and _says(entry, low, words, pairs):
+            inside.append(m.span())
+    return [(m[0].lstrip("0") or "0", any(a <= m.start() < b for a, b in inside))
+            for m in re.finditer(r"\d*\.\d+|\d+", text)]
+
+
+def _fits(have, want):
+    """have is want's numbers, with none, some or all of the ones inside a contraction left out"""
+    if not want:
+        return not have
+    (n, inside), rest = want[0], want[1:]
+    return bool(have) and have[0] == n and _fits(have[1:], rest) or inside and _fits(have, rest)
+
+
 def _same_order(raw, plain):
     have = _sequence(plain)
-    return have in (_sequence(raw), _sequence(PHONE_PAIR.sub(lambda m: f"{m[1]}{m[2]} {m[1]}{m[3]}", raw)))
+    return any(_fits(have, _numbered(r, plain))
+               for r in (raw, PHONE_PAIR.sub(lambda m: f"{m[1]}{m[2]} {m[1]}{m[3]}", raw)))
 
 
 # every word of a translation has to come from somewhere: the remark itself, the FAA meaning of one
