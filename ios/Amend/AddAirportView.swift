@@ -3,6 +3,8 @@ import SwiftUI
 struct AddAirportView: View {
     @Environment(AirportStore.self) private var store
     @Environment(\.dismiss) private var dismiss
+    /// true when opened to choose the home airport (welcome screen); otherwise adding never sets home
+    var makeHome = false
     @State private var query = ""
     @FocusState private var focused: Bool
 
@@ -50,7 +52,7 @@ struct AddAirportView: View {
             .toolbarBackground(EFB.bg, for: .navigationBar)
             .toolbar {
                 ToolbarItem(placement: .principal) {
-                    Text("Add airport")
+                    Text(makeHome ? "Choose home airport" : "Add airport")
                         .font(.system(size: 16, weight: .semibold))
                         .foregroundStyle(EFB.text)
                 }
@@ -61,7 +63,7 @@ struct AddAirportView: View {
     }
 
     private func add(_ id: String) {
-        store.add(id)
+        if let id = store.add(id), makeHome { store.setHome(id) }
         dismiss()
     }
 

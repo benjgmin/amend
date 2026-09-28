@@ -14,6 +14,20 @@ struct AirportsView: View {
                     CycleStrip(meta: meta) { showingGuide = true }.efbRow(top: 8, bottom: 12)
                 }
 
+                // a row, not an overlay: an overlay stays put while pull-to-refresh moves the list,
+                // so it slid over the cycle panel
+                if store.saved.isEmpty {
+                    ContentUnavailableView {
+                        Label("No airports", systemImage: "airplane")
+                    } description: {
+                        Text("Add the airports you fly to. Amend shows what changes at each one every FAA cycle. To make one your home field, open it and tap the house.")
+                    } actions: {
+                        Button("Add airport") { showingAdd = true }
+                            .buttonStyle(.borderedProminent)
+                    }
+                    .efbRow(top: 24, bottom: 8)
+                }
+
                 if let home = store.home {
                     EFBHeader(text: "Home").efbRow(top: 4, bottom: 2)
                     tile(home, isHome: true)
@@ -38,18 +52,6 @@ struct AirportsView: View {
             .listStyle(.plain)
             .scrollContentBackground(.hidden)
             .background(EFB.bg)
-            .overlay {
-                if store.saved.isEmpty {
-                    ContentUnavailableView {
-                        Label("No airports", systemImage: "airplane")
-                    } description: {
-                        Text("Add your home field and the airports you fly to. Amend shows what changes each FAA cycle.")
-                    } actions: {
-                        Button("Add airport") { showingAdd = true }
-                            .buttonStyle(.borderedProminent)
-                    }
-                }
-            }
             .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(EFB.bg, for: .navigationBar)
             .toolbar {

@@ -36,7 +36,7 @@ struct WelcomeView: View {
             footer
         }
         .background(EFB.bg)
-        .sheet(isPresented: $showingAdd) { AddAirportView() }
+        .sheet(isPresented: $showingAdd) { AddAirportView(makeHome: true) }
         .sheet(isPresented: $showingGuide) { NavigationStack { GuideView() } }
     }
 

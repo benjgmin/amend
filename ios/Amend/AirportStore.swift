@@ -117,8 +117,7 @@ final class AirportStore {
     func add(_ raw: String) -> String? {
         guard let id = Self.normalize(raw) else { return nil }
         if !saved.contains(id) {
-            saved.append(id)
-            if saved.count == 1 && home == nil { setHome(id) }   // first airport becomes home
+            saved.append(id)   // never sets home: only an explicit pick does
             persist()
         }
         return id
