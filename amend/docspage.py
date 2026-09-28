@@ -174,7 +174,7 @@ def sections():
             f'<ol class="dx-steps">{how}</ol>')),
         ("labels", "ACT, IFR and FYI", (
             "<p>Every change gets one label, from fixed rules in the code:</p><ul>"
-            "<li><b>ACT</b>: may change what you do there. Tower and Class D hours, frequencies, runways opened, "
+            "<li><b>ACT</b>: could change your plan. Tower and Class D hours, frequencies, runways opened, "
             "closed or renumbered, lighting, pattern altitude, attendance, navaids removed, airspace, and remarks "
             "with words like closed, PPR or not available.</li>"
             "<li><b>IFR</b>: instrument procedures. Approaches, STARs and departures added, amended or removed, and "

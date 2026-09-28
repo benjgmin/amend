@@ -584,7 +584,7 @@ class TestWeb(unittest.TestCase):
         self.assertIn("View plate", page)
         self.assertIn("Effective 10 Jul 2025", page)          # history section
         self.assertIn('href="../guide/">What do these mean?', page)   # legend for the labels
-        self.assertIn('<span class="ann act" title="May change what you do there', page)
+        self.assertIn('<span class="ann act" title="Could change your plan', page)
         self.assertIn('<nav class="sb"', page)                      # desktop sidebar
         self.assertRegex(page, r'assets/style\.css\?v=[0-9a-f]{10}"')  # cache-busted stylesheet
         self.assertIn('data-f="ifr"', page)                         # filter tabs

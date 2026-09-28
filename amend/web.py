@@ -47,8 +47,8 @@ PRIORITY = [("action", "ACT", "Action"), ("ifr", "IFR", "IFR procedures"), ("fyi
 # what the labels mean, same words as the iOS guide (ios/Amend/GuideView.swift): css class, legend, tooltip,
 # full text, example
 TIERS = {
-    "action": ("act", "may change what you do there", "May change what you do there: tower hours, frequencies, runways, navaids",
-               "May change what you do there. Tower or Class D hours, frequencies, runways closed, renumbered or "
+    "action": ("act", "could change your plan", "Could change your plan: tower hours, frequencies, runways, navaids",
+               "Could change your plan. Tower or Class D hours, frequencies, runways closed, renumbered or "
                "restricted, navaids removed or changed, new PPR or noise rules.",
                "Tower hours changed: 0700-2100 → 0700-0100 local"),
     "ifr": ("ifr", "instrument procedures", "Approaches, STARs, departures and IFR routes",
