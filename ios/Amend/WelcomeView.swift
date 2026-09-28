@@ -51,7 +51,7 @@ struct WelcomeView: View {
 
     private var reading: some View {
         pageLayout(icon: "list.bullet.rectangle", title: "How to read it") {
-            chip("ACT", EFB.amber, "Changes how you fly it: tower hours, frequencies, runways, navaids")
+            chip("ACT", EFB.amber, "Could change your plan: tower hours, frequencies, runways, navaids")
             chip("IFR", EFB.cyan, "Approaches, STARs, departures and IFR routes")
             chip("FYI", EFB.dim, "Worth knowing: phone numbers, fees, obstacles, reworded remarks")
             chip("No change", EFB.green, "Nothing changed there this cycle")
