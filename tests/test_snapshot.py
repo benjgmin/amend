@@ -3,14 +3,13 @@ Snapshot of what the engine says today about one real cycle pair, for every airp
 watchlists and the busiest airports (tests/gold/snapshot.json lists them). Any change to diff,
 collapse, rules or summaries shows up here as a diff to review.
 
-It needs Python 3.11+ and the two NASR zips named in tests/gold/snapshot.json in data/
-(download lines in tests/gold/README.md), and skips without them.
+It needs the two NASR zips named in tests/gold/snapshot.json in data/ (download lines in
+tests/gold/README.md), and skips without them.
 After a change you meant to make:  python -m amend.gold --update-snapshot, then review the
 snapshot file's diff before committing it.
 """
 import json
 import os
-import sys
 import unittest
 
 from amend import gold
@@ -31,9 +30,6 @@ class TestSnapshotFile(unittest.TestCase):
 
 @unittest.skipIf(MISSING, f"snapshot needs the FAA NASR zips in data/: {', '.join(MISSING)} "
                           f"(download lines in tests/gold/README.md)")
-@unittest.skipIf(sys.hash_info.algorithm != gold.HASH_ALGORITHM,
-                 f"snapshot needs Python 3.11 or newer ({gold.HASH_ALGORITHM} string hashing), "
-                 f"this Python uses {sys.hash_info.algorithm}")
 class TestSnapshot(unittest.TestCase):
     def test_engine_output_unchanged(self):
         with open(gold.snapshot_path(META), encoding="utf-8") as f:

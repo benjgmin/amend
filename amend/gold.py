@@ -234,22 +234,16 @@ def snapshot_inputs(meta, data=DATA):
     return tuple(paths)
 
 
-# the engine's output depends on Python's string hash seed today (diff.py pairs removed and
-# added rows in set order), so two runs on the same zips can pair FAA rows differently. until
-# that's fixed, the snapshot always runs in a child process with a fixed seed.
-HASH_SEED = "0"
-# a seed pins the order for one string hash algorithm only. the snapshot was recorded on 3.11+
-# (siphash13); 3.10 and older use siphash24, which pairs a few rows at CLT and IAD differently
-HASH_ALGORITHM = "siphash13"
+# the engine's output used to depend on Python's string hash seed (diff.py paired rows in set
+# order). it doesn't anymore, so the snapshot runs under a random seed: every run on the real
+# zips is also a check that the same FAA files give the same output.
+HASH_SEED = "random"
 MARK = "\n@@snapshot@@"
 
 
 def make_snapshot(meta, data=DATA):
     """the engine's output for the snapshot airports, the way the site builds it: every airport
     at once (all-airports mode), then only the snapshot's airports kept."""
-    if sys.hash_info.algorithm != HASH_ALGORITHM:
-        raise ValueError(f"the snapshot needs Python 3.11 or newer ({HASH_ALGORITHM} string hashing); "
-                         f"this is {sys.version.split()[0]} ({sys.hash_info.algorithm})")
     old, new = snapshot_inputs(meta, data)
     env = {**os.environ, "PYTHONHASHSEED": HASH_SEED}
     p = subprocess.run([sys.executable, "-c", "import sys; from amend import gold; gold._child(sys.argv[1:])",

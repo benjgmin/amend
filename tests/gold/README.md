@@ -38,6 +38,8 @@ it can show rows about other airports (see the PR that added this).
 | `evidence` | where the rows came from |
 | `known_failure` | `true` when the engine gets it wrong today (a candidate engine bug) |
 | `why_engine_is_wrong`, `engine_says` | with `known_failure`: the rule that gets it wrong, and what the engine says today |
+| `engine_was_wrong_because`, `engine_said_before_fix` | a known failure that got fixed: the same two notes, kept on record |
+| `expected_was` | a gold expectation that was changed after the case was written: the old `priority` and `changed_because`. a person should confirm these |
 
 The test fails when a case fails, unless it's a `known_failure`. A known failure that starts
 passing fails too, so whoever fixed the engine drops the flag and the fix is on record.
@@ -66,9 +68,9 @@ them yet. `python -m amend.gold` prints how many a person has checked.
 What the engine says today about one real cycle pair for every airport on the watchlists plus
 the busiest airports (the list is frozen in `snapshot.json`, so adding a watchlist doesn't
 change it). No remark translations, no charts, no airspace shapes: NASR only. It runs in
-all-airports mode like the site, in a child process with `PYTHONHASHSEED=0`: today the
-engine's output depends on Python's hash seed (rows get paired in set order), so without a
-fixed seed two runs on the same zips can disagree.
+all-airports mode like the site, in a child process with a random `PYTHONHASHSEED`: the same
+FAA files must give the same output on every run (the engine used to pair rows in set order,
+so it didn't).
 
 The test needs the two NASR zips named in `snapshot.json` in `data/`, checked by sha256, and
 skips without them. The FAA's links roll off its site after a while, but both files are kept
@@ -80,9 +82,8 @@ curl -L --create-dirs -o data/2026-09-03_CSV.zip https://github.com/benjgmin/ame
 python -m unittest tests.test_snapshot -v     # about a minute
 ```
 
-It needs Python 3.11 or newer, like the rest of the backend. The fixed seed only pins the
-order for one string hash algorithm, and 3.10 and older use a different one, so a few rows at
-CLT and IAD pair differently there. The test skips on those, and `--update-snapshot` refuses.
+Output no longer depends on Python's string hashing at all, so it gives the same file on any
+seed and any Python version (checked on 3.10, which hashes strings differently from 3.11+).
 
 After a change you meant to make, `python -m amend.gold --update-snapshot` rewrites the file.
 Review its diff like code: every line that moved is a change in what pilots see.

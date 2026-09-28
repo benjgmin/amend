@@ -22,7 +22,7 @@ CATEGORY = [  # (source prefix, category) - first match wins
     ("CLS_ARSP", "airspace"), ("ATC", "tower"), ("FRQ", "frequency"), ("NAV", "navaid"),
     ("ILS", "navaid"), ("APT_RWY", "runway"), ("APT_RMK", "remark"), ("STAR/DP", "procedure"),
     ("PFR", "route"), ("D-TPP", "chart"), ("AWOS", "weather"), ("APT", "airport"),
-    ("PJA", "airspace"),
+    ("PJA", "airspace"), ("RDR", "tower"),
 ]
 
 
@@ -55,7 +55,8 @@ def to_change(rec, airport, to_cycle):
     out = {
         "id": change_id(airport, to_cycle, rec["summary"]),
         "priority": rec["priority"],
-        "category": "remark" if is_frq_remark(rec) else category(rec["source"]),
+        "category": ("remark" if is_frq_remark(rec)
+                     else rec.get("category") or category(rec["source"])),
         "kind": rec["kind"],
         "summary": rec["summary"],
         "source": base(rec["source"]),
