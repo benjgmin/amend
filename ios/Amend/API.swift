@@ -22,8 +22,10 @@ struct API {
 
     /// raw bytes, or nil on 404 (Amend only publishes files for airports that changed)
     static func data(_ path: String) async throws -> Data? {
+        let sent = Date.now
         let (data, response) = try await URLSession.shared.data(from: base.appending(path: path))
         if let http = response as? HTTPURLResponse {
+            ServerClock.update(http, sent: sent)
             if http.statusCode == 404 { return nil }
             guard (200..<300).contains(http.statusCode) else { throw APIError.badStatus(http.statusCode) }
         }

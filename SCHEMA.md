@@ -24,7 +24,8 @@ Which cycles `latest/` compares.
 |---|---|---|
 | `schema_version` | int | |
 | `from_cycle`, `to_cycle` | string | ISO dates |
-| `upcoming` | bool | `true`: `to_cycle` hasn't taken effect yet |
+| `upcoming` | bool | `true`: `to_cycle` hadn't taken effect when this file was built. Don't show it as-is: files are rebuilt on a schedule, not at the changeover. Compare `effective` with the time now instead |
+| `effective` | string | when `to_cycle` takes effect, always 0901Z on its date (`2026-10-01T09:01:00Z`). In effect once the time is at or past this, by a clock you trust (amend.watch checks the device's against the server's `Date` header) |
 | `includes_charts` | bool | d-TPP chart changes included |
 | `includes_airspace` | bool | class airspace shape changes (floors, ceilings, boundaries) included |
 | `changed_airports` | int | |

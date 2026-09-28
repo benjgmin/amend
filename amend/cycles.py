@@ -1,5 +1,6 @@
 """FAA 28-day cycle math, download URLs, and downloading."""
 import datetime as dt
+import email.utils
 import hashlib
 import io
 import json
@@ -207,17 +208,28 @@ def download(url, path, required=()):
 
 def probe(url):
     """is url posted? True / False, or None if we couldn't tell. reads a few bytes, not the file."""
+    return probe_info(url)[0]
+
+
+def probe_info(url):
+    """(posted, last_modified): probe() plus the file's Last-Modified (UTC datetime, or None), so a run
+    can say how long after the FAA posted a file it first saw it."""
     req = urllib.request.Request(url, headers={"User-Agent": "amend", "Range": "bytes=0-15"})
     try:
         with urllib.request.urlopen(req, timeout=30) as r:
             head = r.read(16).lstrip(b"\xef\xbb\xbf \t\r\n")
+            lm = r.headers.get("Last-Modified")
     except urllib.error.HTTPError as e:
-        return False if e.code in MISSING else None
+        return (False if e.code in MISSING else None), None
     except Exception:
-        return None
+        return None, None
+    try:
+        lm = email.utils.parsedate_to_datetime(lm).astimezone(dt.timezone.utc) if lm else None
+    except (TypeError, ValueError):
+        lm = None
     if url.lower().endswith(".zip"):
-        return head.startswith(b"PK")
-    return head.startswith(b"<") and not head.lower().startswith((b"<!doctype", b"<html"))
+        return head.startswith(b"PK"), lm
+    return head.startswith(b"<") and not head.lower().startswith((b"<!doctype", b"<html")), lm
 
 
 def get_cycle(d):

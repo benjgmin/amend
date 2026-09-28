@@ -1,4 +1,5 @@
 import Foundation
+import Observation
 
 // Mirrors SCHEMA.md (schema_version 1). Decoded with .convertFromSnakeCase.
 
@@ -121,6 +122,52 @@ enum Priority: String, CaseIterable, Identifiable, Sendable {
     }
 }
 
+/// the clock the 0901Z changeover runs on: this device's, unless it's more than 2s off amend.watch's (the Date
+/// header on every API response). a phone set 10 minutes fast mustn't show the new cycle as in effect at 0851Z
+enum ServerClock {
+    private static var offset: TimeInterval = 0
+    static var now: Date { Date.now.addingTimeInterval(offset) }
+
+    static func update(_ response: HTTPURLResponse, sent: Date) {
+        guard let header = response.value(forHTTPHeaderField: "Date"),
+              let server = httpDate.date(from: header) else { return }
+        // the header is whole seconds; compare its middle with the middle of the round trip
+        let mid = sent.addingTimeInterval(Date.now.timeIntervalSince(sent) / 2)
+        let skew = server.addingTimeInterval(0.5).timeIntervalSince(mid)
+        offset = abs(skew) > 2 ? skew : 0
+    }
+
+    private static let httpDate: DateFormatter = {
+        let f = DateFormatter()
+        f.locale = Locale(identifier: "en_US_POSIX")
+        f.timeZone = TimeZone(identifier: "GMT")
+        f.dateFormat = "EEE, dd MMM yyyy HH:mm:ss zzz"
+        return f
+    }()
+}
+
+/// redraws every view that asked Cycle.isInEffect / daysUntil: when the app comes back to the
+/// foreground, when new meta loads, and at the 0901Z changeover itself while a screen is open
+@Observable
+final class CycleClock {
+    static let shared = CycleClock()
+    private(set) var tick = 0
+    @ObservationIgnored private var wait: Task<Void, Never>?
+
+    func recheck(_ cycle: String?) {
+        tick += 1
+        wait?.cancel()
+        wait = nil
+        guard let cycle, let t = Cycle.effectiveInstant(cycle) else { return }
+        let seconds = t.timeIntervalSince(ServerClock.now)
+        guard seconds > 0, seconds < 2 * 86400 else { return }
+        wait = Task { [weak self] in
+            try? await Task.sleep(for: .seconds(seconds + 0.05))
+            if !Task.isCancelled { self?.recheck(cycle) }
+        }
+    }
+}
+
 /// FAA cycle dates ("2026-10-01"). Everything in UTC so a cycle never shows as the day before.
 enum Cycle {
     private static let utc = TimeZone(identifier: "UTC")!
@@ -171,16 +218,18 @@ enum Cycle {
     }
 
     static func isInEffect(_ cycle: String) -> Bool {
+        _ = CycleClock.shared.tick   // so SwiftUI redraws when it moves
         guard let t = effectiveInstant(cycle) else { return true }
-        return Date.now >= t
+        return ServerClock.now >= t
     }
 
     /// days from today until the cycle takes effect (negative = already effective)
     static func daysUntil(_ cycle: String) -> Int? {
+        _ = CycleClock.shared.tick
         guard let d = date(cycle) else { return nil }
         var cal = Calendar(identifier: .gregorian)
         cal.timeZone = utc
-        let today = cal.startOfDay(for: .now)
+        let today = cal.startOfDay(for: ServerClock.now)
         return cal.dateComponents([.day], from: today, to: d).day
     }
 }

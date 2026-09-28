@@ -46,7 +46,7 @@ enum NotificationManager {
         guard !hits.isEmpty || force else { return }
 
         let content = UNMutableNotificationContent()
-        content.title = meta.upcoming ? "New FAA cycle · effective \(Cycle.efb(meta.toCycle))"
+        content.title = !Cycle.isInEffect(meta.toCycle) ? "New FAA cycle · effective \(Cycle.efb(meta.toCycle))"
                                       : "FAA cycle now effective"
         if !hits.isEmpty {
             content.body = summary(hits)
