@@ -45,8 +45,10 @@ Run:
                           shapefiles weren't used (not posted, or unreadable: see checks)
   changes         object  {"airports", "action", "ifr", "fyi", "hidden", "by_category": {}}
                           what the diff produced, before any gate
-  remarks         object  {"texts": remarks needing plain English, "plain_english": shown
-                           translated, "raw_fallback": shown as FAA text, "ai": what the
+  remarks         object  {"texts": changed remarks an airport page reads out (engine 1.3.6 on;
+                           before, every remark text in the diff, hidden ones too),
+                           "plain_english": shown translated, "raw_fallback": shown as FAA
+                           text, "ai": what the
                            translator reported (remarks.STATS), else null: llm_calls,
                            input_tokens, output_tokens, est_cost_usd, sent, translated,
                            rejected (broke the no-guess check), sent_back (the answer was

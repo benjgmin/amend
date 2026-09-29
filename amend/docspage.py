@@ -193,8 +193,9 @@ def sections():
             "doesn't have, like \"the runway\" or \"is available\".</li>"
             "<li><b>The FAA text wins.</b> Any translation that breaks a rule is thrown out and the FAA's own text "
             "is shown instead. The original is always one tap away, translated or not.</li></ul>"
-            "<p>That means plenty of remarks show as FAA text. On the 1 Oct 2026 build, 723 of the 1,591 changed "
-            f'remarks read in plain English. The <a href="{status}">status page</a> shows the current count.</p>')),
+            "<p>That means some remarks show as FAA text. On the 1 Oct 2026 preview, about 94% of the changed "
+            f'remarks on airport pages read in plain English. The <a href="{status}">status page</a> shows the '
+            "current count.</p>")),
         ("checks", "What stops a bad update", (
             "<p>Amend would rather show nothing new than show something wrong. Each of these stops a build, and "
             "the site stays on the last version that passed everything:</p><ul>"

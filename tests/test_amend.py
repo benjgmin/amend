@@ -268,6 +268,27 @@ class TestWhyFaaWords(Case):
             self.assertIn("if(c.untranslated)more='<div class=\"why\">'+esc(c.untranslated)+'</div>'+more;", f.read())
 
 
+class TestRemarkCount(Case):
+    def test_counts_only_the_remarks_a_page_reads_out(self):
+        """1 Oct 2026: the FAA moved ~1,100 PCR VALUE lines out of APT_RMK and into the runway data. Amend
+        hides them, but the run log counted them as remarks shown in the FAA's words, so the status page said
+        745 of 1,591 remarks read in plain English when 665 of the 704 a page reads out did."""
+        rmk = "ARPT_ID,LEGACY_ELEMENT_NUMBER,REMARK"
+        d = tempfile.mkdtemp()
+        o, n = os.path.join(d, "2026-09-03_CSV.zip"), os.path.join(d, "2026-10-01_CSV.zip")
+        make_zip(o, {"APT_RMK.csv": [rmk, "DAB,A1,PCR VALUE: 401/F/D/X/T", "DAB,A2,DEER ON & INVOF ARPT."]})
+        make_zip(n, {"APT_RMK.csv": [rmk, "DAB,A2,DEER & LRG BIRDS ON & INVOF ARPT.", "DAB,A3,RWY 09 IS CLSD."]})
+        with open(remarks.CACHE_FILE, "w") as f:
+            json.dump({"RWY 09 IS CLSD.": "Runway 09 is closed."}, f)
+        try:
+            res = run(o, n, {"DAB"}, None, log=lambda *_: None)
+        finally:
+            os.remove(remarks.CACHE_FILE)
+        read_out = sorted(c["original"] for c in res["airports"]["DAB"] if c.get("original"))
+        self.assertEqual(read_out, ["DEER & LRG BIRDS ON & INVOF ARPT.", "RWY 09 IS CLSD."])
+        self.assertEqual(res["remarks"], {"texts": 2, "plain_english": 1})
+
+
 class TestAccuracyAudit(Case):
     """01 OCT 2026 audit: real cases where amend ranked bookkeeping as act, said a thing twice,
     or labeled it wrong."""
