@@ -255,8 +255,10 @@ a.sbi{color:var(--dm);transition:color .15s}a.sbi:hover{color:var(--tx);text-dec
 .sbi b{font:600 13px var(--mono)}.sbi.sub{color:var(--dm);font-size:13.5px}
 .sbt{display:flex;align-items:center;gap:8px;width:100%;padding:6px 8px;border:0;border-radius:6px;background:none;color:var(--dm);font:14px var(--sans);text-align:left;cursor:pointer;transition:color .15s}
 .sbt:hover,.sbl.cur>.sbt{color:var(--tx);text-decoration:none}.sbl.cur>.sbt{font-weight:500}
-.sbl{position:relative}.sbl.cur>.sbt{padding-right:30px}.sbf{display:none;position:absolute;right:2px;top:3px;width:26px;height:26px;border:0;border-radius:5px;background:none;cursor:pointer;align-items:center;justify-content:center}
-.sbl.cur>.sbf{display:flex}.sbf:hover{background:var(--p2)}.sbf:hover .chev{color:var(--tx)}.sbf[aria-expanded=true] .chev{transform:rotate(90deg)}.sbl.on>.sbt{background:var(--p2);color:var(--tx)}
+.sbl{position:relative}.sbl>.sbt{padding-right:30px}.sbf{display:flex;position:absolute;right:2px;top:3px;width:26px;height:26px;border:0;border-radius:5px;background:none;cursor:pointer;align-items:center;justify-content:center;opacity:0;transition:opacity .15s}
+/* the arrow shows on an open list, the list whose page this is, and a list under the pointer or keyboard focus */
+.sbl.open>.sbf,.sbl.on>.sbf,.sbl:hover>.sbf,.sbl:has(:focus-visible)>.sbf{opacity:1}@media (hover:none){.sbl.cur>.sbf{opacity:1}}
+.sbf:hover{background:var(--p2)}.sbf:hover .chev{color:var(--tx)}.sbf[aria-expanded=true] .chev{transform:rotate(90deg)}.sbl.on>.sbt{background:var(--p2);color:var(--tx)}
 .sbt .n{margin-left:auto;font:12px var(--mono);color:var(--fn)}.sbt .nw{margin-left:auto}.sbt .nw+.n{display:none}
 .sbl.open .sbt .nw{display:none}.sbl.open .sbt .nw+.n{display:inline}
 .sbp{position:relative;display:grid;grid-template-rows:0fr;transition:grid-template-rows .22s ease}.sbl.open>.sbp{grid-template-rows:1fr}
@@ -692,15 +694,17 @@ return{all,active,use,create,rename,set,remove,union,same,link,folded,fold}})();
 // airport page a list with that airport (the one in use first), anywhere else the list in use. Clicking a list's
 // name opens its page, so the sidebar and the page never disagree. The page runs SB.side() right after the
 // sidebar's placeholder, so it's right on the first paint; later calls only slide the open list if nothing else changed
-var SB=(()=>{
+var SB=(()=>{let peek="";   // a list opened with its arrow in the sidebar, on this page
 function which(ls,el){const B=document.body.dataset,R=B.root||"",P=new URLSearchParams(location.search),has=id=>ls.some(l=>l.id===id);
+  if(peek&&has(peek))return peek;
   if(new URL(R+"list/",location.href).pathname===location.pathname){if(B.list!==undefined)return B.list;const l=P.get("l");if(l&&has(l))return l}
   const on=LS.active(),apt=el.dataset.on;
   if(apt&&!(on&&on.ids.includes(apt))){const l=ls.find(x=>x.ids.includes(apt));if(l)return l.id}
   return on?on.id:""}
 function side(){const el=document.getElementById("sbw");if(!el)return;const B=document.body.dataset,R=B.root||"",ls=LS.all(),nc=AM.newc(),op=which(ls,el);
   const sig=JSON.stringify([ls,nc]);
-  if(el.dataset.sig!==sig){el.dataset.sig=sig;
+  const fresh=el.dataset.sig!==sig;
+  if(fresh){el.dataset.sig=sig;
     el.innerHTML=ls.length?'<div class="sbh">Your lists</div>'+ls.map(l=>{const n=l.ids.reduce((s,x)=>s+(nc[x]||0),0),u=R+'list/?l='+encodeURIComponent(l.id);
       return '<div class="sbl" data-l="'+esc(l.id)+'"><a class="sbt" href="'+u+'">'+
         '<span class="nm">'+esc(l.name)+'</span>'+(n?'<span class="nw">'+AM.pill(n)+'</span>':'')+'<span class="n">'+l.ids.length+'</span></a>'+
@@ -709,15 +713,18 @@ function side(){const el=document.getElementById("sbw");if(!el)return;const B=do
         (l.ids.length?'':'<div class="sba sub">No airports yet</div>')+
         '</div><i class="sbbar" aria-hidden="true"><b></b></i></div></div>'}).join(""):""}
   // the list that matches the page shows its airports unless it's folded (the same fold as the home page's arrow)
-  el.querySelectorAll(".sbl").forEach(b=>{const c=b.dataset.l===op,o=c&&!LS.folded(op),f=b.querySelector(".sbf");
-    b.classList.toggle("cur",c);b.classList.toggle("open",o);b.classList.toggle("on",c&&b.dataset.l===B.list);
+  el.querySelectorAll(".sbl").forEach(b=>{const c=b.dataset.l===op,o=c&&!LS.folded(op),f=b.querySelector(".sbf"),pg=b.dataset.l===B.list;
+    // a list opening now slides open: its scrollbar waits until it has, so a short list never flashes one
+    if(o&&!fresh&&!b.classList.contains("open")){b.dataset.anim=1;clearTimeout(b.anim);
+      b.anim=setTimeout(()=>{delete b.dataset.anim;const q=b.querySelector(".sbq");draw(q);here(q)},300)}
+    b.classList.toggle("cur",c);b.classList.toggle("open",o);b.classList.toggle("on",pg);
     f.setAttribute("aria-expanded",o);f.setAttribute("aria-label",(o?"Fold ":"Show ")+b.querySelector(".nm").textContent);
-    b.firstChild.setAttribute("aria-current",c&&b.dataset.l===B.list?"page":"false");b.lastChild.inert=!o});
-  floor();el.querySelectorAll(".sbq").forEach(bar);const q=el.querySelector(".sbl.open .sbq");if(q)requestAnimationFrame(()=>here(q));
-  if(!el.dataset.wired){el.dataset.wired=1;el.addEventListener("click",ev=>{const f=ev.target.closest(".sbf");if(!f)return;const id=f.parentNode.dataset.l;
-    LS.fold(id,!LS.folded(id));side();document.dispatchEvent(new Event("amend:fold"))});
-    // once a list has opened, put the airport shown in view
-    el.addEventListener("transitionend",ev=>{const b=ev.target.closest(".sbl.open");if(b&&ev.target===b.lastChild)here(b.querySelector(".sbq"))})}}
+    b.firstChild.setAttribute("aria-current",pg?"page":"false");b.lastChild.inert=!o});
+  floor();el.querySelectorAll(".sbq").forEach(bar);const q=el.querySelector(".sbl.open:not([data-anim]) .sbq");if(q)requestAnimationFrame(()=>here(q));
+  // the arrow folds the open list, or opens another one in its place (its fold is kept for next time)
+  if(!el.dataset.wired){el.dataset.wired=1;el.addEventListener("click",ev=>{const f=ev.target.closest(".sbf");if(!f)return;const b=f.parentNode,id=b.dataset.l;
+    if(b.classList.contains("cur"))LS.fold(id,!LS.folded(id));else{peek=id;LS.fold(id,false)}
+    side();document.dispatchEvent(new Event("amend:fold"))})}}
 // the CSS sizes the open list's box to the sidebar's spare height; this only sets the least room the lists keep:
 // every list's name, and up to 132px of the open one's airports. Heights of what's drawn, never of anything mid-animation
 function floor(){const el=document.getElementById("sbw");if(!el)return;let h=0;
@@ -729,8 +736,8 @@ function here(q){const on=q&&q.querySelector(".sba.on");
   if(on&&(on.offsetTop<q.scrollTop||on.offsetTop+on.offsetHeight>q.scrollTop+q.clientHeight))q.scrollTop=on.offsetTop-(q.clientHeight-on.offsetHeight)/2}
 // our own scrollbar: native scrolling (wheel, trackpad, touch, keys) moves the box; the thumb follows it and can be dragged
 const seen=new WeakSet(),ro=typeof ResizeObserver!=="undefined"?new ResizeObserver(es=>es.forEach(e=>draw(e.target))):null;
-function draw(q){const bar=q.nextElementSibling,t=bar.firstChild,H=q.clientHeight,S=q.scrollHeight;
-  bar.classList.toggle("can",S>H+1);if(S<=H+1)return;
+function draw(q){const bar=q.nextElementSibling,t=bar.firstChild,H=q.clientHeight,S=q.scrollHeight,
+  can=S>H+1&&!q.closest("[data-anim]");bar.classList.toggle("can",can);if(!can)return;
   const th=Math.max(24,H*H/S);t.style.height=th+"px";t.style.top=(q.scrollTop/(S-H))*(H-th)+"px"}
 function bar(q){if(seen.has(q))return draw(q);seen.add(q);const b=q.nextElementSibling;let hide;
   q.addEventListener("scroll",()=>{draw(q);b.classList.add("go");clearTimeout(hide);hide=setTimeout(()=>b.classList.remove("go"),700)},{passive:true});
