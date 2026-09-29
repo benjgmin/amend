@@ -68,6 +68,25 @@ struct AirportsView: View {
                             }
                     }
                     .onMove { store.move(in: list.id, from: $0, to: $1) }
+                    // the ••• menu has these too, but nobody found them there
+                    if store.lists.count == 1 {
+                        HStack(spacing: 8) {
+                            Button { startNaming(.new, "") } label: {
+                                Label("New list", systemImage: "plus")
+                            }
+                            Button {
+                                importText = ""
+                                importing = true
+                            } label: {
+                                Label("Open a shared list", systemImage: "link")
+                            }
+                        }
+                        .buttonStyle(.bordered)
+                        .controlSize(.small)
+                        .font(.system(size: 13, weight: .medium))
+                        .tint(EFB.cyan)
+                        .efbRow(top: 4, bottom: 2)
+                    }
                     if list.ids.isEmpty {
                         Text("No airports on \(list.name) yet. Tap the magnifying glass, find an airport and tap + to add it.")
                             .font(.subheadline)

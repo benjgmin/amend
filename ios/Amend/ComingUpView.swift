@@ -11,11 +11,6 @@ struct ComingUpView: View {
 
     private var upcoming: Bool { meta.upcoming && !Cycle.isInEffect(meta.toCycle) }
 
-    /// the changeover it counts down to: this cycle's, or the next one once this is in effect
-    private var target: Date? {
-        Cycle.effectiveInstant(upcoming ? meta.toCycle : Cycle.shift(meta.toCycle, days: 28))
-    }
-
     var body: some View {
         let kept = store.saved
         let busy = store.busyKept
@@ -24,19 +19,9 @@ struct ComingUpView: View {
 
         // separate list rows (the list flattens this Group), so each airport is its own tap target
         Group {
-            HStack(alignment: .firstTextBaseline) {
-                EFBHeader(text: upcoming ? "Coming up at your airports" : "This cycle at your airports")
-                Spacer(minLength: 8)
-                if let target {
-                    HStack(spacing: 4) {
-                        Text(upcoming ? "Takes effect" : "Next cycle")
-                        Countdown(to: target)
-                    }
-                    .font(.system(size: 12.5))
-                    .foregroundStyle(EFB.faint)
-                }
-            }
-            .efbRow(top: 20, bottom: 2)
+            // no countdown here: the cycle panel at the top already has it
+            EFBHeader(text: upcoming ? "Coming up at your airports" : "This cycle at your airports")
+                .efbRow(top: 20, bottom: 2)
             .task(id: busy) { await store.loadKept() }
 
             if busy.isEmpty {

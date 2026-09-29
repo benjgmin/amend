@@ -155,9 +155,10 @@ struct WelcomeView: View {
     }
 
     private func chip(_ label: String, _ color: Color, _ text: String) -> some View {
-        HStack(alignment: .top, spacing: 12) {
-            Annunciator(text: label, color: color).frame(width: 70, alignment: .leading)
-            Text(text).font(.subheadline)
+        // label above its text: a fixed label column was narrower than NO CHANGE, which ran into the text
+        VStack(alignment: .leading, spacing: 5) {
+            Annunciator(text: label, color: color)
+            Text(text).font(.subheadline).fixedSize(horizontal: false, vertical: true)
         }
     }
 

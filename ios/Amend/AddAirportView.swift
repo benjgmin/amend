@@ -38,6 +38,22 @@ struct AddAirportView: View {
                             .foregroundStyle(EFB.faint)
                             .efbRow(top: 0, bottom: 4)
                     }
+                    // before you type: the busiest airports this cycle, so the sheet isn't blank
+                    if query.trimmingCharacters(in: .whitespaces).isEmpty, !makeHome, !store.busiest.isEmpty {
+                        EFBHeader(text: "Most action items this cycle").efbRow(top: 0, bottom: 2)
+                        ForEach(store.busiest, id: \.self) { id in
+                            if let apt = store.info(for: id) {
+                                HStack(spacing: 8) {
+                                    Button { open(id) } label: {
+                                        ResultRow(apt: apt, counts: store.counts(for: id), indexLoaded: store.index != nil)
+                                    }
+                                    .buttonStyle(.plain)
+                                    toggle(id)
+                                }
+                                .efbRow(top: 2, bottom: 2)
+                            }
+                        }
+                    }
                     ForEach(results) { apt in
                         HStack(spacing: 8) {
                             Button { open(apt.id) } label: {
@@ -132,17 +148,26 @@ private struct ResultRow: View {
                 Text(apt.name)
                     .font(.subheadline.weight(.medium))
                     .foregroundStyle(EFB.text.opacity(0.9))
-                    .lineLimit(1)
+                    .lineLimit(2)
+                    .fixedSize(horizontal: false, vertical: true)
                 Text([apt.icao, apt.location.isEmpty ? nil : apt.location,
                       apt.type == "airport" ? nil : apt.type?.capitalized]
                         .compactMap { $0 }.joined(separator: " · "))
                     .font(.system(size: 12.5))
                     .foregroundStyle(EFB.dim)
                     .lineLimit(1)
+                // under the name, not beside it: counts beside it cut names to "Santa Bar…"
+                if indexLoaded, let counts, counts.total > 0 {
+                    CountAnnunciators(counts: counts).padding(.top, 3)
+                }
             }
             Spacer(minLength: 6)
-            if indexLoaded {
-                CountAnnunciators(counts: counts)
+            if indexLoaded, (counts?.total ?? 0) == 0 {
+                // NO CHANGE as a glyph, so it doesn't take the name's width either
+                Image(systemName: "checkmark.circle")
+                    .font(.system(size: 15))
+                    .foregroundStyle(EFB.green)
+                    .accessibilityLabel("No change")
             }
         }
         .padding(.vertical, 8)
