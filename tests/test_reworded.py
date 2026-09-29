@@ -2,14 +2,16 @@
 A remark edit that only rewords the FAA text is fyi (amend/diff.py just_reworded). An edit that
 changes what the remark means must keep its rank. These pin both sides.
 
-MUST_KEEP_RANK: edits that change the meaning, each run through the real diff. Today the engine
-reads several as a rewording and ranks them fyi: the numbers are compared as a set, not in
-order; a taxiway letter or a day isn't compared at all; and opposite words (BEFORE/AFTER,
-OVER/UNDER, a direction) aren't blockers. Those are marked KNOWN_MISS and run as expected
-failures, so this file documents the gap without blocking a deploy (update.yml runs every test
-before it publishes). When the engine is fixed, the case it fixes turns into an "unexpected
-success" and fails: drop it from KNOWN_MISS in the same PR, like a gold known_failure.
-The first three are real FAA rows from the 2026-09-03 -> 2026-10-01 cycle. The rest are made-up
+MUST_KEEP_RANK: edits that change the meaning, each run through the real diff. Before engine
+1.3.7 the engine read 16 of them as a rewording and ranked them fyi: the numbers were compared as
+a set, so a sector or a time moving inside a list went unseen; a taxiway letter, a direction or
+a day wasn't compared at all; opposite words (BEFORE/AFTER, OVER/UNDER, TKOF/LNDG) weren't
+blockers; and "WHEN ATCT CLSD" -> "WHEN APCH CLSD" was stripped on both sides.
+KNOWN_MISS lists any case the engine still gets wrong. Those run as expected failures, so a
+known gap never blocks a deploy (update.yml runs every test before it publishes); when a fix
+lands, the case turns into an "unexpected success" and fails until it's dropped from the list,
+like a gold known_failure.
+The first four are real FAA rows (OTH, DBN, SPS from 2026-09-03 -> 10-01, GVL a cycle earlier). The rest are made-up
 edits of the shapes FAA remarks take, not FAA text.
 
 MUST_STAY_REWORDED: real FAA rewordings (2026-08-06 -> 09-03 and 09-03 -> 10-01) that are fyi
@@ -36,6 +38,12 @@ MUST_KEEP_RANK = [
      "FOR CD CTC ATLANTA APCH AT 678-364-6132, WHEN ATCT CLSD CTC ATLANTA ARTCC AT 770-210-7692.",
      "FOR CD IF UNA TO CTC ON FSS FREQ, CTC ATLANTA APCH AT 678-364-6132, WHEN APCH CLSD CTC ATLANTA ARTCC "
      "AT 770-210-7692.",
+     "action"),
+    # the same at GVL a cycle earlier (2026-08-06 -> 09-03)
+    ("gvl_when_apch_clsd", "APT_RMK",
+     "FOR CD IF UNA TO CTC ON FSS FREQ, CTC ATLANTA  APCH AT 678-364-6131, WHEN ATCT CLSD CTC ATLANTA ARTCC AT "
+     "770-210-7692.",
+     "FOR CD CTC ATLANTA APCH AT 678-364-6131, WHEN APCH CLSD IF UNA ON FREQ CTC ATLANTA ARTCC AT 770-210-7692.",
      "action"),
     # reduced runway separation now applies to all AETC aircraft, not only fighters
     ("sps_all_aetc_acft", "APT_RMK",
@@ -71,10 +79,7 @@ MUST_KEEP_RANK = [
     ("non_movement", "APT_RMK", "TRANSPONDER REQD IN MOVEMENT AREA.", "TRANSPONDER REQD IN NON-MOVEMENT AREA.",
      "action"),
 ]
-KNOWN_MISS = {"oth_vor_sectors", "dbn_when_apch_clsd", "sps_all_aetc_acft", "taxiway_letter", "taxiway_side",
-              "weekdays_to_weekends", "night_to_day", "winter_to_summer", "over_to_under", "before_to_after",
-              "takeoff_to_landing", "wet_to_dry", "north_to_south", "left_to_right_traffic", "transient_to_based",
-              "helicopters_to_gliders"}
+KNOWN_MISS = set()
 
 # (name, file, old, new): real FAA edits, same meaning, fyi today
 MUST_STAY_REWORDED = [
@@ -88,6 +93,11 @@ MUST_STAY_REWORDED = [
     ("24a_left", "APT_RMK", "UNUSBL BYD 8 DEG LEFT OF CNTRLN.", "UNUSBL BYD 8 DEG L OF CNTRLN."),
     ("24a_after", "APT_RMK", "AFTER SS ACTVT REIL RWY 33; PAPI RWY 15 & 33; MIRL RWY 15/33 - CTAF.",
      "AFT SS ACTVT REIL RWY 33; PAPI RWY 15 & 33; MIRL RWY 15/33 - CTAF."),
+    # gaining "WHEN ATCT CLSD" while keeping "WHEN APCH CLSD" is the 2026-09-03 clearance rewrite
+    ("sby_gains_when_atct_clsd", "APT_RMK",
+     "FOR CD CTC PATUXENT APCH AT 301-342-3740, WHEN PATUXENT APCH IS CLSD CTC POTOMAC APCH AT 866-640-4124.",
+     "FOR CD WHEN ATCT CLSD IF UNA ON FREQ CTC PATUXENT APCH AT 301-342-3740, WHEN APCH CLSD CTC POTOMAC APCH "
+     "AT 866-640-4124."),
     ("sps_rys", "APT_RMK", "DUE TO CLOSE PROXIMITY OF RYS 33L & 33C USE VIGILANCE WITH MONITOR GND TRACK FOR "
      "THE HI-TACAN  RY 33C APCH.", "DUE TO CLOSE PROXIMITY OF RWYS 33L & 33C USE VIGILANCE WITH MONITOR GND "
      "TRACK FOR THE HI-TACAN  RWY 33C APCH."),

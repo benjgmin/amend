@@ -8,7 +8,7 @@ from .rules import (ACTION_COL_WORDS, ACTION_PREFIXES, ACTION_TEXT_WORDS, ATC_SE
                     DECLARED_DISTANCES, DECLINATION_COLS, DECLINATION_NAV_TYPES, FSS_OUTLET,
                     FSS_OUTLET_NOT, HIDDEN_FILES, HIDDEN_ONLY_COLS, ID_COLS, IFR_REMARK_FILES,
                     NON_ATCT_CONTROL, PAIR_KEYS, PHONE, PHONE_FILLER, REWORD_ALIASES,
-                    REWORD_BLOCKERS, REWORD_PHRASES, ROW_ACTION, ROW_FYI, ROW_TIER,
+                    REWORD_BLOCKERS, REWORD_DIRECTIONS, REWORD_PHRASES, ROW_ACTION, ROW_FYI, ROW_TIER,
                     SURVEY_REMARK_FILES, base, blank_fill, is_fyi_col, is_helipad,
                     is_hours_col, is_noise_col, phone_format, small_change)
 
@@ -139,7 +139,7 @@ def _canon(s):
 # the FAA rewrote "FOR CD IF UNA TO CTC ON FSS FREQ, CTC <ARTCC>" as "FOR CD WHEN ATCT CLSD CTC
 # <ARTCC>" at dozens of airports in the 2026-09-03 cycle; gaining the condition isn't news
 WHEN_CLOSED = re.compile(r"\b(?:WHEN|IF|WHILE)\s+(?:[A-Z]+\s+){0,3}?"
-                         r"(?:ATCT|TWR|TOWER|APCH|CTL|FSS|ARTCC|UNICOM|FAC)\s+(?:IS\s+)?(?:CLSD|CLOSED)\b")
+                         r"(ATCT|TWR|TOWER|APCH|CTL|FSS|ARTCC|UNICOM|FAC)\s+(?:IS\s+)?(?:CLSD|CLOSED)\b")
 
 
 def _words(s):
@@ -149,14 +149,35 @@ def _words(s):
     return {REWORD_ALIASES.get(w, w) for w in re.findall(r"[A-Z]+", s)}
 
 
+def _closed_when(s):
+    """the facilities a remark's 'WHEN <X> CLSD' conditions name: {'TWR', 'APCH'}"""
+    return {REWORD_ALIASES.get(m.group(1), m.group(1)) for m in WHEN_CLOSED.finditer(s)}
+
+
+# the numbers and ids a remark names. a range is one id, so a sector or a time that moves inside
+# a list is a change: OTH "009-059 BYD 25 NM" -> "009-048 BYD 25 NM" names the same numbers, and
+# "CLSD SS-SR" -> "CLSD SR-SS" the same words. one-letter ids (TWY A, a direction) count too
+_RANGE_END = r"(?:[A-Z]*\d+[A-Z0-9/.]*\+*|SR|SS|DUSK|DAWN)"
+_IDS = re.compile(rf"\b{_RANGE_END}\s*-\s*{_RANGE_END}(?![A-Z0-9])|[A-Z]*\d+[A-Z0-9/]*|\b(?:[A-Z]|NE|NW|SE|SW)\b")
+
+
+def _ids(s):
+    for word, short in REWORD_DIRECTIONS.items():
+        s = re.sub(rf"\b{word}\b", short, s)
+    return {re.sub(r"\s+", "", t) for t in _IDS.findall(s)}
+
+
 def just_reworded(old, new):
-    """same numbers/ids, mostly the same words, and no word that changes the meaning gained
-    or lost (rules.REWORD_BLOCKERS) -> the FAA just reworded it."""
+    """same numbers/ids, mostly the same words, no word that changes the meaning gained or lost
+    (rules.REWORD_BLOCKERS) and no 'WHEN <X> CLSD' condition lost -> the FAA just reworded it.
+    gaining one is a rewording (the FAA added 'WHEN ATCT CLSD' to 53 clearance remarks in
+    2026-09-03); losing one isn't (DBN 'WHEN ATCT CLSD' -> 'WHEN APCH CLSD')."""
     old, new = _canon(old), _canon(new)
-    nums = lambda s: set(re.findall(r"[A-Z]*\d+[A-Z0-9/]*", s))
-    if nums(old) != nums(new):
+    if _ids(old) != _ids(new):
         return False
     if (_words(old) ^ _words(new)) & REWORD_BLOCKERS:
+        return False
+    if _closed_when(old) - _closed_when(new):
         return False
     return difflib.SequenceMatcher(None, old, new).ratio() >= 0.6
 
