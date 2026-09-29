@@ -1,5 +1,5 @@
 {
- "engine": "1.3.6",
+ "engine": "1.3.7",
  "remarks": {
   "100LL AND JET-A FUEL AVBL 24 HRS SELF SVC W/ CREDIT CARD.": [
    "W has no verified meaning (the Chart Supplement lists West and White (and Warning Area, Watts), and NASR's 1,489 on 2026-10-01 are mostly west ('300 FT W OF PAD', 'W SIDE'), some white ('MKD WITH W CONES', 'RED & W A-FRAMES'), about 220 written W/ mean with ('FUEL AVBL 24 HRS W/CREDIT CARD', 'MKD W/ ORANGE CONES'), and a few name a taxiway (TWY W). a check can't tell which one a translation picked: 'W RWY MRKG CONES EV 300 FT', on both ends of one runway, read as west); it must stay as written"
@@ -27,15 +27,6 @@
   ],
   "CONES FOR 2400 FT W/300 FT OF OVERUN": [
    "W has no verified meaning (the Chart Supplement lists West and White (and Warning Area, Watts), and NASR's 1,489 on 2026-10-01 are mostly west ('300 FT W OF PAD', 'W SIDE'), some white ('MKD WITH W CONES', 'RED & W A-FRAMES'), about 220 written W/ mean with ('FUEL AVBL 24 HRS W/CREDIT CARD', 'MKD W/ ORANGE CONES'), and a few name a taxiway (TWY W). a check can't tell which one a translation picked: 'W RWY MRKG CONES EV 300 FT', on both ends of one runway, read as west); it must stay as written"
-  ],
-  "CTLG OBSTN 150 FT TREE  0 FT, 170 FT RT; TREES 100 FT, ARND RWY END 19.": [
-   "CTLG is 'control' (CS + JO 1-2-3 suffix G), not what the translation says",
-   "RT has no verified meaning (the FAA lists more than one meaning; copied as written until one is picked); it must stay as written",
-   "added 'catalog'"
-  ],
-  "CTLG OBSTN EXCEEDS A 45 DEG SLP. APCH SLP 17:1 TO DTHR OVR +93 FT TREES, 1588 FT DIST, 0 FT B.": [
-   "CTLG is 'control' (CS + JO 1-2-3 suffix G), not what the translation says",
-   "added 'catalog'"
   ],
   "HELICOPTER TRAINING OPS ON AIRPORT W/ AUTOROTATIONS ON RUNWAY": [
    "W has no verified meaning (the Chart Supplement lists West and White (and Warning Area, Watts), and NASR's 1,489 on 2026-10-01 are mostly west ('300 FT W OF PAD', 'W SIDE'), some white ('MKD WITH W CONES', 'RED & W A-FRAMES'), about 220 written W/ mean with ('FUEL AVBL 24 HRS W/CREDIT CARD', 'MKD W/ ORANGE CONES'), and a few name a taxiway (TWY W). a check can't tell which one a translation picked: 'W RWY MRKG CONES EV 300 FT', on both ends of one runway, read as west); it must stay as written"
@@ -82,14 +73,19 @@
    "dropped EQUIPED"
   ],
   "RY 04S/22S FOR SKI/TUNDRA TIRE EQUIPD ACFT.": [
-   "dropped EQUIPD"
+   "dropped EQUIPD",
+   "changed 04S; a code of letters and digits stays as written",
+   "changed 22S; a code of letters and digits stays as written"
   ],
   "SIMUL OPS RWY 04/22 & 04S/22S NA.": [
-   "SIMUL is 'simultaneous/ly' (JO 2-1-1 (ICAO)), not what the translation says"
+   "SIMUL is 'simultaneous/ly' (JO 2-1-1 (ICAO)), not what the translation says",
+   "changed 04S; a code of letters and digits stays as written",
+   "changed 22S; a code of letters and digits stays as written"
   ],
   "SOUTH FLD - PAD 1 LGTS STD AND IN SVC, BUT NOT IAW REG CRITERIA. NGT LDGS USE CTN. PAD 2 UNLGTD BUT EASTERN AND WESTERN WIND INDICATORS LGTD. TSNT ACFT LDGS RSTD TO PAD 1 DUE TO GND TFC HAZ ASSOC WITH PAD 2. PAD 2 OPS RQRS LOCAL SAFTEY BRIEFING. SLOPES WI EAST AND WEST CLEAR ZONE OF PAD 1 EXCEED REG CRITERIA LMTS.  NORTH FLD - PAD LGTS IN SVC. ALS AVBL BOTH DIR. WIND INDICATOR LGTD.": [
+   "dropped SAFTEY",
    "DIR is 'director' (JO 2-1-1 (GEN)), not what the translation says",
-   "added 'direction'"
+   "added 'safety'"
   ],
   "TIMBERED MOUTAIN SLOPE.": [
    "dropped MOUTAIN",

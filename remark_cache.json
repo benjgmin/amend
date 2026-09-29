@@ -3770,5 +3770,7 @@
  "W RWY MRKG CONES EV 300FT": "W runway marking cones every 300FT",
  "WINDSOCK LCTD W OF RWY 04, MID FIELD.": "Windsock located W of runway 04, middle field.",
  "WX BLN LAUNCH 2000 FT W OF MIDFIELD RWY 02L/20R; 1100 & 2300 DLY.": "Weather balloon launch 2000 feet W of midfield runway 02L/20R; 1100 & 2300 daily.",
- "RSTD: SOLO STU N/A.": "Restricted: solo student N/A."
+ "RSTD: SOLO STU N/A.": "Restricted: solo student N/A.",
+ "CTLG OBSTN 150 FT TREE  0 FT, 170 FT RT; TREES 100 FT, ARND RWY END 19.": "Controlling obstruction 150 foot tree 0 foot, 170 foot RT; trees 100 foot, around runway end 19.",
+ "CTLG OBSTN EXCEEDS A 45 DEG SLP. APCH SLP 17:1 TO DTHR OVR +93 FT TREES, 1588 FT DIST, 0 FT B.": "Controlling obstruction exceeds a 45 degree slope. Approach slope 17:1 to Displaced runway threshold over +93 foot trees, 1588 feet distance, 0 foot B."
 }
