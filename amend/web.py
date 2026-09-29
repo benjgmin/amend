@@ -259,9 +259,14 @@ a.sbi{color:var(--dm);transition:color .15s}a.sbi:hover{color:var(--tx);text-dec
 .sbl.cur>.sbf{display:flex}.sbf:hover{background:var(--p2)}.sbf:hover .chev{color:var(--tx)}.sbf[aria-expanded=true] .chev{transform:rotate(90deg)}.sbl.on>.sbt{background:var(--p2);color:var(--tx)}
 .sbt .n{margin-left:auto;font:12px var(--mono);color:var(--fn)}.sbt .nw{margin-left:auto}.sbt .nw+.n{display:none}
 .sbl.open .sbt .nw{display:none}.sbl.open .sbt .nw+.n{display:inline}
-.sbp{display:grid;grid-template-rows:0fr;transition:grid-template-rows .22s ease}.sbl.open>.sbp{grid-template-rows:1fr}
-.sbq{position:relative;min-height:0;overflow:hidden;margin-left:16px;border-left:1px solid var(--ln);opacity:0;transition:opacity .22s ease}
-.sbl.open .sbq{opacity:1}
+.sbp{position:relative;display:grid;grid-template-rows:0fr;transition:grid-template-rows .22s ease}.sbl.open>.sbp{grid-template-rows:1fr}
+.sbq{position:relative;min-height:0;overflow:hidden;scrollbar-width:none;margin-left:16px;border-left:1px solid var(--ln);opacity:0;transition:opacity .22s ease}
+.sbl.open .sbq{opacity:1}.sbq::-webkit-scrollbar{display:none}
+/* our own scrollbar over the list box: a thin thumb drawn over native scrolling, faint until you're over the list */
+.sbbar{position:absolute;top:0;right:0;bottom:0;width:10px;opacity:0;transition:opacity .2s;touch-action:none}
+.sbl:not(.open) .sbbar{display:none}.sbbar.can{opacity:.45}.sbl.open:hover .sbbar.can,.sbbar.can.go{opacity:1}
+.sbbar b{position:absolute;right:2px;width:4px;border-radius:2px;background:var(--ln2);transition:width .15s,background .15s}
+.sbbar:hover b,.sbbar.go b{width:6px;background:var(--fn)}
 .sba{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-left:-1px;padding:4px 10px;border-left:2px solid transparent;font-size:13.5px;color:var(--dm);transition:color .15s,border-color .15s}
 .sba b{font:500 13px var(--mono)}.sba:hover{color:var(--tx);text-decoration:none;border-left-color:var(--ln2)}
 .sba.on{color:var(--tx);border-left-color:var(--tx)}
@@ -292,7 +297,11 @@ a.sbi{color:var(--dm);transition:color .15s}a.sbi:hover{color:var(--tx);text-dec
  html{overscroll-behavior-y:none}
  .sb{display:flex;flex-direction:column;position:sticky;top:0;align-self:start;height:100vh;height:100dvh;overflow-y:auto;overscroll-behavior:contain;border-right:1px solid var(--ln);background:var(--p);padding:16px 12px}
  .sb .brand{padding:4px 8px 0}
- .sbl.open .sbq{overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin}
+ /* only the open list's box scrolls: the lists shrink to the room the sidebar has left, the box inside them first.
+    --sbmin (set in SB.floor) keeps room for a few airports; below that the whole sidebar scrolls */
+ #sbw{flex:0 1 auto;min-height:var(--sbmin,0px);display:flex;flex-direction:column}#sbw>*{flex:none}
+ #sbw>.sbl.open{flex:0 1 auto;min-height:0;display:flex;flex-direction:column}.sbl.open>.sbt{flex:none}
+ .sbl.open>.sbp{flex:0 1 auto;min-height:0}.sbl.open .sbq{overflow-y:auto;overscroll-behavior:contain}
  .mtop,.pfresh{display:none}
  .main{padding:32px 40px 56px}
  .main.two{grid-template-columns:minmax(0,1fr) 300px;column-gap:32px;align-items:start}
@@ -696,25 +705,45 @@ function side(){const el=document.getElementById("sbw");if(!el)return;const B=do
       return '<div class="sbl" data-l="'+esc(l.id)+'"><a class="sbt" href="'+u+'">'+
         '<span class="nm">'+esc(l.name)+'</span>'+(n?'<span class="nw">'+AM.pill(n)+'</span>':'')+'<span class="n">'+l.ids.length+'</span></a>'+
         '<button class="sbf" type="button" aria-label="Fold '+esc(l.name)+'"><span class="chev" aria-hidden="true">▶</span></button>'+
-        '<div class="sbp"><div class="sbq">'+l.ids.map(x=>'<a class="sba'+(x===el.dataset.on?' on':'')+'" href="'+R+x+'/"><b>'+x+'</b>'+(nc[x]?AM.pill(nc[x]):'')+'</a>').join("")+
+        '<div class="sbp"><div class="sbq" tabindex="-1">'+l.ids.map(x=>'<a class="sba'+(x===el.dataset.on?' on':'')+'" href="'+R+x+'/"><b>'+x+'</b>'+(nc[x]?AM.pill(nc[x]):'')+'</a>').join("")+
         (l.ids.length?'':'<div class="sba sub">No airports yet</div>')+
-        '</div></div></div>'}).join(""):""}
+        '</div><i class="sbbar" aria-hidden="true"><b></b></i></div></div>'}).join(""):""}
   // the list that matches the page shows its airports unless it's folded (the same fold as the home page's arrow)
   el.querySelectorAll(".sbl").forEach(b=>{const c=b.dataset.l===op,o=c&&!LS.folded(op),f=b.querySelector(".sbf");
     b.classList.toggle("cur",c);b.classList.toggle("open",o);b.classList.toggle("on",c&&b.dataset.l===B.list);
     f.setAttribute("aria-expanded",o);f.setAttribute("aria-label",(o?"Fold ":"Show ")+b.querySelector(".nm").textContent);
     b.firstChild.setAttribute("aria-current",c&&b.dataset.l===B.list?"page":"false");b.lastChild.inert=!o});
-  fit();
+  floor();el.querySelectorAll(".sbq").forEach(bar);const q=el.querySelector(".sbl.open .sbq");if(q)requestAnimationFrame(()=>here(q));
   if(!el.dataset.wired){el.dataset.wired=1;el.addEventListener("click",ev=>{const f=ev.target.closest(".sbf");if(!f)return;const id=f.parentNode.dataset.l;
-    LS.fold(id,!LS.folded(id));side();document.dispatchEvent(new Event("amend:fold"))})}}
-// a long open list scrolls in its own box, sized to the sidebar's spare height, so the rest of the sidebar stays put.
-// On a window too short for even that, the box keeps room for a few airports and the whole sidebar scrolls
-function fit(){const sb=document.querySelector(".sb"),q=sb&&sb.querySelector(".sbl.open .sbq");if(!q)return;
-  if(getComputedStyle(sb).overflowY!=="auto"){q.style.maxHeight="";return}   // the sidebar only shows on wide screens
-  q.style.maxHeight="none";const spare=sb.clientHeight-sb.scrollHeight;
-  q.style.maxHeight=Math.max(132,Math.floor(q.scrollHeight+spare))+"px";
-  const on=q.querySelector(".sba.on");if(on&&(on.offsetTop<q.scrollTop||on.offsetTop+on.offsetHeight>q.scrollTop+q.clientHeight))q.scrollTop=on.offsetTop-q.clientHeight/2}   // the airport shown
-addEventListener("resize",()=>fit());addEventListener("load",()=>fit());if(document.fonts)document.fonts.ready.then(()=>fit());
+    LS.fold(id,!LS.folded(id));side();document.dispatchEvent(new Event("amend:fold"))});
+    // once a list has opened, put the airport shown in view
+    el.addEventListener("transitionend",ev=>{const b=ev.target.closest(".sbl.open");if(b&&ev.target===b.lastChild)here(b.querySelector(".sbq"))})}}
+// the CSS sizes the open list's box to the sidebar's spare height; this only sets the least room the lists keep:
+// every list's name, and up to 132px of the open one's airports. Heights of what's drawn, never of anything mid-animation
+function floor(){const el=document.getElementById("sbw");if(!el)return;let h=0;
+  for(const c of el.children){if(c.classList.contains("sbl")){h+=c.firstChild.offsetHeight;
+      if(c.classList.contains("open"))h+=Math.min(c.querySelector(".sbq").scrollHeight,132)}
+    else{const st=getComputedStyle(c);h+=c.offsetHeight+parseFloat(st.marginTop)+parseFloat(st.marginBottom)}}
+  el.style.setProperty("--sbmin",Math.ceil(h)+"px")}
+function here(q){const on=q&&q.querySelector(".sba.on");
+  if(on&&(on.offsetTop<q.scrollTop||on.offsetTop+on.offsetHeight>q.scrollTop+q.clientHeight))q.scrollTop=on.offsetTop-(q.clientHeight-on.offsetHeight)/2}
+// our own scrollbar: native scrolling (wheel, trackpad, touch, keys) moves the box; the thumb follows it and can be dragged
+const seen=new WeakSet(),ro=window.ResizeObserver?new ResizeObserver(es=>es.forEach(e=>draw(e.target))):null;
+function draw(q){const bar=q.nextElementSibling,t=bar.firstChild,H=q.clientHeight,S=q.scrollHeight;
+  bar.classList.toggle("can",S>H+1);if(S<=H+1)return;
+  const th=Math.max(24,H*H/S);t.style.height=th+"px";t.style.top=(q.scrollTop/(S-H))*(H-th)+"px"}
+function bar(q){if(seen.has(q))return draw(q);seen.add(q);const b=q.nextElementSibling;let hide;
+  q.addEventListener("scroll",()=>{draw(q);b.classList.add("go");clearTimeout(hide);hide=setTimeout(()=>b.classList.remove("go"),700)},{passive:true});
+  if(ro)ro.observe(q);draw(q);
+  b.addEventListener("pointerdown",ev=>{ev.preventDefault();const t=b.firstChild,r=t.getBoundingClientRect();
+    // grab the thumb where it was pressed; a press on the track jumps the thumb's middle there first
+    let off=ev.clientY-r.top;if(off<0||off>r.height){off=r.height/2;move(ev)}
+    function move(e){const H=q.clientHeight,S=q.scrollHeight,th=t.offsetHeight,y=e.clientY-b.getBoundingClientRect().top-off;
+      q.scrollTop=Math.max(0,Math.min(1,y/(H-th)))*(S-H)}
+    b.setPointerCapture(ev.pointerId);b.classList.add("go");
+    const up=()=>{b.removeEventListener("pointermove",move);b.classList.remove("go")};
+    b.addEventListener("pointermove",move);b.addEventListener("pointerup",up,{once:true});b.addEventListener("pointercancel",up,{once:true})})}
+if(document.fonts)document.fonts.ready.then(()=>floor());addEventListener("load",()=>floor());
 return{side}})();
 addEventListener("DOMContentLoaded",()=>{AM.sync();const R=document.body.dataset.root||"",B=document.body.dataset,el=document.getElementById("sbw");
 const short=(s,n)=>s.length>n?s.slice(0,n-1)+"…":s;
@@ -1314,8 +1343,8 @@ UPDATES = [
         "about 800 pavement code lines (PCR VALUE) the FAA moved out of the remarks and into the runway data "
         "for 1 Oct 2026 as remarks shown in the FAA's words, but Amend hides them, so the page said 745 of "
         "1,591 remarks read in plain English. Counting what you can see, it's about 94%.",
-        "In the sidebar, a long list scrolls in its own box and shows every airport on it, so the rest of the "
-        "sidebar stays put.",
+        "In the sidebar, a long list scrolls in its own box, with Amend's own thin scrollbar, and shows every "
+        "airport on it, so the rest of the sidebar stays put, also after folding the list and opening it again.",
         "The arrow next to Your lists on the home page, and next to the open list in the sidebar, folds that "
         "list down to its name. Each list remembers whether it's folded, in this browser.",
         "W stays as the FAA wrote it in remark translations. The FAA's lists give W two meanings, west and "
