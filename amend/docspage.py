@@ -5,14 +5,15 @@ FAA posting a file to a change on a pilot's screen, plus the sources, the limits
 Written for pilots and schools, not programmers: docs/data-pipeline.md and docs/architecture.md in
 the repo have the same process with file and line references. When the pipeline changes, change both.
 Anchors #how, #sources, #limits, #api and #open are linked from the site, the app and older pages, so
-keep them.
+keep them (MOVED_JS and MOVED_FROM forward the ones that moved to another page).
 """
+import datetime as dt
 import html
 import json
 import os
 import re
 
-from . import subsite, web
+from . import gold, runlog, subsite, web
 from .web import DTPP_SEARCH, FAA_INQUIRY, NASR_PAGE, REPO_URL, REPORT_URL, SITE_URL
 
 CSS = """<style>
@@ -248,21 +249,6 @@ def sections():
             "boundaries.</li></ul>"
             "<p>Every change links the FAA source it came from, so you can check it against the original in one "
             "tap.</p>")),
-        ("limits", "What it doesn't cover", (
-            "<ul><li><b>NOTAMs.</b> Temporary changes are published as NOTAMs and never show up here.</li>"
-            "<li><b>Corrections between cycles.</b> The FAA sometimes fixes data mid-cycle, usually by NOTAM. Amend "
-            "only reads the 28-day files, so a fix like that shows up here in a later cycle, if at all.</li>"
-            "<li><b>Chart Supplement pages that aren't in the FAA data files</b>, like its special notices. Airport "
-            "remarks are covered.</li>"
-            "<li><b>Class E airspace above the surface</b> (E5). Surface areas are covered.</li>"
-            "<li><b>Chart history before fall 2026</b>, because the FAA doesn't keep old chart indexes online. "
-            "Airport data goes back to Aug 2024.</li>"
-            "<li><b>A plain-English version of every remark.</b> When a translation doesn't pass the checks, you "
-            "get the FAA text instead.</li>"
-            "<li><b>What the FAA hasn't posted yet.</b> A new cycle shows up here after the FAA posts it and a "
-            "build runs, usually within about 20 minutes.</li></ul>"
-            "<p>Amend doesn't publish an accuracy percentage. It would need a large set of changes checked by hand "
-            "against the FAA source, and that set is still being built.</p>")),
         ("open", "Open source and reporting problems", (
             f'<p>The engine, the rules and the site are <a href="{REPO_URL}">on GitHub</a> under the MIT license. '
             f'Found something wrong? <a href="{REPORT_URL}">Open an issue</a> with the airport, the cycle and what '
@@ -271,6 +257,112 @@ def sections():
     ]
 
 
+
+
+CS_PAGE = "https://www.faa.gov/air_traffic/flight_info/aeronav/digital_products/dafd/"
+NOTAM_SEARCH = "https://notams.aim.faa.gov/notamSearch/"
+SHOWN_REMARKS_FROM = (1, 3, 6)   # engine 1.3.6 on: remarks.texts counts only the remarks a page reads out
+
+
+def gold_counts(path=gold.CASES):
+    """the gold set as it stands in the repo: its size, how many a person checked, and by label."""
+    cases = gold.load_cases(path)
+    by = {k: sum(c["expected"].get("priority") == k for c in cases) for k in gold.PRIORITIES}
+    return {"total": len(cases),
+            "human": sum("needs human check" not in c.get("verified_by", "needs human check") for c in cases),
+            "known": sum(bool(c.get("known_failure")) for c in cases), "by": by}
+
+
+def shown_remarks(log_dir=runlog.RUNS):
+    """(plain English, shown, finished_at) from the newest published build that counts shown remarks, or None."""
+    for rec in reversed(runlog.runs(log_dir, last_cycles=2)):
+        rm, eng = rec.get("remarks") or {}, str(rec.get("engine") or "")
+        try:
+            new = tuple(int(x) for x in eng.split(".")[:3]) >= SHOWN_REMARKS_FROM
+        except ValueError:
+            new = False
+        if rec.get("published") and new and isinstance(rm.get("texts"), int) and isinstance(rm.get("plain_english"), int):
+            return rm["plain_english"], rm["texts"], rec.get("finished_at") or rec.get("started_at")
+    return None
+
+
+def accuracy_sections(log_dir=runlog.RUNS, cases=gold.CASES):
+    """the accuracy and limits page. Every number is read at build time: the gold set from the repo, the
+    remark count from the run log. Nothing here is an estimate."""
+    g, rm = gold_counts(cases), shown_remarks(log_dir)
+    using, status = web.sub_url("docs", None, "using/"), web.sub_url("status")
+    n = lambda x: f"{x:,}"
+    known = (f" {g['known']} of them are marked as known mistakes the engine still makes; every other case has to "
+             "come out right." if g["known"] else " Every case has to come out right.")
+    if rm:
+        try:
+            when = f" ({dt.datetime.fromisoformat(rm[2]):%d %b %Y})"
+        except (TypeError, ValueError):
+            when = ""
+        rem = (f"<p>In the latest build{when}, <b>{n(rm[0])} of the {n(rm[1])}</b> changed remarks "
+               f"shown on airport pages read in plain English. The other {n(rm[1] - rm[0])} show the FAA's own text. "
+               f'The <a href="{status}">status page</a> has the count for every build.</p>')
+    else:
+        rem = f'<p>The <a href="{status}">status page</a> shows how many remarks read in plain English in each build.</p>'
+    return [
+        ("measured", "What's measured", (
+            "<p>Amend doesn't publish an overall accuracy percentage. A number like that would need a large, "
+            "random set of changes checked by hand against the FAA source, and that set doesn't exist yet. What "
+            "this page gives instead is what's actually been counted, read from the project's own files each time "
+            "the site is built.</p>")),
+        ("gold", "The test set", (
+            f"<p>Amend keeps a test set of <b>{n(g['total'])} real FAA changes</b>, each with the FAA's own old and "
+            "new rows and the answer Amend should give: its label, its category, and words the plain-English line "
+            f"has to contain. It covers {n(g['by']['action'])} ACT, {n(g['by']['ifr'])} IFR and "
+            f"{n(g['by']['fyi'])} FYI changes, plus {n(g['by']['hidden'])} bookkeeping edits Amend should say "
+            f"nothing about.</p><p>Every build runs the whole set before it downloads anything.{known} If one "
+            "comes out wrong, the build stops and the site stays on the last version that passed.</p>"
+            f"<p><b>{n(g['human'])} of the {n(g['total'])}</b> have been checked by a person, with the FAA's old "
+            "and new text side by side and every abbreviation decoded from the FAA's own lists. The other "
+            f"{n(g['total'] - g['human'])} were written from the FAA rows and still wait for that check. Pilots and "
+            "instructors who check more cases raise that number here as their checks are added.</p>"
+            "<p>Passing the set means Amend gets these cases right. It doesn't prove it gets every change right, "
+            "and a case is only as good as the answer written for it.</p>")),
+        ("remark-count", "Plain-English remarks", (
+            rem + "<p>A remark only reads in plain English when its translation passes the no-guess check: every "
+            "contraction expanded to a meaning taken word for word from the FAA's own lists, every number, time, "
+            "runway, frequency and code kept in order, and no words the remark doesn't have. Anything else shows "
+            f'the FAA text. <a href="{using}#remarks">How remarks work</a>.</p>')),
+        ("limits", "What it doesn't cover", (
+            "<ul><li><b>NOTAMs.</b> Temporary changes, closures and outages are published as NOTAMs and never show "
+            "up on Amend.</li>"
+            "<li><b>Changes between cycles.</b> Amend only reads the FAA's 28-day files. A correction the FAA makes "
+            "mid-cycle, usually by NOTAM, shows up here in a later cycle, if at all.</li>"
+            "<li><b>Parts of the Chart Supplement that aren't in the FAA's data files.</b> The printed Chart "
+            "Supplement also has airport sketches, its notices sections and other pages Amend never sees. Airport "
+            "remarks from the data files are covered.</li>"
+            "<li><b>What's drawn on a chart.</b> For approaches, departures and arrivals Amend reports that a chart "
+            "was added, amended or removed, with a link to the new plate. It doesn't compare the drawings, so read "
+            "the plate itself.</li>"
+            "<li><b>Class E airspace above the surface</b> (E5, starting at 700 or 1,200 ft). Class B, C, D and E "
+            "surface areas are covered.</li>"
+            "<li><b>Chart history before fall 2026</b>, because the FAA doesn't keep old chart indexes online. "
+            "Airport data goes back to Aug 2024.</li>"
+            "<li><b>A plain-English version of every remark.</b> When a translation doesn't pass the check, you "
+            "get the FAA text instead.</li>"
+            "<li><b>What the FAA hasn't posted yet.</b> A new cycle appears after the FAA posts it and a build "
+            "runs, usually within about 20 minutes.</li></ul>"
+            "<p>Amend is not for navigation. Use it to see what changed, then check the official sources "
+            "below.</p>")),
+        ("official", "The official sources", (
+            "<ul>"
+            f'<li><a href="{CS_PAGE}">Chart Supplement</a>: airport information, remarks and notices.</li>'
+            f'<li><a href="{DTPP_SEARCH}">Terminal procedures (d-TPP)</a>: approach, departure and arrival '
+            "charts.</li>"
+            f'<li><a href="{NOTAM_SEARCH}">NOTAM search</a>: temporary changes.</li>'
+            f'<li><a href="{NASR_PAGE.format(cycle="")}">NASR subscription</a>: the data files Amend reads.</li>'
+            "</ul>")),
+        ("report", "Reporting an error", (
+            f'<p>If Amend shows something wrong, <a href="{REPORT_URL}">report it</a> with the airport, the cycle '
+            "and what the FAA source says. A confirmed mistake is fixed in the engine and added to the test set, "
+            "so it can't come back unnoticed. If the FAA's own data is wrong, only the FAA can fix it: use its "
+            f'<a href="{FAA_INQUIRY}">Aeronautical Inquiries</a> page.</p>')),
+    ]
 
 
 def more_sections():
@@ -509,14 +601,21 @@ PAGES = [
      ["airport", "labels", "remarks", "ahead", "lists", "alerts"]),
     ("how-it-works/", "How it works", "How it works",
      "From the FAA posting a new cycle to a change on your screen: every step, what's checked along the way, and "
-     "what Amend doesn't cover.",
-     "Every step from the FAA's files to your screen, what stops a bad update, the status page, sources and limits.",
-     ["how", "checks", "status", "sources", "limits"]),
+     "where the data comes from.",
+     "Every step from the FAA's files to your screen, what stops a bad update, the status page and the sources.",
+     ["how", "checks", "status", "sources"]),
+    ("accuracy/", "Accuracy and limits", "Accuracy and limits",
+     "What's been measured about Amend's answers, what it doesn't cover, and where to check the official source.",
+     "Amend's test set, how many cases a person has checked, the plain-English remark count, and its limits.",
+     "accuracy"),   # "accuracy": accuracy_sections()
     ("api/", "API and data", "API and data",
      "The public JSON files behind Amend: what each one holds, every field, and how to use them in your own tools.",
      "Amend's public JSON files: URLs, fields, examples and recipes. No key needed.",
      None),   # None: api_sections()
 ]
+
+# sections that moved off a page since it was published: its old #anchor goes on to the new page
+MOVED_FROM = {"how-it-works/": {"limits": "accuracy/"}}
 
 # old single-page links (docs.amend.watch/#api, the about page's #how) go on to the page that section is on now
 MOVED_JS = """<script>(()=>{const m=%s[location.hash.slice(1)];if(m)location.replace(%s+m+location.hash)})()</script>"""
@@ -541,7 +640,8 @@ def nav(cur, secs):
 def one_page(n, meta, now):
     path, name, h1, lede, desc, ids = PAGES[n]
     every = all_sections()
-    secs = api_sections() if ids is None else [(i, *every[i]) for i in ids]
+    secs = (api_sections() if ids is None else accuracy_sections() if ids == "accuracy"
+            else [(i, *every[i]) for i in ids])
     prev = PAGES[n - 1] if n else None
     nxt = PAGES[n + 1] if n + 1 < len(PAGES) else None
     pn = ((f'<a href="{web.sub_url("docs", None, prev[0])}"><small>Previous</small>{prev[1]}</a>' if prev else "")
@@ -554,9 +654,11 @@ def one_page(n, meta, now):
             + f'<nav class="dx-nn">{pn}</nav><div class="dx-pad" aria-hidden="true"></div></article></div>{TOC_JS}')
     early = ""
     if not path:
-        moved = {i: p for p, *_, ids in PAGES if p and ids for i in ids}
-        moved["api"] = "api/"   # the old one-page docs' "Data files"
+        moved = {i: p for p, *_, ids in PAGES if p and isinstance(ids, list) for i in ids}
+        moved.update(api="api/", limits="accuracy/")   # the old one-page docs' "Data files", and the limits
         early = MOVED_JS % (json.dumps(moved, sort_keys=True), json.dumps(web.sub_url("docs")))
+    elif path in MOVED_FROM:
+        early = MOVED_JS % (json.dumps(MOVED_FROM[path], sort_keys=True), json.dumps(web.sub_url("docs")))
     title = "Amend Docs" if not path else f"{name} · Amend Docs"
     return subsite.page("docs", title, desc, body, meta, now, head=CSS, path=path, early=early)
 
