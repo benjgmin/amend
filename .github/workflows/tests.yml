@@ -18,7 +18,9 @@ concurrency:                   # a new push to the same PR cancels the run it re
 jobs:
   unittest:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    # the suite takes ~8 min with the snapshot and its shuffled-order rerun (test_order.py);
+    # 10 left too little room for a slow runner
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
 
