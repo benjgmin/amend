@@ -13,17 +13,16 @@ struct AirportsView: View {
     @State private var importText = ""
     @State private var importNote: String?
     @AppStorage(SettingsKey.onboarded) private var onboarded = false
+    /// so a coming-up row can open its airport from a button, not a whole-row link
+    @State private var path = NavigationPath()
 
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $path) {
             List {
                 if let meta = store.meta {
                     CycleStrip(meta: meta) { showingGuide = true }.efbRow(top: 8, bottom: 12)
                     if meta.isStale {
                         StaleBanner(meta: meta).efbRow(top: 0, bottom: 12)
-                    }
-                    if !store.saved.isEmpty && store.index != nil {
-                        ComingUpView(meta: meta)
                     }
                 }
 
@@ -42,7 +41,7 @@ struct AirportsView: View {
                 }
 
                 if let home = store.home {
-                    EFBHeader(text: "Home").efbRow(top: 4, bottom: 2)
+                    EFBHeader(text: "Home").efbRow(top: 0, bottom: 2)
                     tile(home, isHome: true)
                         .swipeActions {
                             Button(role: .destructive) { store.setHome(nil) } label: {
@@ -52,12 +51,12 @@ struct AirportsView: View {
                 }
 
                 if !store.lists.isEmpty || store.home != nil {
-                    listHeader.efbRow(top: 12, bottom: 2)
+                    listHeader.efbRow(top: 10, bottom: 0)
                 }
                 if let list = store.activeList {
                     if store.lists.count > 1 {
                         ListTabs(lists: store.lists, active: list.id) { store.useList($0) }
-                            .efbRow(top: 2, bottom: 6)
+                            .efbRow(top: 2, bottom: 4)
                     }
                     ForEach(list.ids, id: \.self) { id in
                         tile(id, isHome: id == store.home)
@@ -76,6 +75,11 @@ struct AirportsView: View {
                             .efbPanel()
                             .efbRow(top: 3, bottom: 3)
                     }
+                }
+
+                // after your lists, not before: one line per airport, so it no longer pushes them down a few screens
+                if let meta = store.meta, !store.saved.isEmpty, store.index != nil {
+                    ComingUpView(meta: meta) { path.append($0) }
                 }
 
                 // the site's "Most action items this cycle": the busiest airports nationally, to browse
@@ -250,7 +254,7 @@ struct AirportsView: View {
             AirportTile(id: id, info: store.info(for: id), counts: store.counts(for: id),
                         indexLoaded: store.index != nil, isHome: isHome, newCount: store.newCount(id))
         }
-        .efbRow(top: 3, bottom: 3)
+        .efbRow(top: 2, bottom: 2)
     }
 }
 
@@ -318,6 +322,7 @@ private struct CycleStrip: View {
     }
 }
 
+/// one line per airport, so a list of ten fits on a screen: id, name, counts, chevron
 private struct AirportTile: View {
     let id: String
     let info: AirportInfo?
@@ -327,34 +332,30 @@ private struct AirportTile: View {
     var newCount = 0
 
     var body: some View {
-        HStack(alignment: .center, spacing: 12) {
-            VStack(alignment: .leading, spacing: 3) {
-                HStack(alignment: .firstTextBaseline, spacing: 8) {
-                    Text(id)
-                        .font(EFB.mono(20, .semibold))
-                        .foregroundStyle(EFB.text)
-                    if let icao = info?.icao, icao != id {
-                        Text(icao).font(.system(size: 13)).foregroundStyle(EFB.faint)
-                    }
-                    if isHome {
-                        Image(systemName: "house.fill")
-                            .font(.system(size: 11))
-                            .foregroundStyle(EFB.cyan)
-                    }
-                }
-                if let info {
-                    Text(info.name)
-                        .font(.subheadline.weight(.medium))
-                        .foregroundStyle(EFB.text.opacity(0.85))
-                        .lineLimit(1)
-                    if !info.location.isEmpty {
-                        Text(info.location)
-                            .font(.system(size: 13))
-                            .foregroundStyle(EFB.dim)
-                    }
+        HStack(alignment: .center, spacing: 10) {
+            HStack(spacing: 5) {
+                Text(id)
+                    .font(EFB.mono(17, .semibold))
+                    .foregroundStyle(EFB.text)
+                if isHome {
+                    Image(systemName: "house.fill")
+                        .font(.system(size: 11))
+                        .foregroundStyle(EFB.cyan)
                 }
             }
-            Spacer(minLength: 8)
+            .fixedSize()
+            VStack(alignment: .leading, spacing: 1) {
+                Text(info?.name ?? "")
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundStyle(EFB.text.opacity(0.85))
+                if let location = info?.location, !location.isEmpty {
+                    Text(location)
+                        .font(.system(size: 12))
+                        .foregroundStyle(EFB.faint)
+                }
+            }
+            .lineLimit(1)
+            Spacer(minLength: 4)
             if newCount > 0 {
                 NewPill(count: newCount)
             }
@@ -362,12 +363,16 @@ private struct AirportTile: View {
                 CountAnnunciators(counts: counts)
             }
             Image(systemName: "chevron.right")
-                .font(.system(size: 13, weight: .semibold))
+                .font(.system(size: 12, weight: .semibold))
                 .foregroundStyle(EFB.faint)
         }
-        .efbPanel()
+        .padding(.horizontal, 12)
+        .padding(.vertical, 9)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(EFB.panel, in: RoundedRectangle(cornerRadius: EFB.radius))
         .overlay(RoundedRectangle(cornerRadius: EFB.radius)
-            .stroke(isHome ? EFB.cyan.opacity(0.5) : Color.clear, lineWidth: 1))
+            .stroke(isHome ? EFB.cyan.opacity(0.5) : EFB.line, lineWidth: 1))
+        .accessibilityElement(children: .combine)
     }
 }
 
