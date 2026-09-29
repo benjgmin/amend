@@ -73,7 +73,7 @@ class TestStatusPage(unittest.TestCase):
         for step in ("Ingestion", "Parsing", "Normalization", "Diff", "Classification", "Translation", "Validation",
                      "Publishing", "Processing", "Engine"):
             self.assertIn(f" {step} ", t)
-        self.assertIn("Translator cost $", t)
+        self.assertNotIn("cost", t.lower())   # kept in the run log, not shown
         self.assertIn("contractions with no verified meaning", t)
         self.assertIn("Not counted: addresses, and the four-letter airport codes (KSPS) and center codes (ZOA)", t)
 
