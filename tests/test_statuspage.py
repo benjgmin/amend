@@ -399,7 +399,7 @@ class TestDocsPages(unittest.TestCase):
         self.assertGreater(len(fields), 20)
         for fld in fields:
             self.assertIn(f"<code>{fld}</code>", api)
-        self.assertIn('<pre class="xs"><code>{&quot;schema_version&quot;: 1', api)
+        self.assertIn('<pre><code>{&quot;schema_version&quot;: 1', api)
         self.assertIn('<section id="change">', api)
 
     def test_old_single_page_anchors_move_to_their_page(self):
