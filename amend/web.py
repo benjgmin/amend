@@ -260,11 +260,11 @@ a.sbi{color:var(--dm);transition:color .15s}a.sbi:hover{color:var(--tx);text-dec
 .sbt .n{margin-left:auto;font:12px var(--mono);color:var(--fn)}.sbt .nw{margin-left:auto}.sbt .nw+.n{display:none}
 .sbl.open .sbt .nw{display:none}.sbl.open .sbt .nw+.n{display:inline}
 .sbp{display:grid;grid-template-rows:0fr;transition:grid-template-rows .22s ease}.sbl.open>.sbp{grid-template-rows:1fr}
-.sbq{min-height:0;overflow:hidden;margin-left:16px;border-left:1px solid var(--ln);opacity:0;transition:opacity .22s ease}
+.sbq{position:relative;min-height:0;overflow:hidden;margin-left:16px;border-left:1px solid var(--ln);opacity:0;transition:opacity .22s ease}
 .sbl.open .sbq{opacity:1}
 .sba{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-left:-1px;padding:4px 10px;border-left:2px solid transparent;font-size:13.5px;color:var(--dm);transition:color .15s,border-color .15s}
 .sba b{font:500 13px var(--mono)}.sba:hover{color:var(--tx);text-decoration:none;border-left-color:var(--ln2)}
-.sba.on{color:var(--tx);border-left-color:var(--tx)}.sba.go{color:var(--cy);margin-bottom:6px}.sba.go:hover{border-left-color:var(--cy)}
+.sba.on{color:var(--tx);border-left-color:var(--tx)}
 .sba.sub{color:var(--fn)}
 .sb .search{margin:14px 0 0;border-radius:6px;padding:0 10px;box-shadow:none}.sb .search input{font-size:14px;padding:7px 0}
 .sbfoot{margin-top:auto;padding:16px 8px 0;font-size:12.5px;color:var(--fn)}.sbfoot a{color:var(--dm)}
@@ -292,6 +292,7 @@ a.sbi{color:var(--dm);transition:color .15s}a.sbi:hover{color:var(--tx);text-dec
  html{overscroll-behavior-y:none}
  .sb{display:flex;flex-direction:column;position:sticky;top:0;align-self:start;height:100vh;height:100dvh;overflow-y:auto;overscroll-behavior:contain;border-right:1px solid var(--ln);background:var(--p);padding:16px 12px}
  .sb .brand{padding:4px 8px 0}
+ .sbl.open .sbq{overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin}
  .mtop,.pfresh{display:none}
  .main{padding:32px 40px 56px}
  .main.two{grid-template-columns:minmax(0,1fr) 300px;column-gap:32px;align-items:start}
@@ -695,16 +696,25 @@ function side(){const el=document.getElementById("sbw");if(!el)return;const B=do
       return '<div class="sbl" data-l="'+esc(l.id)+'"><a class="sbt" href="'+u+'">'+
         '<span class="nm">'+esc(l.name)+'</span>'+(n?'<span class="nw">'+AM.pill(n)+'</span>':'')+'<span class="n">'+l.ids.length+'</span></a>'+
         '<button class="sbf" type="button" aria-label="Fold '+esc(l.name)+'"><span class="chev" aria-hidden="true">▶</span></button>'+
-        '<div class="sbp"><div class="sbq">'+l.ids.slice(0,12).map(x=>'<a class="sba'+(x===el.dataset.on?' on':'')+'" href="'+R+x+'/"><b>'+x+'</b>'+(nc[x]?AM.pill(nc[x]):'')+'</a>').join("")+
+        '<div class="sbp"><div class="sbq">'+l.ids.map(x=>'<a class="sba'+(x===el.dataset.on?' on':'')+'" href="'+R+x+'/"><b>'+x+'</b>'+(nc[x]?AM.pill(nc[x]):'')+'</a>').join("")+
         (l.ids.length?'':'<div class="sba sub">No airports yet</div>')+
-        (l.ids.length>12?'<a class="sba go" href="'+u+'">All '+l.ids.length+' airports ›</a>':'')+'</div></div></div>'}).join(""):""}
+        '</div></div></div>'}).join(""):""}
   // the list that matches the page shows its airports unless it's folded (the same fold as the home page's arrow)
   el.querySelectorAll(".sbl").forEach(b=>{const c=b.dataset.l===op,o=c&&!LS.folded(op),f=b.querySelector(".sbf");
     b.classList.toggle("cur",c);b.classList.toggle("open",o);b.classList.toggle("on",c&&b.dataset.l===B.list);
     f.setAttribute("aria-expanded",o);f.setAttribute("aria-label",(o?"Fold ":"Show ")+b.querySelector(".nm").textContent);
     b.firstChild.setAttribute("aria-current",c&&b.dataset.l===B.list?"page":"false");b.lastChild.inert=!o});
+  fit();
   if(!el.dataset.wired){el.dataset.wired=1;el.addEventListener("click",ev=>{const f=ev.target.closest(".sbf");if(!f)return;const id=f.parentNode.dataset.l;
     LS.fold(id,!LS.folded(id));side();document.dispatchEvent(new Event("amend:fold"))})}}
+// a long open list scrolls in its own box, sized to the sidebar's spare height, so the rest of the sidebar stays put.
+// On a window too short for even that, the box keeps room for a few airports and the whole sidebar scrolls
+function fit(){const sb=document.querySelector(".sb"),q=sb&&sb.querySelector(".sbl.open .sbq");if(!q)return;
+  if(getComputedStyle(sb).overflowY!=="auto"){q.style.maxHeight="";return}   // the sidebar only shows on wide screens
+  q.style.maxHeight="none";const spare=sb.clientHeight-sb.scrollHeight;
+  q.style.maxHeight=Math.max(132,Math.floor(q.scrollHeight+spare))+"px";
+  const on=q.querySelector(".sba.on");if(on&&(on.offsetTop<q.scrollTop||on.offsetTop+on.offsetHeight>q.scrollTop+q.clientHeight))q.scrollTop=on.offsetTop-q.clientHeight/2}   // the airport shown
+addEventListener("resize",()=>fit());addEventListener("load",()=>fit());if(document.fonts)document.fonts.ready.then(()=>fit());
 return{side}})();
 addEventListener("DOMContentLoaded",()=>{AM.sync();const R=document.body.dataset.root||"",B=document.body.dataset,el=document.getElementById("sbw");
 const short=(s,n)=>s.length>n?s.slice(0,n-1)+"…":s;
@@ -1304,6 +1314,8 @@ UPDATES = [
         "about 800 pavement code lines (PCR VALUE) the FAA moved out of the remarks and into the runway data "
         "for 1 Oct 2026 as remarks shown in the FAA's words, but Amend hides them, so the page said 745 of "
         "1,591 remarks read in plain English. Counting what you can see, it's about 94%.",
+        "In the sidebar, a long list scrolls in its own box and shows every airport on it, so the rest of the "
+        "sidebar stays put.",
         "The arrow next to Your lists on the home page, and next to the open list in the sidebar, folds that "
         "list down to its name. Each list remembers whether it's folded, in this browser.",
         "W stays as the FAA wrote it in remark translations. The FAA's lists give W two meanings, west and "
