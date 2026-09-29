@@ -42,7 +42,7 @@ AI_KEYS = [("sent", "sent to the translator"), ("translated", "came back and pas
            ("llm_errors", "translator calls that failed (translation service unavailable)"),
            ("unanswered", "left as FAA text because a call failed or came back unreadable")]
 # llm_error is the translation API's own error text: never shown on a public page (llm_errors counts it)
-AI_HIDDEN = {"llm_error"}
+AI_HIDDEN = {"llm_error", "est_cost_usd"}   # the cost stays in the run log; it only matters to the owner
 NR = '<span class="nr">not recorded</span>'
 # the page is only redeployed by a run that passes, so on the day a run is blocked it would still
 # read green. the visitor's browser checks two things against the clock instead (BEHIND_JS), with
@@ -300,19 +300,13 @@ def s_remarks(r):
     ai, parts = rm.get("ai"), []
     if isinstance(ai, dict):
         fails = [ai.get(k) for k in ("rejected", "bad_batches")]
-        cost = ai.get("est_cost_usd")
         detail += (f" {len(ai.get('unknown_terms') or {})} contractions with no verified meaning. "
-                   + (f"{num(sum(fails))} translations failed the no-guess check or came back unreadable. "
-                      if all(isinstance(x, int) for x in fails) else "Failures: not recorded. ")
-                   + (f"Translator cost ${cost:,.4f}." if isinstance(cost, (int, float)) else "Cost: not recorded."))
+                   + (f"{num(sum(fails))} translations failed the no-guess check or came back unreadable."
+                      if all(isinstance(x, int) for x in fails) else "Failures: not recorded."))
     else:
-        detail += " Unknown terms, failures and cost: not recorded."
+        detail += " Unknown terms and failures: not recorded."
     if isinstance(ai, dict):
         parts = [f'<tr><td>{label}</td><td class="n">{num(ai.get(k))}</td></tr>' for k, label in AI_KEYS if k in ai]
-        if "est_cost_usd" in ai:
-            cost = ai["est_cost_usd"]
-            cost = f"${cost:,.4f}" if isinstance(cost, (int, float)) else NR
-            parts.append(f'<tr><td>estimated translator cost</td><td class="n">{cost}</td></tr>')
         if "llm_stopped" in ai:
             parts.append(f'<tr><td>translator stopped after repeated failures</td><td class="n">'
                          f'{num(ai["llm_stopped"]) if ai["llm_stopped"] is not None else NR}</td></tr>')
