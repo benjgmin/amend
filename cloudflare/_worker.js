@@ -5,7 +5,7 @@
 // on the two names and serves each page from there, so every deploy of amend.watch updates both, with
 // nothing to sync and no token. The pages ask for their shared files (/assets/, the icons,
 // latest/meta.json for the server clock) from their own name; those pass through too. The docs' other
-// pages (/using/, /how-it-works/, /api/) come from amend.watch/docs/<name>/. Any other path is a link
+// pages (/using/, /how-it-works/, /accuracy/, /api/) come from amend.watch/docs/<name>/. Any other path is a link
 // into the airport site and goes to amend.watch.
 //
 // Setup: cloudflare/README.txt. It only ever fetches amend.watch, and GitHub's public list of runs (checks.json).
@@ -13,7 +13,7 @@
 const ORIGIN = "https://amend.watch";
 const PAGES = { "status.amend.watch": "/status/", "docs.amend.watch": "/docs/" };
 // the docs' other pages (amend/docspage.py PAGES), each served from amend.watch/docs/<name>/
-const SUBPAGES = { "docs.amend.watch": /^\/(using|how-it-works|api)(\/|\/index\.html)?$/ };
+const SUBPAGES = { "docs.amend.watch": /^\/(using|how-it-works|accuracy|api)(\/|\/index\.html)?$/ };
 const SHARED = /^\/(assets\/[\w./-]+|favicon\.ico|site\.webmanifest|latest\/meta\.json)$/;
 
 // status.amend.watch/checks.json: the recent runs of the "update FAA changes" workflow, from GitHub's public API.

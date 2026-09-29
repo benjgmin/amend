@@ -326,13 +326,21 @@ process.stdout.write(JSON.stringify({out,calls}))"""
         res = self.run_js("""import w from "./w.mjs";const calls=[];
 globalThis.fetch=async(u,o)=>{calls.push(o.method+" "+u);return new Response("x",{status:200})};const out=[];
 for(const u of ["https://docs.amend.watch/api/","https://docs.amend.watch/how-it-works/?x=1","https://docs.amend.watch/using",
+  "https://docs.amend.watch/accuracy/",
   "https://docs.amend.watch/api/index.html","https://docs.amend.watch/apix/","https://status.amend.watch/api/"]){
   const r=await w.fetch(new Request(u));out.push(r.status+" "+(r.headers.get("location")||""))}
 process.stdout.write(JSON.stringify({out,calls}))""")
-        self.assertEqual(res["out"], ["200 ", "200 ", "301 https://docs.amend.watch/using/", "200 ",
+        self.assertEqual(res["out"], ["200 ", "200 ", "301 https://docs.amend.watch/using/", "200 ", "200 ",
                                       "301 https://amend.watch/apix/", "301 https://amend.watch/api/"])
         self.assertEqual(res["calls"], ["GET https://amend.watch/docs/api/", "GET https://amend.watch/docs/how-it-works/",
-                                        "GET https://amend.watch/docs/api/"])
+                                        "GET https://amend.watch/docs/accuracy/", "GET https://amend.watch/docs/api/"])
+        # every docs page has its path in the proxy, or its link would land on amend.watch
+        with open(os.path.join("cloudflare", "_worker.js")) as f:
+            worker = f.read()
+        from amend import docspage
+        for p, *_ in docspage.PAGES:
+            if p:
+                self.assertIn(p.strip("/"), re.search(r'"docs.amend.watch": /(.*)/ }', worker).group(1))
 
     def test_checks_json(self):
         """status.amend.watch/checks.json: GitHub's run list, trimmed; a GitHub error still answers, with the last list"""
@@ -400,7 +408,7 @@ class TestDocsPages(unittest.TestCase):
         head = home.split("</head>")[0]
         m = json.loads(re.search(r"const m=(\{.*?\})\[", head).group(1))
         self.assertEqual({k: m[k] for k in ("how", "limits", "sources", "status", "labels", "remarks", "api")},
-                         {"how": "how-it-works/", "limits": "how-it-works/", "sources": "how-it-works/",
+                         {"how": "how-it-works/", "limits": "accuracy/", "sources": "how-it-works/",
                           "status": "how-it-works/", "labels": "using/", "remarks": "using/", "api": "api/"})
         self.assertLess(head.index("const m="), head.index('location.hostname==="amend.watch"'))   # before the forward
         self.assertNotIn("open", m)   # still on the first page
@@ -420,13 +428,54 @@ class TestDocsPages(unittest.TestCase):
 
     def test_pilot_pages_keep_ai_and_github_mentions_to_where_they_belong(self):
         from amend import docspage
-        start, using, how, api = (docspage.one_page(n, META, NOW) for n in range(4))
-        for h in (start, how):
+        start, using, how, acc, api = (docspage.one_page(n, META, NOW) for n in range(5))
+        for h in (start, how, acc):
             self.assertNotIn(" AI", text(h.split("<article")[1].split("</article>")[0]))   # the one disclosure is on the remarks section
         self.assertIn("AI model", using)
         self.assertEqual(text(start.split("<article")[1].split("</article>")[0]).count("GitHub"), 1)   # open source + reporting only
         self.assertNotIn("github.com", how.split("<article")[1].split("</article>")[0])   # the footer keeps Report a problem
         self.assertIn("SCHEMA.md", api)
+
+    def test_accuracy_page_counts_come_from_the_gold_set_and_run_log(self):
+        """every number is read at build time: a newly hand-checked case or a new build changes the page"""
+        from amend import docspage
+        d = tempfile.mkdtemp()
+        cases = os.path.join(d, "cases.jsonl")
+        mk = lambda i, pr, who, **k: json.dumps({"id": i, "expected": {"priority": pr}, "verified_by": who, **k})
+        with open(cases, "w") as f:
+            f.write("// comment\n" + "\n".join([
+                mk("g1", "action", "ben, hand-checked"), mk("g2", "fyi", "claude; needs human check"),
+                mk("g3", "hidden", "an instructor, hand-checked"), mk("g4", "ifr", "x; needs human check",
+                                                                     known_failure=True)]) + "\n")
+        logs = os.path.join(d, "runs", "2026-09-03")
+        os.makedirs(logs)
+        def rec(name, eng, pub, texts, pe):
+            with open(os.path.join(logs, name), "w") as f:
+                json.dump({"engine": eng, "published": pub, "finished_at": "2026-09-29T01:43:00+00:00",
+                           "remarks": {"texts": texts, "plain_english": pe}}, f)
+        rec("1.json", "1.3.7", True, 704, 668)
+        rec("2.json", "1.3.7", False, 700, 1)        # blocked: never counted
+        secs = dict((i, x) for i, _, x in docspage.accuracy_sections(os.path.join(d, "runs"), cases))
+        g = text(secs["gold"])
+        self.assertIn("test set of 4 real FAA changes", g)
+        self.assertIn("1 ACT, 1 IFR and 1 FYI changes, plus 1 bookkeeping", g)
+        self.assertIn("2 of the 4 have been checked by a person", g)
+        self.assertIn("1 of them are marked as known mistakes", g)
+        self.assertIn("668 of the 704 changed remarks", text(secs["remark-count"]))
+        self.assertIn("latest build (29 Sep 2026), 668", text(secs["remark-count"]))
+        rec("2.json", "1.3.5", True, 1591, 745)      # older engines counted every remark, shown or not
+        secs = dict((i, x) for i, _, x in docspage.accuracy_sections(os.path.join(d, "runs"), cases))
+        self.assertIn("668 of the 704", text(secs["remark-count"]))
+        # no invented percentages anywhere on the page
+        page = docspage.one_page([p for p, *_ in docspage.PAGES].index("accuracy/"), META, NOW)
+        self.assertNotIn("%", text(page.split("<article")[1].split("</article>")[0]))
+
+    def test_limits_moved_off_how_it_works_still_land(self):
+        from amend import docspage
+        how = docspage.one_page([p for p, *_ in docspage.PAGES].index("how-it-works/"), META, NOW)
+        head = how.split("</head>")[0]
+        self.assertEqual(json.loads(re.search(r"const m=(\{.*?\})\[", head).group(1)), {"limits": "accuracy/"})
+        self.assertNotIn('id="limits"', how)
 
     def test_a_renamed_schema_heading_fails_loudly(self):
         from unittest import mock
