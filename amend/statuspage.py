@@ -64,7 +64,7 @@ CSS = """<style>
 .stg .d{color:var(--dm);margin-top:2px;overflow-wrap:anywhere}
 .stg .more{margin-top:6px}.stg .more>summary{font-size:13px}
 .nr{color:var(--fn);font-style:italic}
-.tw{overflow-x:auto;margin-top:8px;border:1px solid var(--ln);border-radius:6px}.tw.xs{--sh:var(--p)}
+.tw{overflow-x:auto;margin-top:8px;border:1px solid var(--ln);border-radius:6px}
 .tb{border-collapse:collapse;width:100%;font-size:12.5px;font-variant-numeric:tabular-nums}
 .tb th,.tb td{text-align:left;padding:5px 8px;border-top:1px solid var(--ln);vertical-align:top}
 .tb th{border-top:0;font-weight:600;color:var(--dm);white-space:nowrap}.tb td.n{text-align:right;white-space:nowrap}
@@ -197,7 +197,7 @@ def s_sources(r):
         f'<td>{f"""<a href="{e(s["url"])}">{e(s.get("file"))}</a>""" if s.get("url") else e(s.get("file"))}</td>'
         f'<td class="n">{mb(s.get("bytes"))}</td><td class="h">{e(s.get("sha256")) or NR}</td>'
         f'<td>{e(s.get("last_modified")) or NR}</td><td>{when(s.get("retrieved_at"))}</td></tr>' for s in src)
-    table = (f'<div class="tw xs"><table class="tb"><tr><th>File</th><th>Name</th><th>Size</th><th>SHA-256</th>'
+    table = (f'<div class="tw"><table class="tb"><tr><th>File</th><th>Name</th><th>Size</th><th>SHA-256</th>'
              f'<th>FAA Last-Modified</th><th>Downloaded</th></tr>{rows}</table></div>'
              '<p class="note">"Not recorded" on Last-Modified or Downloaded means the file was downloaded before '
              "the run log kept those, or the FAA server didn't send it.</p>")
@@ -223,7 +223,7 @@ def s_rows(r):
         a, b = old.get(f), new.get(f)
         pct = f"{(b - a) / a:+.1%}" if a and b is not None else ""
         return f'<tr><td>{e(f)}</td><td class="n">{num(a)}</td><td class="n">{num(b)}</td><td class="n">{pct}</td></tr>'
-    table = (f'<div class="tw xs"><table class="tb"><tr><th>Table</th><th>Older</th><th>Newer</th><th>Change</th></tr>'
+    table = (f'<div class="tw"><table class="tb"><tr><th>Table</th><th>Older</th><th>Newer</th><th>Change</th></tr>'
              + "".join(map(line, files)) + '</table></div>'
              '<p class="note">The input check stops a run when a table loses more than 10% of its rows, gains '
              "more than 50%, goes missing or comes back empty, and flags drops over 5% or rises over 15%. Its "
@@ -256,7 +256,7 @@ def s_classify(r):
         return stage("skip" if not reached(r) else "none", "Sorted the changes",
                      "The run stopped before the comparison." if not reached(r) else "Not recorded.")
     cat = ch.get("by_category") or {}
-    table = ('<div class="tw xs"><table class="tb"><tr><th>Category</th><th>Changes</th></tr>'
+    table = ('<div class="tw"><table class="tb"><tr><th>Category</th><th>Changes</th></tr>'
              + "".join(f'<tr><td>{e(k)}</td><td class="n">{num(v)}</td></tr>' for k, v in cat.items())
              + "</table></div>") if cat else ""
     return stage("done", "Sorted the changes",
@@ -319,7 +319,7 @@ def s_remarks(r):
     parts += [f'<tr><td>{e(k)}</td><td class="n">{generic(v)}</td></tr>' for k, v in extra.items()]
     inner = ""
     if parts:
-        inner = f'<div class="tw xs"><table class="tb">{"".join(parts)}</table></div>'
+        inner = f'<div class="tw"><table class="tb">{"".join(parts)}</table></div>'
     if isinstance(ai, dict) and ai.get("unknown_terms"):
         terms = ", ".join(f"{e(k)} ({v})" for k, v in sorted(ai["unknown_terms"].items(), key=lambda kv: (-kv[1], kv[0])))
         inner += (f'<p class="note">These stay exactly as the FAA wrote them until the glossary has a verified '
@@ -353,7 +353,7 @@ def s_summaries(r):
         rows.append(f'<tr><td>{e(label)}</td><td class="n">{generic(n)}</td></tr>')
         if isinstance(v, dict) and v:
             rows += [f'<tr><td>&nbsp;&nbsp;{e(kk)}</td><td class="n">{generic(vv)}</td></tr>' for kk, vv in v.items()]
-    table = f'<div class="tw xs"><table class="tb">{"".join(rows)}</table></div>' if rows else ""
+    table = f'<div class="tw"><table class="tb">{"".join(rows)}</table></div>' if rows else ""
     return stage("pass" if total == 0 else "noted", "Checked the change summaries",
                  "Nothing flagged." if total == 0 else f"{num(total)} flagged. These don't stop a run: each one "
                  "shows the FAA's own values instead.", more("Details", table) if table else "")
@@ -416,7 +416,7 @@ def s_other(r):
         return ""
     rows = "".join(f'<tr><td>{e(k)}</td><td>{generic(v)}</td></tr>' for k, v in extra.items())
     return stage("done", "Other recorded fields", "Fields this page doesn't describe yet, as the run wrote them.",
-                 more("Show", f'<div class="tw xs"><table class="tb">{rows}</table></div>'))
+                 more("Show", f'<div class="tw"><table class="tb">{rows}</table></div>'))
 
 
 def stages(r):
