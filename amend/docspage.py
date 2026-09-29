@@ -14,7 +14,7 @@ import os
 import re
 
 from . import gold, runlog, subsite, web
-from .web import DTPP_SEARCH, FAA_INQUIRY, NASR_PAGE, REPO_URL, REPORT_URL, SITE_URL
+from .web import DTPP_SEARCH, FAA_INQUIRY, NASR_PAGE, ISSUES_URL, REPO_URL, REPORT_EMAIL, REPORT_URL, SITE_URL, e
 
 CSS = """<style>
 .dx{display:grid;grid-template-columns:220px minmax(0,1fr);column-gap:48px;align-items:start}
@@ -251,7 +251,7 @@ def sections():
             "tap.</p>")),
         ("open", "Open source and reporting problems", (
             f'<p>The engine, the rules and the site are <a href="{REPO_URL}">on GitHub</a> under the MIT license. '
-            f'Found something wrong? <a href="{REPORT_URL}">Open an issue</a> with the airport, the cycle and what '
+            f'Found something wrong? <a href="{e(REPORT_URL)}">Email {REPORT_EMAIL}</a> with the airport, the cycle and what '
             "the FAA source says. If the FAA's own data is wrong, only the FAA can fix it: "
             f'use its <a href="{FAA_INQUIRY}">Aeronautical Inquiries</a> page.</p>')),
     ]
@@ -365,7 +365,7 @@ def accuracy_sections(log_dir=runlog.RUNS, cases=gold.CASES):
             f'<li><a href="{NASR_PAGE.format(cycle="")}">NASR subscription</a>: the data files Amend reads.</li>'
             "</ul>")),
         ("report", "Reporting an error", (
-            f'<p>If Amend shows something wrong, <a href="{REPORT_URL}">report it</a> with the airport, the cycle '
+            f'<p>If Amend shows something wrong, <a href="{e(REPORT_URL)}">email it to {REPORT_EMAIL}</a> with the airport, the cycle '
             "and what the FAA source says. A confirmed mistake is fixed in the engine and added to the test set, "
             "so it can't come back unnoticed. If the FAA's own data is wrong, only the FAA can fix it: use its "
             f'<a href="{FAA_INQUIRY}">Aeronautical Inquiries</a> page.</p>')),
@@ -591,7 +591,8 @@ def api_sections():
             "changing it, so ignore fields you don't know. Renaming or removing a field raises it.</p>"
             "<p>Each change also records the <code>engine</code> version that made it. The engine's rules, and "
             f'the full contract in <a href="{REPO_URL}/blob/master/SCHEMA.md">SCHEMA.md</a>, are on GitHub. '
-            f'If you build on the files and something breaks, <a href="{REPORT_URL}">open an issue</a>.</p>')),
+            f'If you build on the files and something breaks, <a href="{ISSUES_URL}">open an issue on GitHub</a> '
+            f'or email <a href="mailto:{REPORT_EMAIL}">{REPORT_EMAIL}</a>.</p>')),
     ]
     return out
 

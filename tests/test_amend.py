@@ -720,7 +720,9 @@ class TestWeb(unittest.TestCase):
         self.assertIn('static.cloudflareinsights.com/beacon.min.js', page)   # the about page's privacy note says so
         self.assertIn('class="mk"', page)                               # the logo, tile coloured by the theme
         self.assertIn("not affiliated with the FAA", page)
-        self.assertIn("issues/new?title=VRB%3A%20", page)               # report a wrong change
+        self.assertIn("mailto:hello@amend.watch?subject=Amend%3A%20wrong%20change%20at%20VRB&amp;body=Airport%3A%20VRB%0ACycle%3A%20", page)  # report a wrong change
+        self.assertIn("Page%3A%20https%3A%2F%2Famend.watch%2FVRB%2F", page)
+        self.assertNotIn("issues/new", page)                            # reporting needs no GitHub account
         self.assertIn('url(fonts/plex-sans-latin.woff2)', open(os.path.join(site, "assets", "style.css")).read())
         about = open(os.path.join(site, "about", "index.html")).read()
         self.assertIn('id="report"', about)

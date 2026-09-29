@@ -74,5 +74,5 @@ def page(kind, title, description, body, meta, now=None, head="", path="", early
 <span class="sx-kind">{"Status" if kind == "status" else "Docs"}</span><nav class="sx-nav" aria-label="Amend">{links}</nav></div></header>
 <main class="sx-main"><div class="card banner stale" id="stale" hidden></div>{body}</main>
 <footer class="sx-foot"><div class="sx-in">{fresh}{'. ' if fresh else ''}Not for navigation. Always use official FAA publications, NOTAMs and a proper preflight briefing.
-Amend is independent and not affiliated with the FAA.<br><a href="{site}">amend.watch</a> · <a href="{site}changelog/">Changelog</a> · <a href="{site}privacy/">Privacy</a> · <a href="{site}terms/">Terms</a> · <a href="{web.REPORT_URL}">Report a problem</a> · <a href="{web.REPO_URL}">Source</a></div></footer>
+Amend is independent and not affiliated with the FAA.<br><a href="{site}">amend.watch</a> · <a href="{site}changelog/">Changelog</a> · <a href="{site}privacy/">Privacy</a> · <a href="{site}terms/">Terms</a> · <a href="{web.e(web.REPORT_URL)}">Report a problem</a> · <a href="{web.REPO_URL}">Source</a></div></footer>
 </body></html>"""

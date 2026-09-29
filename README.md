@@ -11,7 +11,7 @@
   <a href="https://amend.watch/"><b>amend.watch</b></a> ·
   <a href="https://docs.amend.watch/how-it-works/">How it works</a> ·
   <a href="https://amend.watch/guide/">Guide</a> ·
-  <a href="https://github.com/benjgmin/amend/issues/new">Report a problem</a>
+  <a href="mailto:hello@amend.watch">Report a problem</a>
 </p>
 
 Every 28 days the FAA publishes a new cycle of airport, airspace, frequency and chart data. The changes that matter (tower hours, a decommissioned VOR, a renumbered runway, an amended approach) are buried among tens of thousands of rows of bookkeeping noise. Amend diffs every cycle for every US airport, filters out the noise, and explains what's left in plain English, ranked by how much it matters when you fly there. It shows upcoming changes up to three weeks before they take effect.
@@ -74,7 +74,7 @@ Data is public at `https://amend.watch/`, documented in [SCHEMA.md](SCHEMA.md).
 
 - Amend is an independent project. It isn't affiliated with or endorsed by the FAA.
 - No accounts and no cookies. Watchlists live in your browser. Visitor counts come from Cloudflare Web Analytics, which is cookie-free. The details are at [amend.watch/privacy](https://amend.watch/privacy/).
-- Found a change that's wrong or missing? [Open an issue](https://github.com/benjgmin/amend/issues/new) with the airport, the cycle and what the FAA source says.
+- Found a change that's wrong or missing? Email [hello@amend.watch](mailto:hello@amend.watch) with the airport, the cycle and what the FAA source says. Developers can also [open an issue](https://github.com/benjgmin/amend/issues/new).
 
 ## Repo layout
 

@@ -35,7 +35,19 @@ def sub_url(kind, root=None, path=""):
     return f"{SITE_URL if root is None else root}{kind}/{path}"
 
 
-REPORT_URL = REPO_URL + "/issues/new"    # "report a problem" until there's an email address
+REPORT_EMAIL = "hello@amend.watch"      # forwards to the maintainer's inbox; reporting needs no account
+
+
+def report_url(subject="Amend: a problem", airport="", cycle="", page=""):
+    """a mailto: link to REPORT_EMAIL with the subject and a short form filled in, so a report arrives with the
+    airport, cycle and page it's about. %20 for spaces: mail apps show a + as a +."""
+    lines = [f"Airport: {airport}" if airport else "", f"Cycle: {cycle}" if cycle else "", f"Page: {page}" if page else ""]
+    body = "\n".join(x for x in lines if x) + "\n\nWhat looks wrong:\n\n\nWhat the FAA source says (a link or screenshot helps):\n"
+    return f"mailto:{REPORT_EMAIL}?subject={quote(subject, safe='')}&body={quote(body.lstrip(), safe='')}"
+
+
+REPORT_URL = report_url()
+ISSUES_URL = REPO_URL + "/issues/new"    # for developers, on the docs' API page
 # the FAA's own form for a mistake in its data (charts, procedures, airport and navaid data). Amend can't fix those
 FAA_INQUIRY = "https://www.faa.gov/air_traffic/flight_info/aeronav/aero_data/Aeronautical_Inquiries/"
 # Cloudflare Web Analytics: cookie-free visitor counts (the about page's privacy note says so). The token is
@@ -999,7 +1011,7 @@ def sidebar(root, active, meta=None, now=None, on=""):
             f'<div class="sbfoot">Not for navigation. Independent, not affiliated with the FAA.<br>'
             f'<a href="{root}changelog/">Changelog</a> · <a href="{sub_url("status", root)}">Status</a> · '
             f'<a href="{root}privacy/">Privacy</a> · <a href="{root}terms/">Terms</a><br>'
-            f'<a href="{REPORT_URL}">Report a problem</a> · '
+            f'<a href="{e(REPORT_URL)}">Report a problem</a> · '
             f'<a href="{REPO_URL}">Source</a></div></nav>')
     nav = lambda href, text, key: f'<a class="{"on" if key == active else ""}" href="{root}{href}">{text}</a>'
     top = (f'<header class="mtop">{logo(root)}<nav class="nav">'
@@ -1039,7 +1051,7 @@ f'<link rel="alternate" type="application/rss+xml" title="{e(feed[1])}" href="{e
 <main class="main{' two' if two else ''}"><div class="card banner stale full" id="stale" hidden></div>{body}
 <p class="foot full">{freshness(meta, now or dt.datetime.now(dt.timezone.utc))}{'. ' if meta else ''}Not for navigation. Always use official FAA publications, NOTAMs and a proper preflight briefing.
 Amend is independent and not affiliated with the FAA. Data: FAA NASR and d-TPP.
-<a href="{sub_url('docs', root)}">How it works</a> · <a href="{sub_url('status', root)}">Status</a> · <a href="{root}changelog/">Changelog</a> · <a href="{root}privacy/">Privacy</a> · <a href="{root}terms/">Terms</a> · <a href="{REPORT_URL}">Report a problem</a> · <a href="{REPO_URL}">Source</a></p></main></div></body></html>"""
+<a href="{sub_url('docs', root)}">How it works</a> · <a href="{sub_url('status', root)}">Status</a> · <a href="{root}changelog/">Changelog</a> · <a href="{root}privacy/">Privacy</a> · <a href="{root}terms/">Terms</a> · <a href="{e(REPORT_URL)}">Report a problem</a> · <a href="{REPO_URL}">Source</a></p></main></div></body></html>"""
 
 
 def effective(cycle):
@@ -1201,7 +1213,8 @@ def airport_page(apt, info, latest, hist, meta, now, has_card=False):
                 + src(SUPPLEMENT_SEARCH, f"Chart Supplement (search {e(apt)})") + src(DTPP_SEARCH, "Approach plates (d-TPP)")
                 + src(NOTAM_SEARCH, "NOTAMs") + src(NASR_PAGE.format(cycle=meta["to_cycle"]), f"NASR data, {nice(meta['to_cycle'])}")
                 + '<p class="foot">Amend reads these FAA files. If they ever disagree, the FAA is right. '
-                f'<a href="{REPORT_URL}?title={quote(apt + ": ")}">Report a wrong change</a></p></div>')
+                f'<a href="{e(report_url(f"Amend: wrong change at {apt}", apt, nice(meta["to_cycle"]), f"{SITE_URL}{apt}/"))}">'
+                'Report a wrong change</a></p></div>')
     if cycles:
         rail.append('<div class="card box hist"><h3>History</h3>' + "".join(
             f'<a class="hrow" href="#c-{e(cyc)}"><span>{nice(cyc)}</span>{chips(counts(by_cycle[cyc]), False)}</a>'
@@ -1355,6 +1368,8 @@ data-name="{e(wl['name'])}">Save to my lists</a><button class="btn ghost" id="co
 # what shipped, newest first, for /changelog/. Add a line when something people can see changes.
 UPDATES = [
     ("Sep 2026", [
+        "Report a problem by email at hello@amend.watch, no GitHub account needed. Report a wrong change on an "
+        "airport page fills in the airport, cycle and page for you.",
         "The docs have an Accuracy and limits page: the test set of real FAA changes and how many a person has "
         "checked, the plain-English remark count from the latest build, what Amend doesn't cover, and the "
         "official FAA sources to check.",
@@ -1442,7 +1457,7 @@ UPDATES = [
         "Class B, C, D and E surface area changes, told from each airport's point of view.",
     ]),
 ]
-POLICY_DATE = "28 Sep 2026"   # when privacy/ or terms/ last changed in substance; bump it with them
+POLICY_DATE = "29 Sep 2026"   # when privacy/ or terms/ last changed in substance; bump it with them
 
 # the about page used to hold everything. Old links to its sections go on to where each one lives now
 def about_moved():
@@ -1478,8 +1493,9 @@ def about_page(meta, latest, screenshots, now, example="VRB"):
         "<p><b>Not for navigation.</b> Amend helps you notice changes. It doesn't replace official FAA publications, "
         "NOTAMs or a preflight briefing, and if Amend and the FAA ever disagree, the FAA is right.</p>"))
     report = sec("report", "Report a problem", (
-        f'<p>Found a change that\'s wrong, missing or hard to understand? <a href="{REPORT_URL}">Open an issue on '
-        "GitHub</a> with the airport, the cycle and what the FAA source says. It takes a free GitHub account.</p>"
+        f'<p>Found a change that\'s wrong, missing or hard to understand? <a href="{e(REPORT_URL)}">Email '
+        f"{REPORT_EMAIL}</a> with the airport, the cycle and what the FAA source says. No account needed. On an "
+        "airport page, Report a wrong change fills in the airport and cycle for you.</p>"
         "<p>If Amend matches the FAA and it's the FAA's data that looks wrong, like a frequency or a chart that "
         f'doesn\'t match the real airport, Amend can\'t fix it. Tell the FAA through its <a href="{FAA_INQUIRY}">'
         "Aeronautical Inquiries</a> page.</p>"))
@@ -1560,8 +1576,11 @@ def privacy_page(meta, now):
             "from GitHub through that same proxy: your browser doesn't contact GitHub for them.</p>")),
         ("alerts", "Alerts and email", email),
         ("reports", "Reporting a problem", (
-            "<p>Problem reports are GitHub issues, which are public and fall under GitHub's own terms. Don't put "
-            "anything private in one.</p>")),
+            f"<p>Problem reports sent to {REPORT_EMAIL} go to the maintainer's own inbox. They're used only to look into "
+            "the problem and write back, and they aren't published or shared. Your email provider and the "
+            "maintainer's also handle the message under their own terms.</p>"
+            f'<p>If you open a <a href="{ISSUES_URL}">GitHub issue</a> instead, it\'s public and falls under GitHub\'s '
+            "own terms, so don't put anything private in one.</p>")),
         ("app", "The iPhone app", (
             "<p>The app has no account either. It keeps your airports and settings on your phone, and it only "
             "downloads data from amend.watch and charts from the FAA. Notifications are worked out on your phone; "
@@ -1579,7 +1598,7 @@ def privacy_page(meta, now):
         ("changes", "Changes to this page", (
             f"<p>Last changed {POLICY_DATE}. Changes are listed in the <a href=\"../changelog/\">changelog</a>, and "
             f"every edit is in the page's history <a href=\"{REPO_URL}\">on GitHub</a>. Questions go to "
-            f"<a href=\"{REPORT_URL}\">GitHub issues</a>.</p>")),
+            f"<a href=\"mailto:{REPORT_EMAIL}\">{REPORT_EMAIL}</a>.</p>")),
     ]
     return doc_page("privacy", "Privacy", "What Amend keeps about you (almost nothing), and who else sees a visit.",
                     sections, "Amend has no accounts and no cookies. What it stores, and who else sees a visit.",
@@ -1620,7 +1639,7 @@ def terms_page(meta, now):
         ("changes", "Changes", (
             f"<p>Last changed {POLICY_DATE}. These terms can change as Amend does; changes are listed in the "
             f'<a href="../changelog/">changelog</a> and every edit is <a href="{REPO_URL}">on GitHub</a>. '
-            f'Questions go to <a href="{REPORT_URL}">GitHub issues</a>.</p>')),
+            f'Questions go to <a href="mailto:{REPORT_EMAIL}">{REPORT_EMAIL}</a>.</p>')),
     ]
     return doc_page("terms", "Terms of use", "The rules for using Amend, in plain words.", sections,
                     "Terms of use for Amend: not for navigation, no guarantee, and how you can use the data.",
