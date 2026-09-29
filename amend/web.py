@@ -87,18 +87,24 @@ FONT_FACES = "".join(f'@font-face{{font-family:"{fam}";font-style:normal;font-we
 CSS = FONT_FACES + """
 :root{--bg:#F6F8FA;--p:#FFFFFF;--p2:#EEF2F6;--ln:#DDE3EA;--ln2:#C3CCD7;--tx:#0D1B2A;--dm:#4B5B6E;--fn:#667385;
 --am:#A3186E;--amS:#F8E6F0;--cy:#1A5EA6;--cyS:#E3EDF8;--gy:#4B5B6E;--gyS:#EEF2F6;--gn:#2D7A4B;--gnS:#E4F2E9;--on:#FFFFFF;
---amber:var(--am);--cyan:var(--cy);--dim:var(--dm);--shadow:none;
+--amber:var(--am);--cyan:var(--cy);--dim:var(--dm);--shadow:none;--shade:rgba(13,27,42,.16);
 --mk:#FFFFFF;--mkl:#C3CCD7;--mko:#AAB5C3;--mks:#A3186E;--mkn:#0D1B2A;
 --sans:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
 --mono:"IBM Plex Mono",ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,monospace;color-scheme:light}
 @media (prefers-color-scheme:dark){:root{--bg:#09121C;--p:#0E1926;--p2:#152233;--ln:#1F3044;--ln2:#2E4460;--tx:#E6EDF5;
 --dm:#9DAEC2;--fn:#7A8DA4;--am:#E26BB2;--amS:rgba(226,107,178,.14);--cy:#7FB2EC;--cyS:rgba(127,178,236,.14);
---gy:#9DAEC2;--gyS:rgba(157,174,194,.12);--gn:#67C08B;--gnS:rgba(103,192,139,.13);--on:#09121C;--shadow:none;
+--gy:#9DAEC2;--gyS:rgba(157,174,194,.12);--gn:#67C08B;--gnS:rgba(103,192,139,.13);--on:#09121C;--shadow:none;--shade:rgba(0,0,0,.6);
 --mk:#0E1926;--mkl:#2E4460;--mko:#4F627B;--mks:#E26BB2;--mkn:#E6EDF5;color-scheme:dark}}
 *{box-sizing:border-box}html{background:var(--bg)}
 /* every scrollbar in the site's grays and thin, like the sidebar's own: the page, code blocks, tables, tabs.
    CSS only, so find-in-page, momentum and keyboard scrolling stay the browser's */
 html{scrollbar-color:var(--ln2) transparent}*{scrollbar-width:thin}
+/* a box that scrolls sideways shows a soft shadow on each edge that has more content, gone once you reach that end
+   (the covers scroll with the content, the shadows stay put). --sh is the box's own background */
+.xs{--sh:var(--p2);background:linear-gradient(to right,var(--sh) 40%,transparent) left/28px 100% no-repeat local,
+ linear-gradient(to left,var(--sh) 40%,transparent) right/28px 100% no-repeat local,
+ radial-gradient(farthest-side at 0 50%,var(--shade),transparent) left/12px 100% no-repeat scroll,
+ radial-gradient(farthest-side at 100% 50%,var(--shade),transparent) right/12px 100% no-repeat scroll,var(--sh)}
 @supports not (scrollbar-color:red blue){   /* Safari: no scrollbar-color yet, so the boxes inside the page get a thin bar */
  pre::-webkit-scrollbar,.tw::-webkit-scrollbar,.seg::-webkit-scrollbar,.shots::-webkit-scrollbar,.dx-toc::-webkit-scrollbar{width:8px;height:8px}
  pre::-webkit-scrollbar-track,.tw::-webkit-scrollbar-track,.seg::-webkit-scrollbar-track,.shots::-webkit-scrollbar-track,.dx-toc::-webkit-scrollbar-track{background:transparent}
@@ -272,6 +278,8 @@ a.sbi{color:var(--dm);transition:color .15s}a.sbi:hover{color:var(--tx);text-dec
 .sbp{position:relative;display:grid;grid-template-rows:0fr;transition:grid-template-rows .22s ease}.sbl.open>.sbp{grid-template-rows:1fr}
 .sbq{position:relative;min-height:0;overflow:hidden;scrollbar-width:none;margin-left:16px;border-left:1px solid var(--ln);opacity:0;transition:opacity .22s ease}
 .sbl.open .sbq{opacity:1}.sbq::-webkit-scrollbar{display:none}
+.sbq.mt,.sbq.mb{--ft:0px;--fb:0px;-webkit-mask-image:linear-gradient(transparent,#000 var(--ft),#000 calc(100% - var(--fb)),transparent);mask-image:linear-gradient(transparent,#000 var(--ft),#000 calc(100% - var(--fb)),transparent)}
+.sbq.mt{--ft:28px}.sbq.mb{--fb:28px}
 /* our own scrollbar over the list box: a thin thumb drawn over native scrolling, faint until you're over the list */
 .sbbar{position:absolute;top:0;right:0;bottom:0;width:10px;opacity:0;transition:opacity .2s;touch-action:none}
 .sbl:not(.open) .sbbar{display:none}.sbbar.can{opacity:.45}.sbl.open:hover .sbbar.can,.sbbar.can.go{opacity:1}
@@ -745,7 +753,8 @@ function here(q){const on=q&&q.querySelector(".sba.on");
 // our own scrollbar: native scrolling (wheel, trackpad, touch, keys) moves the box; the thumb follows it and can be dragged
 const seen=new WeakSet(),ro=typeof ResizeObserver!=="undefined"?new ResizeObserver(es=>es.forEach(e=>draw(e.target))):null;
 function draw(q){const bar=q.nextElementSibling,t=bar.firstChild,H=q.clientHeight,S=q.scrollHeight,
-  can=S>H+1&&!q.closest("[data-anim]");bar.classList.toggle("can",can);if(!can)return;
+  can=S>H+1&&!q.closest("[data-anim]");bar.classList.toggle("can",can);
+  q.classList.toggle("mt",can&&q.scrollTop>1);q.classList.toggle("mb",can&&q.scrollTop<S-H-1);if(!can)return;   // more above, more below
   const th=Math.max(24,H*H/S);t.style.height=th+"px";t.style.top=(q.scrollTop/(S-H))*(H-th)+"px"}
 function bar(q){if(seen.has(q))return draw(q);seen.add(q);const b=q.nextElementSibling;let hide;
   q.addEventListener("scroll",()=>{draw(q);b.classList.add("go");clearTimeout(hide);hide=setTimeout(()=>b.classList.remove("go"),700)},{passive:true});
@@ -1355,7 +1364,7 @@ data-name="{e(wl['name'])}">Save to my lists</a><button class="btn ghost" id="co
 UPDATES = [
     ("Sep 2026", [
         "Every scrollbar on the site, the docs' code blocks included, is thin and in the site's own grays, in "
-        "light and dark.",
+        "light and dark. A soft shadow on an edge shows there is more to scroll that way.",
         "The remark count on the status page counts only remarks you can read on an airport page. It counted "
         "about 800 pavement code lines (PCR VALUE) the FAA moved out of the remarks and into the runway data "
         "for 1 Oct 2026 as remarks shown in the FAA's words, but Amend hides them, so the page said 745 of "
