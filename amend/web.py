@@ -1378,6 +1378,9 @@ UPDATES = [
     ("Sep 2026", [
         "Report a problem by email at hello@amend.watch, no GitHub account needed. Report a wrong change on an "
         "airport page fills in the airport, cycle and page for you.",
+        "The docs have an Accuracy and limits page: the test set of real FAA changes and how many a person has "
+        "checked, the plain-English remark count from the latest build, what Amend doesn't cover, and the "
+        "official FAA sources to check.",
         "Every scrollbar on the site, the docs' code blocks included, is thin and in the site's own grays, in "
         "light and dark. A soft shadow on an edge shows there is more to scroll that way.",
         "The remark count on the status page counts only remarks you can read on an airport page. It counted "
@@ -1466,7 +1469,8 @@ POLICY_DATE = "29 Sep 2026"   # when privacy/ or terms/ last changed in substanc
 
 # the about page used to hold everything. Old links to its sections go on to where each one lives now
 def about_moved():
-    return {"how": sub_url("docs", "../", "how-it-works/") + "#how", "limits": sub_url("docs", "../", "how-it-works/") + "#limits",
+    return {"how": sub_url("docs", "../", "how-it-works/") + "#how",
+            "limits": sub_url("docs", "../", "accuracy/") + "#limits",
             "privacy": "../privacy/", "updates": "../changelog/"}
 
 

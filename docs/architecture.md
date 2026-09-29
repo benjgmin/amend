@@ -119,7 +119,8 @@ engine that produced a given history entry.
 - **Hosting:** GitHub Pages, custom domain amend.watch. The status page and the docs are built with the site
   (`amend/statuspage.py`, `amend/docspage.py`, layout in `amend/subsite.py`) and served at status.amend.watch
   and docs.amend.watch by a Cloudflare Pages proxy (`cloudflare/_worker.js`, setup in `cloudflare/README.txt`).
-  `web.SUBDOMAINS` turns the names on for every link. The docs are four pages (`docspage.PAGES`); the API page
+  `web.SUBDOMAINS` turns the names on for every link. The docs are five pages (`docspage.PAGES`); the accuracy page
+  reads the gold set and the run log at build time, and the API page
   is rendered from `SCHEMA.md` at build time. The proxy also serves `status.amend.watch/checks.json`, GitHub's
   public list of recent `update.yml` runs (cached 5 min), so the status page can show the 10-minute checks that
   build nothing and never reach the run log. An optional `GITHUB_TOKEN` secret on the Pages project lifts GitHub's

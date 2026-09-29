@@ -3,7 +3,7 @@ import re
 from collections import defaultdict
 
 from . import glossary
-from .diff import _canon
+from .diff import _canon, diff
 from .english import PROC_USE, freq_use, ils, ils_part, procedure_name, summarize
 from .procedures import describe, split_code
 from .rules import REMARK_FILES, base
@@ -42,26 +42,121 @@ def _new_or_removed_airport(apt, rs, kind):
             "key": {"airport": apt}, "values": [v for row in used for v in row.values()]}
 
 
+def _near(a, b):
+    """the same runway number, or one apart (magnetic variation drift)."""
+    return a is not None and b is not None and (a == b or _one_apart(a, b))
+
+
+def _numbers_near(o_id, n_id):
+    """an end number one apart or the same. either end counts: 01/19 -> 18/36 (01 -> 36, 19 ->
+    18) is the FAA listing the ends the other way round."""
+    ends = lambda rid: [_rwy_num(e) for e in (rid or "").split("/")]
+    return any(_near(a, b) for a in ends(o_id) for b in ends(n_id))
+
+
+def _same_size(o, n):
+    return bool(o.get("RWY_LEN")) and (o.get("RWY_LEN"), o.get("RWY_WIDTH")) == (n.get("RWY_LEN"), n.get("RWY_WIDTH"))
+
+
+def _ends(rs, kind, rid):
+    """a runway's end rows (APT_RWY_END) added or removed with it."""
+    return [r for r in rs if base(r["source"]) == "APT_RWY_END" and r["kind"] == kind
+            and r["row"].get("RWY_ID") == rid]
+
+
+def _same_heading(rs, o_id, n_id):
+    """True if an old end and a new end list the same true alignment (within 2 degrees), False
+    if they list others, None if either side lists none."""
+    def headings(kind, rid):
+        out = set()
+        for r in _ends(rs, kind, rid):
+            try:
+                out.add(round(float(r["row"]["TRUE_ALIGNMENT"])) % 360)
+            except (KeyError, ValueError):
+                pass
+        return out
+    old, new = headings("removed", o_id), headings("added", n_id)
+    if not old or not new:
+        return None
+    return any(min(abs(a - b), 360 - abs(a - b)) <= 2 for a in old for b in new)
+
+
+def _is_renumbering(rs, old, new):
+    """one strip under a new number: the first number one apart (magnetic variation drift) or
+    the same size, whatever the number (E70 16/34 -> 18/36, A34 05/23 -> 07/25 and 1NY3 18/36 ->
+    16/34 kept their ends where they were). ends listed the other way round (01/19 -> 18/36)
+    count when the FAA's true alignment shows the same heading: FSO 2026-03-19 yes, I34
+    2024-07-11 no (18/36 at 180 degrees, a new, longer 01/19 at 186)."""
+    o, n = old["row"], new["row"]
+    o_id, n_id = o.get("RWY_ID"), n.get("RWY_ID")
+    return (_one_apart(_rwy_num(o_id), _rwy_num(n_id)) or _same_size(o, n)
+            or (_numbers_near(o_id, n_id) and _same_heading(rs, o_id, n_id) is True))
+
+
+def _best_first(olds, news, score):
+    """[(old, new), ...] by lowest score first (None: never paired); ties go to list order."""
+    cands = []
+    for i, o in enumerate(olds):
+        for j, n in enumerate(news):
+            s = score(o, n)
+            if s is not None:
+                cands.append((s, i, j))
+    used_o, used_n, pairs = set(), set(), []
+    for _, i, j in sorted(cands):
+        if i not in used_o and j not in used_n:
+            used_o.add(i)
+            used_n.add(j)
+            pairs.append((i, j))
+    return [(olds[i], news[j]) for i, j in sorted(pairs)]
+
+
+def _pair_runways(rs, removed, added):
+    """renumberings first, a number one apart before the same size: two runways the same size
+    renumbered together pair 09/27 -> 10/28 and 18/36 -> 01/19, never 09/27 -> 01/19 (TUS
+    2023-11-30: 12/30 is the old 11L/29R, not 11R/29L). one runway left on each side after
+    that was replaced or realigned."""
+    def score(old, new):
+        if not _is_renumbering(rs, old, new):
+            return None
+        o, n = old["row"], new["row"]
+        return (not _numbers_near(o.get("RWY_ID"), n.get("RWY_ID")), not _same_size(o, n))
+    pairs = _best_first(removed, added, score)
+    left_o = [r for r in removed if all(r is not o for o, _ in pairs)]
+    left_n = [r for r in added if all(r is not n for _, n in pairs)]
+    if len(left_o) == 1 and len(left_n) == 1:
+        pairs.append((left_o[0], left_n[0]))
+    return pairs
+
+
+def _end_changes(apt, rs, o_id, n_id):
+    """a renumbered runway's ends, old against new under the new numbers (25 against 26), so
+    what else changed on an end still says so: MRI 2026-09-03, runway 26 touchdown zone
+    elevation 137.3 -> 143.1 ft. ends pair by number, else by their place in the runway id."""
+    place = lambda row: (row.get("RWY_ID", "").split("/").index(row.get("RWY_END_ID"))
+                         if row.get("RWY_END_ID") in row.get("RWY_ID", "").split("/") else None)
+
+    def score(old, new):
+        o, n = _rwy_num(old["row"].get("RWY_END_ID")), _rwy_num(new["row"].get("RWY_END_ID"))
+        if o is not None and o == n:
+            return 0
+        if _one_apart(o, n):
+            return 1
+        return 2 if place(old["row"]) is not None and place(old["row"]) == place(new["row"]) else None
+    out = []
+    for old, new in _best_first(_ends(rs, "removed", o_id), _ends(rs, "added", n_id), score):
+        was = dict(old["row"], RWY_ID=new["row"]["RWY_ID"], RWY_END_ID=new["row"].get("RWY_END_ID", ""))
+        out += [r for r in diff({old["source"]: [(apt, was)]}, {new["source"]: [(apt, new["row"])]})
+                if r.get("fields")]
+    return out
+
+
 def _runway_changes(apt, rs):
     """pair removed+added runways that are the same strip renumbered or rebuilt.
     returns (new records, ids of raw records they replace)."""
     src = lambda r: base(r["source"])
     removed = [r for r in rs if src(r) == "APT_RWY" and r["kind"] == "removed"]
     added = [r for r in rs if src(r) == "APT_RWY" and r["kind"] == "added"]
-    pairs = []
-    for old in removed:
-        for new in added:
-            o, n = old["row"], new["row"]
-            same_size = (o.get("RWY_LEN") and o.get("RWY_LEN") == n.get("RWY_LEN")
-                         and o.get("RWY_WIDTH") == n.get("RWY_WIDTH"))
-            if same_size or _one_apart(_rwy_num(o.get("RWY_ID")), _rwy_num(n.get("RWY_ID"))):
-                pairs.append((old, new))
-                added.remove(new)
-                break
-    # exactly one runway gone and one new one left over -> it was replaced/realigned
-    left = [r for r in removed if all(r is not o for o, _ in pairs)]
-    if len(left) == 1 and len(added) == 1:
-        pairs.append((left[0], added.pop()))
+    pairs = _pair_runways(rs, removed, added)
 
     out, drop = [], set()
     for old, new in pairs:
@@ -75,14 +170,15 @@ def _runway_changes(apt, rs):
             extra.append(f"surface {o.get('SURFACE_TYPE_CODE', '?').lower()} -> "
                          f"{n.get('SURFACE_TYPE_CODE', '?').lower()}")
         tail = f" ({'; '.join(extra)})" if extra else ""
-        renumbered = (_one_apart(_rwy_num(o_id), _rwy_num(n_id)) or
-                      (o.get("RWY_LEN") == n.get("RWY_LEN") and o.get("RWY_WIDTH") == n.get("RWY_WIDTH")))
+        renumbered = _is_renumbering(rs, old, new)
         s = (f"runway {o_id} -> {n_id} (renumbered){tail}" if renumbered
              else f"runway {o_id} -> {n_id} (new runway){tail}")
         out.append({"airport": apt, "source": "APT_RWY.csv", "kind": "changed", "priority": "action",
                     "summary_override": s,
                     "fields": [{"field": "RWY_ID", "old": o_id, "new": n_id}],
                     "values": list(o.values()) + list(n.values())})
+        if renumbered:     # the same strip: what changed on its ends still counts
+            out += _end_changes(apt, rs, o_id, n_id)
         drop |= {id(old), id(new)}
         ids = set(o_id.split("/")) | {o_id} | set(n_id.split("/")) | {n_id}
         for r in rs:  # the runway-end rows are covered by the one line

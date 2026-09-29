@@ -731,8 +731,9 @@ class TestWeb(unittest.TestCase):
         read = lambda p: open(os.path.join(site, p, "index.html")).read()
         docs, privacy, terms, log = read("docs"), read("privacy"), read("terms"), read("changelog")
         how, api, using = read("docs/how-it-works"), read("docs/api"), read("docs/using")
-        for text in ('id="how"', 'id="limits"', "NOTAMs.</b>"):
-            self.assertIn(text, how)
+        self.assertIn('id="how"', how)
+        for text in ('id="limits"', "NOTAMs.</b>", 'id="gold"'):
+            self.assertIn(text, read("docs/accuracy"))
         self.assertIn('id="meta"', api)
         self.assertIn('id="lists"', using)
         self.assertIn('id="start"', docs)

@@ -39,6 +39,7 @@ it can show rows about other airports (see the PR that added this).
 | `known_failure` | `true` when the engine gets it wrong today (a candidate engine bug) |
 | `why_engine_is_wrong`, `engine_says` | with `known_failure`: the rule that gets it wrong, and what the engine says today |
 | `engine_was_wrong_because`, `engine_said_before_fix` | a known failure that got fixed: the same two notes, kept on record |
+| `reviews` | optional: flight instructors' answers, added by `--record` (below): `by`, `date`, `verdict` (`right`, `wrong`, `unsure`), optional `why` (`too_high`, `too_low`, `wording`, `missed`), `note`, `packet`, `response` |
 | `expected_was` | a gold expectation that was changed after the case was written: the old `priority` and `changed_because`. a person should confirm these |
 
 The test fails when a case fails, unless it's a `known_failure`. A known failure that starts
@@ -55,6 +56,32 @@ diff fixes flagged at TIX, PAM, SBM and 5A6). Each was shown with the FAA's old 
 side, abbreviations decoded only from the FAA's lists, next to amend's line and priority. All 21
 came back right. Only cases a person answered count: "not sure" leaves a case unchecked, and g084
 (LUF class D hours) stays unchecked because it was okayed without the FAA text in view.
+
+### instructor reviews
+
+Flight instructors check cases with a review packet: each case shows what the FAA changed (FAA
+abbreviations decoded only from the FAA's lists) and what amend shows, and the instructor answers
+right, wrong or not sure. The packet saves the answers as JSON:
+
+```
+{"id": "r-7f3a", "packet": "instructor-review-v1", "date": "2026-09-30",
+ "reviewer": {"credit": "J.S.", "certificates": "CFII"},
+ "answers": {"g002": {"verdict": "right"},
+             "g005": {"verdict": "wrong", "why": ["too_low"], "note": "..."}}}
+```
+
+```
+python -m amend.gold --record answers.json --dry-run   # what it would add
+python -m amend.gold --record answers.json             # add them to cases.jsonl, then commit
+```
+
+- only a case with an answer is recorded. a blank one is skipped and never counts as checked.
+- `right` counts the case as checked by a person. `unsure` is kept on record and doesn't count.
+- `wrong` marks the case disputed (`python -m amend.gold` lists it) and leaves `expected` alone:
+  someone reads the note against the FAA rows, then fixes the engine or the case in its own PR.
+- `credit` is how the instructor agreed to be named in this public file: a name, initials, or
+  empty for "not named". Contact details are never written here.
+- the same packet recorded twice adds nothing.
 
 ### adding your own hand-checked airports
 

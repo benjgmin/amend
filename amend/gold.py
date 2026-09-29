@@ -7,6 +7,7 @@ engine says about one real cycle pair.
   python -m amend.gold --snapshot          re-run the snapshot pair and diff it against the file
   python -m amend.gold --update-snapshot   rewrite the snapshot after a change you meant to make
   python -m amend.gold --fetch             download the snapshot's two NASR zips into data/
+  python -m amend.gold --record FILE       add an instructor's review answers (FILE: JSON) to the cases
 
 The gold set needs nothing downloaded: every case carries the real FAA rows it came from, and
 runs through the whole pipeline (diff, collapse, summaries) as a two-cycle zip of those rows.
@@ -36,6 +37,8 @@ DATA = os.path.join(HERE, "data")
 
 PRIORITIES = ("action", "ifr", "fyi", "hidden")
 NEEDS_HUMAN = "claude, against the FAA source rows; needs human check"
+VERDICTS = ("right", "wrong", "unsure")
+WHYS = ("too_high", "too_low", "wording", "missed")
 
 
 @contextlib.contextmanager
@@ -88,6 +91,99 @@ def problems(case):
         out.append("no old row")
     if case.get("kind") in ("changed", "added") and not rows.get("new"):
         out.append("no new row")
+    for rv in case.get("reviews", []):
+        out += [f"review: {x}" for x in review_problems(rv)]
+    return out
+
+
+# ---------------------------------------------------------------- instructor reviews
+
+def review_problems(rv):
+    """what's wrong with one entry of a case's `reviews`, as short strings."""
+    out = []
+    if not str(rv.get("by", "")).strip():
+        out.append("no reviewer (by)")
+    if rv.get("verdict") not in VERDICTS:
+        out.append(f"verdict must be one of {', '.join(VERDICTS)}")
+    if not str(rv.get("date", "")).strip():
+        out.append("no date")
+    bad = [w for w in rv.get("why", []) if w not in WHYS]
+    if bad:
+        out.append(f"unknown why {bad}")
+    return out
+
+
+def checked_by_person(case):
+    """a person answered 'right': ben's hand-check (verified_by) or an instructor review."""
+    return ("needs human check" not in case.get("verified_by", "needs human check")
+            or any(r.get("verdict") == "right" for r in case.get("reviews", [])))
+
+
+def disputed(case):
+    """an instructor answered 'wrong'. the gold answer stays until someone looks at why."""
+    return any(r.get("verdict") == "wrong" for r in case.get("reviews", []))
+
+
+def credit(reviewer):
+    """the reviewer as the public cases file names them. only what they agreed to show:
+    their name, their initials, or nobody. contact details never go in the repo."""
+    certs = str(reviewer.get("certificates", "")).strip()
+    role = f"flight instructor ({certs})" if certs else "flight instructor"
+    name = str(reviewer.get("credit", "")).strip()
+    return f"{name}, {role}" if name else f"{role}, not named"
+
+
+def record(responses, path=CASES, write=True):
+    """add one instructor's answers to the cases file. `responses` is the JSON the review
+    packet saves: {"reviewer": {"credit", "certificates"}, "date": "YYYY-MM-DD", "packet",
+    "id": one packet's id, "answers": {case id: {"verdict", "why", "note"}}}.
+    only an answer with a verdict is recorded; a blank one is skipped, never marked checked.
+    'unsure' is recorded but doesn't count as checked; 'wrong' flags the case as disputed and
+    leaves its expected answer alone. returns {"added": [(id, verdict)], "skipped": [...], "unknown": [...]}."""
+    date = str(responses.get("date", "")).strip()
+    if not date:
+        raise ValueError("responses need a date (YYYY-MM-DD)")
+    by = credit(responses.get("reviewer") or {})
+    packet = str(responses.get("packet", "")).strip()
+    rid = str(responses.get("id", "")).strip()     # one filled-in packet; two unnamed CFIIs on one day stay apart
+    with open(path, encoding="utf-8") as f:
+        lines = f.read().split("\n")
+    where = {}
+    for i, line in enumerate(lines):
+        if line.strip().startswith("{"):
+            where[json.loads(line)["id"]] = i
+    out = {"added": [], "skipped": [], "unknown": []}
+    for cid, ans in sorted((responses.get("answers") or {}).items()):
+        verdict = (ans or {}).get("verdict")
+        if cid not in where:
+            out["unknown"].append(cid)
+            continue
+        if verdict not in VERDICTS:
+            out["skipped"].append(cid)       # not answered: never counts as a check
+            continue
+        rv = {"by": by, "date": date, "verdict": verdict}
+        why = [w for w in (ans.get("why") or []) if w in WHYS] if verdict == "wrong" else []
+        if why:
+            rv["why"] = why
+        note = str(ans.get("note") or "").strip()
+        if note:
+            rv["note"] = note
+        if packet:
+            rv["packet"] = packet
+        if rid:
+            rv["response"] = rid
+        case = json.loads(lines[where[cid]])
+        reviews = case.setdefault("reviews", [])
+        if any((r.get("response") == rid) if rid else (r.get("by") == by and r.get("date") == date)
+               for r in reviews):
+            out["skipped"].append(cid)       # this reviewer's answer from that day is in already
+            continue
+        reviews.append(rv)
+        lines[where[cid]] = json.dumps(case)
+        out["added"].append((cid, verdict))
+    if write and out["added"]:
+        with open(path, "w", encoding="utf-8") as f:
+            f.write("\n".join(lines))
     return out
 
 
@@ -187,9 +283,16 @@ def report(s, verbose=False, out=sys.stdout):
     print(f"gold set: {s['passed']} / {s['total']} passed "
           f"({s['known_failures']} known failures, {len(unexpected)} unexpected)", file=out)
     print(f"  false action: {s['false_action']}   missed action: {s['missed_action']}", file=out)
-    human = sum("needs human check" not in r["case"].get("verified_by", "needs human check")
-                for r in s["results"])
+    human = sum(checked_by_person(r["case"]) for r in s["results"])
     print(f"  hand-checked by a person: {human} / {s['total']}", file=out)
+    instr = sum(any(v.get("verdict") == "right" for v in r["case"].get("reviews", [])) for r in s["results"])
+    if instr or any(disputed(r["case"]) for r in s["results"]):
+        print(f"  checked right by a flight instructor: {instr}", file=out)
+    for r in s["results"]:
+        if disputed(r["case"]):
+            c = r["case"]
+            notes = "; ".join(v.get("note", "") for v in c["reviews"] if v.get("verdict") == "wrong")
+            print(f"  DISPUTED {c['id']} {c['airport']}: an instructor said wrong: {notes or '(no note)'}", file=out)
     for r in s["results"]:
         if r["passed"] and not (verbose and r["case"].get("known_failure")):
             continue
@@ -312,7 +415,21 @@ def main(argv=None):
     p.add_argument("--data", default=DATA, help="where the snapshot's NASR zips are")
     p.add_argument("--fetch", action="store_true",
                    help="download the snapshot's NASR zips from the repo's releases into --data")
+    p.add_argument("--record", metavar="FILE",
+                   help="add an instructor's review answers (the packet's JSON) to --cases")
+    p.add_argument("--dry-run", action="store_true", help="with --record: say what it would add, write nothing")
     a = p.parse_args(argv)
+
+    if a.record:
+        with open(a.record, encoding="utf-8") as f:
+            res = record(json.load(f), a.cases, write=not a.dry_run)
+        for cid, v in res["added"]:
+            print(f"{'would add' if a.dry_run else 'added'} {cid}: {v}")
+        if res["skipped"]:
+            print(f"skipped (no answer, or already recorded): {', '.join(res['skipped'])}")
+        if res["unknown"]:
+            print(f"not in the gold set: {', '.join(res['unknown'])}")
+        return
 
     if a.fetch:
         try:
