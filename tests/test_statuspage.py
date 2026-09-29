@@ -445,8 +445,9 @@ class TestDocsPages(unittest.TestCase):
         with open(cases, "w") as f:
             f.write("// comment\n" + "\n".join([
                 mk("g1", "action", "ben, hand-checked"), mk("g2", "fyi", "claude; needs human check"),
-                mk("g3", "hidden", "an instructor, hand-checked"), mk("g4", "ifr", "x; needs human check",
-                                                                     known_failure=True)]) + "\n")
+                mk("g3", "hidden", "x; needs human check", reviews=[{"by": "cfi-1", "verdict": "right"}]),
+                mk("g4", "ifr", "x; needs human check", known_failure=True,
+                   reviews=[{"by": "cfi-2", "verdict": "unsure"}, {"by": "cfi-1", "verdict": "wrong"}])]) + "\n")
         logs = os.path.join(d, "runs", "2026-09-03")
         os.makedirs(logs)
         def rec(name, eng, pub, texts, pe):
@@ -461,6 +462,8 @@ class TestDocsPages(unittest.TestCase):
         self.assertIn("1 ACT, 1 IFR and 1 FYI changes, plus 1 bookkeeping", g)
         self.assertIn("2 of the 4 have been checked by a person", g)
         self.assertIn("1 of them are marked as known mistakes", g)
+        self.assertIn("1 of the checked cases were confirmed by a flight instructor", g)   # unsure never counts
+        self.assertIn("1 case was marked wrong by an instructor and is being looked into", g)
         self.assertIn("668 of the 704 changed remarks", text(secs["remark-count"]))
         self.assertIn("latest build (29 Sep 2026), 668", text(secs["remark-count"]))
         rec("2.json", "1.3.5", True, 1591, 745)      # older engines counted every remark, shown or not
