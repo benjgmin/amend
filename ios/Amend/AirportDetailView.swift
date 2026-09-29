@@ -281,7 +281,7 @@ private struct HistoryView: View {
                 ContentUnavailableView("Couldn't load", systemImage: "wifi.exclamationmark",
                                        description: Text(error))
             } else if loaded && nothingOnRecord {
-                NoChangesView(text: "No changes on record at \(id)\nsince Aug 2024")
+                NoChangesView(text: noHistoryText, color: current == nil ? EFB.green : EFB.dim)
             } else if loaded && groups.isEmpty {
                 NoChangesView(text: "Nothing in this range\nTry a longer range or turn on FYI",
                               color: EFB.dim).padding(.top, 60)
@@ -329,6 +329,22 @@ private struct HistoryView: View {
             .buttonStyle(.plain)
             .accessibilityLabel(allCollapsed ? "Expand all cycles" : "Collapse all cycles")
         }
+    }
+
+    /// this cycle's changes here, which history leaves to the first tab
+    private var current: (count: Int, cycle: String)? {
+        guard let meta = store.meta, let n = store.counts(for: id)?.total, n > 0 else { return nil }
+        return (n, meta.toCycle)
+    }
+
+    /// "no changes" read as wrong next to an ACT 3 badge; say where this cycle's changes are
+    private var noHistoryText: String {
+        guard let current else { return "No changes on record at \(id)\nsince Aug 2024" }
+        let inEffect = Cycle.isInEffect(current.cycle)
+        let plural = current.count == 1 ? "change" : "changes"
+        return "No earlier changes on record at \(id) since Aug 2024\n"
+            + "\(current.count) \(plural) \(inEffect ? "took" : "take") effect \(Cycle.efb(current.cycle)): "
+            + "see \(inEffect ? "Latest" : "Upcoming")"
     }
 
     /// no history file, or only the cycle already shown on the first tab

@@ -30,6 +30,17 @@ struct ChangeRow: View {
                     .tracking(0.55)
                     .textCase(.uppercase)
                     .foregroundStyle(EFB.faint)
+                // on the category line, so a change with nothing else to open doesn't get a line just for this
+                Spacer(minLength: 8)
+                if let url = sourceURL {
+                    Link(destination: url) {
+                        Text("FAA source ↗")
+                            .font(.system(size: 12.5, weight: .medium))
+                            .foregroundStyle(EFB.dim)
+                    }
+                    .buttonStyle(.borderless)   // in a list row, only the link itself is the tap target
+                    .accessibilityLabel("FAA source, opens the FAA website")
+                }
             }
             if isNew { NewPill() }
             Text(displaySummary)
@@ -46,7 +57,7 @@ struct ChangeRow: View {
                     .fixedSize(horizontal: false, vertical: true)
             }
 
-            if hasMore || change.chart?.amdtLabel != nil || change.chart?.pdf != nil || sourceURL != nil {
+            if hasMore || change.chart?.amdtLabel != nil || change.chart?.pdf != nil {
                 HStack(spacing: 12) {
                     if let amdt = change.chart?.amdtLabel {
                         Annunciator(text: amdt, color: EFB.dim)
@@ -74,15 +85,6 @@ struct ChangeRow: View {
                         .buttonStyle(.plain)
                     }
                     Spacer(minLength: 0)
-                    if let url = sourceURL {
-                        Link(destination: url) {
-                            Text("FAA source ↗")
-                                .font(.system(size: 13, weight: .medium))
-                                .foregroundStyle(EFB.dim)
-                        }
-                        .buttonStyle(.borderless)   // in a list row, only the link itself is the tap target
-                        .accessibilityLabel("FAA source, opens the FAA website")
-                    }
                 }
                 .padding(.top, 2)
             }

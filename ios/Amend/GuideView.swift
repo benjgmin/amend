@@ -104,14 +104,13 @@ struct GuideView: View {
             Text("e.g. " + example)
                 .font(EFB.mono(11.5))
                 .foregroundStyle(level.color)
-                .padding(.leading, 102)
         }
     }
 
     private func tierRow(color: Color, label: String, text: String) -> some View {
-        HStack(alignment: .top, spacing: 10) {
+        // label above its text, so the text gets the full width instead of a column sized to NO CHANGE
+        VStack(alignment: .leading, spacing: 6) {
             Annunciator(text: label, color: color)
-                .frame(width: 92, alignment: .leading)
             Text(text).guideBody()
         }
     }
