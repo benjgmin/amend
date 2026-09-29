@@ -95,7 +95,15 @@ CSS = FONT_FACES + """
 --dm:#9DAEC2;--fn:#7A8DA4;--am:#E26BB2;--amS:rgba(226,107,178,.14);--cy:#7FB2EC;--cyS:rgba(127,178,236,.14);
 --gy:#9DAEC2;--gyS:rgba(157,174,194,.12);--gn:#67C08B;--gnS:rgba(103,192,139,.13);--on:#09121C;--shadow:none;
 --mk:#0E1926;--mkl:#2E4460;--mko:#4F627B;--mks:#E26BB2;--mkn:#E6EDF5;color-scheme:dark}}
-*{box-sizing:border-box}html{background:var(--bg)}[hidden]{display:none!important}
+*{box-sizing:border-box}html{background:var(--bg)}
+/* every scrollbar in the site's grays and thin, like the sidebar's own: the page, code blocks, tables, tabs.
+   CSS only, so find-in-page, momentum and keyboard scrolling stay the browser's */
+html{scrollbar-color:var(--ln2) transparent}*{scrollbar-width:thin}
+@supports not (scrollbar-color:red blue){   /* Safari: no scrollbar-color yet, so the boxes inside the page get a thin bar */
+ pre::-webkit-scrollbar,.tw::-webkit-scrollbar,.seg::-webkit-scrollbar,.shots::-webkit-scrollbar,.dx-toc::-webkit-scrollbar{width:8px;height:8px}
+ pre::-webkit-scrollbar-track,.tw::-webkit-scrollbar-track,.seg::-webkit-scrollbar-track,.shots::-webkit-scrollbar-track,.dx-toc::-webkit-scrollbar-track{background:transparent}
+ pre::-webkit-scrollbar-thumb,.tw::-webkit-scrollbar-thumb,.seg::-webkit-scrollbar-thumb,.shots::-webkit-scrollbar-thumb,.dx-toc::-webkit-scrollbar-thumb{background:var(--ln2);border-radius:4px;border:2px solid transparent;background-clip:padding-box}}
+[hidden]{display:none!important}
 body{margin:0;color:var(--tx);background:var(--bg);font:15px/1.5 var(--sans);-webkit-font-smoothing:antialiased}
 a{color:var(--cy);text-decoration:none}a:hover{text-decoration:underline}
 :focus-visible{outline:2px solid var(--cy);outline-offset:2px}
@@ -1346,6 +1354,8 @@ data-name="{e(wl['name'])}">Save to my lists</a><button class="btn ghost" id="co
 # what shipped, newest first, for /changelog/. Add a line when something people can see changes.
 UPDATES = [
     ("Sep 2026", [
+        "Every scrollbar on the site, the docs' code blocks included, is thin and in the site's own grays, in "
+        "light and dark.",
         "The remark count on the status page counts only remarks you can read on an airport page. It counted "
         "about 800 pavement code lines (PCR VALUE) the FAA moved out of the remarks and into the runway data "
         "for 1 Oct 2026 as remarks shown in the FAA's words, but Amend hides them, so the page said 745 of "
