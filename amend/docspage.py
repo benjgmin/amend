@@ -26,9 +26,9 @@ CSS = """<style>
 .dx-s{margin:2px 0 10px 12px;border-left:1px solid var(--ln)}.dx-s a{padding:4px 12px;font-size:13px;border-radius:0 6px 6px 0;margin-left:-1px;border-left:2px solid transparent}
 .dx-s a.on{color:var(--tx);background:var(--p2);border-left-color:var(--am);font-weight:500}
 .dx-crumb{font:600 12px/1.4 var(--sans);text-transform:uppercase;letter-spacing:.08em;color:var(--am);margin:0 0 8px}
-.dx pre{margin:10px 0 14px;padding:12px 14px;background:var(--p2);border:1px solid var(--ln);border-radius:8px;overflow-x:auto;font:12.5px/1.6 var(--mono)}
+.dx pre{margin:10px 0 14px;padding:12px 14px;border:1px solid var(--ln);border-radius:8px;overflow-x:auto;font:12.5px/1.6 var(--mono)}
 .dx pre code{background:none;padding:0;font:inherit;overflow-wrap:normal}
-.dx .tw{margin:10px 0 16px;overflow-x:auto;border:1px solid var(--ln);border-radius:8px;background:var(--p)}
+.dx .tw{margin:10px 0 16px;overflow-x:auto;border:1px solid var(--ln);border-radius:8px}.dx .tw.xs{--sh:var(--p)}
 .dx-tb{border-collapse:collapse;width:100%;font-size:13.5px;line-height:1.55}
 .dx-tb th,.dx-tb td{text-align:left;vertical-align:top;padding:8px 12px;border-top:1px solid var(--ln)}
 .dx-tb th{border-top:0;background:var(--p2);font-weight:600;font-size:12.5px;color:var(--dm);white-space:nowrap}
@@ -376,7 +376,7 @@ def md(block):
             j = i + 1
             while j < len(lines) and not lines[j].startswith("```"):
                 j += 1
-            out.append(f'<pre><code>{html.escape(chr(10).join(lines[i + 1:j]))}</code></pre>')
+            out.append(f'<pre class="xs"><code>{html.escape(chr(10).join(lines[i + 1:j]))}</code></pre>')
             i = j + 1
             continue
         if ln.startswith("|"):
@@ -388,7 +388,7 @@ def md(block):
                     rows.append(cells)
                 i += 1
             head, *body = rows
-            out.append('<div class="tw"><table class="tb dx-tb"><tr>' + "".join(f"<th>{inline(c)}</th>" for c in head)
+            out.append('<div class="tw xs"><table class="tb dx-tb"><tr>' + "".join(f"<th>{inline(c)}</th>" for c in head)
                        + "</tr>" + "".join("<tr>" + "".join(f"<td>{inline(c)}</td>" for c in r) + "</tr>" for r in body)
                        + "</table></div>")
             continue
@@ -426,7 +426,7 @@ def api_sections():
              ("history/index.json", "history-index", "Which cycles and airports have history."),
              ("<ID>/feed.xml", "feeds", "An airport's alert feed (RSS 2.0)."),
              ("cycles.ics", "feeds", "Every cycle changeover, as a calendar.")]
-    table = ('<div class="tw"><table class="tb dx-tb"><tr><th>File</th><th>What it holds</th></tr>'
+    table = ('<div class="tw xs"><table class="tb dx-tb"><tr><th>File</th><th>What it holds</th></tr>'
              + "".join(f'<tr><td><a href="#{a}"><code>{html.escape(p)}</code></a></td><td>{t}</td></tr>' for p, a, t in files)
              + "</table></div>")
     fetch_js = html.escape(
@@ -458,8 +458,8 @@ def api_sections():
             "Always use official FAA publications and NOTAMs to fly.</p>")),
         ("quickstart", "Quick start", (
             "<p>Which cycles are compared, then every change coming up at Daytona Beach (DAB):</p>"
-            f"<pre><code>curl {site}latest/meta.json\ncurl {site}latest/DAB.json</code></pre>"
-            f"<p>The same in JavaScript, in a browser or Node 18 and later:</p><pre><code>{fetch_js}</code></pre>"
+            f"<pre class=\"xs\"><code>curl {site}latest/meta.json\ncurl {site}latest/DAB.json</code></pre>"
+            f"<p>The same in JavaScript, in a browser or Node 18 and later:</p><pre class=\"xs\"><code>{fetch_js}</code></pre>"
             "<p>A <b>404 on an airport file means no changes</b> at that airport, not an error.</p>")),
         ("files", "Files", table),
     ]
