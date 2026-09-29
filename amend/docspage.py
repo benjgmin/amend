@@ -70,11 +70,15 @@ border:1px solid var(--ln);border-radius:8px;background:var(--p);font-size:14.5p
 # the table of contents follows the section you're reading
 TOC_JS = """<script>(()=>{const a=[...document.querySelectorAll(".dx-toc .dx-s a")];if(!a.length||!("IntersectionObserver" in window))return;
 const on=id=>a.forEach(x=>x.classList.toggle("on",x.getAttribute("href")==="#"+id));const seen=new Map(),ids=a.map(x=>x.getAttribute("href").slice(1));
-// at the bottom of the page the last sections can't scroll up to the top, so the last one wins there
-const end=()=>innerHeight+scrollY>=document.documentElement.scrollHeight-4;
-const pick=()=>{if(end())return on(ids[ids.length-1]);const first=ids.find(id=>seen.get(id));if(first)on(first)};
+// room under the article so the last section can scroll up to the top on its own, like every other section
+const secs=[...document.querySelectorAll(".dx section[id]")],pad=document.querySelector(".dx-pad");
+const fit=()=>{if(!pad||!secs.length)return;pad.style.height="0";const top=secs[secs.length-1].getBoundingClientRect().top+scrollY-72;
+  pad.style.height=Math.max(0,innerHeight-(document.documentElement.scrollHeight-top))+"px"};fit();addEventListener("resize",fit);
+let hold=0;const pick=()=>{if(Date.now()<hold)return;const first=ids.find(id=>seen.get(id));if(first)on(first)};
+// a clicked item is the one lit, even while the page is still scrolling to it
+a.forEach(x=>x.addEventListener("click",()=>{on(x.getAttribute("href").slice(1));hold=Date.now()+800}));
 const io=new IntersectionObserver(es=>{es.forEach(e=>seen.set(e.target.id,e.isIntersecting));pick()},{rootMargin:"-70px 0px -60% 0px"});
-document.querySelectorAll(".dx section[id]").forEach(s=>io.observe(s));addEventListener("scroll",pick,{passive:true})})()</script>"""
+secs.forEach(s=>io.observe(s))})()</script>"""
 
 
 def tag(text):
@@ -546,7 +550,7 @@ def one_page(n, meta, now):
             f'<p class="dx-crumb">Docs · {name}</p><h1>{h1}</h1><p class="lede">{lede}</p>'
             + '<details class="dx-jump"><summary>Docs menu</summary><nav>' + nav(path, secs) + "</nav></details>"
             + "".join(f'<section id="{i}"><h2><a href="#{i}">{h}</a></h2>{x}</section>' for i, h, x in secs)
-            + f'<nav class="dx-nn">{pn}</nav></article></div>{TOC_JS}')
+            + f'<nav class="dx-nn">{pn}</nav><div class="dx-pad" aria-hidden="true"></div></article></div>{TOC_JS}')
     early = ""
     if not path:
         moved = {i: p for p, *_, ids in PAGES if p and ids for i in ids}
