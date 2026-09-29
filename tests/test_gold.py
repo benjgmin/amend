@@ -91,3 +91,68 @@ class TestScoring(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestRecordReviews(unittest.TestCase):
+    """python -m amend.gold --record: an instructor's answers go into the cases file, and only
+    answered cases count."""
+
+    def setUp(self):
+        import shutil, tempfile, os
+        self.dir = tempfile.mkdtemp()
+        self.addCleanup(shutil.rmtree, self.dir)
+        self.path = os.path.join(self.dir, "cases.jsonl")
+        shutil.copy(gold.CASES, self.path)
+        self.before = open(self.path, encoding="utf-8").read()
+
+    def responses(self, answers, **kw):
+        return {"id": "r1", "packet": "instructor-review-v1", "date": "2026-09-30",
+                "reviewer": {"credit": "J.S.", "certificates": "CFII", "contact": "js@example.com"},
+                "answers": answers, **kw}
+
+    def test_only_answered_cases_are_recorded(self):
+        res = gold.record(self.responses({
+            "g002": {"verdict": "right"},
+            "g005": {"verdict": "wrong", "why": ["too_low", "bogus"], "note": "night closure matters"},
+            "g016": {"verdict": "unsure"},
+            "g034": {"verdict": ""}, "g046": {}, "g999": {"verdict": "right"}}), self.path)
+        self.assertEqual(res["added"], [("g002", "right"), ("g005", "wrong"), ("g016", "unsure")])
+        self.assertEqual(res["skipped"], ["g034", "g046"])
+        self.assertEqual(res["unknown"], ["g999"])
+        cases = {c["id"]: c for c in gold.load_cases(self.path)}
+        for c in cases.values():
+            self.assertEqual(gold.problems(c), [], c["id"])
+        self.assertTrue(gold.checked_by_person(cases["g002"]))
+        self.assertFalse(gold.checked_by_person(cases["g005"]))
+        self.assertFalse(gold.checked_by_person(cases["g016"]), "not sure is not a check")
+        self.assertFalse(gold.checked_by_person(cases["g034"]), "blank is not a check")
+        self.assertTrue(gold.disputed(cases["g005"]))
+        self.assertEqual(cases["g005"]["reviews"][0]["why"], ["too_low"])
+        self.assertEqual(cases["g005"]["expected"]["priority"], "action", "a wrong verdict never edits the answer")
+        self.assertEqual(cases["g002"]["reviews"][0]["by"], "J.S., flight instructor (CFII)")
+        self.assertNotIn("js@example.com", open(self.path, encoding="utf-8").read())
+
+    def test_untouched_lines_stay_byte_for_byte(self):
+        gold.record(self.responses({"g002": {"verdict": "right"}}), self.path)
+        old, new = self.before.split("\n"), open(self.path, encoding="utf-8").read().split("\n")
+        self.assertEqual(len(old), len(new))
+        self.assertEqual(sum(a != b for a, b in zip(old, new)), 1)
+
+    def test_same_packet_twice_adds_nothing(self):
+        gold.record(self.responses({"g002": {"verdict": "right"}}), self.path)
+        res = gold.record(self.responses({"g002": {"verdict": "right"}}), self.path)
+        self.assertEqual(res["added"], [])
+        other = gold.record(self.responses({"g002": {"verdict": "right"}}, id="r2",
+                                           reviewer={"credit": "", "certificates": "CFI"}), self.path)
+        self.assertEqual(other["added"], [("g002", "right")])
+        c = {c["id"]: c for c in gold.load_cases(self.path)}["g002"]
+        self.assertEqual([r["by"] for r in c["reviews"]],
+                         ["J.S., flight instructor (CFII)", "flight instructor (CFI), not named"])
+
+    def test_dry_run_writes_nothing(self):
+        gold.record(self.responses({"g002": {"verdict": "right"}}), self.path, write=False)
+        self.assertEqual(open(self.path, encoding="utf-8").read(), self.before)
+
+    def test_bad_review_is_caught(self):
+        case = {"reviews": [{"by": "", "verdict": "yes", "date": ""}]}
+        self.assertEqual(len(gold.review_problems(case["reviews"][0])), 3)
