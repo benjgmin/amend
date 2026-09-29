@@ -269,7 +269,9 @@ def gold_counts(path=gold.CASES):
     cases = gold.load_cases(path)
     by = {k: sum(c["expected"].get("priority") == k for c in cases) for k in gold.PRIORITIES}
     return {"total": len(cases),
-            "human": sum("needs human check" not in c.get("verified_by", "needs human check") for c in cases),
+            "human": sum(gold.checked_by_person(c) for c in cases),
+            "instructor": sum(any(r.get("verdict") == "right" for r in c.get("reviews", [])) for c in cases),
+            "disputed": sum(gold.disputed(c) for c in cases),
             "known": sum(bool(c.get("known_failure")) for c in cases), "by": by}
 
 
@@ -319,8 +321,13 @@ def accuracy_sections(log_dir=runlog.RUNS, cases=gold.CASES):
             "comes out wrong, the build stops and the site stays on the last version that passed.</p>"
             f"<p><b>{n(g['human'])} of the {n(g['total'])}</b> have been checked by a person, with the FAA's old "
             "and new text side by side and every abbreviation decoded from the FAA's own lists. The other "
-            f"{n(g['total'] - g['human'])} were written from the FAA rows and still wait for that check. Pilots and "
-            "instructors who check more cases raise that number here as their checks are added.</p>"
+            f"{n(g['total'] - g['human'])} were written from the FAA rows and still wait for that check. "
+            + (f"{n(g['instructor'])} of the checked cases were confirmed by a flight instructor. " if g["instructor"]
+               else "Flight instructors' checks are added here as they come in. ")
+            + (f"{n(g['disputed'])} {'case was' if g['disputed'] == 1 else 'cases were'} marked wrong by an "
+               f"instructor and {'is' if g['disputed'] == 1 else 'are'} being looked into; until then the written "
+               "answer stays. " if g["disputed"] else "")
+            + "</p>"
             "<p>Passing the set means Amend gets these cases right. It doesn't prove it gets every change right, "
             "and a case is only as good as the answer written for it.</p>")),
         ("remark-count", "Plain-English remarks", (
