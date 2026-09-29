@@ -76,11 +76,37 @@ ACTION_TEXT_WORDS = ("CLSD", "CLOSED", "TWR", "PPR", "NOT AVBL", "UNAVBL", "UNUS
 REWORD_BLOCKERS = {w for w in ACTION_TEXT_WORDS if " " not in w} | {
     "NOT", "NO", "NON", "NA", "ONLY", "EXC", "UNMON", "MONITORED", "UNLGTD", "LGTD", "APVL",
     "DAY", "DAYTIME", "NIGHT", "NGT", "VFR", "IFR", "AVBL", "OTS", "USBL", "REQD",
-    "MANDATORY", "UNATNDD", "ATNDD", "PERMITTED", "AUTH", "UNAUTH"}
+    "MANDATORY", "UNATNDD", "ATNDD", "PERMITTED", "AUTH", "UNAUTH",
+    # when and to whom it applies: days, months, seasons, and words that name one of a pair.
+    # "RWY 18 CLSD MON-FRI" -> "SAT-SUN", "OVER 12500 LBS" -> "UNDER", "BEFORE ARR" -> "AFTER",
+    # "TO TKOF" -> "TO LNDG", "WHEN WET" -> "WHEN DRY", "AETC FTR ACFT" -> "AETC ACFT" (SPS).
+    # not MAY: it's also the verb ("DEER MAY BE ON RWY")
+    "MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN",
+    "JAN", "FEB", "MAR", "APR", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC",
+    "WINTER", "SPRING", "SUMMER", "FALL",
+    "BEFORE", "AFTER", "OVER", "UNDER", "ABOVE", "BELOW", "TKOF", "LNDG", "WET", "DRY",
+    "TRAN", "BASED", "JET", "FTR", "HEL", "GLDR"}
 REWORD_ALIASES = {"EXCP": "EXC", "EXCEPT": "EXC", "CLOSED": "CLSD", "UNMONITORED": "UNMON",
                   "TOWER": "TWR", "ATCT": "TWR", "REQUIRED": "REQD", "RQRD": "REQD",
                   "UNAVAILABLE": "UNAVBL", "AVAILABLE": "AVBL", "UNUSABLE": "UNUSBL", "OPNS": "OPS",
-                  "UNLIGHTED": "UNLGTD", "UNLIT": "UNLGTD", "LIGHTED": "LGTD", "LIT": "LGTD"}
+                  "UNLIGHTED": "UNLGTD", "UNLIT": "UNLGTD", "LIGHTED": "LGTD", "LIT": "LGTD",
+                  # the blockers above, spelled out or contracted (BLM "OVER" -> "OVR" is a rewording)
+                  "MONDAY": "MON", "TUESDAY": "TUE", "TUES": "TUE", "WEDNESDAY": "WED", "THURSDAY": "THU",
+                  "THUR": "THU", "THURS": "THU", "FRIDAY": "FRI", "SATURDAY": "SAT", "SUNDAY": "SUN",
+                  "JANUARY": "JAN", "FEBRUARY": "FEB", "MARCH": "MAR", "APRIL": "APR", "JUNE": "JUN",
+                  "JULY": "JUL", "AUGUST": "AUG", "SEPTEMBER": "SEP", "SEPT": "SEP", "OCTOBER": "OCT",
+                  "NOVEMBER": "NOV", "DECEMBER": "DEC", "AUTUMN": "FALL",
+                  "BFR": "BEFORE", "AFT": "AFTER", "OVR": "OVER", "ABV": "ABOVE", "BLW": "BELOW",
+                  "BLO": "BELOW", "TAKEOFF": "TKOF", "TAKEOFFS": "TKOF", "TKOFS": "TKOF",
+                  "LANDING": "LNDG", "LANDINGS": "LNDG", "LNDGS": "LNDG", "LDG": "LNDG",
+                  "TRANSIENT": "TRAN", "TRANSIENTS": "TRAN", "JETS": "JET", "FIGHTER": "FTR",
+                  "FIGHTERS": "FTR", "HELICOPTER": "HEL", "HELICOPTERS": "HEL", "HELO": "HEL",
+                  "HELOS": "HEL", "GLIDER": "GLDR", "GLIDERS": "GLDR", "GLDRS": "GLDR"}
+# directions, written out or not, count as the ids they are: "N OF ARPT" -> "S OF ARPT" isn't a
+# rewording, "NORTH" -> "N" (MAF) and "LEFT" -> "L" (24A) are (diff.just_reworded)
+REWORD_DIRECTIONS = {"NORTH": "N", "SOUTH": "S", "EAST": "E", "WEST": "W", "NORTHEAST": "NE",
+                     "NORTHWEST": "NW", "SOUTHEAST": "SE", "SOUTHWEST": "SW", "LEFT": "L", "RIGHT": "R",
+                     "LFT": "L", "RGT": "R"}
 # ... and phrases, before the words are split: AKN "APPROACH NOT AUTHORIZED" = "APCH NA"
 REWORD_PHRASES = {"NOT AUTHORIZED": "NA", "NOT AUTH": "NA"}
 
