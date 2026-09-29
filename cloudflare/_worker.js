@@ -21,30 +21,46 @@ const SHARED = /^\/(assets\/[\w./-]+|favicon\.ico|site\.webmanifest|latest\/meta
 // GitHub gets a few calls an hour whoever visits, and a visitor's browser never talks to GitHub itself
 const RUNS = "https://api.github.com/repos/benjgmin/amend/actions/workflows/update.yml/runs?per_page=40";
 const CHECKS_TTL = 300;   // GitHub allows 60 calls an hour per IP without a token: this is 12 per edge location
+// Cloudflare's outbound addresses are shared, so GitHub can refuse a call without a token even at that rate. With a
+// GITHUB_TOKEN secret on this Pages project (any token; it needs no access, it only lifts the limit to 5,000 an hour)
+// that stops. Without one, a refused call serves the last list GitHub did send, marked stale, for up to a day
+const LAST_TTL = 86400;
+let lastGood = null;   // this isolate's copy, in case the edge cache has none
 
-async function checks(ctx) {
+async function checks(ctx, env) {
   const key = new Request("https://status.amend.watch/checks.json");
+  const lastKey = new Request("https://status.amend.watch/checks-last.json");
   const cache = typeof caches !== "undefined" ? caches.default : null;
   const hit = cache && (await cache.match(key));
   if (hit) return hit;
+  const save = (k, res) => {
+    if (!cache) return;
+    const put = cache.put(k, res.clone());
+    if (ctx && ctx.waitUntil) ctx.waitUntil(put);
+    return put;
+  };
+  const json = (body, ttl) => new Response(JSON.stringify(body), { headers: {
+    "Content-Type": "application/json; charset=utf-8", "Cache-Control": "public, max-age=" + ttl } });
   let body, ttl = CHECKS_TTL;
   try {
-    const r = await fetch(RUNS, { headers: { "User-Agent": "amend-status", Accept: "application/vnd.github+json" } });
+    const headers = { "User-Agent": "amend-status", Accept: "application/vnd.github+json" };
+    if (env && env.GITHUB_TOKEN) headers.Authorization = "Bearer " + env.GITHUB_TOKEN;
+    const r = await fetch(RUNS, { headers });
     if (!r.ok) throw new Error("GitHub " + r.status);
     const j = await r.json();
     body = { runs: (j.workflow_runs || []).map((x) => ({
       event: x.event, status: x.status, conclusion: x.conclusion,
       started: x.run_started_at || x.created_at, updated: x.updated_at, url: x.html_url })) };
+    lastGood = body;
+    await save(lastKey, json(body, LAST_TTL));
   } catch (e) {
-    body = { runs: [], error: "GitHub didn't answer" };   // the page keeps its link to GitHub instead
-    ttl = 600;
+    const last = (cache && (await cache.match(lastKey))) || null;
+    const prev = last ? await last.json() : lastGood;
+    body = Object.assign({}, prev || { runs: [] }, { stale: !!prev, error: String(e.message || e) });
+    ttl = 120;   // try GitHub again soon
   }
-  const res = new Response(JSON.stringify(body), { headers: {
-    "Content-Type": "application/json; charset=utf-8", "Cache-Control": "public, max-age=" + ttl } });
-  if (cache) {
-    const put = cache.put(key, res.clone());
-    if (ctx && ctx.waitUntil) ctx.waitUntil(put); else await put;
-  }
+  const res = json(body, ttl);
+  await save(key, res);
   return res;
 }
 
@@ -64,7 +80,7 @@ export default {
     else return Response.redirect(ORIGIN + url.pathname + url.search, 301);
     if (request.method !== "GET" && request.method !== "HEAD")
       return new Response(null, { status: 405, headers: { Allow: "GET, HEAD" } });
-    if (path === null) return checks(ctx);
+    if (path === null) return checks(ctx, env);
     // the query only matters to the files (?v= cache busting); the pages don't read it on the server
     const upstream = await fetch(ORIGIN + path + (path.endsWith("/") ? "" : url.search), {
       method: request.method,

@@ -122,7 +122,8 @@ engine that produced a given history entry.
   `web.SUBDOMAINS` turns the names on for every link. The docs are four pages (`docspage.PAGES`); the API page
   is rendered from `SCHEMA.md` at build time. The proxy also serves `status.amend.watch/checks.json`, GitHub's
   public list of recent `update.yml` runs (cached 5 min), so the status page can show the 10-minute checks that
-  build nothing and never reach the run log.
+  build nothing and never reach the run log. An optional `GITHUB_TOKEN` secret on the Pages project lifts GitHub's
+  limit; without one, a refused call serves the last list GitHub sent, marked stale.
 - **Concurrency:** one deploy at a time (`update.yml:24-26`).
 - **Pull requests:** `.github/workflows/tests.yml` runs the unit tests on every PR. It has read-only
   permissions, no secrets and never downloads FAA data or deploys.

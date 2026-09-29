@@ -633,7 +633,8 @@ sxTip(document.getElementById("sxbars"))</script>"""
 
 # the checks for new FAA data. Most of them find nothing and build nothing, so the run log (and the builds strip) never
 # sees them; the status proxy (cloudflare/_worker.js) serves GitHub's list of runs at /checks.json, cached, so a
-# visitor's browser never talks to GitHub. On amend.watch itself (or if GitHub says no) the card keeps its link
+# visitor's browser never talks to GitHub. On amend.watch itself the card is only its text; if the list can't be had
+# at all, the card says so rather than leaving a gap
 CHECK_EVERY_MIN = 10
 CHECKS_JS = r"""<script>(()=>{const w=document.getElementById("sxchk");if(!w||location.hostname==="amend.watch")return;
 const clock=()=>typeof AM!=="undefined"&&AM.now?AM.now():Date.now();
@@ -641,13 +642,17 @@ const el=(t,c,x)=>{const n=document.createElement(t);if(c)n.className=c;if(x)n.t
 const M=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],p=n=>String(n).padStart(2,"0");
 const fmt=t=>{const d=new Date(t);return p(d.getUTCDate())+" "+M[d.getUTCMonth()]+" "+d.getUTCFullYear()+" "+p(d.getUTCHours())+":"+p(d.getUTCMinutes())+":"+p(d.getUTCSeconds())+"Z"};
 const why={workflow_dispatch:"check",schedule:"check",push:"after a code change"};
+// say so instead of leaving the card with no strip
+const say=t=>{const n=el("p","sx-last late");n.append(el("span","sx-dot"),t);w.querySelector(".sx-live").replaceChildren(n)};
 fetch("/checks.json").then(r=>r.ok?r.json():null).then(j=>{const runs=(j&&Array.isArray(j.runs)?j.runs:[]).filter(r=>r&&Date.parse(r.started));
-  if(!runs.length)return;runs.sort((a,b)=>Date.parse(a.started)-Date.parse(b.started));
+  if(!runs.length)return say("Recent checks couldn't be loaded just now. They come from GitHub's list of runs, which didn't answer.");runs.sort((a,b)=>Date.parse(a.started)-Date.parse(b.started));
   const done=runs.filter(r=>r.status==="completed"),last=done[done.length-1];if(!last)return;
-  // late only if no check has even started lately: during a deploy, checks wait in line behind it
-  const mins=Math.floor((clock()-Date.parse(last.started))/6e4),late=(clock()-Date.parse(runs[runs.length-1].started))/6e4>3*+w.dataset.every;
+  // late only if no check has even started lately: during a deploy, checks wait in line behind it. an old list
+  // GitHub sent before it stopped answering says nothing about the timer
+  const mins=Math.floor((clock()-Date.parse(last.started))/6e4),late=!j.stale&&(clock()-Date.parse(runs[runs.length-1].started))/6e4>3*+w.dataset.every;
   const line=el("p","sx-last"+(late?" late":""));line.append(el("span","sx-dot"),"Last checked ",el("b","",mins<1?"just now":mins<120?mins+" min ago":Math.floor(mins/60)+"h ago"),
     el("span","sx-when",fmt(last.started)));if(late)line.append(el("span","sx-when","no check for a while, the timer may have stopped"));
+  if(j.stale)line.append(el("span","sx-when","GitHub didn't answer just now, so this is the last list it sent"));
   const bars=el("div","sx-bars sx-chk"),tally={};
   for(const r of runs.slice(-40)){const ok=r.status!=="completed"?["b-info","Running"]:r.conclusion==="success"?["b-ok","Passed"]:
       r.conclusion==="failure"?["b-bad","Failed"]:["b-none",(r.conclusion||"ended").replace(/_/g," ")];
@@ -658,7 +663,7 @@ fetch("/checks.json").then(r=>r.ok?r.json():null).then(j=>{const runs=(j&&Array.
     b.dataset.w=(why[r.event]||"check")+(r.status==="completed"&&sec>=0?", took "+Math.round(sec/1e3)+"s":"");
     b.setAttribute("aria-label",b.dataset.x+" · "+b.dataset.w+" · "+ok[1]);bars.append(b)}
   const leg=el("div","sx-legend");leg.append(el("span","","Older"),el("span","",Math.min(runs.length,40)+" checks: "+Object.entries(tally).map(([k,n])=>n+" "+k.toLowerCase()).join(", ")),el("span","","Newest"));
-  w.querySelector(".sx-live").replaceChildren(line,bars,leg);if(window.sxTip)sxTip(bars)}).catch(()=>{})})()</script>"""
+  w.querySelector(".sx-live").replaceChildren(line,bars,leg);if(window.sxTip)sxTip(bars)}).catch(()=>say("Recent checks couldn't be loaded just now."))})()</script>"""
 
 
 def checks_card():

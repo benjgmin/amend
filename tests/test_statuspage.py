@@ -335,7 +335,7 @@ process.stdout.write(JSON.stringify({out,calls}))""")
                                         "GET https://amend.watch/docs/api/"])
 
     def test_checks_json(self):
-        """status.amend.watch/checks.json: GitHub's run list, trimmed; a GitHub error still answers, with no runs"""
+        """status.amend.watch/checks.json: GitHub's run list, trimmed; a GitHub error still answers, with the last list"""
         res = self.run_js("""import w from "./w.mjs";const calls=[];let ok=true;
 globalThis.fetch=async(u,o)=>{calls.push(u);return ok?new Response(JSON.stringify({workflow_runs:[{id:1,event:"workflow_dispatch",
   status:"completed",conclusion:"success",run_started_at:"2026-09-28T21:43:05Z",updated_at:"2026-09-28T21:43:30Z",
@@ -348,11 +348,22 @@ process.stdout.write(JSON.stringify({a,b,st:r.status,type:r.headers.get("content
         self.assertEqual(res["a"], {"runs": [{"event": "workflow_dispatch", "status": "completed", "conclusion": "success",
                                               "started": "2026-09-28T21:43:05Z", "updated": "2026-09-28T21:43:30Z",
                                               "url": "https://github.com/benjgmin/amend/actions/runs/1"}]})
-        self.assertEqual(res["b"]["runs"], [])
+        # GitHub said no: the last list it sent, marked stale, with why
+        self.assertEqual((res["b"]["runs"], res["b"]["stale"], res["b"]["error"]), (res["a"]["runs"], True, "GitHub 403"))
         self.assertEqual((res["st"], res["type"]), (200, "application/json; charset=utf-8"))
         self.assertEqual(res["docs"], "301 https://amend.watch/checks.json")
         self.assertTrue(all(u.startswith("https://api.github.com/repos/benjgmin/amend/actions/workflows/update.yml/runs")
                             for u in res["calls"]))
+
+
+    def test_checks_json_never_answered(self):
+        """no list yet and GitHub says no: empty and not stale; a GITHUB_TOKEN secret goes along when there is one"""
+        res = self.run_js("""import w from "./w.mjs";const auth=[];
+globalThis.fetch=async(u,o)=>{auth.push(o.headers.Authorization||null);return new Response("no",{status:403})};
+const b=await (await w.fetch(new Request("https://status.amend.watch/checks.json"),{GITHUB_TOKEN:"t0k"})).json();
+process.stdout.write(JSON.stringify({b,auth}))""")
+        self.assertEqual(res["b"], {"runs": [], "stale": False, "error": "GitHub 403"})
+        self.assertEqual(res["auth"], ["Bearer t0k"])
 
 
 class TestChecksCard(unittest.TestCase):
@@ -366,6 +377,8 @@ class TestChecksCard(unittest.TestCase):
         for cls in set(statuspage.BAR.values()) | set(re.findall(r'\["(b-[a-z]+)",', statuspage.CHECKS_JS)):
             self.assertTrue(cls.startswith("b-"), cls)
         self.assertNotRegex(statuspage.CHECKS_JS, r'\["(none|ok|bad|info)",')
+        # no list at all: the card says so instead of showing only its text
+        self.assertEqual(statuspage.CHECKS_JS.count('say("Recent checks couldn'), 2)
 
 
 class TestDocsPages(unittest.TestCase):
