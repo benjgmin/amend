@@ -728,7 +728,7 @@ function floor(){const el=document.getElementById("sbw");if(!el)return;let h=0;
 function here(q){const on=q&&q.querySelector(".sba.on");
   if(on&&(on.offsetTop<q.scrollTop||on.offsetTop+on.offsetHeight>q.scrollTop+q.clientHeight))q.scrollTop=on.offsetTop-(q.clientHeight-on.offsetHeight)/2}
 // our own scrollbar: native scrolling (wheel, trackpad, touch, keys) moves the box; the thumb follows it and can be dragged
-const seen=new WeakSet(),ro=window.ResizeObserver?new ResizeObserver(es=>es.forEach(e=>draw(e.target))):null;
+const seen=new WeakSet(),ro=typeof ResizeObserver!=="undefined"?new ResizeObserver(es=>es.forEach(e=>draw(e.target))):null;
 function draw(q){const bar=q.nextElementSibling,t=bar.firstChild,H=q.clientHeight,S=q.scrollHeight;
   bar.classList.toggle("can",S>H+1);if(S<=H+1)return;
   const th=Math.max(24,H*H/S);t.style.height=th+"px";t.style.top=(q.scrollTop/(S-H))*(H-th)+"px"}
