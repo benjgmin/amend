@@ -140,8 +140,6 @@ def run(old_zip, new_zip, ids=None, dtpp_path=None, llm=False, log=print, airspa
     names = name_lists(old_zip, new_zip)
     remarks = translate_remarks(texts, llm, *names)
     rejects = rejected()
-    wanted = {t for t in texts if t}
-    remark_stats = {"texts": len(wanted), "plain_english": sum(remarks.get(t, t) != t for t in wanted)}
     routes = (load_routes(old_zip), load_routes(new_zip))
     records = merge_freq_uses(collapse(records, routes))
 
@@ -226,6 +224,11 @@ def run(old_zip, new_zip, ids=None, dtpp_path=None, llm=False, log=print, airspa
             ids_seen.add(c["id"])
             out.append(c)
         airports[apt] = out
+    # the remarks a page reads out. hidden rows (on 1 Oct 2026, ~1,100 PCR VALUE lines the FAA moved into
+    # the runway data), the old wording of a changed remark and rows folded into another change never
+    # read as a remark, so they aren't counted as shown in the FAA's words
+    shown = {c["original"] for recs in airports.values() for c in recs if c.get("original")}
+    remark_stats = {"texts": len(shown), "plain_english": sum(remarks.get(t, t) != t for t in shown)}
     return {"from_cycle": from_cycle, "to_cycle": to_cycle, "airports": airports,
             "hidden": dict(hidden), "seconds": time.time() - t0,
             "checks": {"no_english": dict(no_template), "summary_value_mismatches": mismatched},

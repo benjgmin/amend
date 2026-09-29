@@ -1310,6 +1310,10 @@ data-name="{e(wl['name'])}">Save to my lists</a><button class="btn ghost" id="co
 # what shipped, newest first, for /changelog/. Add a line when something people can see changes.
 UPDATES = [
     ("Sep 2026", [
+        "The remark count on the status page counts only remarks you can read on an airport page. It counted "
+        "about 800 pavement code lines (PCR VALUE) the FAA moved out of the remarks and into the runway data "
+        "for 1 Oct 2026 as remarks shown in the FAA's words, but Amend hides them, so the page said 745 of "
+        "1,591 remarks read in plain English. Counting what you can see, it's about 94%.",
         "In the sidebar, a long list scrolls in its own box and shows every airport on it, so the rest of the "
         "sidebar stays put.",
         "The arrow next to Your lists on the home page, and next to the open list in the sidebar, folds that "
