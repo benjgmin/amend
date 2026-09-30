@@ -16,7 +16,7 @@ The web pages and the iOS app only read those files.
                FAA (nfdc.faa.gov, aeronav.faa.gov)
                  |  NASR CSV zip, d-TPP metafile XML, class airspace shapefile zip
                  v
-   GitHub Actions: update.yml (every 3h, on merge, or by hand)
+   GitHub Actions: update.yml (every 10 min, on merge, or by hand)
      check  -> is a rebuild needed?            amend/freshness.py
      build  -> tests                           tests/
             -> history: new cycles             amend/history.py  --\
