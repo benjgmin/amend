@@ -51,7 +51,7 @@ Every seed case started as `"verified_by": "claude, against the FAA source rows;
 Claude read the real FAA rows for each one and set the expected answer. `python -m amend.gold`
 prints how many a person has checked.
 
-On 2026-09-28 ben hand-checked 21 of them (17 seed cases plus g124-g127, the judgment calls the
+So far 21 have been hand-checked (17 seed cases plus g124-g127, the judgment calls the
 diff fixes flagged at TIX, PAM, SBM and 5A6). Each was shown with the FAA's old and new text side by
 side, abbreviations decoded only from the FAA's lists, next to amend's line and priority. All 21
 came back right. Only cases a person answered count: "not sure" leaves a case unchecked, and g084
@@ -92,7 +92,7 @@ python -m amend.gold --record answers.json             # add them to cases.jsonl
    differently.
 3. Set `expected` to what a pilot needs to hear, not to what amend says today. If they differ,
    add `"known_failure": true` and `"engine_says"`.
-4. Put your name or handle in `verified_by`, e.g. `"ben, hand-checked against the chart supplement"`.
+4. Put your name or handle in `verified_by`, e.g. `"J.S., hand-checked against the chart supplement"`.
    To confirm a seed case, replace its `verified_by` the same way.
 5. `python -m amend.gold -v` and commit.
 
