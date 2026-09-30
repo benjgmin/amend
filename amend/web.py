@@ -660,7 +660,10 @@ function arm(){clearTimeout(arm.t);const f=document.body.dataset.eff,ms=f?Date.p
   if(ms>0&&ms<2e9)arm.t=setTimeout(()=>{if(!flip())arm()},ms+25)}
 const fmt=ms=>{const m=Math.floor(ms/6e4),d=Math.floor(m/1440),h=Math.floor(m%1440/60),mm=m%60;return(d?d+"d ":"")+(d||h?h+"h ":"")+mm+"m"};
 function tick(){document.querySelectorAll("time[data-until]").forEach(t=>{const ms=Date.parse(t.dataset.until)-now();
-  t.textContent=ms>=6e4?"in "+fmt(ms):ms>0?"in under 1m":"now";t.title=t.getAttribute("datetime").slice(0,16).replace("T"," ")+"Z"})}
+  t.textContent=ms>=6e4?"in "+fmt(ms):ms>0?"in under 1m":"now";t.title=t.getAttribute("datetime").slice(0,16).replace("T"," ")+"Z"});
+  // "tomorrow" / "in 3 days" (web.rel_day), counted in UTC days from the clock, not from when the page was built
+  const today=Math.floor(now()/864e5);document.querySelectorAll("[data-rel]").forEach(x=>{const d=Date.parse(x.dataset.rel)/864e5-today;
+    if(d===d)x.textContent=d<=0?"today":d===1?"tomorrow":"in "+d+" days"})}
 const ago=ms=>{const m=Math.floor(ms/6e4),h=Math.floor(m/60),d=Math.floor(h/24);return m<2?"just now":m<60?m+"m ago":h<48?h+"h ago":d+" days ago"};
 function fresh(){document.querySelectorAll("time[data-ago]").forEach(t=>{t.textContent=ago(now()-Date.parse(t.dataset.ago))});
   const b=document.body.dataset.built,age=b?now()-Date.parse(b):0,st=document.getElementById("stale");
@@ -1094,12 +1097,17 @@ def status(meta, now):
     return upcoming, state_note(meta, now, upcoming)
 
 
+def rel_day(cycle, now):
+    """'tomorrow' as of the build, in a span app.js rewrites from the clock (AM.tick): a page built the day before
+    the changeover must not still say "tomorrow" on the morning of it."""
+    days = (dt.date.fromisoformat(cycle) - now.date()).days
+    return f'<span data-rel="{e(cycle)}">{"today" if days <= 0 else "tomorrow" if days == 1 else f"in {days} days"}</span>'
+
+
 def state_note(meta, now, up):
-    """the banner under the changes: before the changeover (up) or after it."""
+    """the banner under the changes (HTML): before the changeover (up) or after it."""
     if up:
-        days = (effective(meta["to_cycle"]).date() - now.date()).days
-        when = "today" if days <= 0 else "tomorrow" if days == 1 else f"in {days} days"
-        return (f"These changes take effect {nice(meta['to_cycle'])} 0901Z ({when}). "
+        return (f"These changes take effect {nice(meta['to_cycle'])} 0901Z ({rel_day(meta['to_cycle'], now)}). "
                 f"Until then, the current value applies: it's the one before the →.")
     return (f"In effect since {nice(meta['to_cycle'])} 0901Z, compared to the previous cycle "
             f"({nice(meta['from_cycle'])}).")
@@ -1137,7 +1145,7 @@ def next_kv(meta, now):
 
 def status_box(meta, now):
     """the rail box on list pages: in effect or not, what applies until then, and the countdown."""
-    return (flip(meta, now, lambda up: f'{state_ann(up)}<p class="note">{e(landing_note(meta, now, up))}</p>')
+    return (flip(meta, now, lambda up: f'{state_ann(up)}<p class="note">{landing_note(meta, now, up)}</p>')
             + next_kv(meta, now))
 
 
@@ -1186,7 +1194,7 @@ def airport_page(apt, info, latest, hist, meta, now, has_card=False):
     col = ['<div class="card banner" id="newnote" hidden></div>']
     if changes:
         col.append('<div class="card banner">' + flip(
-            meta, now, lambda up: f'{state_ann(up)}<span>{e(state_note(meta, now, up))}</span>') + '</div>')
+            meta, now, lambda up: f'{state_ann(up)}<span>{state_note(meta, now, up)}</span>') + '</div>')
         col.append(grouped(changes, anchors=True, cycle=meta["to_cycle"]))
     else:
         col.append('<div class="card none">' + flip(meta, now, lambda up: (
@@ -1232,10 +1240,10 @@ def airport_page(apt, info, latest, hist, meta, now, has_card=False):
 
 
 def landing_note(meta, now, upcoming):
+    """HTML: the day word is a rel_day span."""
     if upcoming:
-        days = (dt.date.fromisoformat(meta["to_cycle"]) - now.date()).days
-        when = "today" if days <= 0 else "tomorrow" if days == 1 else f"in {days} days"
-        return f"Takes effect {when} at 0901Z; until then the current cycle (since {nice(meta['from_cycle'])}) applies."
+        return (f"Takes effect {rel_day(meta['to_cycle'], now)} at 0901Z; until then the current cycle "
+                f"(since {nice(meta['from_cycle'])}) applies.")
     return f"In effect since {nice(meta['to_cycle'])} 0901Z."
 
 
@@ -1298,7 +1306,7 @@ approach plates. Keep lists of the airports you fly to, and share one link for a
 <div class="kv"><span>Airports {F(lambda up: 'changing' if up else 'changed')}</span><span>{n:,}</span></div>
 <div class="kv"><span>Compared to</span><span>{nice(meta['from_cycle'])}</span></div>
 {next_kv(meta, now)}
-<p class="note">{F(lambda up: e(landing_note(meta, now, up)))}</p>
+<p class="note">{F(lambda up: landing_note(meta, now, up))}</p>
 <p class="note"><a href="webcal://amend.watch/cycles.ics">Add cycle dates to your calendar</a> (<a href="cycles.ics">.ics</a>)</p></div>
 <div class="card box"><h3>What the labels mean</h3>{legend("")}</div>
 </aside>
