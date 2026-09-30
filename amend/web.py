@@ -644,14 +644,16 @@ function mark(root,apt,cyc){const els=[...root.querySelectorAll(".it[data-id]")]
   return{n:r.nw.size,prev:r.prev}}
 // the clock the changeover runs on: this device's, unless it's more than 2s off the server's (its Date header,
 // read once per page). a phone set 10 minutes fast must not show the new cycle as in effect at 0851Z
-let SKEW=0;const now=()=>Date.now()+SKEW;
-// nothing flips until the server has answered (or 1.5s passed without it), so a fast clock never flips early
+let SKEW=0,SYNCED=false;const now=()=>Date.now()+SKEW;
+// nothing flips until the server has answered (or 1.5s passed without it), so a fast clock never flips early.
+// that includes AM.tick() from the sidebar mid-parse: flipping then swapped only the sidebar and cleared data-eff,
+// so the rest of a page opened after 0901Z kept its upcoming wording
 function sync(){const t0=Date.now();Promise.race([fetch((document.body.dataset.root||"")+"latest/meta.json",{method:"HEAD",cache:"no-store"})
   .then(r=>{const d=Date.parse(r.headers.get("Date")||"");if(!d)return;const s=d+500-(t0+Date.now())/2;SKEW=Math.abs(s)>2000?s:0}),
-  new Promise(ok=>setTimeout(ok,1500))]).catch(()=>{}).then(()=>{flip();arm()})}
+  new Promise(ok=>setTimeout(ok,1500))]).catch(()=>{}).then(()=>{SYNCED=true;flip();arm()})}
 // pages built before 0901Z carry the in-effect version of every "upcoming" bit (.flip[data-after]); swap it in
 // at the changeover, to the second, whether the page was opened before it or after
-function flip(){const f=document.body.dataset.eff;if(!f||now()<Date.parse(f))return false;
+function flip(){const f=document.body.dataset.eff;if(!SYNCED||!f||now()<Date.parse(f))return false;
   document.querySelectorAll(".flip[data-after]").forEach(x=>{x.innerHTML=x.dataset.after;x.removeAttribute("data-after")});
   delete document.body.dataset.eff;tick();document.dispatchEvent(new Event("amend:flip"));return true}
 function arm(){clearTimeout(arm.t);const f=document.body.dataset.eff,ms=f?Date.parse(f)-now():NaN;

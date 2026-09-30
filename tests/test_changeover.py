@@ -69,7 +69,7 @@ class TestPages(unittest.TestCase):
 # app.js with just enough DOM to run AM.flip / AM.sync, and a clock the test sets
 HARNESS = r"""
 const vm = require("vm"), fs = require("fs");
-const [appPath, eff, deviceNow, serverDate] = process.argv.slice(2);
+const [appPath, eff, deviceNow, serverDate, tickFirst] = process.argv.slice(2);
 let clock = Date.parse(deviceNow);
 Date.now = () => clock;
 const flips = [{innerHTML: "Not in effect yet", dataset: {after: "In effect"}, removeAttribute(a) { delete this.dataset.after }}];
@@ -88,6 +88,8 @@ globalThis.localStorage = {getItem: () => null, setItem() {}};
 globalThis.fetch = () => Promise.resolve({headers: {get: h => h === "Date" ? serverDate || null : null}});
 vm.runInThisContext(fs.readFileSync(appPath, "utf8"));
 const out = {};
+// the sidebar's inline AM.tick() runs while the page is still loading, before sync()
+if (tickFirst) { AM.tick(); out.textAfterEarlyTick = flips[0].innerHTML }
 AM.sync();
 out.textBeforeServer = flips[0].innerHTML;
 setImmediate(() => {
@@ -105,7 +107,7 @@ setImmediate(() => {
 
 @unittest.skipUnless(shutil.which("node"), "needs node to run the page script")
 class TestPageScript(unittest.TestCase):
-    def run_js(self, device_now, server_date=None):
+    def run_js(self, device_now, server_date=None, tick_first=False):
         d = tempfile.mkdtemp()
         self.addCleanup(shutil.rmtree, d)
         app, harness = os.path.join(d, "app.js"), os.path.join(d, "h.js")
@@ -113,7 +115,8 @@ class TestPageScript(unittest.TestCase):
             f.write(web.APP)
         with open(harness, "w") as f:
             f.write(HARNESS)
-        out = subprocess.run(["node", harness, app, "2026-10-01T09:01:00Z", device_now, server_date or ""],
+        out = subprocess.run(["node", harness, app, "2026-10-01T09:01:00Z", device_now, server_date or "",
+                              "1" if tick_first else ""],
                              capture_output=True, text=True, check=True).stdout
         return json.loads(out)
 
@@ -130,6 +133,13 @@ class TestPageScript(unittest.TestCase):
     def test_opened_after_the_changeover_flips_once_the_server_answers(self):
         r = self.run_js("2026-10-01T09:01:00.000Z")
         self.assertEqual(r["textBeforeServer"], "Not in effect yet")
+        self.assertEqual(r["textAfterSync"], "In effect")
+
+    def test_early_tick_waits_for_the_server(self):
+        """the sidebar calls AM.tick() mid-parse. flipping then would swap only what's parsed so far and clear
+        data-eff, so the rest of a page opened after 0901Z would keep saying upcoming."""
+        r = self.run_js("2026-10-01T09:30:00.000Z", tick_first=True)
+        self.assertEqual(r["textAfterEarlyTick"], "Not in effect yet")
         self.assertEqual(r["textAfterSync"], "In effect")
 
     def test_fast_device_clock_waits_for_the_server(self):
