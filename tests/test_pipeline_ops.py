@@ -21,12 +21,18 @@ REQ = cycles.CSV_REQUIRED
 
 
 def zip_bytes(names=REQ, extra=None):
+    """same arguments, same bytes: entries get a fixed date instead of the clock's, so tests
+    that build a zip twice and compare hashes can't fail when the two builds straddle a tick."""
+    def entry(n):
+        info = zipfile.ZipInfo(n, date_time=(2026, 1, 1, 0, 0, 0))
+        info.compress_type, info.external_attr = zipfile.ZIP_DEFLATED, 0o600 << 16
+        return info
     buf = io.BytesIO()
     with zipfile.ZipFile(buf, "w", zipfile.ZIP_DEFLATED) as z:
         for n in names:
-            z.writestr(n, "ARPT_ID\rVRB\r")
+            z.writestr(entry(n), "ARPT_ID\rVRB\r")
         for n, b in (extra or {}).items():
-            z.writestr(n, b)
+            z.writestr(entry(n), b)
     return buf.getvalue()
 
 
