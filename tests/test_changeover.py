@@ -73,10 +73,11 @@ const [appPath, eff, deviceNow, serverDate, tickFirst] = process.argv.slice(2);
 let clock = Date.parse(deviceNow);
 Date.now = () => clock;
 const flips = [{innerHTML: "Not in effect yet", dataset: {after: "In effect"}, removeAttribute(a) { delete this.dataset.after }}];
+const rel = {dataset: {rel: eff.slice(0, 10)}, textContent: "tomorrow"};   // web.rel_day, as built the day before
 const events = [];
 globalThis.document = {
   body: {dataset: {eff, root: ""}},
-  querySelectorAll: s => s === ".flip[data-after]" ? flips.filter(f => f.dataset.after) : [],
+  querySelectorAll: s => s === ".flip[data-after]" ? flips.filter(f => f.dataset.after) : s === "[data-rel]" ? [rel] : [],
   getElementById: () => null, addEventListener() {}, dispatchEvent(e) { events.push(e.type) }};
 globalThis.Event = class { constructor(t) { this.type = t } };
 globalThis.addEventListener = () => {};
@@ -94,6 +95,8 @@ AM.sync();
 out.textBeforeServer = flips[0].innerHTML;
 setImmediate(() => {
   out.textAfterSync = flips[0].innerHTML;
+  AM.tick();
+  out.relAfterTick = rel.textContent;
   // run the timer sync() armed for the changeover (not its 1.5s fallback), at the moment it asked for
   const t = timers.filter(t => t.at !== Date.parse(deviceNow) + 1500).sort((a, b) => a.at - b.at)[0];
   out.timerAt = t ? new Date(t.at).toISOString() : null;
@@ -141,6 +144,12 @@ class TestPageScript(unittest.TestCase):
         r = self.run_js("2026-10-01T09:30:00.000Z", tick_first=True)
         self.assertEqual(r["textAfterEarlyTick"], "Not in effect yet")
         self.assertEqual(r["textAfterSync"], "In effect")
+
+    def test_day_word_follows_the_clock(self):
+        """a page built the day before says "tomorrow"; opened on the morning of the changeover it says today."""
+        self.assertEqual(self.run_js("2026-10-01T02:00:00.000Z")["relAfterTick"], "today")
+        self.assertEqual(self.run_js("2026-09-30T23:59:00.000Z")["relAfterTick"], "tomorrow")
+        self.assertEqual(self.run_js("2026-09-28T12:00:00.000Z")["relAfterTick"], "in 3 days")
 
     def test_fast_device_clock_waits_for_the_server(self):
         """device 10 minutes fast: at its 09:05 the server says 08:55, so nothing flips yet."""
