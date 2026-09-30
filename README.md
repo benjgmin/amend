@@ -17,8 +17,8 @@
 Every 28 days the FAA publishes a new cycle of airport, airspace, frequency and chart data. The changes that matter (tower hours, a decommissioned VOR, a renumbered runway, an amended approach) are buried among tens of thousands of rows of bookkeeping noise. Amend diffs every cycle for every US airport, filters out the noise, and explains what's left in plain English, ranked by how much it matters when you fly there. It shows upcoming changes up to three weeks before they take effect.
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/web/airport-dark.png">
-  <img src="docs/screenshots/web/airport-light.png" alt="The Charlotte/Douglas Intl page on amend.watch: 128 changes in the 03 Sep 2026 cycle, 18 of them action items">
+  <source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/web/home-dark.png">
+  <img src="docs/screenshots/web/home-light.png" alt="The amend.watch home page with a list of five airports in the sidebar, showing what changes at each in the 01 Oct 2026 cycle">
 </picture>
 
 ## Why
