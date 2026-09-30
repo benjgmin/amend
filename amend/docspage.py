@@ -249,8 +249,9 @@ def sections():
             "boundaries.</li></ul>"
             "<p>Every change links the FAA source it came from, so you can check it against the original in one "
             "tap.</p>")),
-        ("open", "Open source and reporting problems", (
-            f'<p>The engine, the rules and the site are <a href="{REPO_URL}">on GitHub</a> under the MIT license. '
+        ("open", "Source code and reporting problems", (
+            f'<p>The engine, the rules and the site are <a href="{REPO_URL}">on GitHub</a> under the Functional '
+            "Source License, which turns into MIT after two years. "
             f'Found something wrong? <a href="{e(REPORT_URL)}">Email {REPORT_EMAIL}</a> with the airport, the cycle and what '
             "the FAA source says. If the FAA's own data is wrong, only the FAA can fix it: "
             f'use its <a href="{FAA_INQUIRY}">Aeronautical Inquiries</a> page.</p>')),

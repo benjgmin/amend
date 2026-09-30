@@ -140,4 +140,4 @@ NASR data comes from the [FAA 28-Day NASR Subscription](https://www.faa.gov/air_
 
 ## License
 
-MIT. FAA data is public domain. IBM Plex Sans and IBM Plex Mono are under the SIL Open Font License ([amend/fonts/OFL.txt](amend/fonts/OFL.txt)).
+[Functional Source License 1.1, MIT future license](LICENSE) (FSL-1.1-MIT). You can read, use and change the code for anything except a competing commercial product or service, and each version becomes MIT two years after it's published. Code published before 30 Sep 2026 stays under the MIT license. FAA data is public domain. IBM Plex Sans and IBM Plex Mono are under the SIL Open Font License ([amend/fonts/OFL.txt](amend/fonts/OFL.txt)).
