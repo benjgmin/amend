@@ -1378,6 +1378,9 @@ data-name="{e(wl['name'])}">Save to my lists</a><button class="btn ghost" id="co
 # what shipped, newest first, for /changelog/. Add a line when something people can see changes.
 UPDATES = [
     ("Sep 2026", [
+        "Amend's code is now under the Functional Source License (FSL-1.1-MIT) instead of MIT. It's still "
+        "public and free to read and use, just not to sell a competing product, and each version becomes MIT two "
+        "years after it's published.",
         "Report a problem by email at hello@amend.watch, no GitHub account needed. Report a wrong change on an "
         "airport page fills in the airport, cycle and page for you.",
         "The docs have an Accuracy and limits page: the test set of real FAA changes and how many a person has "
@@ -1467,7 +1470,7 @@ UPDATES = [
         "Class B, C, D and E surface area changes, told from each airport's point of view.",
     ]),
 ]
-POLICY_DATE = "29 Sep 2026"   # when privacy/ or terms/ last changed in substance; bump it with them
+POLICY_DATE = "30 Sep 2026"   # when privacy/ or terms/ last changed in substance; bump it with them
 
 # the about page used to hold everything. Old links to its sections go on to where each one lives now
 def about_moved():
@@ -1496,10 +1499,11 @@ def about_page(meta, latest, screenshots, now, example="VRB"):
                                           f'<h3>{title}</h3><div class="note">{text}</div></div>')
     sec = lambda id_, title, inner: f'<section class="card box prose" id="{id_}"><h3>{title}</h3>{inner}</section>'
     go = lambda href, title, text: f'<a class="card box go" href="{href}"><b>{title} ›</b><span class="note">{text}</span></a>'
-    independent = sec("independent", "Independent and open source", (
+    independent = sec("independent", "Independent and source available", (
         "<p>Amend is an independent project. It isn't affiliated with or endorsed by the FAA. The code, including "
-        f'the rules that sort every change, is <a href="{REPO_URL}">open source on GitHub</a> under the MIT '
-        "license.</p>"
+        f'the rules that sort every change, is <a href="{REPO_URL}">public on GitHub</a> under the Functional '
+        "Source License: anyone can read it and use it, just not to sell a competing product, and each version "
+        "becomes MIT two years after it's published.</p>"
         "<p><b>Not for navigation.</b> Amend helps you notice changes. It doesn't replace official FAA publications, "
         "NOTAMs or a preflight briefing, and if Amend and the FAA ever disagree, the FAA is right.</p>"))
     report = sec("report", "Report a problem", (
@@ -1642,7 +1646,10 @@ def terms_page(meta, now):
             "training material. Please don't present Amend's data as official FAA data, and keep automated "
             "requests reasonable: the data only changes a few times a day. Don't try to break, overload or get around "
             "how the site works.</p>"
-            f'<p>The code is open source under the <a href="{REPO_URL}/blob/master/LICENSE">MIT license</a>.</p>')),
+            f'<p>The code is source available under the <a href="{REPO_URL}/blob/master/LICENSE">Functional Source '
+            "License (FSL-1.1-MIT)</a>. You can read, use and change it for anything except a competing commercial "
+            "product or service, and each version becomes available under the MIT license two years after it's "
+            "published. Code published before 30 Sep 2026 stays under the MIT license.</p>")),
         ("links", "Other sites", (
             "<p>Amend links to sites it doesn't run, like FAA pages and plates, GitHub, and news reader apps. "
             "Their own terms and privacy policies apply there, and Amend isn't responsible for them.</p>")),
