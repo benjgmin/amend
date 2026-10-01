@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"8PA3","entries":[{"cycle":"2026-10-01","from_cycle":"2026-09-03","engine":"1.3.8","id":"adce1ab80917","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Deer Meadows Airstrip, runway 08/26 3500x100 ft turf","source":"APT_BASE"}],"first_cycle":"2026-10-01","last_cycle":"2026-10-01"}

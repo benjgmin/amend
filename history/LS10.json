@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"LS10","entries":[{"cycle":"2026-10-01","from_cycle":"2026-09-03","engine":"1.3.8","id":"81602b68dabd","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Reynolds, runway 16/34 2000x40 ft turf","source":"APT_BASE"}],"first_cycle":"2026-10-01","last_cycle":"2026-10-01"}

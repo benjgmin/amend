@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"MI4","entries":[{"cycle":"2026-10-01","from_cycle":"2026-09-03","engine":"1.3.8","id":"a327cb4c1d49","priority":"fyi","category":"airport","kind":"changed","summary":"FAA district office: none -> DET","source":"APT_BASE","fields":[{"field":"ADO_CODE","old":"","new":"DET"}]}],"first_cycle":"2026-10-01","last_cycle":"2026-10-01"}

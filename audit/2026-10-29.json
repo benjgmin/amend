@@ -1,0 +1,1466 @@
+{
+ "from_cycle": "2026-10-01",
+ "to_cycle": "2026-10-29",
+ "errors": [],
+ "warnings": [],
+ "watchlists": {
+  "daytona-training": [
+   "DAB",
+   "OMN",
+   "DED",
+   "EVB",
+   "SFB",
+   "ORL",
+   "ISM",
+   "VRB"
+  ]
+ },
+ "airports": {
+  "ANC": [
+   {
+    "id": "2fe910ff398f",
+    "priority": "action",
+    "category": "navaid",
+    "kind": "changed",
+    "summary": "runway 07L: approach bearing: 73.88 -> 75.88° magnetic",
+    "source": "ILS_BASE",
+    "fields": [
+     {
+      "field": "APCH_BEAR",
+      "old": "73.88",
+      "new": "75.88"
+     }
+    ]
+   },
+   {
+    "id": "5baef7bfee03",
+    "priority": "action",
+    "category": "navaid",
+    "kind": "changed",
+    "summary": "runway 07R: approach bearing: 73.85 -> 75.85° magnetic",
+    "source": "ILS_BASE",
+    "fields": [
+     {
+      "field": "APCH_BEAR",
+      "old": "73.85",
+      "new": "75.85"
+     }
+    ]
+   }
+  ],
+  "ATL": [
+   {
+    "id": "72f3e00bc888",
+    "priority": "ifr",
+    "category": "route",
+    "kind": "changed",
+    "summary": "preferred IFR routes: 4 changed",
+    "source": "PFR",
+    "details": [
+     "preferred IFR route ATL -> BCT: new routing ATL SMLTZ3 WALET ZPLEN VUUDU3 BCT",
+     "preferred IFR route ATL -> DJT: new routing ATL SMLTZ3 WALET ZPLEN VUUDU3 DJT",
+     "preferred IFR route CLE -> ATL: new routing CLE CAVVS6 APE HLRRY ONDRE1 ATL",
+     "preferred IFR route MSP -> ATL: new routing MSP ZMBRO1 BRIBE ENL PLESS J45 BNA NEWBB IHAVE MTHEW CHPPR1 ATL"
+    ]
+   }
+  ],
+  "AUS": [
+   {
+    "id": "8624e6eda0f3",
+    "priority": "ifr",
+    "category": "route",
+    "kind": "changed",
+    "summary": "preferred IFR routes: 1 changed",
+    "source": "PFR",
+    "details": [
+     "preferred IFR route OAK -> AUS: new routing OAK CNDEL6 KAYEX LOSHN BOILE BLH TFD SSO ELP FST DILLO LAIKS4 AUS"
+    ]
+   }
+  ],
+  "BNA": [
+   {
+    "id": "5cf00cad7af9",
+    "priority": "ifr",
+    "category": "route",
+    "kind": "changed",
+    "summary": "preferred IFR routes: 2 added, 3 changed",
+    "source": "PFR",
+    "details": [
+     "new preferred IFR route BHM -> BNA: BHM KELCC BNTLE KNEEY CHSNE CHSNE3 BNA",
+     "new preferred IFR route BNA -> MYR: BNA TAZMO5 BURME VXV SLOJO BRDWK1 MYR",
+     "preferred IFR route BNA -> BCT: new routing BNA FLAME5 GENDE ACORI VUUDU3 BCT",
+     "preferred IFR route BNA -> DJT: new routing BNA FLAME5 GENDE ACORI VUUDU3 DJT",
+     "preferred IFR route MSP -> BNA: new routing MSP ZMBRO1 BRIBE ENL SOKOL RYYMN4 BNA"
+    ]
+   }
+  ],
+  "BOS": [
+   {
+    "id": "d5d243bedf89",
+    "priority": "ifr",
+    "category": "route",
+    "kind": "changed",
+    "summary": "preferred IFR routes: 8 changed",
+    "source": "PFR",
+    "details": [
+     "preferred IFR route BOS -> BUF: new routing BOS HYLND7 HYLND CAM GONZZ EHMAN BUF",
+     "preferred IFR route BOS -> BWI: new routing BOS PATSS7 PATSS NELIE Q75 MXE NUGGY TRISH5 BWI",
+     "preferred IFR route BOS -> DET: new routing BOS HYLND7 HYLND CAM Q822 GONZZ COLTS GIGGY3 DET",
+     "preferred IFR route BOS -> MYR: new routing BOS SSOXS7 SSOXS Q167 RIFLE HEADI Q97 SAWED KTEEE TORST1 MYR",
+     "preferred IFR route BOS -> ROC: new routing BOS HYLND7 HYLND CAM GONZZ ROC",
+     "preferred IFR route BOS -> SLC: new routing BOS HYLND7 HYLND HANAA Q816 HOCKE BAE DBQ FOD ONL J94 BFF CKW CARTR2 SLC",
+     "preferred IFR route CLE -> BOS: new routing CLE PFLYD1 DUUKR JHW Q82 PONCT JFUND2 BOS",
+     "preferred IFR route MSP -> BOS: new routing MSP NRTHN1 TTOWN DAYYY Q140 HANKK PONCT JFUND2 BOS"
+    ]
+   }
+  ],
+  "BWI": [
+   {
+    "id": "b13486c4e7c5",
+    "priority": "action",
+    "category": "navaid",
+    "kind": "removed",
+    "summary": "FND NDB (371) (8 NM from the field): decommissioned",
+    "source": "NAV_BASE",
+    "fields": [
+     {
+      "field": "NAV_ID",
+      "old": "FND",
+      "new": ""
+     },
+     {
+      "field": "NAV_TYPE",
+      "old": "NDB",
+      "new": ""
+     },
+     {
+      "field": "NAV_STATUS",
+      "old": "OPERATIONAL RESTRICTED",
+      "new": ""
+     },
+     {
+      "field": "NAME",
+      "old": "ELLICOTT",
+      "new": ""
+     },
+     {
+      "field": "STATE_NAME",
+      "old": "MARYLAND",
+      "new": ""
+     },
+     {
+      "field": "REGION_CODE",
+      "old": "AEA",
+      "new": ""
+     },
+     {
+      "field": "COUNTRY_NAME",
+      "old": "UNITED STATES",
+      "new": ""
+     },
+     {
+      "field": "OWNER",
+      "old": "F-FEDERAL AVIATION ADMIN",
+      "new": ""
+     },
+     {
+      "field": "OPERATOR",
+      "old": "F-FEDERAL AVIATION ADMIN",
+      "new": ""
+     },
+     {
+      "field": "NAS_USE_FLAG",
+      "old": "Y",
+      "new": ""
+     },
+     {
+      "field": "PUBLIC_USE_FLAG",
+      "old": "Y",
+      "new": ""
+     },
+     {
+      "field": "NDB_CLASS_CODE",
+      "old": "MHW",
+      "new": ""
+     },
+     {
+      "field": "OPER_HOURS",
+      "old": "24",
+      "new": ""
+     },
+     {
+      "field": "HIGH_ALT_ARTCC_ID",
+      "old": "ZDC",
+      "new": ""
+     },
+     {
+      "field": "HIGH_ARTCC_NAME",
+      "old": "WASHINGTON",
+      "new": ""
+     },
+     {
+      "field": "LOW_ALT_ARTCC_ID",
+      "old": "ZDC",
+      "new": ""
+     },
+     {
+      "field": "LOW_ARTCC_NAME",
+      "old": "WASHINGTON",
+      "new": ""
+     },
+     {
+      "field": "SURVEY_ACCURACY_CODE",
+      "old": "0",
+      "new": ""
+     },
+     {
+      "field": "SIMUL_VOICE_FLAG",
+      "old": "N",
+      "new": ""
+     },
+     {
+      "field": "AUTO_VOICE_ID_FLAG",
+      "old": "N",
+      "new": ""
+     },
+     {
+      "field": "MNT_CAT_CODE",
+      "old": "1",
+      "new": ""
+     },
+     {
+      "field": "VOICE_CALL",
+      "old": "NONE",
+      "new": ""
+     },
+     {
+      "field": "FREQ",
+      "old": "371",
+      "new": ""
+     },
+     {
+      "field": "Z_MKR_FLAG",
+      "old": "N",
+      "new": ""
+     },
+     {
+      "field": "FSS_ID",
+      "old": "DCA",
+      "new": ""
+     },
+     {
+      "field": "FSS_NAME",
+      "old": "LEESBURG",
+      "new": ""
+     },
+     {
+      "field": "FSS_HOURS",
+      "old": "24",
+      "new": ""
+     },
+     {
+      "field": "NOTAM_ID",
+      "old": "BWI",
+      "new": ""
+     },
+     {
+      "field": "PITCH_FLAG",
+      "old": "N",
+      "new": ""
+     },
+     {
+      "field": "CATCH_FLAG",
+      "old": "N",
+      "new": ""
+     },
+     {
+      "field": "SUA_ATCAA_FLAG",
+      "old": "N",
+      "new": ""
+     }
+    ]
+   },
+   {
+    "id": "535c34bb0e03",
+    "priority": "ifr",
+    "category": "procedure",
+    "kind": "changed",
+    "summary": "arrival/departure procedures new or updated: TRISH4 -> TRISH5",
+    "source": "STAR/DP",
+    "details": [
+     "TRISH4 -> TRISH5: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart"
+    ],
+    "procedures": {
+     "updated": [
+      "TRISH5"
+     ],
+     "removed": []
+    }
+   },
+   {
+    "id": "4202469f461d",
+    "priority": "ifr",
+    "category": "route",
+    "kind": "changed",
+    "summary": "preferred IFR routes: 33 changed",
+    "source": "PFR",
+    "details": [
+     "preferred IFR route ACK -> BWI: new routing ACK LFV CELTS NELIE Q75 MXE V378 NUGGY TRISH5 BWI",
+     "preferred IFR route ALB -> BWI: new routing ALB PWL BIZEX Q75 MXE V378 NUGGY TRISH5 BWI",
+     "preferred IFR route ALLEX -> BWI: new routing ALLEX KAYCC KYLOH NELIE Q75 MXE NUGGY TRISH5 BWI",
+     "preferred IFR route BOS -> BWI: new routing BOS PATSS7 PATSS NELIE Q75 MXE NUGGY TRISH5 BWI",
+     "preferred IFR route BRADD -> BWI: new routing BRADD BOS Q75 MXE NUGGY TRISH5 BWI",
+     "preferred IFR route BTV -> BWI: new routing BTV DENYU PONCT BIZEX Q75 MXE V378 NUGGY TRISH5 BWI",
+     "preferred IFR route BWI -> BED: new routing BWI DUKPN1 BROSS Q419 DPK DREEM4 BED",
+     "preferred IFR route BWI -> MHT: new routing BWI DUKPN1 BROSS Q419 RBV Q22 LLUND SMYTH ROZZE3 MHT",
+     "preferred IFR route BWI -> MYR: new routing BWI CONLE5 SCOOB KTEEE TORST1 MYR",
+     "preferred IFR route CLE -> BWI: new routing CLE KKIDS1 NUSMM ANTHM5 BWI",
+     "preferred IFR route CYUL -> BWI: new routing CYUL FAWNS BUGSY PONCT BIZEX Q75 MXE V378 NUGGY TRISH5 BWI",
+     "preferred IFR route EBONY -> BWI: new routing EBONY KAYCC KYLOH NELIE Q75 MXE NUGGY TRISH5 BWI",
+     "preferred IFR route EWR -> BWI: new routing EWR BIGGY Q75 MXE V378 NUGGY TRISH5 BWI",
+     "preferred IFR route EWR -> BWI: new routing EWR BIGGY V3 MXE V378 NUGGY TRISH5 BWI",
+     "preferred IFR route HPN -> BWI: new routing HPN BIGGY Q75 MXE V378 NUGGY TRISH5 BWI",
+     "preferred IFR route HPN -> BWI: new routing HPN BIGGY V3 MXE V378 NUGGY TRISH5 BWI",
+     "preferred IFR route JFK -> BWI: new routing JFK RBV Q430 COPES Q75 MXE V378 NUGGY TRISH5 BWI",
+     "preferred IFR route KANNI -> BWI: new routing KANNI BOS Q75 MXE NUGGY TRISH5 BWI",
+     "preferred IFR route KJOHN -> BWI: new routing KJOHN BIZEX Q75 MXE NUGGY TRISH5 BWI",
+     "preferred IFR route LGA -> BWI: new routing LGA BIGGY Q75 MXE V378 NUGGY TRISH5 BWI",
+     "preferred IFR route LGA -> BWI: new routing LGA BIGGY V3 MXE V378 NUGGY TRISH5 BWI",
+     "preferred IFR route MIILS -> BWI: new routing MIILS KAYCC KYLOH NELIE Q75 MXE NUGGY TRISH5 BWI",
+     "preferred IFR route MSP -> BWI: new routing MSP SNUPE1 DLL J34 DJB NUSMM ANTHM5 BWI",
+     "preferred IFR route MT -> BWI: new routing MT SYR FQM IZZEE TRISH5 BWI",
+     "preferred IFR route PHL -> BWI: new routing PHL DQO BAINS TRISH5 BWI",
+     "preferred IFR route QUBIS -> BWI: new routing QUBIS KAYCC KYLOH NELIE Q75 MXE NUGGY TRISH5 BWI",
+     "preferred IFR route ROC -> BWI: new routing ROC BURST DDUBS IZZEE TRISH5 BWI",
+     "preferred IFR route SYR -> BWI: new routing SYR FQM IZZEE TRISH5 BWI",
+     "preferred IFR route TAFFY -> BWI: new routing TAFFY KAYCC KYLOH NELIE Q75 MXE NUGGY TRISH5 BWI",
+     "preferred IFR route TEB -> BWI: new routing TEB BIGGY Q75 MXE V378 NUGGY TRISH5 BWI",
+     "preferred IFR route TOPPS -> BWI: new routing TOPPS KAYCC KYLOH NELIE Q75 MXE NUGGY TRISH5 BWI",
+     "preferred IFR route TUSKY -> BWI: new routing TUSKY Q475 COPLY Q75 MXE NUGGY TRISH5 BWI",
+     "preferred IFR route WHALE -> BWI: new routing WHALE BOS Q75 MXE NUGGY TRISH5 BWI"
+    ]
+   }
+  ],
+  "CLT": [
+   {
+    "id": "6933b6f068f9",
+    "priority": "ifr",
+    "category": "route",
+    "kind": "changed",
+    "summary": "preferred IFR routes: 2 changed",
+    "source": "PFR",
+    "details": [
+     "preferred IFR route CLE -> CLT: new routing CLE CAVVS6 APE HVQ LNDIZ PARQR7 CLT",
+     "preferred IFR route CLT -> MHT: new routing CLT BATTA1 RDU NOWAE Q87 GEARS BBOBO Q22 LLUND SMYTH ROZZE3 MHT"
+    ]
+   }
+  ],
+  "DCA": [
+   {
+    "id": "feca6e215194",
+    "priority": "ifr",
+    "category": "route",
+    "kind": "changed",
+    "summary": "preferred IFR routes: 1 added, 6 changed, 2 removed",
+    "source": "PFR",
+    "details": [
+     "new preferred IFR route BUF -> DCA: BUF VAIRS PSB SKILS5 DCA",
+     "preferred IFR route BUF -> DCA: discontinued",
+     "preferred IFR route DCA -> BED: new routing DCA DOCTR5 AGARD WNSTN T320 GON YANTC DREEM4 BED",
+     "preferred IFR route DCA -> BED: new routing DCA SOOKI6 SWANN BROSS Q419 DPK DREEM4 BED",
+     "preferred IFR route DCA -> MHT: new routing DCA SOOKI6 SWANN BROSS Q419 RBV Q22 LLUND SMYTH ROZZE3 MHT",
+     "preferred IFR route DCA -> MYR: new routing DCA AMEEE1 SCOOB KTEEE TORST1 MYR",
+     "preferred IFR route MSP -> DCA: discontinued",
+     "preferred IFR route MSP -> DCA: new routing MSP SNUPE1 DLL J34 BUCKO FRDMM7 DCA",
+     "preferred IFR route ROC -> DCA: new routing ROC BURST ETG PSB SKILS5 DCA"
+    ]
+   }
+  ],
+  "DED": [
+   {
+    "id": "db43bb841ae5",
+    "priority": "action",
+    "category": "remark",
+    "kind": "changed",
+    "summary": "revised remark: Activate Runway End Identifier Lights runway 12 & 30; Medium Intensity Runway Lights runway 05/23, High Intensity Runway Lights runway 12/30 - click the mic on CTAF. Precision Approach Path Indicator runway 05, 12, & 23 operate continuously.",
+    "source": "APT_RMK",
+    "original": "ACTVT REIL RWY 12 & 30; MIRL RWY 05/23, HIRL RWY 12/30 - CTAF.  PAPI RWY 05, 12, & 23 OPER CONSLY.",
+    "fields": [
+     {
+      "field": "REMARK",
+      "old": "ACTVT REIL RWY 12 & 30; PAPI RWY 30; MIRL RWY 05/23, HIRL RWY 12/30 - CTAF.  PAPI RWY 05, 12, & 23 OPER CONSLY.",
+      "new": "ACTVT REIL RWY 12 & 30; MIRL RWY 05/23, HIRL RWY 12/30 - CTAF.  PAPI RWY 05, 12, & 23 OPER CONSLY."
+     }
+    ]
+   }
+  ],
+  "DEN": [
+   {
+    "id": "07d686aa69d4",
+    "priority": "ifr",
+    "category": "route",
+    "kind": "changed",
+    "summary": "preferred IFR routes: 1 changed",
+    "source": "PFR",
+    "details": [
+     "preferred IFR route MSP -> DEN: new routing MSP SNOWZ1 LLUKY PORDR AALLE4 DEN"
+    ]
+   }
+  ],
+  "DFW": [
+   {
+    "id": "c15ac0cea932",
+    "priority": "ifr",
+    "category": "route",
+    "kind": "changed",
+    "summary": "preferred IFR routes: 8 changed",
+    "source": "PFR",
+    "details": [
+     "preferred IFR route CLE -> DFW: new routing CLE ZAAPA7 SINKR PXV LIT FEWWW BRDJE5 DFW",
+     "preferred IFR route CLE -> DFW: new routing CLE ZAAPA7 SINKR PXV LIT FEWWW SEEVR4 DFW",
+     "preferred IFR route DFW -> BCT: new routing DFW MRSSH ZALEA HRV Q105 BLVNS Y290 GAWKS VUUDU3 BCT",
+     "preferred IFR route DFW -> BCT: new routing DFW MRSSH3 ZALEA MCB J50 CEW J2 DEFUN VUUDU3 BCT",
+     "preferred IFR route DFW -> DJT: new routing DFW MRSSH3 ZALEA HRV Q105 BLVNS Y290 GAWKS VUUDU3 DJT",
+     "preferred IFR route DFW -> DJT: new routing DFW MRSSH3 ZALEA MCB J50 CEW J2 DEFUN VUUDU3 DJT",
+     "preferred IFR route MSP -> DFW: new routing MSP SNOWZ1 ZZEEE OVR J21 ICT HOFFF JOVEM6 DFW",
+     "preferred IFR route MSP -> DFW: new routing MSP SNOWZ1 ZZEEE OVR J21 IRW IBAKE VKTRY2 DFW"
+    ]
+   }
+  ],
+  "DTW": [
+   {
+    "id": "1a492c6c086b",
+    "priority": "action",
+    "category": "remark",
+    "kind": "added",
+    "summary": "new remark: International diversion aircraft utilizing Evans terminal may experience significant delay due to terminal gate capacity. Contact Evans ramp tower 734-247-1046 for coordination.",
+    "source": "APT_RMK",
+    "original": "INTL DVRSN ACFT UTILIZING EVANS TRML MAY EXPERIENCE SGFNT DLA DUE TO TRML GATE CPTY. CTC EVANS RAMP TWR 734-247-1046 FOR CDN."
+   },
+   {
+    "id": "e445049d808f",
+    "priority": "ifr",
+    "category": "route",
+    "kind": "changed",
+    "summary": "preferred IFR routes: 5 changed",
+    "source": "PFR",
+    "details": [
+     "preferred IFR route DTW -> DJT: new routing DTW CLVIN3 STAZE VXV THRSR Q79 ZPLEN VUUDU3 DJT",
+     "preferred IFR route DTW -> MCO: new routing DTW CLVIN3 STAZE VXV THRSR ZJAYX GRNCH5 MCO",
+     "preferred IFR route DTW -> MHT: new routing DTW HHOWE4 LNCON JHW Q82 PONCT ROZZE3 MHT",
+     "preferred IFR route MSP -> DTW: new routing MSP SNUPE1 DLL PORZL KKISS2 DTW",
+     "preferred IFR route MSP -> DTW: new routing MSP SNUPE1 DLL PORZL RKCTY2 DTW"
+    ]
+   }
+  ],
+  "EVB": [
+   {
+    "id": "385890762e36",
+    "priority": "action",
+    "category": "runway",
+    "kind": "changed",
+    "summary": "runway 07/25: length: 5000 -> 4856 ft",
+    "source": "APT_RWY",
+    "fields": [
+     {
+      "field": "RWY_LEN",
+      "old": "5000",
+      "new": "4856"
+     }
+    ]
+   },
+   {
+    "id": "be32c14102a9",
+    "priority": "action",
+    "category": "runway",
+    "kind": "changed",
+    "summary": "runway 07: declared distances: takeoff run available (TORA) 5,000 ft -> 4,856 ft; takeoff distance available (TODA) 5,000 ft -> 4,856 ft; accelerate-stop distance available (ASDA) 4,853 ft -> 4,755 ft; landing distance available (LDA) 4,518 ft -> 4,509 ft; displaced threshold: 335 -> 245 ft; threshold crossing height: 43 -> 47 ft AGL",
+    "source": "APT_RWY_END",
+    "fields": [
+     {
+      "field": "ACLT_STOP_DIST_AVBL",
+      "old": "4853",
+      "new": "4755"
+     },
+     {
+      "field": "DISPLACED_THR_LEN",
+      "old": "335",
+      "new": "245"
+     },
+     {
+      "field": "LNDG_DIST_AVBL",
+      "old": "4518",
+      "new": "4509"
+     },
+     {
+      "field": "THR_CROSSING_HGT",
+      "old": "43",
+      "new": "47"
+     },
+     {
+      "field": "TKOF_DIST_AVBL",
+      "old": "5000",
+      "new": "4856"
+     },
+     {
+      "field": "TKOF_RUN_AVBL",
+      "old": "5000",
+      "new": "4856"
+     }
+    ]
+   },
+   {
+    "id": "6d88e5665512",
+    "priority": "action",
+    "category": "runway",
+    "kind": "changed",
+    "summary": "runway 25: declared distances: takeoff run available (TORA) 5,000 ft -> 4,856 ft; takeoff distance available (TODA) 5,000 ft -> 4,856 ft; accelerate-stop distance available (ASDA) 4,763 ft -> 4,730 ft; landing distance available (LDA) 4,463 ft -> 4,464 ft; displaced threshold: 300 -> 266 ft; threshold crossing height: 46 -> 48 ft AGL",
+    "source": "APT_RWY_END",
+    "fields": [
+     {
+      "field": "ACLT_STOP_DIST_AVBL",
+      "old": "4763",
+      "new": "4730"
+     },
+     {
+      "field": "DISPLACED_THR_LEN",
+      "old": "300",
+      "new": "266"
+     },
+     {
+      "field": "LNDG_DIST_AVBL",
+      "old": "4463",
+      "new": "4464"
+     },
+     {
+      "field": "THR_CROSSING_HGT",
+      "old": "46",
+      "new": "48"
+     },
+     {
+      "field": "TKOF_DIST_AVBL",
+      "old": "5000",
+      "new": "4856"
+     },
+     {
+      "field": "TKOF_RUN_AVBL",
+      "old": "5000",
+      "new": "4856"
+     }
+    ]
+   }
+  ],
+  "EWR": [
+   {
+    "id": "79b06e6a6112",
+    "priority": "ifr",
+    "category": "route",
+    "kind": "changed",
+    "summary": "preferred IFR routes: 16 changed, 1 removed",
+    "source": "PFR",
+    "details": [
+     "preferred IFR route CLE -> EWR: new routing CLE PFLYD1 DORET J584 SLT FQM3 EWR",
+     "preferred IFR route EWR -> BED: new routing EWR BREZY V39 CMK MERIT HFD DREEM4 BED",
+     "preferred IFR route EWR -> BED: new routing EWR MERIT HFD DREEM4 BED",
+     "preferred IFR route EWR -> BVY: new routing EWR BREZY V39 CMK MERIT HFD DREEM4 BVY",
+     "preferred IFR route EWR -> BVY: new routing EWR MERIT HFD DREEM4 BVY",
+     "preferred IFR route EWR -> BWI: new routing EWR BIGGY Q75 MXE V378 NUGGY TRISH5 BWI",
+     "preferred IFR route EWR -> BWI: new routing EWR BIGGY V3 MXE V378 NUGGY TRISH5 BWI",
+     "preferred IFR route EWR -> DET: new routing EWR GAYEL Q818 WOZEE COLTS GIGGY3 DET",
+     "preferred IFR route EWR -> IND: new routing EWR ZIMMZ Q42 HIDON RINTE SNKPT2 IND",
+     "preferred IFR route EWR -> LWM: new routing EWR BREZY V39 CMK MERIT HFD DREEM4 LWM",
+     "preferred IFR route EWR -> LWM: new routing EWR MERIT HFD DREEM4 LWM",
+     "preferred IFR route EWR -> MHT: new routing EWR GREKI JUDDS MARTN QUINZ ROZZE3 MHT",
+     "preferred IFR route EWR -> MHT: new routing EWR MERIT HFD CRIBB ROZZE3 MHT",
+     "preferred IFR route EWR -> MTN: discontinued",
+     "preferred IFR route EWR -> MYR: new routing EWR ELVAE NECCK WHITE Q409 CRPLR KTEEE TORST1 MYR",
+     "preferred IFR route EWR -> SLC: new routing EWR GAYEL Q818 WOZEE Q935 HOCKE BAE DBQ FOD ONL J94 BFF CKW CARTR2 SLC",
+     "preferred IFR route MSP -> EWR: new routing MSP ZMBRO1 BRIBE KG72M EVOTE NELLS KEEHO J584 SLT FQM3 EWR"
+    ]
+   }
+  ],
+  "FLL": [
+   {
+    "id": "1bfed0f078f8",
+    "priority": "ifr",
+    "category": "route",
+    "kind": "changed",
+    "summary": "preferred IFR routes: 11 changed",
+    "source": "PFR",
+    "details": [
+     "preferred IFR route CLE -> FLL: new routing CLE CAVVS6 APE Q149 BURGG QUIWE Q93 PRMUS CUUDA3 FLL",
+     "preferred IFR route FLL -> BED: new routing FLL AGERS1 DUCEN Q87 JROSS JOHAR Q109 DFENC SAWED Q97 CCC YANTC DREEM4 BED",
+     "preferred IFR route FLL -> BED: new routing FLL FEALX2 ETECK PELCN Y309 FLRDA SAGGY CHIEZ Q161 KALDA Q97 HEADI YANTC DREEM4 BED",
+     "preferred IFR route FLL -> BVY: new routing FLL FEALX2 ETECK PELCN Y309 FLRDA SAGGY CHIEZ Q161 KALDA Q97 HEADI YANTC DREEM4 BVY",
+     "preferred IFR route FLL -> LWM: new routing FLL AGERS1 DUCEN Q87 JROSS ELLDE Q97 PAACK JAMIE Q481 DPK DREEM4 LWM",
+     "preferred IFR route FLL -> LWM: new routing FLL FEALX2 ETECK PELCN Y309 FLRDA SAGGY CHIEZ Q161 KALDA Q97 HEADI YANTC DREEM4 LWM",
+     "preferred IFR route FLL -> MHT: new routing FLL AGERS1 DUCEN Q87 JROSS ELLDE Q97 PAACK JAMIE Q133 JFK LLUND SMYTH ROZZE3 MHT",
+     "preferred IFR route FLL -> MHT: new routing FLL FEALX2 ETECK GRUBR Y299 SEELO WAALT Q131 EARZZ JAMIE Q133 JFK LLUND SMYTH ROZZE3 MHT",
+     "preferred IFR route MSP -> FLL: new routing MSP TOTTZ1 ALO IRK STL Q19 HITMN ACORI TEEKY4 FLL",
+     "preferred IFR route PHL -> FLL: new routing PHL OOD TEBEE HAYDO TRPOD Q409 CRPLR PAACK Q97 KENLL TARPN3 FLL",
+     "preferred IFR route PHL -> FLL: new routing PHL OOD TEBEE HAYDO TRPOD Q409 CRPLR PAACK Q97 PRMUS CUUDA3 FLL"
+    ]
+   }
+  ],
+  "HOU": [
+   {
+    "id": "291c056e0789",
+    "priority": "ifr",
+    "category": "route",
+    "kind": "changed",
+    "summary": "preferred IFR routes: 6 changed",
+    "source": "PFR",
+    "details": [
+     "preferred IFR route CLE -> HOU: new routing CLE ZAAPA7 SINKR TIIDE Q31 DHART Q33 SWEUP WAPPL7 HOU",
+     "preferred IFR route HOU -> BCT: new routing HOU ELOCO6 LLA HRV SJI J2 DEFUN VUUDU3 BCT",
+     "preferred IFR route HOU -> BCT: new routing HOU ELOCO6 LLA LEV Y290 GAWKS VUUDU3 BCT",
+     "preferred IFR route HOU -> CHS: new routing HOU ELOCO6 LLA HRV SJI J2 DEFUN CABLO ALLMA SAV BAGGY4 CHS",
+     "preferred IFR route HOU -> DJT: new routing HOU ELOCO6 LLA HRV SJI J2 DEFUN VUUDU3 DJT",
+     "preferred IFR route HOU -> DJT: new routing HOU ELOCO6 LLA LEV Y290 GAWKS VUUDU3 DJT"
+    ]
+   }
+  ],
+  "IAD": [
+   {
+    "id": "ae96e578201a",
+    "priority": "action",
+    "category": "remark",
+    "kind": "removed",
+    "summary": "removed remark: COCKPIT OVER CNTRLN TAXI PROHIBITED AT TWY Y INT WITH TWY Y11. JUDGMENTAL OVERSTEER RQRED.",
+    "source": "APT_RMK",
+    "original": "COCKPIT OVER CNTRLN TAXI PROHIBITED AT TWY Y INT WITH TWY Y11. JUDGMENTAL OVERSTEER RQRED.",
+    "untranslated": "Kept in the FAA's words: the plain-English version didn't pass Amend's checks."
+   },
+   {
+    "id": "4dcc1c5c6f35",
+    "priority": "ifr",
+    "category": "route",
+    "kind": "changed",
+    "summary": "preferred IFR routes: 5 changed",
+    "source": "PFR",
+    "details": [
+     "preferred IFR route IAD -> BED: new routing IAD WOOLY2 SWANN BROSS Q419 DPK DREEM4 BED",
+     "preferred IFR route IAD -> MHT: new routing IAD JCOBY4 SWANN BROSS Q419 RBV Q22 LLUND SMYTH ROZZE3 MHT",
+     "preferred IFR route IAD -> MYR: new routing IAD JCOBY4 SCOOB KTEEE TORST1 MYR",
+     "preferred IFR route IAD -> MYR: new routing IAD JDUBB4 RRSIN GSO Q75 SLOJO BRDWK1 MYR",
+     "preferred IFR route MSP -> IAD: new routing MSP SNUPE1 DLL J34 DJB MGW GIBBZ6 IAD"
+    ]
+   }
+  ],
+  "IAH": [
+   {
+    "id": "65893219c3fa",
+    "priority": "action",
+    "category": "remark",
+    "kind": "changed",
+    "summary": "revised remark: Apron terminal alpha north ramp north-south taxilane closed to aircraft wingspan more than 135 feet.",
+    "source": "APT_RMK",
+    "original": "APN TRML ALPHA N RAMP N-S TXL CLSD TO ACFT WINGSPAN MORE THAN 135 FT.",
+    "fields": [
+     {
+      "field": "REMARK",
+      "old": "APRON TERMINAL ALPHA NORTH RAMP NORTH-SOUTH TXL CLSD TO ACFT WINGSPAN MORE THAN 125 FT.",
+      "new": "APN TRML ALPHA N RAMP N-S TXL CLSD TO ACFT WINGSPAN MORE THAN 135 FT."
+     }
+    ]
+   },
+   {
+    "id": "21a31f5b8c7e",
+    "priority": "ifr",
+    "category": "procedure",
+    "kind": "changed",
+    "summary": "arrival/departure procedures new or updated: BAZBL1 -> BAZBL2",
+    "source": "STAR/DP",
+    "details": [
+     "BAZBL1 -> BAZBL2: transitions added GOZDA"
+    ],
+    "procedures": {
+     "updated": [
+      "BAZBL2"
+     ],
+     "removed": []
+    }
+   },
+   {
+    "id": "28bcbba37d72",
+    "priority": "ifr",
+    "category": "route",
+    "kind": "changed",
+    "summary": "preferred IFR routes: 12 changed",
+    "source": "PFR",
+    "details": [
+     "preferred IFR route CLE -> IAH: new routing CLE ZAAPA7 SINKR TIIDE Q31 DHART Q33 SWEUP GESNR2 IAH",
+     "preferred IFR route CLE -> IAH: new routing CLE ZAAPA7 SINKR TIIDE Q31 DHART Q33 SWEUP ZEEKK3 IAH",
+     "preferred IFR route IAH -> BCT: new routing IAH GUMBY3 GUSTI AWDAD SJI J2 DEFUN VUUDU3 BCT",
+     "preferred IFR route IAH -> BCT: new routing IAH GUMBY3 LLA LEV Y290 GAWKS VUUDU3 BCT",
+     "preferred IFR route IAH -> BCT: new routing IAH MMUGS4 GUSTI AWDAD SJI J2 DEFUN VUUDU3 BCT",
+     "preferred IFR route IAH -> BCT: new routing IAH MMUGS4 LLA LEV Y290 GAWKS VUUDU3 BCT",
+     "preferred IFR route IAH -> CHS: new routing IAH GUMBY3 GUSTI SJI J2 DEFUN CABLO ALLMA SAV BAGGY4 CHS",
+     "preferred IFR route IAH -> CHS: new routing IAH MMUGS4 GUSTI SJI J2 DEFUN CABLO ALLMA SAV BAGGY4 CHS",
+     "preferred IFR route IAH -> DJT: new routing IAH GUMBY3 GUSTI AWDAD SJI J2 DEFUN VUUDU3 DJT",
+     "preferred IFR route IAH -> DJT: new routing IAH GUMBY3 LLA LEV Y290 GAWKS VUUDU3 DJT",
+     "preferred IFR route IAH -> DJT: new routing IAH MMUGS4 GUSTI AWDAD SJI J2 DEFUN VUUDU3 DJT",
+     "preferred IFR route IAH -> DJT: new routing IAH MMUGS4 LLA LEV Y290 GAWKS VUUDU3 DJT"
+    ]
+   }
+  ],
+  "JFK": [
+   {
+    "id": "8a19ddd26518",
+    "priority": "ifr",
+    "category": "route",
+    "kind": "changed",
+    "summary": "preferred IFR routes: 9 changed, 1 removed",
+    "source": "PFR",
+    "details": [
+     "preferred IFR route CLE -> JFK: new routing CLE PFLYD1 JASEE HOXIE Q476 WLKES PUCKY1 JFK",
+     "preferred IFR route JFK -> BED: new routing JFK MERIT HFD DREEM4 BED",
+     "preferred IFR route JFK -> BWI: new routing JFK RBV Q430 COPES Q75 MXE V378 NUGGY TRISH5 BWI",
+     "preferred IFR route JFK -> DET: new routing JFK GAYEL Q818 WOZEE COLTS GIGGY3 DET",
+     "preferred IFR route JFK -> IND: discontinued",
+     "preferred IFR route JFK -> IND: new routing JFK RBV Q430 SAAME BRNAN Q42 HIDON RINTE SNKPT2 IND",
+     "preferred IFR route JFK -> LWM: new routing JFK MERIT HFD DREEM4 LWM",
+     "preferred IFR route JFK -> MHT: new routing JFK GREKI JUDDS MARTN QUINZ ROZZE3 MHT",
+     "preferred IFR route JFK -> SLC: new routing JFK GAYEL Q818 WOZEE Q935 HOCKE BAE DBQ FOD ONL J94 BFF CKW CARTR2 SLC",
+     "preferred IFR route MSP -> JFK: new routing MSP SNUPE1 DLL HASTE DAFLU J70 JHW Q476 WLKES PUCKY1 JFK"
+    ]
+   }
+  ],
+  "LAS": [
+   {
+    "id": "4176f71647e4",
+    "priority": "ifr",
+    "category": "route",
+    "kind": "changed",
+    "summary": "preferred IFR routes: 2 changed",
+    "source": "PFR",
+    "details": [
+     "preferred IFR route CLE -> LAS: new routing CLE GTLKE6 YABRO EDENS LEFAM HBU DVC TYEGR CHOWW4 LAS",
+     "preferred IFR route CLE -> LAS: new routing CLE GTLKE6 YABRO IOW J60 HVE GGAPP CHOWW4 LAS"
+    ]
+   }
+  ],
+  "LAX": [
+   {
+    "id": "6917e00e4a24",
+    "priority": "ifr",
+    "category": "route",
+    "kind": "changed",
+    "summary": "preferred IFR routes: 1 changed",
+    "source": "PFR",
+    "details": [
+     "preferred IFR route CLE -> LAX: new routing CLE GTLKE6 YABRO IOW HVE PROMT Q88 HAKMN ANJLL4 LAX"
+    ]
+   }
+  ],
+  "LGA": [
+   {
+    "id": "7e1f3e08d421",
+    "priority": "ifr",
+    "category": "route",
+    "kind": "changed",
+    "summary": "preferred IFR routes: 12 changed, 1 removed",
+    "source": "PFR",
+    "details": [
+     "preferred IFR route CLE -> LGA: new routing CLE PFLYD1 MAAJR ETG MIP4 LGA",
+     "preferred IFR route LGA -> BED: new routing LGA MERIT HFD DREEM4 BED",
+     "preferred IFR route LGA -> BVY: new routing LGA MERIT HFD DREEM4 BVY",
+     "preferred IFR route LGA -> BWI: new routing LGA BIGGY Q75 MXE V378 NUGGY TRISH5 BWI",
+     "preferred IFR route LGA -> BWI: new routing LGA BIGGY V3 MXE V378 NUGGY TRISH5 BWI",
+     "preferred IFR route LGA -> IND: discontinued",
+     "preferred IFR route LGA -> IND: new routing LGA ZIMMZ Q42 HIDON RINTE SNKPT2 IND",
+     "preferred IFR route LGA -> LWM: new routing LGA MERIT HFD DREEM4 LWM",
+     "preferred IFR route LGA -> MHT: new routing LGA GREKI JUDDS MARTN QUINZ ROZZE3 MHT",
+     "preferred IFR route LGA -> MHT: new routing LGA MERIT HFD CRIBB ROZZE3 MHT",
+     "preferred IFR route LGA -> MYR: new routing LGA WHITE Q409 CRPLR KTEEE TORST1 MYR",
+     "preferred IFR route LGA -> SLC: new routing LGA GAYEL Q818 WOZEE Q935 HOCKE BAE DBQ FOD ONL J94 BFF CKW CARTR2 SLC",
+     "preferred IFR route MSP -> LGA: new routing MSP SNUPE1 DLL GERBS Q186 WEVEL ETG MIP4 LGA"
+    ]
+   }
+  ],
+  "MCO": [
+   {
+    "id": "aca967f59bc0",
+    "priority": "action",
+    "category": "remark",
+    "kind": "added",
+    "summary": "new remark: Prior permission required vertipad. Call airfield operations 407-825-2036 to execute letter of agreement no less than 21 days in advance.",
+    "source": "APT_RMK",
+    "original": "PPR VERTIPAD. CALL AIRFIELD OPS 407-825-2036 TO EXCT LOA NO LESS THAN 21 DAYS IN ADVN."
+   },
+   {
+    "id": "51a9accd865b",
+    "priority": "action",
+    "category": "remark",
+    "kind": "changed",
+    "summary": "revised remark: Pilots conducting Enhanced Flight Vision Systems operations; be aware Light Emitting Diode Approach Light System in use runway 18R.",
+    "source": "APT_RMK",
+    "original": "PILOTS CONDUCTING EFVS OPS; BE AWARE LED ALS IN USE RWY 18R.",
+    "fields": [
+     {
+      "field": "REMARK",
+      "old": "24 HR PPR FOR ACFT EQUIPPED WITH WEATHER MODIFICATION OR GEOENGINEERING EQPT 407-825-2036.",
+      "new": "PILOTS CONDUCTING EFVS OPS; BE AWARE LED ALS IN USE RWY 18R."
+     }
+    ]
+   },
+   {
+    "id": "29095d26ef9e",
+    "priority": "action",
+    "category": "runway",
+    "kind": "changed",
+    "summary": "runway 18R: approach lights: 1,400 foot medium intensity approach lighting system with runway alignment indicator lights (MALSR) -> standard 2,400 foot high intensity approach lighting system with sequenced flashers, category II or III configuration (ALSF2); touchdown zone lights: yes -> no",
+    "source": "APT_RWY_END",
+    "fields": [
+     {
+      "field": "APCH_LGT_SYSTEM_CODE",
+      "old": "MALSR",
+      "new": "ALSF2"
+     },
+     {
+      "field": "TDZ_LGT_AVBL_FLAG",
+      "old": "Y",
+      "new": "N"
+     }
+    ]
+   },
+   {
+    "id": "dbe519854f7a",
+    "priority": "action",
+    "category": "runway",
+    "kind": "changed",
+    "summary": "runway 36L: touchdown zone lights: no -> yes",
+    "source": "APT_RWY_END",
+    "fields": [
+     {
+      "field": "TDZ_LGT_AVBL_FLAG",
+      "old": "N",
+      "new": "Y"
+     }
+    ]
+   },
+   {
+    "id": "07d55c32bd3c",
+    "priority": "ifr",
+    "category": "route",
+    "kind": "changed",
+    "summary": "preferred IFR routes: 10 added, 10 changed",
+    "source": "PFR",
+    "details": [
+     "new preferred IFR route AVL -> MCO: AVL QUIWE FISHO LPERD GTOUT1 MCO",
+     "new preferred IFR route AVL -> MCO: AVL QUIWE FISHO LPERD SNFLD3 MCO",
+     "new preferred IFR route CAK -> MCO: CAK AIR RICCS Q103 SLOJO EFFAY Q83 ROYCO Q85 LPERD GTOUT1 MCO",
+     "new preferred IFR route CAK -> MCO: CAK AIR RICCS Q103 SLOJO EFFAY Q83 ROYCO Q85 LPERD SNFLD3 MCO",
+     "new preferred IFR route CLE -> MCO: CLE KKIDS1 NUSMM RICCS Q103 SLOJO EFFAY Q83 ROYCO Q85 LPERD SNFLD3 MCO",
+     "new preferred IFR route CMH -> MCO: CMH OHIOS DANCO Q103 SLOJO EFFAY Q83 ROYCO Q85 LPERD SNFLD3 MCO",
+     "new preferred IFR route HSV -> MCO: HSV VLKNN MGMRY DEEDA GRNCH5 MCO",
+     "new preferred IFR route IND -> MCO: IND DAWNN1 IIU Q79 THRSR ZJAYX GRNCH5 MCO",
+     "new preferred IFR route OKC -> MCO: OKC RDHWK3 HOLLE LITTR MGMRY DEEDA GRNCH5 MCO",
+     "new preferred IFR route TYS -> MCO: TYS THRSR ZJAYX GRNCH5 MCO",
+     "preferred IFR route CLE -> MCO: new routing CLE KKIDS1 NUSMM RICCS Q103 SLOJO EFFAY Q83 ROYCO Q85 LPERD GTOUT1 MCO",
+     "preferred IFR route CMH -> MCO: new routing CMH OHIOS DANCO Q103 SLOJO EFFAY Q83 ROYCO Q85 LPERD GTOUT1 MCO",
+     "preferred IFR route DTW -> MCO: new routing DTW CLVIN3 STAZE VXV THRSR ZJAYX GRNCH5 MCO",
+     "preferred IFR route MCO -> BED: new routing MCO FATHE4 VIYAP Q87 JROSS JOHAR Q109 DFENC SAWED Q97 CCC YANTC DREEM4 BED",
+     "preferred IFR route MCO -> BED: new routing MCO MZULO3 ETECK PELCN Y309 FLRDA SAGGY CHIEZ Q161 KALDA Q97 HEADI YANTC DREEM4 BED",
+     "preferred IFR route MCO -> MHT: new routing MCO MZULO3 LENDS GRUBR Y299 SEELO WAALT Q131 EARZZ JAMIE Q133 JFK LLUND SMYTH ROZZE3 MHT",
+     "preferred IFR route MEM -> MCO: new routing MEM BBKNG7 KERMI VLKNN MGMRY DEEDA GRNCH5 MCO",
+     "preferred IFR route MKE -> MCO: new routing MKE OBK DELHI TTH RAMRD JILIS DEEDA GRNCH5 MCO",
+     "preferred IFR route MSP -> MCO: new routing MSP ZMBRO1 BRIBE ENL PLESS Q19 HITMN DEEDA GRNCH5 MCO",
+     "preferred IFR route STL -> MCO: new routing STL DRUSE5 BNA DEEDA GRNCH5 MCO"
+    ]
+   }
+  ],
+  "MDW": [
+   {
+    "id": "6610945ac50e",
+    "priority": "ifr",
+    "category": "route",
+    "kind": "changed",
+    "summary": "preferred IFR routes: 5 changed",
+    "source": "PFR",
+    "details": [
+     "preferred IFR route CLE -> MDW: new routing CLE GTLKE6 BAGEL PANGG7 MDW",
+     "preferred IFR route MDW -> BCT: new routing MDW DENNT DARCY DREGS DUMGE SCOTO SWAPP Q79 ZPLEN VUUDU3 BCT",
+     "preferred IFR route MDW -> DJT: new routing MDW DENNT DARCY DREGS DUMGE SCOTO SWAPP Q79 ZPLEN VUUDU3 DJT",
+     "preferred IFR route MDW -> MHT: new routing MDW LEWKE GIJ EVOTE NELLS KEEHO JHW Q82 PONCT ROZZE3 MHT",
+     "preferred IFR route MSP -> MDW: new routing MSP TOTTZ1 OHHMY ENDEE8 MDW"
+    ]
+   }
+  ],
+  "MEM": [
+   {
+    "id": "023f86dcdb6e",
+    "priority": "action",
+    "category": "navaid",
+    "kind": "changed",
+    "summary": "MEM (Memphis) navaid: status: OPERATIONAL IFR -> OPERATIONAL RESTRICTED",
+    "source": "NAV_BASE",
+    "fields": [
+     {
+      "field": "NAV_STATUS",
+      "old": "OPERATIONAL IFR",
+      "new": "OPERATIONAL RESTRICTED"
+     }
+    ]
+   },
+   {
+    "id": "d1797dfcde54",
+    "priority": "ifr",
+    "category": "remark",
+    "kind": "added",
+    "summary": "new navaid remark: VOR unusable 105-110 beyond 40 nautical miles; 115-120 beyond 40 nautical miles; 155-165 beyond 40 nautical miles; 170-179 beyond 40 nautical miles below 18000 feet; 205-210 beyond 40 nautical miles.",
+    "source": "NAV_RMK",
+    "original": "VOR UNUSBL 105-110 BYD 40 NM; 115-120 BYD 40 NM; 155-165 BYD 40 NM; 170-179 BYD 40 NM BLW 18000 FT; 205-210 BYD 40 NM."
+   },
+   {
+    "id": "07b014d354c1",
+    "priority": "ifr",
+    "category": "route",
+    "kind": "changed",
+    "summary": "preferred IFR routes: 5 changed, 2 removed",
+    "source": "PFR",
+    "details": [
+     "preferred IFR route MEM -> BCT: new routing MEM PIEPE6 IBUFY DEFUN VUUDU3 BCT",
+     "preferred IFR route MEM -> DJT: new routing MEM PIEPE6 IBUFY DEFUN VUUDU3 DJT",
+     "preferred IFR route MEM -> MCO: new routing MEM BBKNG7 KERMI VLKNN MGMRY DEEDA GRNCH5 MCO",
+     "preferred IFR route MSP -> MEM: discontinued",
+     "preferred IFR route MSP -> MEM: new routing MSP TOTTZ1 ALO IRK WHOLL BRBBQ3 MEM",
+     "preferred IFR route MSP -> MEM: new routing MSP TOTTZ1 ALO J233 STL J151 FAM WHOLL BRBBQ3 MEM"
+    ]
+   }
+  ],
+  "MIA": [
+   {
+    "id": "ae33a4970474",
+    "priority": "ifr",
+    "category": "procedure",
+    "kind": "changed",
+    "summary": "arrival/departure procedures new or updated: KLADA2",
+    "source": "STAR/DP",
+    "details": [
+     "KLADA2: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart"
+    ],
+    "procedures": {
+     "updated": [
+      "KLADA2"
+     ],
+     "removed": []
+    }
+   },
+   {
+    "id": "ddf915c07a79",
+    "priority": "ifr",
+    "category": "route",
+    "kind": "changed",
+    "summary": "preferred IFR routes: 7 changed",
+    "source": "PFR",
+    "details": [
+     "preferred IFR route CLE -> MIA: new routing CLE CAVVS6 APE Q149 BURGG QUIWE Q93 DEBRL CSTAL3 MIA",
+     "preferred IFR route MIA -> BED: new routing MIA FOLZZ3 ALYRA PELCN Y309 FLRDA SAGGY CHIEZ Q161 KALDA Q97 HEADI YANTC DREEM4 BED",
+     "preferred IFR route MIA -> BVY: new routing MIA FOLZZ3 ALYRA PELCN Y309 FLRDA SAGGY CHIEZ Q161 KALDA Q97 HEADI YANTC DREEM4 BVY",
+     "preferred IFR route MIA -> LWM: new routing MIA FOLZZ3 ALYRA PELCN Y309 FLRDA SAGGY CHIEZ Q161 KALDA Q97 HEADI YANTC DREEM4 LWM",
+     "preferred IFR route MIA -> MHT: new routing MIA FOLZZ3 ALYRA GRUBR Y299 SEELO WAALT Q131 EARZZ JAMIE Q133 JFK LLUND SMYTH ROZZE3 MHT",
+     "preferred IFR route MSP -> MIA: new routing MSP TOTTZ1 ALO J233 SKBOZ Q19 HITMN ACORI FROGZ5 MIA",
+     "preferred IFR route PHL -> MIA: new routing PHL OOD TEBEE HAYDO TRPOD Q409 CRPLR PAACK Q97 DEBRL CSTAL3 MIA"
+    ]
+   }
+  ],
+  "MSP": [
+   {
+    "id": "d65558ee50e1",
+    "priority": "action",
+    "category": "navaid",
+    "kind": "changed",
+    "summary": "MSP (Minneapolis) navaid: VOR/DME -> DME; automatic voice identification: yes -> no; status: OPERATIONAL RESTRICTED -> OPERATIONAL IFR",
+    "source": "NAV_BASE",
+    "fields": [
+     {
+      "field": "AUTO_VOICE_ID_FLAG",
+      "old": "Y",
+      "new": "N"
+     },
+     {
+      "field": "NAV_STATUS",
+      "old": "OPERATIONAL RESTRICTED",
+      "new": "OPERATIONAL IFR"
+     },
+     {
+      "field": "NAV_TYPE",
+      "old": "VOR/DME",
+      "new": "DME"
+     }
+    ]
+   },
+   {
+    "id": "9081e12027af",
+    "priority": "ifr",
+    "category": "procedure",
+    "kind": "changed",
+    "summary": "arrival/departure procedures new or updated: BITEZ1, BUNYN1, HTDSH1, KBREW2 -> KBREW1, NRTHN1, SNOWZ1, SNUPE1, TOTTZ1, ZMBRO7 -> ZMBRO1; removed: COULT7, HSTIN6, LEINY6, MEDOW5, ORSKY3, RST1, SCHEP1, SLAYR4, SMERF7, WLSTN7",
+    "source": "STAR/DP",
+    "details": [
+     "BITEZ1: new procedure; transitions DKOTA, LEINY, SMERF",
+     "BUNYN1: new procedure; transitions DLH, KVUSI",
+     "HTDSH1: new procedure; transitions ALO, BRIBE, FOOLS, OANNA, OHHMY, ZZIPR",
+     "KBREW2 -> KBREW1: waypoints added HOMUR, HRBEK, KEETN; waypoints removed FAR, GEP; transitions added KEETN; transitions removed FAR",
+     "NRTHN1: new procedure; transitions AROND, TTOWN",
+     "SNOWZ1: new procedure; transitions DABOY, ISTIQ, LLUKY, SMTHA, ZZEEE",
+     "SNUPE1: new procedure; transitions DLL",
+     "TOTTZ1: new procedure; transitions ALO, FOOLS, OANNA, OHHMY, ZZIPR",
+     "ZMBRO7 -> ZMBRO1: waypoints added BRIBE, PEKTE; waypoints removed ODI; transitions added BRIBE; transitions removed ODI",
+     "COULT7: removed",
+     "HSTIN6: removed",
+     "LEINY6: removed",
+     "MEDOW5: removed",
+     "ORSKY3: removed",
+     "RST1: removed",
+     "SCHEP1: removed",
+     "SLAYR4: removed",
+     "SMERF7: removed",
+     "WLSTN7: removed"
+    ],
+    "procedures": {
+     "updated": [
+      "BITEZ1",
+      "BUNYN1",
+      "HTDSH1",
+      "KBREW1",
+      "NRTHN1",
+      "SNOWZ1",
+      "SNUPE1",
+      "TOTTZ1",
+      "ZMBRO1"
+     ],
+     "removed": [
+      "COULT7",
+      "HSTIN6",
+      "LEINY6",
+      "MEDOW5",
+      "ORSKY3",
+      "RST1",
+      "SCHEP1",
+      "SLAYR4",
+      "SMERF7",
+      "WLSTN7"
+     ]
+    }
+   },
+   {
+    "id": "394bc7d31858",
+    "priority": "ifr",
+    "category": "route",
+    "kind": "changed",
+    "summary": "preferred IFR routes: 42 changed, 5 removed",
+    "source": "PFR",
+    "details": [
+     "preferred IFR route CLE -> MSP: new routing CLE GTLKE6 ALPHE J34 VIO KAMMA KKILR4 MSP",
+     "preferred IFR route MSP -> ATL: new routing MSP ZMBRO1 BRIBE ENL PLESS J45 BNA NEWBB IHAVE MTHEW CHPPR1 ATL",
+     "preferred IFR route MSP -> BCT: new routing MSP TOTTZ1 ALO IRK J45 DENNI Q19 HITMN ACORI VUUDU3 BCT",
+     "preferred IFR route MSP -> BED: new routing MSP NRTHN1 TTOWN DAYYY Q140 HANKK PONCT EEGUL ZELKA2 BED",
+     "preferred IFR route MSP -> BNA: new routing MSP ZMBRO1 BRIBE ENL SOKOL RYYMN4 BNA",
+     "preferred IFR route MSP -> BOS: new routing MSP NRTHN1 TTOWN DAYYY Q140 HANKK PONCT JFUND2 BOS",
+     "preferred IFR route MSP -> BWI: new routing MSP SNUPE1 DLL J34 DJB NUSMM ANTHM5 BWI",
+     "preferred IFR route MSP -> CLE: new routing MSP SNUPE1 DLL J34 BAE OLYEE BRWNZ4 CLE",
+     "preferred IFR route MSP -> DCA: discontinued",
+     "preferred IFR route MSP -> DCA: new routing MSP SNUPE1 DLL J34 BUCKO FRDMM7 DCA",
+     "preferred IFR route MSP -> DEN: new routing MSP SNOWZ1 LLUKY PORDR AALLE4 DEN",
+     "preferred IFR route MSP -> DET: new routing MSP SNUPE1 DLL BAE WEBOR RRALF3 DET",
+     "preferred IFR route MSP -> DFW: new routing MSP SNOWZ1 ZZEEE OVR J21 ICT HOFFF JOVEM6 DFW",
+     "preferred IFR route MSP -> DFW: new routing MSP SNOWZ1 ZZEEE OVR J21 IRW IBAKE VKTRY2 DFW",
+     "preferred IFR route MSP -> DJT: new routing MSP TOTTZ1 ALO STL Q19 HITMN ACORI VUUDU3 DJT",
+     "preferred IFR route MSP -> DTW: new routing MSP SNUPE1 DLL PORZL KKISS2 DTW",
+     "preferred IFR route MSP -> DTW: new routing MSP SNUPE1 DLL PORZL RKCTY2 DTW",
+     "preferred IFR route MSP -> EWR: new routing MSP ZMBRO1 BRIBE KG72M EVOTE NELLS KEEHO J584 SLT FQM3 EWR",
+     "preferred IFR route MSP -> FLL: new routing MSP TOTTZ1 ALO IRK STL Q19 HITMN ACORI TEEKY4 FLL",
+     "preferred IFR route MSP -> IAD: new routing MSP SNUPE1 DLL J34 DJB MGW GIBBZ6 IAD",
+     "preferred IFR route MSP -> JFK: new routing MSP SNUPE1 DLL HASTE DAFLU J70 JHW Q476 WLKES PUCKY1 JFK",
+     "preferred IFR route MSP -> LGA: new routing MSP SNUPE1 DLL GERBS Q186 WEVEL ETG MIP4 LGA",
+     "preferred IFR route MSP -> MCO: new routing MSP ZMBRO1 BRIBE ENL PLESS Q19 HITMN DEEDA GRNCH5 MCO",
+     "preferred IFR route MSP -> MDW: new routing MSP TOTTZ1 OHHMY ENDEE8 MDW",
+     "preferred IFR route MSP -> MEM: discontinued",
+     "preferred IFR route MSP -> MEM: new routing MSP TOTTZ1 ALO IRK WHOLL BRBBQ3 MEM",
+     "preferred IFR route MSP -> MEM: new routing MSP TOTTZ1 ALO J233 STL J151 FAM WHOLL BRBBQ3 MEM",
+     "preferred IFR route MSP -> MIA: new routing MSP TOTTZ1 ALO J233 SKBOZ Q19 HITMN ACORI FROGZ5 MIA",
+     "preferred IFR route MSP -> MKE: new routing MSP SNUPE1 DLL BAE MKE",
+     "preferred IFR route MSP -> MKY: new routing MSP ZMBRO1 BRIBE ENL PLESS Q19 BULZI Q81 NICKI PLYER PIKKR7 MKY",
+     "preferred IFR route MSP -> MSN: new routing MSP SNUPE1 DLL MSN",
+     "preferred IFR route MSP -> MYR: new routing MSP ZMBRO1 BRIBE JOT ERECO IIU RYANS VXV SLOJO BRDWK1 MYR",
+     "preferred IFR route MSP -> ORD: discontinued",
+     "preferred IFR route MSP -> ORD: new routing MSP TOTTZ1 ZZIPR FYTTE7 ORD",
+     "preferred IFR route MSP -> ORL: new routing MSP ZMBRO1 BRIBE ENL PLESS Q19 HITMN THRSR ZPLEN MJKAL JAFAR3 ORL",
+     "preferred IFR route MSP -> PHL: new routing MSP SNUPE1 DLL J34 VIO CRL SPYDY EWC JST BOJID4 PHL",
+     "preferred IFR route MSP -> PHX: new routing MSP SNOWZ1 LLUKY PUB ALS GUP EAGUL6 PHX",
+     "preferred IFR route MSP -> RSW: new routing MSP ZMBRO1 BRIBE ENL PLESS Q19 BULZI Q81 NICKI PLYER TYNEE4 RSW",
+     "preferred IFR route MSP -> SFO: new routing MSP BITEZ1 LEINY VKING CZI J32 LLC LEGGS BDEGA4 SFO",
+     "preferred IFR route MSP -> SFO: new routing MSP SNOWZ1 LLUKY CYS J148 OAL INYOE DYAMD5 SFO",
+     "preferred IFR route MSP -> SLC: new routing MSP BITEZ1 LEINY RAP DDY CARTR2 SLC",
+     "preferred IFR route MSP -> SRQ: new routing MSP ZMBRO1 BRIBE ENL PLESS Q19 HITMN ACORI BANGZ2 SRQ",
+     "preferred IFR route MSP -> STL: new routing MSP TOTTZ1 ALO IRK LORLE3 STL",
+     "preferred IFR route MSP -> TEB: new routing MSP SNUPE1 DLL HASTE DAFLU J70 JHW LVZ5 TEB",
+     "preferred IFR route MSP -> TPA: new routing MSP ZMBRO1 BRIBE ENL PLESS Q19 HITMN ACORI MAATY6 TPA"
+    ]
+   },
+   {
+    "id": "2a4a3ed7aafd",
+    "priority": "ifr",
+    "category": "remark",
+    "kind": "removed",
+    "summary": "removed navaid remark: VOR unusable 260-270 below 4000 feet.",
+    "source": "NAV_RMK",
+    "original": "VOR UNUSBL 260-270 BLW 4000 FT."
+   }
+  ],
+  "OAK": [
+   {
+    "id": "9259ebb9be84",
+    "priority": "ifr",
+    "category": "procedure",
+    "kind": "changed",
+    "summary": "arrival/departure procedures new or updated: CNDEL5 -> CNDEL6, HUSSH2 -> HUSSH3, KATFH3 -> KATFH4, NUEVO8 -> NUEVO9, SALAD5 -> SALAD6, SKYL1 -> SKYL2, SLNT3 -> SLNT4",
+    "source": "STAR/DP",
+    "details": [
+     "CNDEL5 -> CNDEL6: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart",
+     "HUSSH2 -> HUSSH3: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart",
+     "KATFH3 -> KATFH4: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart",
+     "NUEVO8 -> NUEVO9: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart",
+     "SALAD5 -> SALAD6: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart",
+     "SKYL1 -> SKYL2: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart",
+     "SLNT3 -> SLNT4: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart"
+    ],
+    "procedures": {
+     "updated": [
+      "CNDEL6",
+      "HUSSH3",
+      "KATFH4",
+      "NUEVO9",
+      "SALAD6",
+      "SKYL2",
+      "SLNT4"
+     ],
+     "removed": []
+    }
+   },
+   {
+    "id": "2adaa0ccd6ea",
+    "priority": "ifr",
+    "category": "route",
+    "kind": "changed",
+    "summary": "preferred IFR routes: 1 changed",
+    "source": "PFR",
+    "details": [
+     "preferred IFR route OAK -> AUS: new routing OAK CNDEL6 KAYEX LOSHN BOILE BLH TFD SSO ELP FST DILLO LAIKS4 AUS"
+    ]
+   }
+  ],
+  "ORD": [
+   {
+    "id": "7442bbe8111d",
+    "priority": "action",
+    "category": "frequency",
+    "kind": "changed",
+    "summary": "Chicago departure frequency (primary; FAA: DEP/P): 351.675 -> 340.2",
+    "source": "FRQ",
+    "fields": [
+     {
+      "field": "FREQ",
+      "old": "351.675",
+      "new": "340.2"
+     }
+    ]
+   },
+   {
+    "id": "428aeb092854",
+    "priority": "ifr",
+    "category": "route",
+    "kind": "changed",
+    "summary": "preferred IFR routes: 7 changed, 2 removed",
+    "source": "PFR",
+    "details": [
+     "preferred IFR route CLE -> ORD: new routing CLE GTLKE6 DAIFE WATSN WATSN4 ORD",
+     "preferred IFR route MSP -> ORD: discontinued",
+     "preferred IFR route MSP -> ORD: new routing MSP TOTTZ1 ZZIPR FYTTE7 ORD",
+     "preferred IFR route ORD -> BCT: new routing ORD DENNT DARCY DREGS DUMGE SCOTO SWAPP Q79 ZPLEN VUUDU3 BCT",
+     "preferred IFR route ORD -> DET: new routing ORD DUFEE LOGGR HOSSA PETTE3 DET",
+     "preferred IFR route ORD -> DJT: new routing ORD DENNT DARCY DREGS DUMGE SCOTO SWAPP Q79 ZPLEN VUUDU3 DJT",
+     "preferred IFR route ORD -> MHT: new routing ORD EBAKE WISMO POSTS PADDE SVM DKK PONCT ROZZE3 MHT",
+     "preferred IFR route ORD -> MYR: new routing ORD EARND ELANR EMMLY ETAME EMEGE FLM SLOJO BRDWK1 MYR"
+    ]
+   }
+  ],
+  "ORL": [
+   {
+    "id": "1a480e48d21f",
+    "priority": "ifr",
+    "category": "route",
+    "kind": "changed",
+    "summary": "preferred IFR routes: 7 changed",
+    "source": "PFR",
+    "details": [
+     "preferred IFR route MSP -> ORL: new routing MSP ZMBRO1 BRIBE ENL PLESS Q19 HITMN THRSR ZPLEN MJKAL JAFAR3 ORL",
+     "preferred IFR route ORL -> BED: new routing ORL NYTES2 NYTES MZULO HESTA ETECK PELCN Y309 FLRDA SAGGY CHIEZ Q161 KALDA Q97 HEADI YANTC DREEM4 BED",
+     "preferred IFR route ORL -> BED: new routing ORL NYTES2 NYTES WORMS GUANO BKENI VIYAP Q87 JROSS ELLDE Q97 PAACK JAMIE Q481 DPK DREEM4 BED",
+     "preferred IFR route ORL -> BED: new routing ORL TOLLZ2 TOLLZ MZULO HESTA ETECK PELCN Y309 FLRDA SAGGY CHIEZ Q161 KALDA Q97 HEADI YANTC DREEM4 BED",
+     "preferred IFR route ORL -> BED: new routing ORL TOLLZ2 TOLLZ WORMS GUANO BKENI VIYAP Q87 JROSS ELLDE Q97 PAACK JAMIE Q481 DPK DREEM4 BED",
+     "preferred IFR route ORL -> MHT: new routing ORL NYTES2 NYTES MZULO HESTA LENDS GRUBR Y299 SEELO WAALT Q131 EARZZ JAMIE Q133 JFK LLUND SMYTH ROZZE3 MHT",
+     "preferred IFR route ORL -> MHT: new routing ORL TOLLZ2 TOLLZ MZULO HESTA LENDS GRUBR Y299 SEELO WAALT Q131 EARZZ JAMIE Q133 JFK LLUND SMYTH ROZZE3 MHT"
+    ]
+   }
+  ],
+  "PHL": [
+   {
+    "id": "d0186d818afa",
+    "priority": "ifr",
+    "category": "route",
+    "kind": "changed",
+    "summary": "preferred IFR routes: 12 changed",
+    "source": "PFR",
+    "details": [
+     "preferred IFR route CLE -> PHL: new routing CLE KKIDS1 EWC JST BOJID4 PHL",
+     "preferred IFR route MSP -> PHL: new routing MSP SNUPE1 DLL J34 VIO CRL SPYDY EWC JST BOJID4 PHL",
+     "preferred IFR route PHL -> BCT: new routing PHL OOD TEBEE HAYDO TRPOD Q409 CRPLR PAACK Q97 KENLL CPTAN4 BCT",
+     "preferred IFR route PHL -> BWI: new routing PHL DQO BAINS TRISH5 BWI",
+     "preferred IFR route PHL -> DJT: new routing PHL OOD TEBEE HAYDO TRPOD Q409 CRPLR PAACK Q97 KENLL CPTAN4 DJT",
+     "preferred IFR route PHL -> EYW: new routing PHL OOD TEBEE HAYDO TRPOD Q409 CRPLR PAACK Q97 EBAYY FNTSY1 EYW",
+     "preferred IFR route PHL -> FLL: new routing PHL OOD TEBEE HAYDO TRPOD Q409 CRPLR PAACK Q97 KENLL TARPN3 FLL",
+     "preferred IFR route PHL -> FLL: new routing PHL OOD TEBEE HAYDO TRPOD Q409 CRPLR PAACK Q97 PRMUS CUUDA3 FLL",
+     "preferred IFR route PHL -> MHT: new routing PHL DITCH LUIGI HNNAH LLUND SMYTH ROZZE3 MHT",
+     "preferred IFR route PHL -> MIA: new routing PHL OOD TEBEE HAYDO TRPOD Q409 CRPLR PAACK Q97 DEBRL CSTAL3 MIA",
+     "preferred IFR route PHL -> MYR: new routing PHL OOD TEBEE HAYDO TRPOD Q409 CRPLR KTEEE TORST1 MYR",
+     "preferred IFR route PHL -> SFO: new routing PHL PTW SARAA RAV J64 FWA WHETT EDENS LMN HLC J80 OAL INYOE DYAMD5 SFO"
+    ]
+   }
+  ],
+  "PHX": [
+   {
+    "id": "b63654f5e8b8",
+    "priority": "ifr",
+    "category": "route",
+    "kind": "changed",
+    "summary": "preferred IFR routes: 3 changed",
+    "source": "PFR",
+    "details": [
+     "preferred IFR route CLE -> PHX: new routing CLE GTLKE6 YABRO IOW LEFAM HLC PUB ALS GUP EAGUL6 PHX",
+     "preferred IFR route CLE -> PHX: new routing CLE ZAAPA7 SNNOH VHP ICT GUP EAGUL6 PHX",
+     "preferred IFR route MSP -> PHX: new routing MSP SNOWZ1 LLUKY PUB ALS GUP EAGUL6 PHX"
+    ]
+   }
+  ],
+  "SAN": [
+   {
+    "id": "641000b2533c",
+    "priority": "ifr",
+    "category": "route",
+    "kind": "changed",
+    "summary": "preferred IFR routes: 11 changed",
+    "source": "PFR",
+    "details": [
+     "preferred IFR route HHR -> SAN: new routing HHR LIMBO V64 WOKRO V363 DANAH V165 SARGS SAN",
+     "preferred IFR route HHR -> SAN: new routing HHR LIMBO V64 WOKRO V363 DANAH V23 MZB SAN",
+     "preferred IFR route HHR -> SAN: new routing HHR SLI JARRD V25 MZB SAN",
+     "preferred IFR route HHR -> SAN: new routing HHR SLI V64 WOKRO V363 DANAH V23 MZB SAN",
+     "preferred IFR route SMO -> SAN: new routing SMO SMO POPPR V23 SLI V165 SARGS SAN",
+     "preferred IFR route SMO -> SAN: new routing SMO SMO WILMA V64 WOKRO V363 DANAH V165 SARGS SAN",
+     "preferred IFR route SMO -> SAN: new routing SMO SMO WILMA V64 WOKRO V363 DANAH V23 MZB SAN",
+     "preferred IFR route TOA -> SAN: new routing TOA LIMBO V64 WOKRO V363 DANAH V165 SARGS SAN",
+     "preferred IFR route TOA -> SAN: new routing TOA LIMBO V64 WOKRO V363 DANAH V23 MZB SAN",
+     "preferred IFR route TOA -> SAN: new routing TOA SLI JARRD V25 MZB SAN",
+     "preferred IFR route TOA -> SAN: new routing TOA SLI V64 WOKRO V363 DANAH V23 MZB SAN"
+    ]
+   }
+  ],
+  "SEA": [
+   {
+    "id": "ab7eaeda3fcc",
+    "priority": "ifr",
+    "category": "procedure",
+    "kind": "changed",
+    "summary": "arrival/departure procedures new or updated: OZWLD1 -> OZWLD2",
+    "source": "STAR/DP",
+    "details": [
+     "OZWLD1 -> OZWLD2: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart"
+    ],
+    "procedures": {
+     "updated": [
+      "OZWLD2"
+     ],
+     "removed": []
+    }
+   },
+   {
+    "id": "341db81b8e8e",
+    "priority": "ifr",
+    "category": "route",
+    "kind": "changed",
+    "summary": "preferred IFR routes: 1 changed",
+    "source": "PFR",
+    "details": [
+     "preferred IFR route CLE -> SEA: new routing CLE GTLKE6 ALPHE J34 BAE J16 PDT CHINS5 SEA"
+    ]
+   }
+  ],
+  "SFO": [
+   {
+    "id": "e77255aa6c71",
+    "priority": "ifr",
+    "category": "route",
+    "kind": "changed",
+    "summary": "preferred IFR routes: 5 changed",
+    "source": "PFR",
+    "details": [
+     "preferred IFR route CLE -> SFO: new routing CLE GTLKE6 ALPHE SMUUV OBK DBQ FOD ONL J94 LLC LEGGS BDEGA4 SFO",
+     "preferred IFR route CLE -> SFO: new routing CLE ZAAPA7 SNNOH VHP J80 OAL INYOE DYAMD5 SFO",
+     "preferred IFR route MSP -> SFO: new routing MSP BITEZ1 LEINY VKING CZI J32 LLC LEGGS BDEGA4 SFO",
+     "preferred IFR route MSP -> SFO: new routing MSP SNOWZ1 LLUKY CYS J148 OAL INYOE DYAMD5 SFO",
+     "preferred IFR route PHL -> SFO: new routing PHL PTW SARAA RAV J64 FWA WHETT EDENS LMN HLC J80 OAL INYOE DYAMD5 SFO"
+    ]
+   }
+  ],
+  "SLC": [
+   {
+    "id": "bd1f6f85d62d",
+    "priority": "action",
+    "category": "frequency",
+    "kind": "removed",
+    "summary": "center (ARTCC ZLC) frequencies discontinued: Grassy Mountain RCAG 128.55, 269.175 (low/high altitude); an RCAG is a remote center air to ground facility",
+    "source": "FRQ",
+    "details": [
+     "removed: 128.55 GRASSY MOUNTAIN RCAG (LOW/HIGH)",
+     "removed: 269.175 GRASSY MOUNTAIN RCAG (LOW/HIGH)"
+    ]
+   },
+   {
+    "id": "098a7cf7a892",
+    "priority": "action",
+    "category": "remark",
+    "kind": "removed",
+    "summary": "removed tower/ATC remark: Salt Lake ARTCC (ZLC) frequencies 128.55/269.175 (Grassy Mountain RCAG) are used for SKEES RNAV STAR and YUTES RNAV STAR.",
+    "source": "ATC_RMK",
+    "original": "SALT LAKE ARTCC (ZLC) FREQS 128.55/269.175 (GRASSY MOUNTAIN RCAG) USED FOR SKEES RNAV STAR AND YUTES RNAV STAR."
+   },
+   {
+    "id": "a556bfafcb5e",
+    "priority": "action",
+    "category": "runway",
+    "kind": "changed",
+    "summary": "runway HF: length: 60 -> 43 ft; edge light intensity: perimeter (PERI) -> none; width: 60 -> 43 ft",
+    "source": "APT_RWY",
+    "fields": [
+     {
+      "field": "RWY_LEN",
+      "old": "60",
+      "new": "43"
+     },
+     {
+      "field": "RWY_LGT_CODE",
+      "old": "PERI",
+      "new": ""
+     },
+     {
+      "field": "RWY_WIDTH",
+      "old": "60",
+      "new": "43"
+     }
+    ]
+   },
+   {
+    "id": "f8f900e83707",
+    "priority": "ifr",
+    "category": "procedure",
+    "kind": "changed",
+    "summary": "arrival/departure procedures new or updated: CARTR1 -> CARTR2, PITTT2 -> PITTT3, SKEES6 -> SKEES7, YUTES2 -> YUTES3",
+    "source": "STAR/DP",
+    "details": [
+     "CARTR1 -> CARTR2: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart",
+     "PITTT2 -> PITTT3: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart",
+     "SKEES6 -> SKEES7: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart",
+     "YUTES2 -> YUTES3: same waypoints and transitions; altitudes, speeds or notes may have changed, check the chart"
+    ],
+    "procedures": {
+     "updated": [
+      "CARTR2",
+      "PITTT3",
+      "SKEES7",
+      "YUTES3"
+     ],
+     "removed": []
+    }
+   },
+   {
+    "id": "dd17ed004cc7",
+    "priority": "ifr",
+    "category": "route",
+    "kind": "changed",
+    "summary": "preferred IFR routes: 7 changed",
+    "source": "PFR",
+    "details": [
+     "preferred IFR route BOS -> SLC: new routing BOS HYLND7 HYLND HANAA Q816 HOCKE BAE DBQ FOD ONL J94 BFF CKW CARTR2 SLC",
+     "preferred IFR route EWR -> SLC: new routing EWR GAYEL Q818 WOZEE Q935 HOCKE BAE DBQ FOD ONL J94 BFF CKW CARTR2 SLC",
+     "preferred IFR route HPN -> SLC: new routing HPN GAYEL Q818 WOZEE Q935 HOCKE BAE DBQ FOD ONL J94 BFF CKW CARTR2 SLC",
+     "preferred IFR route JFK -> SLC: new routing JFK GAYEL Q818 WOZEE Q935 HOCKE BAE DBQ FOD ONL J94 BFF CKW CARTR2 SLC",
+     "preferred IFR route LGA -> SLC: new routing LGA GAYEL Q818 WOZEE Q935 HOCKE BAE DBQ FOD ONL J94 BFF CKW CARTR2 SLC",
+     "preferred IFR route MSP -> SLC: new routing MSP BITEZ1 LEINY RAP DDY CARTR2 SLC",
+     "preferred IFR route TEB -> SLC: new routing TEB GAYEL Q818 WOZEE Q935 HOCKE BAE DBQ FOD ONL J94 BFF CKW CARTR2 SLC"
+    ]
+   }
+  ],
+  "STL": [
+   {
+    "id": "a34b7f303b52",
+    "priority": "ifr",
+    "category": "route",
+    "kind": "changed",
+    "summary": "preferred IFR routes: 4 changed",
+    "source": "PFR",
+    "details": [
+     "preferred IFR route MSP -> STL: new routing MSP TOTTZ1 ALO IRK LORLE3 STL",
+     "preferred IFR route STL -> BCT: new routing STL DRUSE5 BNA ACORI VUUDU3 BCT",
+     "preferred IFR route STL -> DJT: new routing STL DRUSE5 BNA ACORI VUUDU3 DJT",
+     "preferred IFR route STL -> MCO: new routing STL DRUSE5 BNA DEEDA GRNCH5 MCO"
+    ]
+   }
+  ],
+  "TPA": [
+   {
+    "id": "2be2a96d7d98",
+    "priority": "action",
+    "category": "frequency",
+    "kind": "changed",
+    "summary": "CLASS B frequency: 119.9 -> 120.475",
+    "source": "FRQ",
+    "fields": [
+     {
+      "field": "FREQ",
+      "old": "119.9",
+      "new": "120.475"
+     }
+    ]
+   },
+   {
+    "id": "b04cca3d8043",
+    "priority": "ifr",
+    "category": "route",
+    "kind": "changed",
+    "summary": "preferred IFR routes: 4 changed",
+    "source": "PFR",
+    "details": [
+     "preferred IFR route MSP -> TPA: new routing MSP ZMBRO1 BRIBE ENL PLESS Q19 HITMN ACORI MAATY6 TPA",
+     "preferred IFR route TPA -> DJT: new routing TPA GANDY8 SABEE VUUDU3 DJT",
+     "preferred IFR route TPA -> MHT: new routing TPA BAYPO2 CAMJO Q99 POLYY DADDS Q87 GEARS BBOBO Q22 LLUND SMYTH ROZZE3 MHT"
+    ]
+   }
+  ],
+  "VNY": [
+   {
+    "id": "fe8e8f94e723",
+    "priority": "ifr",
+    "category": "route",
+    "kind": "changed",
+    "summary": "preferred IFR routes: 1 changed",
+    "source": "PFR",
+    "details": [
+     "preferred IFR route VNY -> RNM: new routing VNY TWINE V518 KIMMO V459 SLI V23 OCN V208 JLI RNM"
+    ]
+   }
+  ]
+ }
+}

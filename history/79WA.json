@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"79WA","entries":[{"cycle":"2026-10-01","from_cycle":"2026-09-03","engine":"1.3.8","id":"f02bcc9306bc","priority":"action","category":"runway","kind":"changed","summary":"runway 14/32: width: 80 -> 30 ft","source":"APT_RWY","fields":[{"field":"RWY_WIDTH","old":"80","new":"30"}]}],"first_cycle":"2026-10-01","last_cycle":"2026-10-01"}

@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"WI51","entries":[{"cycle":"2026-10-01","from_cycle":"2026-09-03","engine":"1.3.8","id":"a0aa129d17ac","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Del Monte, runway N/S 2400x60 ft turf","source":"APT_BASE"}],"first_cycle":"2026-10-01","last_cycle":"2026-10-01"}

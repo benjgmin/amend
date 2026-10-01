@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"TX24","entries":[{"cycle":"2026-10-01","from_cycle":"2026-09-03","engine":"1.3.8","id":"1f75a8094948","priority":"action","category":"airport","kind":"removed","summary":"airport removed from FAA database: Oaks, runway 12/30 3000x100 ft dirt","source":"APT_BASE"}],"first_cycle":"2026-10-01","last_cycle":"2026-10-01"}

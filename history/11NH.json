@@ -1,0 +1,1 @@
+{"schema_version":1,"airport":"11NH","entries":[{"cycle":"2026-10-01","from_cycle":"2026-09-03","engine":"1.3.8","id":"bfce5fc55994","priority":"fyi","category":"airport","kind":"added","summary":"new airport in FAA database: Brady Sullivan/Dover, runway H1 50x50 ft conc, CTAF 122.9","source":"APT_BASE"}],"first_cycle":"2026-10-01","last_cycle":"2026-10-01"}
