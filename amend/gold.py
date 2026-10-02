@@ -245,6 +245,15 @@ def judge(case, changes):
             why.append(f"summary has {s!r}")
     if exp.get("count") and len(changes) != exp["count"]:
         why.append(f"{len(changes)} changes (expected {exp['count']})")
+    details = c.get("details", [])
+    if "details_count" in exp and len(details) != exp["details_count"]:
+        why.append(f"{len(details)} detail lines (expected {exp['details_count']})")
+    for s in exp.get("details_contains", []):
+        if not any(s in d for d in details):
+            why.append(f"no detail line has {s!r}")
+    for s in exp.get("details_lacks", []):
+        if any(s in d for d in details):
+            why.append(f"a detail line has {s!r}")
     if why:
         why.append(f"engine said: {c['summary']!r}")
     return not why, c["priority"], "; ".join(why)

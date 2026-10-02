@@ -355,6 +355,111 @@ class TestPhoneOnlyEdits(TestPriorityRules):
         return [c["summary"] for c in changes]
 
 
+class TestListRemarks(TestPriorityRules):
+    """a general remark's number is a place in a list, not its topic (rules.LIST_REMARK_COLS)."""
+    h = "ARPT_ID,LEGACY_ELEMENT_NUMBER,TAB_NAME,REF_COL_NAME,REF_COL_SEQ_NO,REMARK"
+    geo = "24 HR PPR FOR ACFT EQUIPPED WITH WEATHER MODIFICATION OR GEOENGINEERING EQPT 407-825-2036."
+    efvs = "PILOTS CONDUCTING EFVS OPS; BE AWARE LED ALS IN USE RWY 18R."
+
+    def row(self, apt, n, text, tab="AIRPORT", ref="GENERAL_REMARK", el=None):
+        return f'{apt},{el or f"A110-{n}"},{tab},{ref},{n},"{text}"'
+
+    def said(self, changes):
+        """(kind, FAA text): what the engine said, whatever the remark translation cache holds"""
+        return sorted((c["kind"], c["original"]) for c in changes)
+
+    def test_unrelated_remarks(self):   # calibration examples in diff.unrelated_remarks
+        self.assertTrue(d.unrelated_remarks(self.geo, self.efvs))
+        self.assertTrue(d.unrelated_remarks("NO JET ACFT OPS AUTH.", "RADIO MUST BE ON FREQ IF ENG IS RUNNING."))
+        # one word in common, or alike letter by letter: still an edit
+        self.assertFalse(d.unrelated_remarks("FOR CD CTC CHICAGO ARTCC AT 630-906-8921.",
+                                             "FOR CD CTC MILWAUKEE CD AT 414-489-2173."))
+        self.assertFalse(d.unrelated_remarks("AWOS OTS UFN.", "ASOS UNAVBL, NO WX REPORTING."))
+        self.assertFalse(d.unrelated_remarks("HEAVY AMERICAN BALD EAGLE ACTIVITY WEST THROUGH SOUTH.",
+                                             "BIRDS & EAGLES INVOF ARPT SPCLY W THRU S."))
+        # a remark blanked or filled in isn't a replacement
+        self.assertFalse(d.unrelated_remarks("", self.efvs))
+
+    def test_new_remark_in_a_reused_number(self):   # AVX 2026-05-14 A110-13
+        ch = self.one("APT_RMK.csv", self.h, [self.row("AVX", 13, "NO JET ACFT OPS AUTH.")],
+                      [self.row("AVX", 13, "RADIO MUST BE ON FREQ IF ENG IS RUNNING.")], "AVX")
+        self.assertEqual(self.said(ch), [("added", "RADIO MUST BE ON FREQ IF ENG IS RUNNING."),
+                                         ("removed", "NO JET ACFT OPS AUTH.")])
+
+    def test_one_copy_of_a_listed_twice_remark_replaced(self):
+        """MCO lists the same PPR remark as A110-19 and -20 (2026-10-01). when one copy's number
+        gets a new remark, the PPR remark is still there: only the new one is news."""
+        old = [self.row("MCO", 19, self.geo), self.row("MCO", 20, self.geo)]
+        new = [self.row("MCO", 19, self.efvs), self.row("MCO", 20, self.geo)]
+        self.assertEqual(self.said(self.one("APT_RMK.csv", self.h, old, new, "MCO")), [("added", self.efvs)])
+        # both copies gone: removed, once
+        ch = self.one("APT_RMK.csv", self.h, old, [self.row("MCO", 19, self.efvs)], "MCO")
+        self.assertEqual(self.said(ch), [("added", self.efvs), ("removed", self.geo)])
+
+    def test_a_remark_that_only_moved_says_nothing(self):   # g130 O44
+        old = [self.row("O44", 2, "30 FT PLINE 478 FT FM RWY 35 THR BOTH SIDES."),
+               self.row("O44", 3, "FOR CD CTC OKE CITY APCH AT 405-681-5683.")]
+        new = [self.row("O44", 2, "FOR CD CTC OKE CITY APCH AT 405-681-5683."), self.row("O44", 3, "PPR.")]
+        self.assertEqual(self.said(self.one("APT_RMK.csv", self.h, old, new, "O44")),
+                         [("added", "PPR."), ("removed", "30 FT PLINE 478 FT FM RWY 35 THR BOTH SIDES.")])
+
+    def test_edits_stay_edits(self):
+        # BUU 2026-10-01: a new facility to call for a clearance, same remark
+        ch = self.one("APT_RMK.csv", self.h, [self.row("BUU", 6, "FOR CD CTC CHICAGO ARTCC AT 630-906-8921.")],
+                      [self.row("BUU", 6, "FOR CD CTC MILWAUKEE CD AT 414-489-2173.")], "BUU")
+        self.assertEqual([c["kind"] for c in ch], ["changed"])
+        # a remark filed against a runway end is about that end, whatever it says (3DA 2026-09-03)
+        obstn = dict(tab="RUNWAY_END_OBSTN", ref="OBSTN_CLNC_SLOPE", el="A57-18")
+        ch = self.one("APT_RMK.csv", self.h,
+                      [self.row("3DA", 1, "APCH RATIO 15:1 TO DTHR OVR 49 FT TREE, 770 FT DIST, 42 FT R.", **obstn)],
+                      [self.row("3DA", 1, "CONTROLLING OBSTRUCTION EXCEEDS A 45 DEGREE SLOPE.", **obstn)], "3DA")
+        self.assertEqual([c["kind"] for c in ch], ["changed"])
+
+
+class TestRouteLines(TestPriorityRules):
+    """one line per preferred route, so the lines add up to the summary's counts."""
+    h = "Orig,Route String,Dest,Hours1,Type,Area,Altitude,Aircraft,Direction,Seq,DCNTR,ACNTR"
+
+    def lines(self, old, new, apt):
+        ch = self.one("PFR_RMT_FMT.csv", self.h, old, new, apt)
+        self.assertEqual(len(ch), 1)
+        return ch[0]["summary"], ch[0]["details"]
+
+    def test_routes_that_read_the_same_are_told_apart(self):
+        # LAX -> F70 (2026-09-03): the same routing for M class and for P and Q class
+        old = ["LAX,LAX SLI8 SLI V8 PDZ JESEX TIQMU F70,F70,,TEC,LAX (M CLASS) TO F70,M50,,,7,ZLA,ZLA",
+               "LAX,LAX SLI8 SLI V8 PDZ JESEX TIQMU F70,F70,,TEC,LAX (P AND Q CLASS) TO F70,PQ50,,,8,ZLA,ZLA"]
+        summary, details = self.lines(old, [], "F70")
+        self.assertEqual(summary, "preferred IFR routes: 2 removed")
+        self.assertEqual(details, [
+            "preferred IFR route LAX -> F70 [area LAX (M CLASS) TO F70, altitude M50] via LAX SLI8 SLI V8 PDZ "
+            "JESEX TIQMU F70: discontinued",
+            "preferred IFR route LAX -> F70 [area LAX (P AND Q CLASS) TO F70, altitude PQ50] via LAX SLI8 SLI V8 "
+            "PDZ JESEX TIQMU F70: discontinued"])
+        # rows that differ only in the FAA's sequence number share a line that says so
+        old = ["LAX,LAX SILEX BUR,BUR,,TEC,,M50,,,3,ZLA,ZLA", "LAX,LAX SILEX BUR,BUR,,TEC,,M50,,,4,ZLA,ZLA"]
+        self.assertEqual(self.lines(old, [], "BUR")[1],
+                         ["preferred IFR route LAX -> BUR via LAX SILEX BUR: discontinued (listed 2 times)"])
+
+    def test_a_changed_route_says_what_changed(self):   # g132 LAX -> SBA
+        row = "LAX,LAX VTU8 VTU KWANG SBA,SBA,,TEC,LAX WEST (J CLASS) TO SBA,{},,,9,ZLA,ZLA"
+        self.assertEqual(self.lines([row.format("J110")], [row.format("J100")], "SBA")[1],
+                         ["preferred IFR route LAX -> SBA via LAX VTU8 VTU KWANG SBA: altitude J110 -> J100"])
+
+
+class TestHelipads(TestPriorityRules):
+    h = "ARPT_ID,RWY_ID,RWY_LEN,RWY_WIDTH,SURFACE_TYPE_CODE,RWY_LGT_CODE"
+
+    def test_a_helipad_change_is_fyi(self):
+        """SLC's pads are HB and HF (2026-10-01): a pad shrinking or losing its lights is fyi,
+        like a pad added or removed. a runway's change is still act."""
+        ch = self.one("APT_RWY.csv", self.h, ["SLC,HF,60,60,ASPH,PERI"], ["SLC,HF,43,43,ASPH,"], "SLC")
+        self.assertEqual([c["priority"] for c in ch], ["fyi"])
+        self.assertTrue(ch[0]["summary"].startswith("helipad HF: "))
+        ch = self.one("APT_RWY.csv", self.h, ["SLC,14/32,4893,150,ASPH,HIGH"], ["SLC,14/32,4893,150,ASPH,"], "SLC")
+        self.assertEqual([c["priority"] for c in ch], ["action"])
+
+
 class TestCategories(Case):
     def test_radar_hours_are_tower(self):   # g093 NGF
         self.assertEqual(category("RDR.csv"), "tower")

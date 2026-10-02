@@ -7,7 +7,8 @@ from .rules import (ACTION_COL_WORDS, ACTION_PREFIXES, ACTION_TEXT_WORDS, ATC_SE
                     COL_CATEGORY, CONTEXT_COLS, DECLARED_ACTION_FT, DECLARED_ACTION_PCT,
                     DECLARED_DISTANCES, DECLINATION_COLS, DECLINATION_NAV_TYPES, FSS_OUTLET,
                     FSS_OUTLET_NOT, HIDDEN_FILES, HIDDEN_ONLY_COLS, ID_COLS, IFR_REMARK_FILES,
-                    NON_ATCT_CONTROL, PAIR_KEYS, PHONE, PHONE_FILLER, REWORD_ALIASES,
+                    LIST_REMARK_COLS, NON_ATCT_CONTROL, PAIR_KEYS, PHONE, PHONE_FILLER,
+                    REMARK_FILES, REMARK_LITTLE_WORDS, REMARK_SLOT_COLS, REWORD_ALIASES,
                     REWORD_BLOCKERS, REWORD_DIRECTIONS, REWORD_PHRASES, ROW_ACTION, ROW_FYI, ROW_TIER,
                     SURVEY_REMARK_FILES, base, blank_fill, is_fyi_col, is_helipad,
                     is_hours_col, is_noise_col, phone_format, small_change)
@@ -19,22 +20,30 @@ def keyed(fname, a):
     return bool(keys) and all(k in a for k in keys)
 
 
+def list_remark(fname, r):
+    """true for a remark in a numbered list (rules.LIST_REMARK_COLS): its number isn't its topic."""
+    return base(fname) in REMARK_FILES and r.get("REF_COL_NAME") in LIST_REMARK_COLS
+
+
 def pair_rows(fname, removed, added):
     """[(old row, new row), ...]: removed and added rows that are one row edited.
     best match first across all rows, so an old row can't claim a new row another old row
     matches better; ties go to the earlier row in the (sorted) lists, never to set order.
     a pair needs its pair keys (rules.PAIR_KEYS) equal, and half its values equal or a pair
-    key to match on. score: the share of columns with the same value in both rows."""
+    key to match on. score: the share of columns with the same value in both rows.
+    a list remark never pairs with an unrelated one that took its number (unrelated_remarks)."""
     # item sets computed once: route files (STAR_RTE, DP_RTE) can have 700 removed and 700
     # added rows at one airport when its procedures get a new version
     pk = PAIR_KEYS.get(base(fname), ())
     items = [frozenset(a.items()) for a in added]
     cands = []
     for i, r in enumerate(removed):
-        ri, is_keyed = frozenset(r.items()), keyed(fname, r)
+        ri, is_keyed, in_list = frozenset(r.items()), keyed(fname, r), list_remark(fname, r)
         must = [(k, r[k]) for k in pk if k in r]
         for j, a in enumerate(added):
             if any(a.get(k) != v for k, v in must):
+                continue
+            if in_list and unrelated_remarks(r.get("REMARK", ""), a.get("REMARK", "")):
                 continue
             s = len(ri & items[j]) / max(len(r.keys() | a.keys()), 1)
             if s >= 0.5 or is_keyed:
@@ -180,6 +189,32 @@ def just_reworded(old, new):
     if _closed_when(old) - _closed_when(new):
         return False
     return difflib.SequenceMatcher(None, old, new).ratio() >= 0.6
+
+
+def _stems(s):
+    """a remark's words cut to 4 letters (EAGLE = EAGLES), less the little ones, and its numbers."""
+    s = _canon(s)
+    words = {w[:4] for w in _words(s) if len(w) > 1 and w not in REMARK_LITTLE_WORDS}
+    return words | {t for t in _ids(s) if any(ch.isdigit() for ch in t)}
+
+
+def unrelated_remarks(old, new):
+    """true if a new remark took an old one's place in a list instead of editing it: no word or
+    number in common, and under 35% the same letter by letter. MCO 2026-10-29: "24 HR PPR FOR ACFT
+    EQUIPPED WITH WEATHER MODIFICATION OR GEOENGINEERING EQPT 407-825-2036." -> "PILOTS
+    CONDUCTING EFVS OPS; BE AWARE LED ALS IN USE RWY 18R.".
+    calibrated on 12 cycle pairs (2025-10-30 to 2026-10-01): it splits 26 of 2,330 list remark
+    edits. 21 are a new remark in a reused number (SMF, DSM, O44, DIJ); the other 5 are rewrites in
+    new abbreviations (6AZ2 "PRIOR PMSN RQRD BEFORE USE." -> "ALL OPS PPR."), which then read as
+    removed + new: both still said. one shared word keeps it an edit (BUU "FOR CD CTC CHICAGO
+    ARTCC AT 630-906-8921." -> "FOR CD CTC MILWAUKEE CD AT 414-489-2173."), and so does a short
+    rewrite that's still alike letter by letter (HBE "AWOS OTS UFN." -> "ASOS UNAVBL, NO WX
+    REPORTING.")."""
+    if not old.strip() or not new.strip():
+        return False
+    if _stems(old) & _stems(new):
+        return False
+    return difflib.SequenceMatcher(None, _canon(old), _canon(new)).ratio() < 0.35
 
 
 def only_phones_changed(old, new):
@@ -425,6 +460,17 @@ def diff(old, new):
             removed = [o[apt][k] for k in sorted(o[apt].keys() - n[apt].keys())]
             added = [n[apt][k] for k in sorted(n[apt].keys() - o[apt].keys())]
 
+            # a remark that only moved to another number (O44 2026-05-14 swapped A110-2 and -3),
+            # or one copy of a remark listed twice going away or coming back (MCO 2026-10-01
+            # lists the same PPR remark as A110-19 and -20): it's still there, nothing to say.
+            # taken out before pairing, so it can't pair with what took its old number
+            if base(fname) in REMARK_FILES:
+                slotless = lambda r: tuple(sorted((k, v) for k, v in r.items() if k not in REMARK_SLOT_COLS))
+                now = {slotless(r) for r in n[apt].values()}
+                before = {slotless(r) for r in o[apt].values()}
+                removed = [r for r in removed if slotless(r) not in now]
+                added = [r for r in added if slotless(r) not in before]
+
             # pair removed/added rows that are really the same thing edited
             for r, best in pair_rows(fname, removed, added):
                 removed.remove(r)
@@ -454,6 +500,8 @@ def diff(old, new):
                     pri = "fyi"     # same schedule, written differently
                 if keep & set(cols):
                     pri = "action"  # a VOR realigned: every radial moved
+                if pri == "action" and base(fname) in ("APT_RWY", "APT_RWY_END") and is_helipad(best.get("RWY_ID")):
+                    pri = "fyi"     # a helipad's size, lights or surface: fyi like the pad itself (row_priority)
                 rec = {
                     "airport": apt, "source": fname, "kind": "changed", "priority": pri,
                     "fields": [{"field": c, "old": r.get(c, ""), "new": best.get(c, "")} for c in cols],
@@ -462,6 +510,8 @@ def diff(old, new):
                 cats = {COL_CATEGORY.get(c) for c in cols}
                 if len(cats) == 1 and None not in cats:
                     rec["category"] = cats.pop()
+                if base(fname) == "PFR_RMT_FMT":
+                    rec["_row"] = best     # the whole new row: what tells two routes apart (collapse)
                 records.append(rec)
 
             still_there = {r.get("FREQ") for r in n[apt].values()}

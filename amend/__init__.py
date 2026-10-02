@@ -7,4 +7,4 @@ SCHEMA_VERSION = 1
 # (amend/runlog.py ENGINE_FILES). every new history entry and every run log record carries
 # it, so any published change can be traced to the engine that made it. history entries from
 # before this field existed have no "engine".
-ENGINE_VERSION = "1.3.8"
+ENGINE_VERSION = "1.3.9"
