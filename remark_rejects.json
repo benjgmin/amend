@@ -1,12 +1,10 @@
 {
- "engine": "1.3.8",
+ "engine": "1.3.9",
  "remarks": {
   "100 LL 24 HR SELF-SVC.": [
-   "added 'continuous'",
-   "added 'operation'"
-  ],
-  "100LL AND JET-A FUEL AVBL 24 HRS SELF SVC W/ CREDIT CARD.": [
-   "W has no verified meaning (the Chart Supplement lists West and White (and Warning Area, Watts), and NASR's 1,489 on 2026-10-01 are mostly west ('300 FT W OF PAD', 'W SIDE'), some white ('MKD WITH W CONES', 'RED & W A-FRAMES'), about 220 written W/ mean with ('FUEL AVBL 24 HRS W/CREDIT CARD', 'MKD W/ ORANGE CONES'), and a few name a taxiway (TWY W). a check can't tell which one a translation picked: 'W RWY MRKG CONES EV 300 FT', on both ends of one runway, read as west); it must stay as written"
+   "HR is 'hour' (CS), not what the translation says",
+   "lost number 24",
+   "added 'continuous'"
   ],
   "12 FT RD, 65 FT DSTC, 225 R.": [
    "RD is not in the verified glossary; it must stay as written",
@@ -28,11 +26,8 @@
    "RD is not in the verified glossary; it must stay as written",
    "added 'road'"
   ],
-  "200 FT SWY SW END HAS BEEN REMKD AS 200 FT DTHR FOR RWY 05.": [
-   "dropped REMKD",
-   "added 'remarked'"
-  ],
   "30 FT UNMKD PLINE LCTD APPROX 990 FT FROM RWY 18 END.": [
+   "UNMKD is not in the verified glossary; it must stay as written",
    "dropped APPROX"
   ],
   "32 FT PLINE MKD WITH ORANGE BALLS 1/2 NM FM RWY 33 THLD ON CTRLN.": [
@@ -52,19 +47,15 @@
    "added 'maximum'",
    "added 'gross'"
   ],
-  "ACVT REIL RWY 08 & 26; PAPI RWY 08 & 26; MIRL RWY 08/26 - CTAF.": [
-   "ACVT is not in the verified glossary; it must stay as written",
-   "added 'activate'",
-   "added 'click'"
-  ],
   "ADD'L CTC: CHRIS WILLIAMS, 737-704-4304.": [
    "ADD is not in the verified glossary; it must stay as written",
    "L is 'Left' (JO 2-1-1 (ICAO)), not what the translation says",
    "added 'additional'"
   ],
   "ALL PILOTS ARE STGLY ENCOURAGED TO FLY A FULL PAT AND ANNC INTNS AND PSN ON 122.90.  STA NOT RCMDD.  MOWERS ON RWYS EQUIPPED WITH SAFETY FLAGS AND RDOS.": [
+   "STGLY is not in the verified glossary; it must stay as written",
    "dropped RDOS",
-   "added 'radios'"
+   "added 'strongly'"
   ],
   "ALT PHONE (678) 767-3516": [
    "ALT is 'altitude' (CS), not what the translation says",
@@ -74,13 +65,10 @@
    "dropped BFIEFING",
    "added 'briefing'"
   ],
-  "ARPT NAME & SEGEMENTED CRC PAINTED ON RWY AT MIDFIELD.": [
-   "dropped SEGEMENTED",
-   "added 'segmented'"
-  ],
   "ARPT PHY ADS: 19708 EUSTIS ARPT RD, EUSTIS, FL 32736": [
+   "PHY is not in the verified glossary; it must stay as written",
    "RD is not in the verified glossary; it must stay as written",
-   "added 'road'"
+   "added 'physical'"
   ],
   "ARPT UNATTNDD THANKSGIVING, CHRISTMAS & NEW YEARS DAY.": [
    "dropped UNATTNDD"
@@ -90,18 +78,6 @@
    "NR is 'number' (CS), not what the translation says",
    "added 'taxiing'"
   ],
-  "BLOCK CRACKING UP TO 3 IN WIDE CRACKS, RAVELING, AND WEATHERING.  RWY CLSD INDEFLY EXECEPT FOR TAXIING.": [
-   "dropped EXECEPT",
-   "added 'except'"
-  ],
-  "CAUTION - HI VOLUME OF COPTER AND UAS TFC, ARTILLERY, AND PJE. ACTIVE FRNG RNG. AFTER HR COPTER OPS MAY OCCUR. CTC BASE OPS FOR CURRENT BASH COND. INCR BIRD ACT SEPT, OCT, FEB, AND MAR.": [
-   "dropped SEPT",
-   "added 'september'"
-  ],
-  "CAUTION: USE EXTREME CAUTION FOR UAS OPS AT NASA LANGLEY RESEARCH CNTR FR SFC TO 400 FT WI 1/2 NM RAD OF 370607.51N 762313.88W & 1 FW UAS TRAINING RANGE FR SFC TO 400 FT WI 0.30 NM RAD OF 370525.32N 762131.91W.": [
-   "RAD has no verified meaning (the FAA lists more than one meaning; copied as written until one is picked); it must stay as written",
-   "added 'radius'"
-  ],
   "COCKPIT OVER CNTRLN TAXI PROHIBITED AT TWY Y INT WITH TWY Y11. JUDGMENTAL OVERSTEER RQRED.": [
    "dropped RQRED",
    "added 'required'"
@@ -110,48 +86,38 @@
    "dropped CONDL",
    "added 'conditional'"
   ],
-  "CONES FOR 2400 FT W/300 FT OF OVERUN": [
-   "W has no verified meaning (the Chart Supplement lists West and White (and Warning Area, Watts), and NASR's 1,489 on 2026-10-01 are mostly west ('300 FT W OF PAD', 'W SIDE'), some white ('MKD WITH W CONES', 'RED & W A-FRAMES'), about 220 written W/ mean with ('FUEL AVBL 24 HRS W/CREDIT CARD', 'MKD W/ ORANGE CONES'), and a few name a taxiway (TWY W). a check can't tell which one a translation picked: 'W RWY MRKG CONES EV 300 FT', on both ends of one runway, read as west); it must stay as written",
-   "dropped OVERUN",
-   "added 'overrun'"
-  ],
   "CTN: 5 FT UNLIT OBST APRXLY 150 FT NORTH OF AFRT TRML LCTD 136 FT FM TWY B CNTRLN EAST SIDE. UNLGTD ABNDD TWR WEST SIDE OF FLD.": [
    "AFRT is 'air freight' (JO 2-1-1 (GEN)), not what the translation says",
-   "repeated 'field'"
+   "added 'airport'"
   ],
   "CTN: ACFT OP TO PARKSIDE ARPT (W87) 1.2 NM E OF GOHEEN FLD (W52) ACFT OP TO BOTH ARPT SHOULD MNT AND ANNC ON CTAF 122.9.": [
    "OP is not in the verified glossary; it must stay as written",
-   "added 'operations'"
+   "added 'operating'"
   ],
   "CTNG OBSTN EXCEEDS A 45 DEG SLP": [
    "CTNG is not in the verified glossary; it must stay as written",
-   "added 'controlling'"
+   "added 'continuing'"
   ],
   "DO NOT USE ADJ PVT ROAD; RD BET RWY AND PVT CABINS FOR TAKE OFF OR LDG.": [
+   "RD is not in the verified glossary; it must stay as written",
    "BET is not in the verified glossary; it must stay as written",
-   "added 'between'"
+   "repeated 'road'"
   ],
   "DTHR UNMKD.": [
    "UNMKD is not in the verified glossary; it must stay as written"
   ],
   "DUE TO TFC VOL, LCL DEP AND ARR OPNS ARE DISCOURAGED AND DLAS CAN BE EXPCD BTN 1500-1730Z++ AND 0130-0300Z++.": [
+   "dropped DLAS",
    "EXPCD is not in the verified glossary; it must stay as written",
-   "added 'expected'"
+   "added 'delays'"
   ],
   "FOR AFT HRS NAVL/LGT FAILURE CALL 704-880-6897.": [
    "dropped NAVL",
-   "added 'navigation'"
+   "added 'naval'"
   ],
   "FULL-STOP LDGS NA UNLESS EMER.": [
    "dropped EMER",
    "added 'emergency'"
-  ],
-  "HELICOPTER TRAINING OPS ON AIRPORT W/ AUTOROTATIONS ON RUNWAY": [
-   "W has no verified meaning (the Chart Supplement lists West and White (and Warning Area, Watts), and NASR's 1,489 on 2026-10-01 are mostly west ('300 FT W OF PAD', 'W SIDE'), some white ('MKD WITH W CONES', 'RED & W A-FRAMES'), about 220 written W/ mean with ('FUEL AVBL 24 HRS W/CREDIT CARD', 'MKD W/ ORANGE CONES'), and a few name a taxiway (TWY W). a check can't tell which one a translation picked: 'W RWY MRKG CONES EV 300 FT', on both ends of one runway, read as west); it must stay as written"
-  ],
-  "INDY APPCH - R, E 134.85 OR 377.1, TWR - 1200-0400Z++ EXCLD HOL. 126.2 OR 243.6 FSS-TERRE HAUTE HUF-NOTAM HUF.": [
-   "EXCLD is 'exclude' (CS), not what the translation says",
-   "added 'except'"
   ],
   "INTENSIVE HELI OPS.": [
    "HELI is 'heliport' (JO 2-1-1 (GEN)), not what the translation says",
@@ -167,22 +133,13 @@
    "NR is 'number' (CS), not what the translation says",
    "added 'near'"
   ],
-  "LRG PLINES 0.5 NM WEST.": [
-   "PLINES is 'Power line' (JO 2-1-1 (GEN) + JO 1-2-3 suffix S), not what the translation says",
-   "added 'pipelines'"
-  ],
   "MAN-MADE OR NATURAL OBJECTS OBSTRUCT THE APCHS, I.E. A 16 FT HANGER, A 30 FT BLDG, AND A 60 FT TOWER, PER AIRSPACE CASE 96-AGL-1612-NRA.": [
    "dropped HANGER"
   ],
   "MIL: ANG RAMP: OPR 1430-2230Z++ MON-THU. CLSD FRI-SUN AND HOL. OFFL BUS ONLY.  PPR REQ 48 HR ALL ACFT, VALID 1 HR +/- ETA. TRAN PRK/SVC EXTREMELY LTD.  BASE OPS DSN 245-2274, C801-245-2274.  MIL ALT HILL AFB (KHIF) 25 NM N.  ALL ACFT CTC HIVE CTL (COMD POST) 20 MIN OUT WITH ETA AND REQ.": [
    "ALT is 'altitude' (CS), not what the translation says",
-   "added 'alternate'"
-  ],
-  "MILITARY: ANG: OPR 1030-2100Z++ MON-THUR EXC HOL. PPR TSNT ACFT OFFL BUS ONLY. AFLD MGR C315-233-2399, AFT DUTY HR CTC C315-233-2399. PPR REQ FOR ALL TSNT ACFT DUE LTD TSNT SVC. NTFY AFLD MGR OF ETA DLA OVR 30 MIN OR MSN CNL IS RQR.": [
-   "REQ is 'request' (CS), not what the translation says"
-  ],
-  "MIRL RWY 13/31 PRESET TO LOW; TO INCR INTST AND ACTVT REILS RWY  13 & 31; PAPI RWY 05, 13, 23 & 31; MIRL RWY 5/23 - CTAF.": [
-   "REILS is 'Runway End Identifier Lights' (CS + JO 1-2-3 suffix S), not what the translation says"
+   "added 'plus'",
+   "added 'minus'"
   ],
   "MRKG ILLEGIBLE/ NO LOGER DISCERNIBLE": [
    "dropped LOGER",
@@ -190,12 +147,8 @@
   ],
   "NOISE ABATEMENT PROCS: CMB TPA BFR TURNING; AVD FLT OVR SHORE & TOWN; TGL NA.": [
    "AVD is not in the verified glossary; it must stay as written",
-   "added 'avoid'"
-  ],
-  "NOISE ABATEMENT RWY 6/24. USE FULL RWY AND AVOID INTXN DEPS. MINIMIZE /AVOID TGL OPNS. CLIMB OUT ON RWY HDG TIL 1100 FT OVR WATER THEN PROCD ON CRS. REDUCE PWR AS SOON AS PRACTICAL. REQ QUIET HRS 2200-0700 LCL. LDG FEE APPL ACFT >6,000 LBS MTOW OR COMM OPS.": [
-   "REQ is 'request' (CS), not what the translation says",
-   "APPL is not in the verified glossary; it must stay as written",
-   "dropped MTOW"
+   "NA has no verified meaning (the FAA lists 'not authorized', and most remarks mean that ('TGL NA', 'AUTO CPD APCH NA BLW 1200 FT MSL'), but dozens of NASR's 576 on 2026-10-01 mean not available ('SNOW REMOVAL NA', 'AFT HR FUEL NA', 'ARFF NA', 'FONE NA'), and 'TGL, SVCS, CELL RECEPTION NA' means both at once. a check can't tell which one a translation picked); it must stay as written",
+   "added a negation: the FAA text has 0, the translation 1"
   ],
   "OBSNT CLNC SLP EXCEEDS A 40 DEG ANGLE": [
    "OBSNT is not in the verified glossary; it must stay as written",
@@ -209,25 +162,13 @@
    "added 'plus'",
    "added 'minus'"
   ],
-  "OWNER DESIRES HELI NOT TO BE CHARTED.": [
-   "HELI is 'heliport' (JO 2-1-1 (GEN)), not what the translation says",
-   "added 'helicopter'"
-  ],
   "PAPI RWY 15 & 33; MIRL RWY 15/33 OPER DUSK - 2400.  AFT 2400 - CTAF.": [
-   "added 'click'",
-   "added 'mic'"
-  ],
-  "PCL ON 122.7": [
-   "PCL is 'pilot controlled lighting' (CS), not what the translation says",
    "added 'click'",
    "added 'mic'"
   ],
   "PILOTS REQD TO CMPLT THE ARPT USAGE LOG UPON ARR.": [
    "REQD has no verified meaning (REQ + D would read as 'requested'; remarks use REQD for required); it must stay as written",
    "added 'required'"
-  ],
-  "POSSIBLE TURBULENCE INVOF EXHAUST STACKS 3,500 FT SW OF RWY 04, AVOID LOW ALT OVERFLT.": [
-   "dropped OVERFLT"
   ],
   "PPR REQ FOR ALL NON OWNER OR NON BASED ACFT": [
    "REQ is 'request' (CS), not what the translation says"
@@ -242,60 +183,32 @@
   "PRVDD ALL USERS OF THE BEACH RANCH AIRPORT ARE ADVISED OF THE PROXIMITY OF THE KUHN EMERGENCY AIRPORT LOCATED APPROX 2 MILES NNE.": [
    "dropped APPROX"
   ],
-  "PUB RD 209 FT FM RWY END, 14 FT ABV RWY & 14 FT FM LT OF CTLN.": [
-   "RD is not in the verified glossary; it must stay as written",
-   "LT has no verified meaning (remarks use it for left ('440 FT LT OF CTLN'); JO 7340.2's 'turn left after take-off' doesn't fit); it must stay as written",
-   "added 'road'"
-  ],
   "PUBLIC GOLF COURSE S-W APP END RWY 1.": [
    "W has no verified meaning (the Chart Supplement lists West and White (and Warning Area, Watts), and NASR's 1,489 on 2026-10-01 are mostly west ('300 FT W OF PAD', 'W SIDE'), some white ('MKD WITH W CONES', 'RED & W A-FRAMES'), about 220 written W/ mean with ('FUEL AVBL 24 HRS W/CREDIT CARD', 'MKD W/ ORANGE CONES'), and a few name a taxiway (TWY W). a check can't tell which one a translation picked: 'W RWY MRKG CONES EV 300 FT', on both ends of one runway, read as west); it must stay as written",
    "added 'west'"
   ],
   "RD TRAVERSING APCH END RWY 28 IS A PVT GRVL RD WITH VEHICLES CNTRD BY STOP SIGNS.": [
    "RD is not in the verified glossary; it must stay as written",
+   "CNTRD is 'center' (CS + JO 1-2-3 suffix D), not what the translation says",
    "added 'road'"
-  ],
-  "REIL RWY 11 & 29 OPR CONSLY; PAPI RWY 11, 16, 29 & 34 OPR CONSLY. ACTVT MALS RWY 34; REILRWY 16;  RWY 16/34 EDGE LIGHTS; TWY LGTS CTAF.": [
-   "dropped REILRWY",
-   "repeated 'end'",
-   "repeated 'identifier'"
   ],
   "REQ 24 HR ADVN NOTICE OR IMT REPORTING UPON LDG FOR ACFT EQUIPPED WITH WX MOFICIATION OR GEOENGINEERING EQUPT 352-465-8545.": [
    "dropped MOFICIATION",
    "dropped EQUPT",
    "added 'modification'"
   ],
-  "RSTD: ALL TXY LEAD IN LINES SW OF CNTR AND EAST RAMP ARE TO BE UTILIZED FOR TOW OPS ONLY.": [
-   "TXY is not in the verified glossary; it must stay as written",
-   "added 'taxiway'"
-  ],
-  "RSTD: C130 & LRGR 180 DEG TURNS PMTD ON CONC SFC RWY 11/29 E & W ENDS & RWY 02/20 S END.": [
-   "W has no verified meaning (the Chart Supplement lists West and White (and Warning Area, Watts), and NASR's 1,489 on 2026-10-01 are mostly west ('300 FT W OF PAD', 'W SIDE'), some white ('MKD WITH W CONES', 'RED & W A-FRAMES'), about 220 written W/ mean with ('FUEL AVBL 24 HRS W/CREDIT CARD', 'MKD W/ ORANGE CONES'), and a few name a taxiway (TWY W). a check can't tell which one a translation picked: 'W RWY MRKG CONES EV 300 FT', on both ends of one runway, read as west); it must stay as written",
-   "added 'west'"
-  ],
   "RSTD: PPR CTC AFLD MGMT OPS 1100-0300Z++ DSN 574-2504, C757-764-2504. PPR VALID +/- 1 HR OF APVL TIME DUR AFLD OPR HRS. IF OUTSIDE OF APVL TIME SLOT, CTC AFLD MGMT OPS TO UPDATE PPR. ONLY 1 F/W ACFT AUTH FR 1300-1400Z++. TRANSPORT/DV ACFT CTC AFLD MGMT OPS 20 MIN PRIOR LDG VIA PTD VHF 142.3 OR UHF 376.2.": [
    "added 'plus'",
    "added 'minus'"
-  ],
-  "RSTD: PPR WITH 72 HR NTC AND BILLETING CONFIRMATION NR REQ FOR ALL ACFT. EMERG DIVERT ACFT TO BUCHOLZ AAF OUTSIDE OF REG AFLD OPR HR, CTC FAA CONTROLLER AT OAKLAND CNTR TO AMG BASE OPS/TWR PERS RECALL. ALL ACFT TRNSPG XPLOS CARGO RQR A PPR. CTC BASE OPS, PACIFIC DSN 480-2131, C808-580-2131. ACFT AVOID OVER FLT E END OF ISLAND BLW 1500 FT AGL. TWY E IS WT RSTD FOR FOLLOWING ACFT B737, B757, B767, C-5, C-17, C-130. BT AND 180 DEG TURN ON RWY WILL BE RQR FOR EITHER ARR OR DEPT. EXCEPTIONS MAY BE GRANTED FOR TWY A, IN ORDER TO ACCESS XPLOS CARGO PRKG LOC.": [
-   "REQ is 'request' (CS), not what the translation says",
-   "DSN is 'Defense Switching Network (Telephone)' (CS), not what the translation says",
-   "DEPT is 'department' (JO 2-1-1 (GEN)), not what the translation says"
   ],
   "RWU 3- THLD LTS 74 FT BYD THLD BAR.": [
    "LTS is not in the verified glossary; it must stay as written",
    "added 'lights'"
   ],
-  "RWY 05 HAS MKD PLINES 1000 FT FM THLD.": [
-   "PLINES is 'Power line' (JO 2-1-1 (GEN) + JO 1-2-3 suffix S), not what the translation says",
-   "added 'pipeline'"
-  ],
-  "RWY 07/25 NOT PLOWED FOR SN,  OPN TO SKI EQUIPED ACFT.": [
-   "dropped EQUIPED"
-  ],
   "RWY 08/26: LRG HAY BALES ALG NORTH EDGE; +30 FT BLDG, 72 FT SOUTH OF CNTRLN; +60 FT TREE, 96 FT NORTH OF CNTRLN; FARM EQPT PARKED NR RWY ENDS.": [
    "NR is 'number' (CS), not what the translation says",
-   "added 'near'"
+   "dropped the sign of +30",
+   "dropped the sign of +60"
   ],
   "RWY 08: 130 FT UNMKD PLINE, 0.85 MI FM RWY END.": [
    "UNMKD is not in the verified glossary; it must stay as written"
@@ -304,43 +217,21 @@
    "MKGS is not in the verified glossary; it must stay as written",
    "added 'markings'"
   ],
-  "RWY 20 W & BLK BNDRY CONES": [
-   "BLK is not in the verified glossary; it must stay as written",
-   "added 'black'"
-  ],
-  "RWY 25 4 FT FENCE AND BRUSH 65 FT FM THR AND 15 FT ROAD 85 FT FM THR; 11 FT BLDG 180 FT FM THR, 53 FT L; 10 FT SIGN, 108 FT FM THR, 32 FT RITE.": [
-   "L is 'Left' (JO 2-1-1 (ICAO)), not what the translation says"
-  ],
   "RWY 28 ALSO 15 FT RD 60 FT L AT RWY END.": [
-   "L is 'Left' (JO 2-1-1 (ICAO)), not what the translation says",
-   "added 'lft'"
-  ],
-  "RWY 30 10 FT PVT ROAD O FT, 30 FT LT, 33 FT TREE 205 FT ON EXT CTRLINE, 12 FT CABINS 330 FT, 30 FT RT.": [
-   "dropped CTRLINE",
-   "added 'centerline'"
-  ],
-  "RWY 31 CLNC SLOPE ON CTRLN 50:1.": [
-   "CTRLN is not in the verified glossary; it must stay as written",
-   "added 'centerline'"
+   "RD is not in the verified glossary; it must stay as written",
+   "added 'road'"
   ],
   "RWY 31 NSTD AIMING POINT MKGS AT 300 FT.": [
    "MKGS is not in the verified glossary; it must stay as written",
-   "added 'markings'"
+   "added 'marked'"
   ],
   "RWY 7 BSC RWY MARKIINGS": [
    "dropped MARKIINGS",
    "added 'markings'"
   ],
-  "RWY IS MNTAND & MOWED TO LESS TO LESS THAN 30 FT WID, 20 FT MAX.": [
-   "dropped MNTAND",
-   "added 'maintained'"
-  ],
   "RWY MKGS FADED & WORN.": [
    "MKGS is not in the verified glossary; it must stay as written",
    "added 'markings'"
-  ],
-  "RY 04S/22S FOR SKI/TUNDRA TIRE EQUIPD ACFT.": [
-   "dropped EQUIPD"
   ],
   "SELF SVC FUEL AVBL 24H VIA CREDIT CARD.": [
    "changed 24H; a code of letters and digits stays as written",
@@ -356,30 +247,9 @@
    "SGL is 'signal' (JO 2-1-1 (GEN)), not what the translation says",
    "added 'single'"
   ],
-  "SIMUL OPS RWY 04/22 & 04S/22S NA.": [
-   "SIMUL is 'simultaneous/ly' (JO 2-1-1 (ICAO)), not what the translation says",
-   "NA has no verified meaning (the FAA lists 'not authorized', and most remarks mean that ('TGL NA', 'AUTO CPD APCH NA BLW 1200 FT MSL'), but dozens of NASR's 576 on 2026-10-01 mean not available ('SNOW REMOVAL NA', 'AFT HR FUEL NA', 'ARFF NA', 'FONE NA'), and 'TGL, SVCS, CELL RECEPTION NA' means both at once. a check can't tell which one a translation picked); it must stay as written",
-   "added a negation: the FAA text has 0, the translation 1"
-  ],
-  "SOUTH FLD - PAD 1 LGTS STD AND IN SVC, BUT NOT IAW REG CRITERIA. NGT LDGS USE CTN. PAD 2 UNLGTD BUT EASTERN AND WESTERN WIND INDICATORS LGTD. TSNT ACFT LDGS RSTD TO PAD 1 DUE TO GND TFC HAZ ASSOC WITH PAD 2. PAD 2 OPS RQRS LOCAL SAFTEY BRIEFING. SLOPES WI EAST AND WEST CLEAR ZONE OF PAD 1 EXCEED REG CRITERIA LMTS.  NORTH FLD - PAD LGTS IN SVC. ALS AVBL BOTH DIR. WIND INDICATOR LGTD.": [
-   "dropped SAFTEY",
-   "DIR is 'director' (JO 2-1-1 (GEN)), not what the translation says",
-   "added 'safety'"
-  ],
-  "SOUTHERN HOUGHTON CO ARPT & HERITAGE ASSOCIATION.": [
-   "came back as the FAA text"
-  ],
   "SUBD. PROPERTY OWNERS ASSOCIATION INC., OTHER CONTACT PERSON: RON SMITH": [
-   "came back as the FAA text"
-  ],
-  "TIMBERED MOUTAIN SLOPE.": [
-   "dropped MOUTAIN",
-   "added 'mountain'"
-  ],
-  "TO AND LDG NA SS-SR.": [
-   "NA has no verified meaning (the FAA lists 'not authorized', and most remarks mean that ('TGL NA', 'AUTO CPD APCH NA BLW 1200 FT MSL'), but dozens of NASR's 576 on 2026-10-01 mean not available ('SNOW REMOVAL NA', 'AFT HR FUEL NA', 'ARFF NA', 'FONE NA'), and 'TGL, SVCS, CELL RECEPTION NA' means both at once. a check can't tell which one a translation picked); it must stay as written",
-   "added a negation: the FAA text has 0, the translation 1",
-   "added 'takeoff'"
+   "dropped SUBD",
+   "added 'subdivision'"
   ],
   "TURF AREA AVBL FOR ACFT OPS ALG RSA N OF RWY 7/25 PVMT ENDS. MKD WITH W MKRS. USE AT PILOT OWN RISK.": [
    "PVMT is not in the verified glossary; it must stay as written",

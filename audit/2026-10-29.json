@@ -46,10 +46,10 @@
     "summary": "preferred IFR routes: 4 changed",
     "source": "PFR",
     "details": [
-     "preferred IFR route ATL -> BCT: new routing ATL SMLTZ3 WALET ZPLEN VUUDU3 BCT",
-     "preferred IFR route ATL -> DJT: new routing ATL SMLTZ3 WALET ZPLEN VUUDU3 DJT",
-     "preferred IFR route CLE -> ATL: new routing CLE CAVVS6 APE HLRRY ONDRE1 ATL",
-     "preferred IFR route MSP -> ATL: new routing MSP ZMBRO1 BRIBE ENL PLESS J45 BNA NEWBB IHAVE MTHEW CHPPR1 ATL"
+     "preferred IFR route ATL -> BCT: new routing ATL SMLTZ3 WALET ZPLEN VUUDU3 BCT; aircraft none -> JET ONLY, RNAV 1 - DME/DME/IRU OR GPS.; area none -> TO 06FA, BCT, F45, DJT, SUA",
+     "preferred IFR route ATL -> DJT: new routing ATL SMLTZ3 WALET ZPLEN VUUDU3 DJT; aircraft none -> JET ONLY, RNAV 1 - DME/DME/IRU OR GPS.; area none -> TO 06FA, BCT, F45, DJT, SUA",
+     "preferred IFR route CLE -> ATL: new routing CLE CAVVS6 APE HLRRY ONDRE1 ATL; aircraft RNAV ONLY -> JETS ONLY: RNAV 1 - DME/DME/IRU OR GPS; area FROM CLEVELAND METRO(CLE,CGF,BKL,LNN,LPR) -> FROM CLE,CGF,LNN,LPR",
+     "preferred IFR route MSP -> ATL: new routing MSP ZMBRO1 BRIBE ENL PLESS J45 BNA NEWBB IHAVE MTHEW CHPPR1 ATL; area none -> FROM ANE, FCM, MSP STP"
     ]
    }
   ],
@@ -77,9 +77,9 @@
     "details": [
      "new preferred IFR route BHM -> BNA: BHM KELCC BNTLE KNEEY CHSNE CHSNE3 BNA",
      "new preferred IFR route BNA -> MYR: BNA TAZMO5 BURME VXV SLOJO BRDWK1 MYR",
-     "preferred IFR route BNA -> BCT: new routing BNA FLAME5 GENDE ACORI VUUDU3 BCT",
-     "preferred IFR route BNA -> DJT: new routing BNA FLAME5 GENDE ACORI VUUDU3 DJT",
-     "preferred IFR route MSP -> BNA: new routing MSP ZMBRO1 BRIBE ENL SOKOL RYYMN4 BNA"
+     "preferred IFR route BNA -> BCT: new routing BNA FLAME5 GENDE ACORI VUUDU3 BCT; area none -> TO 06FA, BCT, F45, DJT, SUA",
+     "preferred IFR route BNA -> DJT: new routing BNA FLAME5 GENDE ACORI VUUDU3 DJT; area none -> TO 06FA, BCT, F45, DJT, SUA",
+     "preferred IFR route MSP -> BNA: new routing MSP ZMBRO1 BRIBE ENL SOKOL RYYMN4 BNA; aircraft JETS - RNAV1 DME/DME/IRU OR GPS -> JETS ONLY: RNAV 1 - DME/DME/IRU OR GPS; area none -> FROM ANE, FCM, MSP STP"
     ]
    }
   ],
@@ -92,14 +92,14 @@
     "summary": "preferred IFR routes: 8 changed",
     "source": "PFR",
     "details": [
-     "preferred IFR route BOS -> BUF: new routing BOS HYLND7 HYLND CAM GONZZ EHMAN BUF",
-     "preferred IFR route BOS -> BWI: new routing BOS PATSS7 PATSS NELIE Q75 MXE NUGGY TRISH5 BWI",
+     "preferred IFR route BOS -> BUF: new routing BOS HYLND7 HYLND CAM GONZZ EHMAN BUF; aircraft none -> JETS ONLY - RNAV 1 - DME/DME/IRU OR GPS; altitude none -> AT OR ABOVE 110; hours 1100-0400 -> none",
+     "preferred IFR route BOS -> BWI: new routing BOS PATSS7 PATSS NELIE Q75 MXE NUGGY TRISH5 BWI; aircraft none -> JET ONLY, RNAV 1 - DME/DME/IRU OR GPS.; area TO BWI,MTN -> TO BWI, MTN; hours 1100-0300 -> none",
      "preferred IFR route BOS -> DET: new routing BOS HYLND7 HYLND CAM Q822 GONZZ COLTS GIGGY3 DET",
-     "preferred IFR route BOS -> MYR: new routing BOS SSOXS7 SSOXS Q167 RIFLE HEADI Q97 SAWED KTEEE TORST1 MYR",
-     "preferred IFR route BOS -> ROC: new routing BOS HYLND7 HYLND CAM GONZZ ROC",
-     "preferred IFR route BOS -> SLC: new routing BOS HYLND7 HYLND HANAA Q816 HOCKE BAE DBQ FOD ONL J94 BFF CKW CARTR2 SLC",
-     "preferred IFR route CLE -> BOS: new routing CLE PFLYD1 DUUKR JHW Q82 PONCT JFUND2 BOS",
-     "preferred IFR route MSP -> BOS: new routing MSP NRTHN1 TTOWN DAYYY Q140 HANKK PONCT JFUND2 BOS"
+     "preferred IFR route BOS -> MYR: new routing BOS SSOXS7 SSOXS Q167 RIFLE HEADI Q97 SAWED KTEEE TORST1 MYR; aircraft none -> JETS ONLY, RNAV 1 - DME/DME/IRU OR GPS.; area none -> TO CRE GGE MYR",
+     "preferred IFR route BOS -> ROC: new routing BOS HYLND7 HYLND CAM GONZZ ROC; aircraft none -> JETS ONLY - RNAV 1 - DME/DME/IRU OR GPS; altitude none -> AT OR ABOVE 110",
+     "preferred IFR route BOS -> SLC: new routing BOS HYLND7 HYLND HANAA Q816 HOCKE BAE DBQ FOD ONL J94 BFF CKW CARTR2 SLC; aircraft TURBOJETS ONLY: DME/DME/IRU OR GPS REQUIRED -> JETS ONLY: DME/DME/IRU OR GPS REQUIRED; hours 1100-0300 -> none",
+     "preferred IFR route CLE -> BOS via CLE PFLYD1 DUUKR JHW Q82 PONCT JFUND2 BOS: aircraft RNAV ONLY -> JETS ONLY: RNAV 1 - DME/DME/IRU OR GPS; area KCLE ONLY -> none; hours 1100-0300 -> none",
+     "preferred IFR route MSP -> BOS: new routing MSP NRTHN1 TTOWN DAYYY Q140 HANKK PONCT JFUND2 BOS; aircraft none -> JETS ONLY: RNAV 1 - DME/DME/IRU OR GPS; area none -> FROM ANE, FCM, MSP STP"
     ]
    }
   ],
@@ -294,36 +294,36 @@
     "summary": "preferred IFR routes: 33 changed",
     "source": "PFR",
     "details": [
-     "preferred IFR route ACK -> BWI: new routing ACK LFV CELTS NELIE Q75 MXE V378 NUGGY TRISH5 BWI",
-     "preferred IFR route ALB -> BWI: new routing ALB PWL BIZEX Q75 MXE V378 NUGGY TRISH5 BWI",
+     "preferred IFR route ACK -> BWI: new routing ACK LFV CELTS NELIE Q75 MXE V378 NUGGY TRISH5 BWI; aircraft none -> JET ONLY, RNAV 1 - DME/DME/IRU OR GPS.; area none -> TO BWI, MTN; hours 1100-0300 -> none",
+     "preferred IFR route ALB -> BWI: new routing ALB PWL BIZEX Q75 MXE V378 NUGGY TRISH5 BWI; aircraft none -> JET ONLY, RNAV 1 - DME/DME/IRU OR GPS.; area FROM ALB,SCH,GFL,5B2 -> FROM ALB, SCH, GFL, 5B2 TO BWI, MTN; hours 1100-0300 -> none",
      "preferred IFR route ALLEX -> BWI: new routing ALLEX KAYCC KYLOH NELIE Q75 MXE NUGGY TRISH5 BWI",
-     "preferred IFR route BOS -> BWI: new routing BOS PATSS7 PATSS NELIE Q75 MXE NUGGY TRISH5 BWI",
+     "preferred IFR route BOS -> BWI: new routing BOS PATSS7 PATSS NELIE Q75 MXE NUGGY TRISH5 BWI; aircraft none -> JET ONLY, RNAV 1 - DME/DME/IRU OR GPS.; area TO BWI,MTN -> TO BWI, MTN; hours 1100-0300 -> none",
      "preferred IFR route BRADD -> BWI: new routing BRADD BOS Q75 MXE NUGGY TRISH5 BWI",
-     "preferred IFR route BTV -> BWI: new routing BTV DENYU PONCT BIZEX Q75 MXE V378 NUGGY TRISH5 BWI",
-     "preferred IFR route BWI -> BED: new routing BWI DUKPN1 BROSS Q419 DPK DREEM4 BED",
-     "preferred IFR route BWI -> MHT: new routing BWI DUKPN1 BROSS Q419 RBV Q22 LLUND SMYTH ROZZE3 MHT",
-     "preferred IFR route BWI -> MYR: new routing BWI CONLE5 SCOOB KTEEE TORST1 MYR",
-     "preferred IFR route CLE -> BWI: new routing CLE KKIDS1 NUSMM ANTHM5 BWI",
-     "preferred IFR route CYUL -> BWI: new routing CYUL FAWNS BUGSY PONCT BIZEX Q75 MXE V378 NUGGY TRISH5 BWI",
+     "preferred IFR route BTV -> BWI: new routing BTV DENYU PONCT BIZEX Q75 MXE V378 NUGGY TRISH5 BWI; aircraft none -> JET ONLY, RNAV 1 - DME/DME/IRU OR GPS.; area none -> TO BWI, MTN",
+     "preferred IFR route BWI -> BED: new routing BWI DUKPN1 BROSS Q419 DPK DREEM4 BED; aircraft JETS, RNAV 1-DME/DME/IRU OR GPS -> JETS ONLY, RNAV 1-DME/DME/IRU OR GPS",
+     "preferred IFR route BWI -> MHT: new routing BWI DUKPN1 BROSS Q419 RBV Q22 LLUND SMYTH ROZZE3 MHT; aircraft TURBOJETS -> JETS ONLY, RNAV 1 - DME/DME/IRU OR GPS",
+     "preferred IFR route BWI -> MYR: new routing BWI CONLE5 SCOOB KTEEE TORST1 MYR; aircraft none -> JETS ONLY, RNAV 1 - DME/DME/IRU OR GPS.; area FROM BWI,DMW,ESN,FDK,GAI,MTN -> FROM BWI,DMW,ESN,FDK,GAI,MTN  TO CRE GGE MYR",
+     "preferred IFR route CLE -> BWI via CLE KKIDS1 NUSMM ANTHM5 BWI: aircraft RNAV ONLY -> JETS ONLY:  RNAV1 DME/DME/IRU OR GPS; area KCLE ONLY -> TO BWI,  MTN",
+     "preferred IFR route CYUL -> BWI: new routing CYUL FAWNS BUGSY PONCT BIZEX Q75 MXE V378 NUGGY TRISH5 BWI; aircraft none -> JET ONLY, RNAV 1 - DME/DME/IRU OR GPS.; area none -> TO BWI, MTN",
      "preferred IFR route EBONY -> BWI: new routing EBONY KAYCC KYLOH NELIE Q75 MXE NUGGY TRISH5 BWI",
-     "preferred IFR route EWR -> BWI: new routing EWR BIGGY Q75 MXE V378 NUGGY TRISH5 BWI",
-     "preferred IFR route EWR -> BWI: new routing EWR BIGGY V3 MXE V378 NUGGY TRISH5 BWI",
-     "preferred IFR route HPN -> BWI: new routing HPN BIGGY Q75 MXE V378 NUGGY TRISH5 BWI",
-     "preferred IFR route HPN -> BWI: new routing HPN BIGGY V3 MXE V378 NUGGY TRISH5 BWI",
-     "preferred IFR route JFK -> BWI: new routing JFK RBV Q430 COPES Q75 MXE V378 NUGGY TRISH5 BWI",
+     "preferred IFR route EWR -> BWI: new routing EWR BIGGY Q75 MXE V378 NUGGY TRISH5 BWI; aircraft TURBOJETS ONLY -> JET ONLY, RNAV 1 - DME/DME/IRU OR GPS.; area none -> TO BWI, MTN",
+     "preferred IFR route EWR -> BWI: new routing EWR BIGGY V3 MXE V378 NUGGY TRISH5 BWI; aircraft TURBOJETS ONLY -> JET ONLY, RNAV 1 - DME/DME/IRU OR GPS.; area none -> TO BWI, MTN",
+     "preferred IFR route HPN -> BWI: new routing HPN BIGGY Q75 MXE V378 NUGGY TRISH5 BWI; aircraft none -> JET ONLY, RNAV 1 - DME/DME/IRU OR GPS.; area none -> TO BWI, MTN",
+     "preferred IFR route HPN -> BWI: new routing HPN BIGGY V3 MXE V378 NUGGY TRISH5 BWI; aircraft TURBOJETS ONLY -> JET ONLY, RNAV 1 - DME/DME/IRU OR GPS.; area none -> TO BWI, MTN",
+     "preferred IFR route JFK -> BWI: new routing JFK RBV Q430 COPES Q75 MXE V378 NUGGY TRISH5 BWI; aircraft none -> JET ONLY, RNAV 1 - DME/DME/IRU OR GPS.; area none -> TO BWI, MTN",
      "preferred IFR route KANNI -> BWI: new routing KANNI BOS Q75 MXE NUGGY TRISH5 BWI",
      "preferred IFR route KJOHN -> BWI: new routing KJOHN BIZEX Q75 MXE NUGGY TRISH5 BWI",
-     "preferred IFR route LGA -> BWI: new routing LGA BIGGY Q75 MXE V378 NUGGY TRISH5 BWI",
-     "preferred IFR route LGA -> BWI: new routing LGA BIGGY V3 MXE V378 NUGGY TRISH5 BWI",
+     "preferred IFR route LGA -> BWI: new routing LGA BIGGY Q75 MXE V378 NUGGY TRISH5 BWI; aircraft none -> JET ONLY, RNAV 1 - DME/DME/IRU OR GPS.; area none -> TO BWI, MTN",
+     "preferred IFR route LGA -> BWI: new routing LGA BIGGY V3 MXE V378 NUGGY TRISH5 BWI; aircraft TURBOJETS ONLY -> JET ONLY, RNAV 1 - DME/DME/IRU OR GPS.; area none -> TO BWI, MTN",
      "preferred IFR route MIILS -> BWI: new routing MIILS KAYCC KYLOH NELIE Q75 MXE NUGGY TRISH5 BWI",
-     "preferred IFR route MSP -> BWI: new routing MSP SNUPE1 DLL J34 DJB NUSMM ANTHM5 BWI",
+     "preferred IFR route MSP -> BWI: new routing MSP SNUPE1 DLL J34 DJB NUSMM ANTHM5 BWI; aircraft TURBOJET -> JETS ONLY: RNAV 1 - DME/DME/IRU OR GPS; area none -> FROM ANE, FCM, MSP STP TO BWI, MTN",
      "preferred IFR route MT -> BWI: new routing MT SYR FQM IZZEE TRISH5 BWI",
-     "preferred IFR route PHL -> BWI: new routing PHL DQO BAINS TRISH5 BWI",
+     "preferred IFR route PHL -> BWI: new routing PHL DQO BAINS TRISH5 BWI; aircraft TURBOJETS ONLY -> JET ONLY, RNAV 1 - DME/DME/IRU OR GPS.; area none -> TO BWI, MTN",
      "preferred IFR route QUBIS -> BWI: new routing QUBIS KAYCC KYLOH NELIE Q75 MXE NUGGY TRISH5 BWI",
-     "preferred IFR route ROC -> BWI: new routing ROC BURST DDUBS IZZEE TRISH5 BWI",
+     "preferred IFR route ROC -> BWI: new routing ROC BURST DDUBS IZZEE TRISH5 BWI; aircraft TURBOJETS -> JET ONLY, RNAV 1 - DME/DME/IRU OR GPS.; area none -> TO BWI, MTN",
      "preferred IFR route SYR -> BWI: new routing SYR FQM IZZEE TRISH5 BWI",
      "preferred IFR route TAFFY -> BWI: new routing TAFFY KAYCC KYLOH NELIE Q75 MXE NUGGY TRISH5 BWI",
-     "preferred IFR route TEB -> BWI: new routing TEB BIGGY Q75 MXE V378 NUGGY TRISH5 BWI",
+     "preferred IFR route TEB -> BWI: new routing TEB BIGGY Q75 MXE V378 NUGGY TRISH5 BWI; aircraft none -> JET ONLY, RNAV 1 - DME/DME/IRU OR GPS.; area FROM TETERBORO(TEB,MMU,CDW) -> FROM CDW, MMU, TEB TO BWI, MTN",
      "preferred IFR route TOPPS -> BWI: new routing TOPPS KAYCC KYLOH NELIE Q75 MXE NUGGY TRISH5 BWI",
      "preferred IFR route TUSKY -> BWI: new routing TUSKY Q475 COPLY Q75 MXE NUGGY TRISH5 BWI",
      "preferred IFR route WHALE -> BWI: new routing WHALE BOS Q75 MXE NUGGY TRISH5 BWI"
@@ -339,7 +339,7 @@
     "summary": "preferred IFR routes: 2 changed",
     "source": "PFR",
     "details": [
-     "preferred IFR route CLE -> CLT: new routing CLE CAVVS6 APE HVQ LNDIZ PARQR7 CLT",
+     "preferred IFR route CLE -> CLT: new routing CLE CAVVS6 APE HVQ LNDIZ PARQR7 CLT; aircraft JETS ONLY RNAV 1 - DME/DME/IRU OR GPS -> JETS ONLY: RNAV 1 - DME/DME/IRU OR GPS; area FROM  CGF, CLE, BKL,LNN,LPR -> FROM  CGF, CLE, LNN,LPR",
      "preferred IFR route CLT -> MHT: new routing CLT BATTA1 RDU NOWAE Q87 GEARS BBOBO Q22 LLUND SMYTH ROZZE3 MHT"
     ]
    }
@@ -354,14 +354,14 @@
     "source": "PFR",
     "details": [
      "new preferred IFR route BUF -> DCA: BUF VAIRS PSB SKILS5 DCA",
-     "preferred IFR route BUF -> DCA: discontinued",
+     "preferred IFR route BUF -> DCA via BUF BFD PSB SKILS5 DCA: discontinued",
      "preferred IFR route DCA -> BED: new routing DCA DOCTR5 AGARD WNSTN T320 GON YANTC DREEM4 BED",
      "preferred IFR route DCA -> BED: new routing DCA SOOKI6 SWANN BROSS Q419 DPK DREEM4 BED",
      "preferred IFR route DCA -> MHT: new routing DCA SOOKI6 SWANN BROSS Q419 RBV Q22 LLUND SMYTH ROZZE3 MHT",
-     "preferred IFR route DCA -> MYR: new routing DCA AMEEE1 SCOOB KTEEE TORST1 MYR",
-     "preferred IFR route MSP -> DCA: discontinued",
-     "preferred IFR route MSP -> DCA: new routing MSP SNUPE1 DLL J34 BUCKO FRDMM7 DCA",
-     "preferred IFR route ROC -> DCA: new routing ROC BURST ETG PSB SKILS5 DCA"
+     "preferred IFR route DCA -> MYR: new routing DCA AMEEE1 SCOOB KTEEE TORST1 MYR; aircraft none -> JETS ONLY, RNAV 1 - DME/DME/IRU OR GPS.; area none -> TO CRE GGE MYR",
+     "preferred IFR route MSP -> DCA via MSP COULT7 DLL J34 BUCKO NUMMY3 DCA: discontinued",
+     "preferred IFR route MSP -> DCA: new routing MSP SNUPE1 DLL J34 BUCKO FRDMM7 DCA; aircraft JET ONLY, RNAV 1 - DME/DME/IRU OR GPS. -> JETS ONLY: RNAV 1 - DME/DME/IRU OR GPS; area TO ADW, DAA, DCA -> FROM ANE, FCM, MSP STP TO ADW, DAA, DCA",
+     "preferred IFR route ROC -> DCA: new routing ROC BURST ETG PSB SKILS5 DCA; aircraft RNAV ONLY -> JETS ONLY, RNAV 1 - DME/DME/IRU OR GPS"
     ]
    }
   ],
@@ -374,7 +374,7 @@
     "summary": "preferred IFR routes: 1 changed",
     "source": "PFR",
     "details": [
-     "preferred IFR route MSP -> DEN: new routing MSP SNOWZ1 LLUKY PORDR AALLE4 DEN"
+     "preferred IFR route MSP -> DEN: new routing MSP SNOWZ1 LLUKY PORDR AALLE4 DEN; aircraft none -> JETS ONLY: RNAV 1 - DME/DME/IRU OR GPS"
     ]
    }
   ],
@@ -387,14 +387,14 @@
     "summary": "preferred IFR routes: 8 changed",
     "source": "PFR",
     "details": [
-     "preferred IFR route CLE -> DFW: new routing CLE ZAAPA7 SINKR PXV LIT FEWWW BRDJE5 DFW",
-     "preferred IFR route CLE -> DFW: new routing CLE ZAAPA7 SINKR PXV LIT FEWWW SEEVR4 DFW",
-     "preferred IFR route DFW -> BCT: new routing DFW MRSSH ZALEA HRV Q105 BLVNS Y290 GAWKS VUUDU3 BCT",
-     "preferred IFR route DFW -> BCT: new routing DFW MRSSH3 ZALEA MCB J50 CEW J2 DEFUN VUUDU3 BCT",
-     "preferred IFR route DFW -> DJT: new routing DFW MRSSH3 ZALEA HRV Q105 BLVNS Y290 GAWKS VUUDU3 DJT",
-     "preferred IFR route DFW -> DJT: new routing DFW MRSSH3 ZALEA MCB J50 CEW J2 DEFUN VUUDU3 DJT",
-     "preferred IFR route MSP -> DFW: new routing MSP SNOWZ1 ZZEEE OVR J21 ICT HOFFF JOVEM6 DFW",
-     "preferred IFR route MSP -> DFW: new routing MSP SNOWZ1 ZZEEE OVR J21 IRW IBAKE VKTRY2 DFW"
+     "preferred IFR route CLE -> DFW: new routing CLE ZAAPA7 SINKR PXV LIT FEWWW BRDJE5 DFW; aircraft RNAV TURBOJET -> JETS ONLY: RNAV 1 - DME/DME/IRU OR GPS; area FROM CLEVELAND METRO(CLE,CGF,BKL,LNN,LPR) -> FROM CLE,CGF,LNN,LPR",
+     "preferred IFR route CLE -> DFW: new routing CLE ZAAPA7 SINKR PXV LIT FEWWW SEEVR4 DFW; aircraft RNAV -> JETS ONLY: RNAV 1 - DME/DME/IRU OR GPS; area FROM CLEVELAND METRO(CLE,CGF,BKL,LNN,LPR) -> FROM CLE,CGF,LNN,LPR",
+     "preferred IFR route DFW -> BCT: new routing DFW MRSSH ZALEA HRV Q105 BLVNS Y290 GAWKS VUUDU3 BCT; aircraft none -> JET ONLY, RNAV 1 - DME/DME/IRU OR GPS.; area none -> TO 06FA, BCT, F45, DJT, SUA",
+     "preferred IFR route DFW -> BCT: new routing DFW MRSSH3 ZALEA MCB J50 CEW J2 DEFUN VUUDU3 BCT; aircraft none -> JET ONLY, RNAV 1 - DME/DME/IRU OR GPS.; area none -> TO 06FA, BCT, F45, DJT, SUA",
+     "preferred IFR route DFW -> DJT: new routing DFW MRSSH3 ZALEA HRV Q105 BLVNS Y290 GAWKS VUUDU3 DJT; aircraft none -> JET ONLY, RNAV 1 - DME/DME/IRU OR GPS.; area none -> TO 06FA, BCT, F45, DJT, SUA",
+     "preferred IFR route DFW -> DJT: new routing DFW MRSSH3 ZALEA MCB J50 CEW J2 DEFUN VUUDU3 DJT; aircraft none -> JET ONLY, RNAV 1 - DME/DME/IRU OR GPS.; area none -> TO 06FA, BCT, F45, DJT, SUA",
+     "preferred IFR route MSP -> DFW: new routing MSP SNOWZ1 ZZEEE OVR J21 ICT HOFFF JOVEM6 DFW; aircraft TURBOJET ONLY -> JETS ONLY: RNAV 1 - DME/DME/IRU OR GPS",
+     "preferred IFR route MSP -> DFW: new routing MSP SNOWZ1 ZZEEE OVR J21 IRW IBAKE VKTRY2 DFW; aircraft TURBOJET -> JETS ONLY: RNAV 1 - DME/DME/IRU OR GPS"
     ]
    }
   ],
@@ -416,11 +416,11 @@
     "summary": "preferred IFR routes: 5 changed",
     "source": "PFR",
     "details": [
-     "preferred IFR route DTW -> DJT: new routing DTW CLVIN3 STAZE VXV THRSR Q79 ZPLEN VUUDU3 DJT",
-     "preferred IFR route DTW -> MCO: new routing DTW CLVIN3 STAZE VXV THRSR ZJAYX GRNCH5 MCO",
-     "preferred IFR route DTW -> MHT: new routing DTW HHOWE4 LNCON JHW Q82 PONCT ROZZE3 MHT",
-     "preferred IFR route MSP -> DTW: new routing MSP SNUPE1 DLL PORZL KKISS2 DTW",
-     "preferred IFR route MSP -> DTW: new routing MSP SNUPE1 DLL PORZL RKCTY2 DTW"
+     "preferred IFR route DTW -> DJT: new routing DTW CLVIN3 STAZE VXV THRSR Q79 ZPLEN VUUDU3 DJT; aircraft none -> JET ONLY, RNAV 1 - DME/DME/IRU OR GPS.; area none -> TO 06FA, BCT, F45, DJT, SUA",
+     "preferred IFR route DTW -> MCO: new routing DTW CLVIN3 STAZE VXV THRSR ZJAYX GRNCH5 MCO; aircraft none -> JETS ONLY, RNAV 1 - DME/DME/IRU OR GPS.; area none -> FROM ARB, DET, DTW, MTC, ONZ, OZW, PTK, TTF, VLL, YIP",
+     "preferred IFR route DTW -> MHT: new routing DTW HHOWE4 LNCON JHW Q82 PONCT ROZZE3 MHT; aircraft RNAV ONLY -> JETS ONLY, RNAV 1 - DME/DME/IRU OR GPS; area FROM DETROIT METRO(DTW,DET,YQG,PTK,YIP,ARB) -> FROM ARB, DET, DTW, MTC, ONZ, OZW, PTK, TTF, VLL, YIP; hours 1100-0300 -> none",
+     "preferred IFR route MSP -> DTW: new routing MSP SNUPE1 DLL PORZL KKISS2 DTW; aircraft DME/DME/IRU OR GPS REQUIRED -> RNAV 1 - DME/DME/IRU OR GPS; area none -> FROM ANE, FCM, MSP STP",
+     "preferred IFR route MSP -> DTW: new routing MSP SNUPE1 DLL PORZL RKCTY2 DTW; aircraft DME/DME/IRU OR GPS REQUIRED -> RNAV 1 - DME/DME/IRU OR GPS; area none -> FROM ANE, FCM, MSP STP"
     ]
    }
   ],
@@ -433,23 +433,23 @@
     "summary": "preferred IFR routes: 16 changed, 1 removed",
     "source": "PFR",
     "details": [
-     "preferred IFR route CLE -> EWR: new routing CLE PFLYD1 DORET J584 SLT FQM3 EWR",
+     "preferred IFR route CLE -> EWR via CLE PFLYD1 DORET J584 SLT FQM3 EWR: aircraft RNAV ONLY -> ACFT. CAPABLE OF 250 KTS OR GREATER:   RNAV 1 - DME/DME/IRU OR GPS; area KCLE ONLY -> none",
      "preferred IFR route EWR -> BED: new routing EWR BREZY V39 CMK MERIT HFD DREEM4 BED",
      "preferred IFR route EWR -> BED: new routing EWR MERIT HFD DREEM4 BED",
      "preferred IFR route EWR -> BVY: new routing EWR BREZY V39 CMK MERIT HFD DREEM4 BVY",
      "preferred IFR route EWR -> BVY: new routing EWR MERIT HFD DREEM4 BVY",
-     "preferred IFR route EWR -> BWI: new routing EWR BIGGY Q75 MXE V378 NUGGY TRISH5 BWI",
-     "preferred IFR route EWR -> BWI: new routing EWR BIGGY V3 MXE V378 NUGGY TRISH5 BWI",
+     "preferred IFR route EWR -> BWI: new routing EWR BIGGY Q75 MXE V378 NUGGY TRISH5 BWI; aircraft TURBOJETS ONLY -> JET ONLY, RNAV 1 - DME/DME/IRU OR GPS.; area none -> TO BWI, MTN",
+     "preferred IFR route EWR -> BWI: new routing EWR BIGGY V3 MXE V378 NUGGY TRISH5 BWI; aircraft TURBOJETS ONLY -> JET ONLY, RNAV 1 - DME/DME/IRU OR GPS.; area none -> TO BWI, MTN",
      "preferred IFR route EWR -> DET: new routing EWR GAYEL Q818 WOZEE COLTS GIGGY3 DET",
-     "preferred IFR route EWR -> IND: new routing EWR ZIMMZ Q42 HIDON RINTE SNKPT2 IND",
+     "preferred IFR route EWR -> IND: new routing EWR ZIMMZ Q42 HIDON RINTE SNKPT2 IND; aircraft TURBOJETS -> RNAV 1 - DME/DME/IRU OR GPS; altitude MAX ALTITUDE FL280 -> none",
      "preferred IFR route EWR -> LWM: new routing EWR BREZY V39 CMK MERIT HFD DREEM4 LWM",
      "preferred IFR route EWR -> LWM: new routing EWR MERIT HFD DREEM4 LWM",
-     "preferred IFR route EWR -> MHT: new routing EWR GREKI JUDDS MARTN QUINZ ROZZE3 MHT",
-     "preferred IFR route EWR -> MHT: new routing EWR MERIT HFD CRIBB ROZZE3 MHT",
-     "preferred IFR route EWR -> MTN: discontinued",
-     "preferred IFR route EWR -> MYR: new routing EWR ELVAE NECCK WHITE Q409 CRPLR KTEEE TORST1 MYR",
+     "preferred IFR route EWR -> MHT: new routing EWR GREKI JUDDS MARTN QUINZ ROZZE3 MHT; aircraft JETS ONLY -> JETS ONLY, RNAV 1 - DME/DME/IRU OR GPS; altitude FL190 AND ABOVE -> AT OR ABOVE FL190; hours 1100-0300 -> none",
+     "preferred IFR route EWR -> MHT: new routing EWR MERIT HFD CRIBB ROZZE3 MHT; aircraft JETS ONLY -> JETS ONLY, RNAV 1 - DME/DME/IRU OR GPS; hours 1100-0300 -> none",
+     "preferred IFR route EWR -> MTN via EWR BIGGY V3 MXE V408 VINNY V93 SKILS MTN: discontinued",
+     "preferred IFR route EWR -> MYR: new routing EWR ELVAE NECCK WHITE Q409 CRPLR KTEEE TORST1 MYR; aircraft none -> RNAV 1 - DME/DME/IRU OR GPS; area none -> TO CRE GGE MYR",
      "preferred IFR route EWR -> SLC: new routing EWR GAYEL Q818 WOZEE Q935 HOCKE BAE DBQ FOD ONL J94 BFF CKW CARTR2 SLC",
-     "preferred IFR route MSP -> EWR: new routing MSP ZMBRO1 BRIBE KG72M EVOTE NELLS KEEHO J584 SLT FQM3 EWR"
+     "preferred IFR route MSP -> EWR: new routing MSP ZMBRO1 BRIBE KG72M EVOTE NELLS KEEHO J584 SLT FQM3 EWR; aircraft JETS -> RNAV 1 - DME/DME/IRU OR GPS; area none -> FROM ANE, FCM, MSP STP"
     ]
    }
   ],
@@ -462,17 +462,17 @@
     "summary": "preferred IFR routes: 11 changed",
     "source": "PFR",
     "details": [
-     "preferred IFR route CLE -> FLL: new routing CLE CAVVS6 APE Q149 BURGG QUIWE Q93 PRMUS CUUDA3 FLL",
-     "preferred IFR route FLL -> BED: new routing FLL AGERS1 DUCEN Q87 JROSS JOHAR Q109 DFENC SAWED Q97 CCC YANTC DREEM4 BED",
-     "preferred IFR route FLL -> BED: new routing FLL FEALX2 ETECK PELCN Y309 FLRDA SAGGY CHIEZ Q161 KALDA Q97 HEADI YANTC DREEM4 BED",
-     "preferred IFR route FLL -> BVY: new routing FLL FEALX2 ETECK PELCN Y309 FLRDA SAGGY CHIEZ Q161 KALDA Q97 HEADI YANTC DREEM4 BVY",
-     "preferred IFR route FLL -> LWM: new routing FLL AGERS1 DUCEN Q87 JROSS ELLDE Q97 PAACK JAMIE Q481 DPK DREEM4 LWM",
-     "preferred IFR route FLL -> LWM: new routing FLL FEALX2 ETECK PELCN Y309 FLRDA SAGGY CHIEZ Q161 KALDA Q97 HEADI YANTC DREEM4 LWM",
-     "preferred IFR route FLL -> MHT: new routing FLL AGERS1 DUCEN Q87 JROSS ELLDE Q97 PAACK JAMIE Q133 JFK LLUND SMYTH ROZZE3 MHT",
-     "preferred IFR route FLL -> MHT: new routing FLL FEALX2 ETECK GRUBR Y299 SEELO WAALT Q131 EARZZ JAMIE Q133 JFK LLUND SMYTH ROZZE3 MHT",
-     "preferred IFR route MSP -> FLL: new routing MSP TOTTZ1 ALO IRK STL Q19 HITMN ACORI TEEKY4 FLL",
-     "preferred IFR route PHL -> FLL: new routing PHL OOD TEBEE HAYDO TRPOD Q409 CRPLR PAACK Q97 KENLL TARPN3 FLL",
-     "preferred IFR route PHL -> FLL: new routing PHL OOD TEBEE HAYDO TRPOD Q409 CRPLR PAACK Q97 PRMUS CUUDA3 FLL"
+     "preferred IFR route CLE -> FLL: new routing CLE CAVVS6 APE Q149 BURGG QUIWE Q93 PRMUS CUUDA3 FLL; aircraft none -> JETS ONLY, EXCLUDES EA50, E50P, SF50, C510, C5258/3/2026   RNAV 1 - DME/DME/IRU OR GPS; area none -> FROM CLE,CGF,LNN,LPR  TO FLL, OPF",
+     "preferred IFR route FLL -> BED: new routing FLL AGERS1 DUCEN Q87 JROSS JOHAR Q109 DFENC SAWED Q97 CCC YANTC DREEM4 BED; aircraft RNAV 1 - DME/DME/IRU OR GPS -> JETS ONLY, RNAV 1-DME/DME/IRU OR GPS",
+     "preferred IFR route FLL -> BED: new routing FLL FEALX2 ETECK PELCN Y309 FLRDA SAGGY CHIEZ Q161 KALDA Q97 HEADI YANTC DREEM4 BED; aircraft RNAV 1-DME/DME/IRU OR GPS -> JETS ONLY, RNAV 1-DME/DME/IRU OR GPS",
+     "preferred IFR route FLL -> BVY: new routing FLL FEALX2 ETECK PELCN Y309 FLRDA SAGGY CHIEZ Q161 KALDA Q97 HEADI YANTC DREEM4 BVY; aircraft RNAV 1 - DME/DME/IRU OR GPS -> JETS ONLY, RNAV 1-DME/DME/IRU OR GPS",
+     "preferred IFR route FLL -> LWM: new routing FLL AGERS1 DUCEN Q87 JROSS ELLDE Q97 PAACK JAMIE Q481 DPK DREEM4 LWM; aircraft RNAV 1 - DME/DME/IRU OR GPS -> JETS ONLY, RNAV 1-DME/DME/IRU OR GPS",
+     "preferred IFR route FLL -> LWM: new routing FLL FEALX2 ETECK PELCN Y309 FLRDA SAGGY CHIEZ Q161 KALDA Q97 HEADI YANTC DREEM4 LWM; aircraft RNAV 1 - DME/DME/IRU OR GPS -> JETS ONLY, RNAV 1-DME/DME/IRU OR GPS",
+     "preferred IFR route FLL -> MHT: new routing FLL AGERS1 DUCEN Q87 JROSS ELLDE Q97 PAACK JAMIE Q133 JFK LLUND SMYTH ROZZE3 MHT; aircraft none -> JETS ONLY, RNAV 1 - DME/DME/IRU OR GPS",
+     "preferred IFR route FLL -> MHT: new routing FLL FEALX2 ETECK GRUBR Y299 SEELO WAALT Q131 EARZZ JAMIE Q133 JFK LLUND SMYTH ROZZE3 MHT; aircraft none -> JETS ONLY, RNAV 1 - DME/DME/IRU OR GPS",
+     "preferred IFR route MSP -> FLL: new routing MSP TOTTZ1 ALO IRK STL Q19 HITMN ACORI TEEKY4 FLL; aircraft JETS ONLY,  RNAV 1 - DME/DME/IRU OR GPS. -> JETS ONLY, RNAV 1 - DME/DME/IRU OR GPS.; area TO FLL,FXE,PMP -> FROM ANE, FCM, MSP STP TO FLL,FXE,PMP",
+     "preferred IFR route PHL -> FLL: new routing PHL OOD TEBEE HAYDO TRPOD Q409 CRPLR PAACK Q97 KENLL TARPN3 FLL; aircraft VLJ/TURBPROP ONLY: INCL EA50,E50P,SF50,C510,C525 -> TURBOPROP EA50, E50P, SF50, C510, C525 AIRCRAFT ONLY,   RNAV 1 - DME/DME/IRU OR GPS",
+     "preferred IFR route PHL -> FLL: new routing PHL OOD TEBEE HAYDO TRPOD Q409 CRPLR PAACK Q97 PRMUS CUUDA3 FLL; aircraft none -> JETS ONLY, EXCLUDES EA50, E50P, SF50, C510, C525  RNAV 1 - DME/DME/IRU OR GPS"
     ]
    }
   ],
@@ -485,12 +485,12 @@
     "summary": "preferred IFR routes: 6 changed",
     "source": "PFR",
     "details": [
-     "preferred IFR route CLE -> HOU: new routing CLE ZAAPA7 SINKR TIIDE Q31 DHART Q33 SWEUP WAPPL7 HOU",
-     "preferred IFR route HOU -> BCT: new routing HOU ELOCO6 LLA HRV SJI J2 DEFUN VUUDU3 BCT",
-     "preferred IFR route HOU -> BCT: new routing HOU ELOCO6 LLA LEV Y290 GAWKS VUUDU3 BCT",
-     "preferred IFR route HOU -> CHS: new routing HOU ELOCO6 LLA HRV SJI J2 DEFUN CABLO ALLMA SAV BAGGY4 CHS",
-     "preferred IFR route HOU -> DJT: new routing HOU ELOCO6 LLA HRV SJI J2 DEFUN VUUDU3 DJT",
-     "preferred IFR route HOU -> DJT: new routing HOU ELOCO6 LLA LEV Y290 GAWKS VUUDU3 DJT"
+     "preferred IFR route CLE -> HOU: new routing CLE ZAAPA7 SINKR TIIDE Q31 DHART Q33 SWEUP WAPPL7 HOU; aircraft RNAV ONLY -> JET & TURBOPROP ACFT. CAPABLE OF 280 KTS OR GREATER ONLY:  RNAV 1 - DME/DME/IRU OR GPS; area FROM CLEVELAND METRO(CLE,CGF,BKL,LNN,LPR) -> FROM CLE,CGF,LNN,LPR",
+     "preferred IFR route HOU -> BCT: new routing HOU ELOCO6 LLA HRV SJI J2 DEFUN VUUDU3 BCT; aircraft none -> JET ONLY, RNAV 1 - DME/DME/IRU OR GPS.; area none -> TO 06FA, BCT, F45, DJT, SUA",
+     "preferred IFR route HOU -> BCT: new routing HOU ELOCO6 LLA LEV Y290 GAWKS VUUDU3 BCT; aircraft none -> JET ONLY, RNAV 1 - DME/DME/IRU OR GPS.; area none -> TO 06FA, BCT, F45, DJT, SUA",
+     "preferred IFR route HOU -> CHS: new routing HOU ELOCO6 LLA HRV SJI J2 DEFUN CABLO ALLMA SAV BAGGY4 CHS; aircraft none -> RNAV 1 - DME/DME/IRU OR GPS; area none -> TO CHS JZI",
+     "preferred IFR route HOU -> DJT: new routing HOU ELOCO6 LLA HRV SJI J2 DEFUN VUUDU3 DJT; aircraft none -> JET ONLY, RNAV 1 - DME/DME/IRU OR GPS.; area none -> TO 06FA, BCT, F45, DJT, SUA",
+     "preferred IFR route HOU -> DJT: new routing HOU ELOCO6 LLA LEV Y290 GAWKS VUUDU3 DJT; aircraft none -> JET ONLY, RNAV 1 - DME/DME/IRU OR GPS.; area none -> TO 06FA, BCT, F45, DJT, SUA"
     ]
    }
   ],
@@ -513,11 +513,11 @@
     "summary": "preferred IFR routes: 5 changed",
     "source": "PFR",
     "details": [
-     "preferred IFR route IAD -> BED: new routing IAD WOOLY2 SWANN BROSS Q419 DPK DREEM4 BED",
-     "preferred IFR route IAD -> MHT: new routing IAD JCOBY4 SWANN BROSS Q419 RBV Q22 LLUND SMYTH ROZZE3 MHT",
+     "preferred IFR route IAD -> BED: new routing IAD WOOLY2 SWANN BROSS Q419 DPK DREEM4 BED; aircraft RNAV 1 - DME/DME/IRU OR GPS -> JETS ONLY, RNAV 1-DME/DME/IRU OR GPS",
+     "preferred IFR route IAD -> MHT: new routing IAD JCOBY4 SWANN BROSS Q419 RBV Q22 LLUND SMYTH ROZZE3 MHT; aircraft PART 121 AND 129 ONLY -> PART 121 AND 129 JETS ONLY:  RNAV 1 - DME/DME/IRU OR GPS",
      "preferred IFR route IAD -> MYR: new routing IAD JCOBY4 SCOOB KTEEE TORST1 MYR",
-     "preferred IFR route IAD -> MYR: new routing IAD JDUBB4 RRSIN GSO Q75 SLOJO BRDWK1 MYR",
-     "preferred IFR route MSP -> IAD: new routing MSP SNUPE1 DLL J34 DJB MGW GIBBZ6 IAD"
+     "preferred IFR route IAD -> MYR: new routing IAD JDUBB4 RRSIN GSO Q75 SLOJO BRDWK1 MYR; aircraft none -> JETS ONLY, RNAV 1 - DME/DME/IRU OR GPS.; area FROM DCA,DAA,IAD,JYO,MRB,OKV -> FROM DCA,DAA,IAD,JYO,MRB,OKV   TO CRE GGE MYR",
+     "preferred IFR route MSP -> IAD: new routing MSP SNUPE1 DLL J34 DJB MGW GIBBZ6 IAD; aircraft JETS ONLY,  RNAV 1 - DME/DME/IRU OR GPS. -> JETS ONLY: RNAV 1 - DME/DME/IRU OR GPS; area TO JYO, IAD, HEF -> FROM ANE, FCM, MSP STP TO HEF, IAD, JYO"
     ]
    }
   ],
@@ -563,17 +563,17 @@
     "summary": "preferred IFR routes: 12 changed",
     "source": "PFR",
     "details": [
-     "preferred IFR route CLE -> IAH: new routing CLE ZAAPA7 SINKR TIIDE Q31 DHART Q33 SWEUP GESNR2 IAH",
-     "preferred IFR route CLE -> IAH: new routing CLE ZAAPA7 SINKR TIIDE Q31 DHART Q33 SWEUP ZEEKK3 IAH",
-     "preferred IFR route IAH -> BCT: new routing IAH GUMBY3 GUSTI AWDAD SJI J2 DEFUN VUUDU3 BCT",
+     "preferred IFR route CLE -> IAH: new routing CLE ZAAPA7 SINKR TIIDE Q31 DHART Q33 SWEUP GESNR2 IAH; aircraft RNAV ONLY -> JET & TURBOPROP ACFT. ONLY:  RNAV 1 - DME/DME/IRU OR GPS; area FROM CLEVELAND METRO(CLE,CGF,BKL,LNN,LPR) -> FROM CLE,CGF,LNN,LPR",
+     "preferred IFR route CLE -> IAH: new routing CLE ZAAPA7 SINKR TIIDE Q31 DHART Q33 SWEUP ZEEKK3 IAH; aircraft RNAV ONLY -> JET & TURBOPROP ACFT. CAPABLE OF 280 KTS OR GREATER ONLY:  RNAV 1 - DME/DME/IRU OR GPS; area FROM CLEVELAND METRO(CLE,CGF,BKL,LNN,LPR) -> FROM CLE,CGF,LNN,LPR",
+     "preferred IFR route IAH -> BCT: new routing IAH GUMBY3 GUSTI AWDAD SJI J2 DEFUN VUUDU3 BCT; aircraft none -> JET ONLY, RNAV 1 - DME/DME/IRU OR GPS.; area none -> TO 06FA, BCT, F45, DJT, SUA",
      "preferred IFR route IAH -> BCT: new routing IAH GUMBY3 LLA LEV Y290 GAWKS VUUDU3 BCT",
-     "preferred IFR route IAH -> BCT: new routing IAH MMUGS4 GUSTI AWDAD SJI J2 DEFUN VUUDU3 BCT",
+     "preferred IFR route IAH -> BCT: new routing IAH MMUGS4 GUSTI AWDAD SJI J2 DEFUN VUUDU3 BCT; aircraft none -> JET ONLY, RNAV 1 - DME/DME/IRU OR GPS.; area none -> TO 06FA, BCT, F45, DJT, SUA",
      "preferred IFR route IAH -> BCT: new routing IAH MMUGS4 LLA LEV Y290 GAWKS VUUDU3 BCT",
-     "preferred IFR route IAH -> CHS: new routing IAH GUMBY3 GUSTI SJI J2 DEFUN CABLO ALLMA SAV BAGGY4 CHS",
-     "preferred IFR route IAH -> CHS: new routing IAH MMUGS4 GUSTI SJI J2 DEFUN CABLO ALLMA SAV BAGGY4 CHS",
-     "preferred IFR route IAH -> DJT: new routing IAH GUMBY3 GUSTI AWDAD SJI J2 DEFUN VUUDU3 DJT",
+     "preferred IFR route IAH -> CHS: new routing IAH GUMBY3 GUSTI SJI J2 DEFUN CABLO ALLMA SAV BAGGY4 CHS; aircraft none -> RNAV 1 - DME/DME/IRU OR GPS; area none -> TO CHS JZI",
+     "preferred IFR route IAH -> CHS: new routing IAH MMUGS4 GUSTI SJI J2 DEFUN CABLO ALLMA SAV BAGGY4 CHS; aircraft none -> RNAV 1 - DME/DME/IRU OR GPS; area none -> TO CHS JZI",
+     "preferred IFR route IAH -> DJT: new routing IAH GUMBY3 GUSTI AWDAD SJI J2 DEFUN VUUDU3 DJT; aircraft none -> JET ONLY, RNAV 1 - DME/DME/IRU OR GPS.; area none -> TO 06FA, BCT, F45, DJT, SUA",
      "preferred IFR route IAH -> DJT: new routing IAH GUMBY3 LLA LEV Y290 GAWKS VUUDU3 DJT",
-     "preferred IFR route IAH -> DJT: new routing IAH MMUGS4 GUSTI AWDAD SJI J2 DEFUN VUUDU3 DJT",
+     "preferred IFR route IAH -> DJT: new routing IAH MMUGS4 GUSTI AWDAD SJI J2 DEFUN VUUDU3 DJT; aircraft none -> JET ONLY, RNAV 1 - DME/DME/IRU OR GPS.; area none -> TO 06FA, BCT, F45, DJT, SUA",
      "preferred IFR route IAH -> DJT: new routing IAH MMUGS4 LLA LEV Y290 GAWKS VUUDU3 DJT"
     ]
    }
@@ -587,16 +587,16 @@
     "summary": "preferred IFR routes: 9 changed, 1 removed",
     "source": "PFR",
     "details": [
-     "preferred IFR route CLE -> JFK: new routing CLE PFLYD1 JASEE HOXIE Q476 WLKES PUCKY1 JFK",
+     "preferred IFR route CLE -> JFK via CLE PFLYD1 JASEE HOXIE Q476 WLKES PUCKY1 JFK: aircraft RNAV 1-DME/DME/IRU OR GPS, 250KTS OR GREATER -> JET & TURBOPROP ACFT. CAPABLE OF 250 KTS OR GREATER ONLY:  RNAV 1 - DME/DME/IRU OR GPS; area CLE METRO ONLY (KCLE) -> TO FRG, JFK",
      "preferred IFR route JFK -> BED: new routing JFK MERIT HFD DREEM4 BED",
-     "preferred IFR route JFK -> BWI: new routing JFK RBV Q430 COPES Q75 MXE V378 NUGGY TRISH5 BWI",
+     "preferred IFR route JFK -> BWI: new routing JFK RBV Q430 COPES Q75 MXE V378 NUGGY TRISH5 BWI; aircraft none -> JET ONLY, RNAV 1 - DME/DME/IRU OR GPS.; area none -> TO BWI, MTN",
      "preferred IFR route JFK -> DET: new routing JFK GAYEL Q818 WOZEE COLTS GIGGY3 DET",
-     "preferred IFR route JFK -> IND: discontinued",
-     "preferred IFR route JFK -> IND: new routing JFK RBV Q430 SAAME BRNAN Q42 HIDON RINTE SNKPT2 IND",
+     "preferred IFR route JFK -> IND via JFK RBV Q430 AIR J80 RINTE SNKPT2 IND: discontinued",
+     "preferred IFR route JFK -> IND via JFK RBV Q430 SAAME BRNAN Q42 HIDON RINTE SNKPT2 IND: aircraft none -> RNAV 1- DME/DME/IRU OR GPS",
      "preferred IFR route JFK -> LWM: new routing JFK MERIT HFD DREEM4 LWM",
-     "preferred IFR route JFK -> MHT: new routing JFK GREKI JUDDS MARTN QUINZ ROZZE3 MHT",
-     "preferred IFR route JFK -> SLC: new routing JFK GAYEL Q818 WOZEE Q935 HOCKE BAE DBQ FOD ONL J94 BFF CKW CARTR2 SLC",
-     "preferred IFR route MSP -> JFK: new routing MSP SNUPE1 DLL HASTE DAFLU J70 JHW Q476 WLKES PUCKY1 JFK"
+     "preferred IFR route JFK -> MHT: new routing JFK GREKI JUDDS MARTN QUINZ ROZZE3 MHT; aircraft DME/DME/IRU OR GNSS REQUIRED -> JETS ONLY, RNAV 1 - DME/DME/IRU OR GPS; hours 1100-0300 -> none",
+     "preferred IFR route JFK -> SLC: new routing JFK GAYEL Q818 WOZEE Q935 HOCKE BAE DBQ FOD ONL J94 BFF CKW CARTR2 SLC; aircraft none -> JETS ONLY, RNAV 1 GPS",
+     "preferred IFR route MSP -> JFK: new routing MSP SNUPE1 DLL HASTE DAFLU J70 JHW Q476 WLKES PUCKY1 JFK; aircraft RNAV 1 - DME/DME/IRU OR GPS,  250KTS OR GREATER -> RNAV 1 - DME/DME/IRU OR GPS; area none -> FROM  ANE, FCM, MSP STP  TO FRG, JFK"
     ]
    }
   ],
@@ -609,8 +609,8 @@
     "summary": "preferred IFR routes: 2 changed",
     "source": "PFR",
     "details": [
-     "preferred IFR route CLE -> LAS: new routing CLE GTLKE6 YABRO EDENS LEFAM HBU DVC TYEGR CHOWW4 LAS",
-     "preferred IFR route CLE -> LAS: new routing CLE GTLKE6 YABRO IOW J60 HVE GGAPP CHOWW4 LAS"
+     "preferred IFR route CLE -> LAS: new routing CLE GTLKE6 YABRO EDENS LEFAM HBU DVC TYEGR CHOWW4 LAS; aircraft none -> JETS ONLY:  RNAV 1 - DME/DME/IRU OR GPS; area FROM CLEVELAND METRO(CLE,CGF,BKL,LNN,LPR) -> FROM CLE,CGF,LNN,LPR",
+     "preferred IFR route CLE -> LAS: new routing CLE GTLKE6 YABRO IOW J60 HVE GGAPP CHOWW4 LAS; aircraft none -> JETS ONLY: RNAV 1 - DME/DME/IRU OR GPS; area FROM CLEVELAND METRO(CLE,CGF,BKL,LNN,LPR) -> FROM CLE,CGF,LNN,LPR"
     ]
    }
   ],
@@ -623,7 +623,7 @@
     "summary": "preferred IFR routes: 1 changed",
     "source": "PFR",
     "details": [
-     "preferred IFR route CLE -> LAX: new routing CLE GTLKE6 YABRO IOW HVE PROMT Q88 HAKMN ANJLL4 LAX"
+     "preferred IFR route CLE -> LAX: new routing CLE GTLKE6 YABRO IOW HVE PROMT Q88 HAKMN ANJLL4 LAX; aircraft RNAV ONLY -> RNAV 1 - DME/DME/IRU OR GPS; area FROM CLEVELAND METRO(CLE,CGF,BKL,LNN,LPR) -> FROM CLE,CGF,LNN,LPR"
     ]
    }
   ],
@@ -636,19 +636,19 @@
     "summary": "preferred IFR routes: 12 changed, 1 removed",
     "source": "PFR",
     "details": [
-     "preferred IFR route CLE -> LGA: new routing CLE PFLYD1 MAAJR ETG MIP4 LGA",
+     "preferred IFR route CLE -> LGA via CLE PFLYD1 MAAJR ETG MIP4 LGA: aircraft RNAV ONLY -> ACFT. CAPABLE OF 210 KTS OR GREATER:  RNAV ONLY:  RNAV 1 - DME/DME/IRU OR GPS; area KCLE ONLY -> none",
      "preferred IFR route LGA -> BED: new routing LGA MERIT HFD DREEM4 BED",
      "preferred IFR route LGA -> BVY: new routing LGA MERIT HFD DREEM4 BVY",
-     "preferred IFR route LGA -> BWI: new routing LGA BIGGY Q75 MXE V378 NUGGY TRISH5 BWI",
-     "preferred IFR route LGA -> BWI: new routing LGA BIGGY V3 MXE V378 NUGGY TRISH5 BWI",
-     "preferred IFR route LGA -> IND: discontinued",
-     "preferred IFR route LGA -> IND: new routing LGA ZIMMZ Q42 HIDON RINTE SNKPT2 IND",
+     "preferred IFR route LGA -> BWI: new routing LGA BIGGY Q75 MXE V378 NUGGY TRISH5 BWI; aircraft none -> JET ONLY, RNAV 1 - DME/DME/IRU OR GPS.; area none -> TO BWI, MTN",
+     "preferred IFR route LGA -> BWI: new routing LGA BIGGY V3 MXE V378 NUGGY TRISH5 BWI; aircraft TURBOJETS ONLY -> JET ONLY, RNAV 1 - DME/DME/IRU OR GPS.; area none -> TO BWI, MTN",
+     "preferred IFR route LGA -> IND via LGA NEWEL J60 DANNR RAV J64 CASIO RINTE SNKPT2 IND: discontinued",
+     "preferred IFR route LGA -> IND via LGA ZIMMZ Q42 HIDON RINTE SNKPT2 IND: aircraft TURBOJETS -> RNAV 1- DME/DME/IRU OR GPS; altitude AOA FL260 -> none",
      "preferred IFR route LGA -> LWM: new routing LGA MERIT HFD DREEM4 LWM",
-     "preferred IFR route LGA -> MHT: new routing LGA GREKI JUDDS MARTN QUINZ ROZZE3 MHT",
-     "preferred IFR route LGA -> MHT: new routing LGA MERIT HFD CRIBB ROZZE3 MHT",
-     "preferred IFR route LGA -> MYR: new routing LGA WHITE Q409 CRPLR KTEEE TORST1 MYR",
-     "preferred IFR route LGA -> SLC: new routing LGA GAYEL Q818 WOZEE Q935 HOCKE BAE DBQ FOD ONL J94 BFF CKW CARTR2 SLC",
-     "preferred IFR route MSP -> LGA: new routing MSP SNUPE1 DLL GERBS Q186 WEVEL ETG MIP4 LGA"
+     "preferred IFR route LGA -> MHT: new routing LGA GREKI JUDDS MARTN QUINZ ROZZE3 MHT; aircraft JETS ONLY -> JETS ONLY, RNAV 1 - DME/DME/IRU OR GPS; altitude FL190 AND ABOVE -> AT OR ABOVE FL190; hours 1100-0300 -> none",
+     "preferred IFR route LGA -> MHT: new routing LGA MERIT HFD CRIBB ROZZE3 MHT; aircraft JETS ONLY -> JETS ONLY, RNAV 1 - DME/DME/IRU OR GPS; hours 1100-0300 -> none",
+     "preferred IFR route LGA -> MYR: new routing LGA WHITE Q409 CRPLR KTEEE TORST1 MYR; aircraft none -> RNAV 1 - DME/DME/IRU OR GPS; area none -> TO CRE GGE MYR",
+     "preferred IFR route LGA -> SLC: new routing LGA GAYEL Q818 WOZEE Q935 HOCKE BAE DBQ FOD ONL J94 BFF CKW CARTR2 SLC; aircraft none -> JETS ONLY, RNAV 1 GPS",
+     "preferred IFR route MSP -> LGA: new routing MSP SNUPE1 DLL GERBS Q186 WEVEL ETG MIP4 LGA; aircraft none -> RNAV 1 - DME/DME/IRU OR GPS; area none -> FROM ANE, FCM, MSP STP"
     ]
    }
   ],
@@ -661,22 +661,6 @@
     "summary": "new remark: Prior permission required vertipad. Call airfield operations 407-825-2036 to execute letter of agreement no less than 21 days in advance.",
     "source": "APT_RMK",
     "original": "PPR VERTIPAD. CALL AIRFIELD OPS 407-825-2036 TO EXCT LOA NO LESS THAN 21 DAYS IN ADVN."
-   },
-   {
-    "id": "51a9accd865b",
-    "priority": "action",
-    "category": "remark",
-    "kind": "changed",
-    "summary": "revised remark: Pilots conducting Enhanced Flight Vision Systems operations; be aware Light Emitting Diode Approach Light System in use runway 18R.",
-    "source": "APT_RMK",
-    "original": "PILOTS CONDUCTING EFVS OPS; BE AWARE LED ALS IN USE RWY 18R.",
-    "fields": [
-     {
-      "field": "REMARK",
-      "old": "24 HR PPR FOR ACFT EQUIPPED WITH WEATHER MODIFICATION OR GEOENGINEERING EQPT 407-825-2036.",
-      "new": "PILOTS CONDUCTING EFVS OPS; BE AWARE LED ALS IN USE RWY 18R."
-     }
-    ]
    },
    {
     "id": "29095d26ef9e",
@@ -731,16 +715,16 @@
      "new preferred IFR route IND -> MCO: IND DAWNN1 IIU Q79 THRSR ZJAYX GRNCH5 MCO",
      "new preferred IFR route OKC -> MCO: OKC RDHWK3 HOLLE LITTR MGMRY DEEDA GRNCH5 MCO",
      "new preferred IFR route TYS -> MCO: TYS THRSR ZJAYX GRNCH5 MCO",
-     "preferred IFR route CLE -> MCO: new routing CLE KKIDS1 NUSMM RICCS Q103 SLOJO EFFAY Q83 ROYCO Q85 LPERD GTOUT1 MCO",
-     "preferred IFR route CMH -> MCO: new routing CMH OHIOS DANCO Q103 SLOJO EFFAY Q83 ROYCO Q85 LPERD GTOUT1 MCO",
-     "preferred IFR route DTW -> MCO: new routing DTW CLVIN3 STAZE VXV THRSR ZJAYX GRNCH5 MCO",
-     "preferred IFR route MCO -> BED: new routing MCO FATHE4 VIYAP Q87 JROSS JOHAR Q109 DFENC SAWED Q97 CCC YANTC DREEM4 BED",
-     "preferred IFR route MCO -> BED: new routing MCO MZULO3 ETECK PELCN Y309 FLRDA SAGGY CHIEZ Q161 KALDA Q97 HEADI YANTC DREEM4 BED",
-     "preferred IFR route MCO -> MHT: new routing MCO MZULO3 LENDS GRUBR Y299 SEELO WAALT Q131 EARZZ JAMIE Q133 JFK LLUND SMYTH ROZZE3 MHT",
+     "preferred IFR route CLE -> MCO: new routing CLE KKIDS1 NUSMM RICCS Q103 SLOJO EFFAY Q83 ROYCO Q85 LPERD GTOUT1 MCO; aircraft none -> JETS ONLY, RNAV 1 - DME/DME/IRU OR GPS.; area none -> FROM CLE, CGF, LPR, LNN",
+     "preferred IFR route CMH -> MCO: new routing CMH OHIOS DANCO Q103 SLOJO EFFAY Q83 ROYCO Q85 LPERD GTOUT1 MCO; aircraft none -> JETS ONLY, RNAV 1 - DME/DME/IRU OR GPS.",
+     "preferred IFR route DTW -> MCO: new routing DTW CLVIN3 STAZE VXV THRSR ZJAYX GRNCH5 MCO; aircraft none -> JETS ONLY, RNAV 1 - DME/DME/IRU OR GPS.; area none -> FROM ARB, DET, DTW, MTC, ONZ, OZW, PTK, TTF, VLL, YIP",
+     "preferred IFR route MCO -> BED: new routing MCO FATHE4 VIYAP Q87 JROSS JOHAR Q109 DFENC SAWED Q97 CCC YANTC DREEM4 BED; aircraft RNAV 1 - DME/DME/IRU OR GPS -> JETS ONLY, RNAV 1-DME/DME/IRU OR GPS",
+     "preferred IFR route MCO -> BED: new routing MCO MZULO3 ETECK PELCN Y309 FLRDA SAGGY CHIEZ Q161 KALDA Q97 HEADI YANTC DREEM4 BED; aircraft RNAV 1 - DME/DME/IRU OR GPS -> JETS ONLY, RNAV 1-DME/DME/IRU OR GPS",
+     "preferred IFR route MCO -> MHT: new routing MCO MZULO3 LENDS GRUBR Y299 SEELO WAALT Q131 EARZZ JAMIE Q133 JFK LLUND SMYTH ROZZE3 MHT; aircraft none -> JETS ONLY, RNAV 1 - DME/DME/IRU OR GPS",
      "preferred IFR route MEM -> MCO: new routing MEM BBKNG7 KERMI VLKNN MGMRY DEEDA GRNCH5 MCO",
      "preferred IFR route MKE -> MCO: new routing MKE OBK DELHI TTH RAMRD JILIS DEEDA GRNCH5 MCO",
-     "preferred IFR route MSP -> MCO: new routing MSP ZMBRO1 BRIBE ENL PLESS Q19 HITMN DEEDA GRNCH5 MCO",
-     "preferred IFR route STL -> MCO: new routing STL DRUSE5 BNA DEEDA GRNCH5 MCO"
+     "preferred IFR route MSP -> MCO: new routing MSP ZMBRO1 BRIBE ENL PLESS Q19 HITMN DEEDA GRNCH5 MCO; aircraft none -> JETS ONLY, RNAV 1 - DME/DME/IRU OR GPS.; area none -> FROM ANE, FCM, MSP STP",
+     "preferred IFR route STL -> MCO: new routing STL DRUSE5 BNA DEEDA GRNCH5 MCO; aircraft none -> JETS ONLY, RNAV 1 - DME/DME/IRU OR GPS."
     ]
    }
   ],
@@ -753,11 +737,11 @@
     "summary": "preferred IFR routes: 5 changed",
     "source": "PFR",
     "details": [
-     "preferred IFR route CLE -> MDW: new routing CLE GTLKE6 BAGEL PANGG7 MDW",
-     "preferred IFR route MDW -> BCT: new routing MDW DENNT DARCY DREGS DUMGE SCOTO SWAPP Q79 ZPLEN VUUDU3 BCT",
-     "preferred IFR route MDW -> DJT: new routing MDW DENNT DARCY DREGS DUMGE SCOTO SWAPP Q79 ZPLEN VUUDU3 DJT",
-     "preferred IFR route MDW -> MHT: new routing MDW LEWKE GIJ EVOTE NELLS KEEHO JHW Q82 PONCT ROZZE3 MHT",
-     "preferred IFR route MSP -> MDW: new routing MSP TOTTZ1 OHHMY ENDEE8 MDW"
+     "preferred IFR route CLE -> MDW: new routing CLE GTLKE6 BAGEL PANGG7 MDW; aircraft RNAV ONLY -> RNAV 1 - DME/DME/IRU OR GPS; area FROM CLEVELAND METRO(CLE,CGF,BKL,LNN,LPR) -> FROM CLE,CGF,LNN,LPR  TO 05C, IGQ, 3HO, GYY, MDW",
+     "preferred IFR route MDW -> BCT: new routing MDW DENNT DARCY DREGS DUMGE SCOTO SWAPP Q79 ZPLEN VUUDU3 BCT; aircraft none -> JET ONLY, RNAV 1 - DME/DME/IRU OR GPS.; area none -> TO 06FA, BCT, F45, DJT, SUA",
+     "preferred IFR route MDW -> DJT: new routing MDW DENNT DARCY DREGS DUMGE SCOTO SWAPP Q79 ZPLEN VUUDU3 DJT; aircraft none -> JET ONLY, RNAV 1 - DME/DME/IRU OR GPS.; area none -> TO 06FA, BCT, F45, DJT, SUA",
+     "preferred IFR route MDW -> MHT: new routing MDW LEWKE GIJ EVOTE NELLS KEEHO JHW Q82 PONCT ROZZE3 MHT; aircraft DME/DME/IRU OR GNSS REQUIRED -> JETS ONLY, RNAV 1 - DME/DME/IRU OR GPS; hours 1100-0300 -> none",
+     "preferred IFR route MSP -> MDW: new routing MSP TOTTZ1 OHHMY ENDEE8 MDW; aircraft TURBOJET -> RNAV 1 - DME/DME/IRU OR GPS; area none -> FROM ANE, FCM, MSP STP"
     ]
    }
   ],
@@ -797,9 +781,10 @@
      "preferred IFR route MEM -> BCT: new routing MEM PIEPE6 IBUFY DEFUN VUUDU3 BCT",
      "preferred IFR route MEM -> DJT: new routing MEM PIEPE6 IBUFY DEFUN VUUDU3 DJT",
      "preferred IFR route MEM -> MCO: new routing MEM BBKNG7 KERMI VLKNN MGMRY DEEDA GRNCH5 MCO",
-     "preferred IFR route MSP -> MEM: discontinued",
-     "preferred IFR route MSP -> MEM: new routing MSP TOTTZ1 ALO IRK WHOLL BRBBQ3 MEM",
-     "preferred IFR route MSP -> MEM: new routing MSP TOTTZ1 ALO J233 STL J151 FAM WHOLL BRBBQ3 MEM"
+     "preferred IFR route MSP -> MEM via MSP RST1 ALO IRK VIH ARG DAWGG2 MEM: discontinued",
+     "preferred IFR route MSP -> MEM via MSP RST1 ALO J233 STL J151 FAM ARG DAWGG2 MEM: discontinued",
+     "preferred IFR route MSP -> MEM: new routing MSP TOTTZ1 ALO IRK WHOLL BRBBQ3 MEM; aircraft TURBOJET -> JETS ONLY, RNAV 1 - DME/DME/IRU OR GPS; area none -> FROM ANE, FCM, MSP STP",
+     "preferred IFR route MSP -> MEM: new routing MSP TOTTZ1 ALO J233 STL J151 FAM WHOLL BRBBQ3 MEM; aircraft TURBOJET -> JETS ONLY, RNAV 1 - DME/DME/IRU OR GPS; area none -> FROM ANE, FCM, MSP STP"
     ]
    }
   ],
@@ -829,13 +814,13 @@
     "summary": "preferred IFR routes: 7 changed",
     "source": "PFR",
     "details": [
-     "preferred IFR route CLE -> MIA: new routing CLE CAVVS6 APE Q149 BURGG QUIWE Q93 DEBRL CSTAL3 MIA",
-     "preferred IFR route MIA -> BED: new routing MIA FOLZZ3 ALYRA PELCN Y309 FLRDA SAGGY CHIEZ Q161 KALDA Q97 HEADI YANTC DREEM4 BED",
-     "preferred IFR route MIA -> BVY: new routing MIA FOLZZ3 ALYRA PELCN Y309 FLRDA SAGGY CHIEZ Q161 KALDA Q97 HEADI YANTC DREEM4 BVY",
-     "preferred IFR route MIA -> LWM: new routing MIA FOLZZ3 ALYRA PELCN Y309 FLRDA SAGGY CHIEZ Q161 KALDA Q97 HEADI YANTC DREEM4 LWM",
-     "preferred IFR route MIA -> MHT: new routing MIA FOLZZ3 ALYRA GRUBR Y299 SEELO WAALT Q131 EARZZ JAMIE Q133 JFK LLUND SMYTH ROZZE3 MHT",
-     "preferred IFR route MSP -> MIA: new routing MSP TOTTZ1 ALO J233 SKBOZ Q19 HITMN ACORI FROGZ5 MIA",
-     "preferred IFR route PHL -> MIA: new routing PHL OOD TEBEE HAYDO TRPOD Q409 CRPLR PAACK Q97 DEBRL CSTAL3 MIA"
+     "preferred IFR route CLE -> MIA: new routing CLE CAVVS6 APE Q149 BURGG QUIWE Q93 DEBRL CSTAL3 MIA; aircraft none -> JETS ONLY, EXCLUDES EA50, E50P, SF50, C510, C525:  RNAV 1 - DME/DME/IRU OR GPS; area none -> FROM CLE,CGF,LNN,LPR  TO 07FA,HST,MIA,TMB,X51",
+     "preferred IFR route MIA -> BED: new routing MIA FOLZZ3 ALYRA PELCN Y309 FLRDA SAGGY CHIEZ Q161 KALDA Q97 HEADI YANTC DREEM4 BED; aircraft RNAV 1 - DME/DME/IRU OR GPS -> JETS ONLY, RNAV 1-DME/DME/IRU OR GPS",
+     "preferred IFR route MIA -> BVY: new routing MIA FOLZZ3 ALYRA PELCN Y309 FLRDA SAGGY CHIEZ Q161 KALDA Q97 HEADI YANTC DREEM4 BVY; aircraft RNAV 1 - DME/DME/IRU OR GPS -> JETS ONLY, RNAV 1-DME/DME/IRU OR GPS",
+     "preferred IFR route MIA -> LWM: new routing MIA FOLZZ3 ALYRA PELCN Y309 FLRDA SAGGY CHIEZ Q161 KALDA Q97 HEADI YANTC DREEM4 LWM; aircraft RNAV 1 - DME/DME/IRU OR GPS -> JETS ONLY, RNAV 1-DME/DME/IRU OR GPS",
+     "preferred IFR route MIA -> MHT: new routing MIA FOLZZ3 ALYRA GRUBR Y299 SEELO WAALT Q131 EARZZ JAMIE Q133 JFK LLUND SMYTH ROZZE3 MHT; aircraft none -> JETS ONLY, RNAV 1 - DME/DME/IRU OR GPS",
+     "preferred IFR route MSP -> MIA: new routing MSP TOTTZ1 ALO J233 SKBOZ Q19 HITMN ACORI FROGZ5 MIA; area TO 07FA,HST,MIA,TMB,X51 -> FROM ANE, FCM, MSP STP TO 07FA,HST,MIA,TMB,X51",
+     "preferred IFR route PHL -> MIA: new routing PHL OOD TEBEE HAYDO TRPOD Q409 CRPLR PAACK Q97 DEBRL CSTAL3 MIA; aircraft none -> JETS ONLY, EXCLUDES EA50, E50P, SF50, C510, C525  RNAV 1 - DME/DME/IRU OR GPS"
     ]
    }
   ],
@@ -927,51 +912,53 @@
     "summary": "preferred IFR routes: 42 changed, 5 removed",
     "source": "PFR",
     "details": [
-     "preferred IFR route CLE -> MSP: new routing CLE GTLKE6 ALPHE J34 VIO KAMMA KKILR4 MSP",
-     "preferred IFR route MSP -> ATL: new routing MSP ZMBRO1 BRIBE ENL PLESS J45 BNA NEWBB IHAVE MTHEW CHPPR1 ATL",
-     "preferred IFR route MSP -> BCT: new routing MSP TOTTZ1 ALO IRK J45 DENNI Q19 HITMN ACORI VUUDU3 BCT",
-     "preferred IFR route MSP -> BED: new routing MSP NRTHN1 TTOWN DAYYY Q140 HANKK PONCT EEGUL ZELKA2 BED",
-     "preferred IFR route MSP -> BNA: new routing MSP ZMBRO1 BRIBE ENL SOKOL RYYMN4 BNA",
-     "preferred IFR route MSP -> BOS: new routing MSP NRTHN1 TTOWN DAYYY Q140 HANKK PONCT JFUND2 BOS",
-     "preferred IFR route MSP -> BWI: new routing MSP SNUPE1 DLL J34 DJB NUSMM ANTHM5 BWI",
-     "preferred IFR route MSP -> CLE: new routing MSP SNUPE1 DLL J34 BAE OLYEE BRWNZ4 CLE",
-     "preferred IFR route MSP -> DCA: discontinued",
-     "preferred IFR route MSP -> DCA: new routing MSP SNUPE1 DLL J34 BUCKO FRDMM7 DCA",
-     "preferred IFR route MSP -> DEN: new routing MSP SNOWZ1 LLUKY PORDR AALLE4 DEN",
-     "preferred IFR route MSP -> DET: new routing MSP SNUPE1 DLL BAE WEBOR RRALF3 DET",
-     "preferred IFR route MSP -> DFW: new routing MSP SNOWZ1 ZZEEE OVR J21 ICT HOFFF JOVEM6 DFW",
-     "preferred IFR route MSP -> DFW: new routing MSP SNOWZ1 ZZEEE OVR J21 IRW IBAKE VKTRY2 DFW",
-     "preferred IFR route MSP -> DJT: new routing MSP TOTTZ1 ALO STL Q19 HITMN ACORI VUUDU3 DJT",
-     "preferred IFR route MSP -> DTW: new routing MSP SNUPE1 DLL PORZL KKISS2 DTW",
-     "preferred IFR route MSP -> DTW: new routing MSP SNUPE1 DLL PORZL RKCTY2 DTW",
-     "preferred IFR route MSP -> EWR: new routing MSP ZMBRO1 BRIBE KG72M EVOTE NELLS KEEHO J584 SLT FQM3 EWR",
-     "preferred IFR route MSP -> FLL: new routing MSP TOTTZ1 ALO IRK STL Q19 HITMN ACORI TEEKY4 FLL",
-     "preferred IFR route MSP -> IAD: new routing MSP SNUPE1 DLL J34 DJB MGW GIBBZ6 IAD",
-     "preferred IFR route MSP -> JFK: new routing MSP SNUPE1 DLL HASTE DAFLU J70 JHW Q476 WLKES PUCKY1 JFK",
-     "preferred IFR route MSP -> LGA: new routing MSP SNUPE1 DLL GERBS Q186 WEVEL ETG MIP4 LGA",
-     "preferred IFR route MSP -> MCO: new routing MSP ZMBRO1 BRIBE ENL PLESS Q19 HITMN DEEDA GRNCH5 MCO",
-     "preferred IFR route MSP -> MDW: new routing MSP TOTTZ1 OHHMY ENDEE8 MDW",
-     "preferred IFR route MSP -> MEM: discontinued",
-     "preferred IFR route MSP -> MEM: new routing MSP TOTTZ1 ALO IRK WHOLL BRBBQ3 MEM",
-     "preferred IFR route MSP -> MEM: new routing MSP TOTTZ1 ALO J233 STL J151 FAM WHOLL BRBBQ3 MEM",
-     "preferred IFR route MSP -> MIA: new routing MSP TOTTZ1 ALO J233 SKBOZ Q19 HITMN ACORI FROGZ5 MIA",
-     "preferred IFR route MSP -> MKE: new routing MSP SNUPE1 DLL BAE MKE",
-     "preferred IFR route MSP -> MKY: new routing MSP ZMBRO1 BRIBE ENL PLESS Q19 BULZI Q81 NICKI PLYER PIKKR7 MKY",
-     "preferred IFR route MSP -> MSN: new routing MSP SNUPE1 DLL MSN",
-     "preferred IFR route MSP -> MYR: new routing MSP ZMBRO1 BRIBE JOT ERECO IIU RYANS VXV SLOJO BRDWK1 MYR",
-     "preferred IFR route MSP -> ORD: discontinued",
-     "preferred IFR route MSP -> ORD: new routing MSP TOTTZ1 ZZIPR FYTTE7 ORD",
-     "preferred IFR route MSP -> ORL: new routing MSP ZMBRO1 BRIBE ENL PLESS Q19 HITMN THRSR ZPLEN MJKAL JAFAR3 ORL",
-     "preferred IFR route MSP -> PHL: new routing MSP SNUPE1 DLL J34 VIO CRL SPYDY EWC JST BOJID4 PHL",
-     "preferred IFR route MSP -> PHX: new routing MSP SNOWZ1 LLUKY PUB ALS GUP EAGUL6 PHX",
-     "preferred IFR route MSP -> RSW: new routing MSP ZMBRO1 BRIBE ENL PLESS Q19 BULZI Q81 NICKI PLYER TYNEE4 RSW",
-     "preferred IFR route MSP -> SFO: new routing MSP BITEZ1 LEINY VKING CZI J32 LLC LEGGS BDEGA4 SFO",
-     "preferred IFR route MSP -> SFO: new routing MSP SNOWZ1 LLUKY CYS J148 OAL INYOE DYAMD5 SFO",
-     "preferred IFR route MSP -> SLC: new routing MSP BITEZ1 LEINY RAP DDY CARTR2 SLC",
-     "preferred IFR route MSP -> SRQ: new routing MSP ZMBRO1 BRIBE ENL PLESS Q19 HITMN ACORI BANGZ2 SRQ",
-     "preferred IFR route MSP -> STL: new routing MSP TOTTZ1 ALO IRK LORLE3 STL",
-     "preferred IFR route MSP -> TEB: new routing MSP SNUPE1 DLL HASTE DAFLU J70 JHW LVZ5 TEB",
-     "preferred IFR route MSP -> TPA: new routing MSP ZMBRO1 BRIBE ENL PLESS Q19 HITMN ACORI MAATY6 TPA"
+     "preferred IFR route CLE -> MSP: new routing CLE GTLKE6 ALPHE J34 VIO KAMMA KKILR4 MSP; aircraft RNAV ONLY -> JETS ONLY:  RNAV 1 - DME/DME/IRU OR GPS; area FROM CLEVELAND METRO(CLE,CGF,BKL,LNN,LPR) -> FROM CLE,CGF,LNN,LPR; hours 1000-0300 -> none",
+     "preferred IFR route MSP -> ATL: new routing MSP ZMBRO1 BRIBE ENL PLESS J45 BNA NEWBB IHAVE MTHEW CHPPR1 ATL; area none -> FROM ANE, FCM, MSP STP",
+     "preferred IFR route MSP -> BCT: new routing MSP TOTTZ1 ALO IRK J45 DENNI Q19 HITMN ACORI VUUDU3 BCT; aircraft none -> JETS ONLY: RNAV 1 - DME/DME/IRU OR GPS; area none -> FROM ANE, FCM, MSP STP TO BCT, DJT, SUA, F45, 06FA",
+     "preferred IFR route MSP -> BED: new routing MSP NRTHN1 TTOWN DAYYY Q140 HANKK PONCT EEGUL ZELKA2 BED; aircraft none -> JET & TURBOPROP ACFT. ONLY:  RNAV 1 - DME/DME/IRU OR GPS; area none -> FROM ANE, FCM, MSP STP TO BED, BVY, LWM",
+     "preferred IFR route MSP -> BNA: new routing MSP ZMBRO1 BRIBE ENL SOKOL RYYMN4 BNA; aircraft JETS - RNAV1 DME/DME/IRU OR GPS -> JETS ONLY: RNAV 1 - DME/DME/IRU OR GPS; area none -> FROM ANE, FCM, MSP STP",
+     "preferred IFR route MSP -> BOS: new routing MSP NRTHN1 TTOWN DAYYY Q140 HANKK PONCT JFUND2 BOS; aircraft none -> JETS ONLY: RNAV 1 - DME/DME/IRU OR GPS; area none -> FROM ANE, FCM, MSP STP",
+     "preferred IFR route MSP -> BWI: new routing MSP SNUPE1 DLL J34 DJB NUSMM ANTHM5 BWI; aircraft TURBOJET -> JETS ONLY: RNAV 1 - DME/DME/IRU OR GPS; area none -> FROM ANE, FCM, MSP STP TO BWI, MTN",
+     "preferred IFR route MSP -> CLE: new routing MSP SNUPE1 DLL J34 BAE OLYEE BRWNZ4 CLE; aircraft RNAV TURBOJET -> RNAV 1 - DME/DME/IRU OR GPS; area TO CLEVELAND METRO(CLE,CGF,BKL,LNN,LPR) -> FROM ANE, FCM, MSP STP TO CLE,CGF,BKL,LNN,LPR",
+     "preferred IFR route MSP -> DCA via MSP COULT7 DLL J34 BUCKO NUMMY3 DCA: discontinued",
+     "preferred IFR route MSP -> DCA: new routing MSP SNUPE1 DLL J34 BUCKO FRDMM7 DCA; aircraft JET ONLY, RNAV 1 - DME/DME/IRU OR GPS. -> JETS ONLY: RNAV 1 - DME/DME/IRU OR GPS; area TO ADW, DAA, DCA -> FROM ANE, FCM, MSP STP TO ADW, DAA, DCA",
+     "preferred IFR route MSP -> DEN: new routing MSP SNOWZ1 LLUKY PORDR AALLE4 DEN; aircraft none -> JETS ONLY: RNAV 1 - DME/DME/IRU OR GPS",
+     "preferred IFR route MSP -> DET: new routing MSP SNUPE1 DLL BAE WEBOR RRALF3 DET; aircraft DME/DME/IRU OR GPS REQUIRED -> RNAV 1 - DME/DME/IRU OR GPS; area TO DETROIT SATS(DET,ARB,PTK,YIP,CYQG) -> FROM ANE, FCM, MSP STP TO DET, ARB, MTC, ONZ, OZW, PTK,TTF, VLL. YIP,CYQG",
+     "preferred IFR route MSP -> DFW: new routing MSP SNOWZ1 ZZEEE OVR J21 ICT HOFFF JOVEM6 DFW; aircraft TURBOJET ONLY -> JETS ONLY: RNAV 1 - DME/DME/IRU OR GPS",
+     "preferred IFR route MSP -> DFW: new routing MSP SNOWZ1 ZZEEE OVR J21 IRW IBAKE VKTRY2 DFW; aircraft TURBOJET -> JETS ONLY: RNAV 1 - DME/DME/IRU OR GPS",
+     "preferred IFR route MSP -> DJT: new routing MSP TOTTZ1 ALO STL Q19 HITMN ACORI VUUDU3 DJT; aircraft none -> JETS ONLY: RNAV 1 - DME/DME/IRU OR GPS; area none -> FROM ANE, FCM, MSP STP TO BCT, DJT, SUA, F45, 06FA",
+     "preferred IFR route MSP -> DTW: new routing MSP SNUPE1 DLL PORZL KKISS2 DTW; aircraft DME/DME/IRU OR GPS REQUIRED -> RNAV 1 - DME/DME/IRU OR GPS; area none -> FROM ANE, FCM, MSP STP",
+     "preferred IFR route MSP -> DTW: new routing MSP SNUPE1 DLL PORZL RKCTY2 DTW; aircraft DME/DME/IRU OR GPS REQUIRED -> RNAV 1 - DME/DME/IRU OR GPS; area none -> FROM ANE, FCM, MSP STP",
+     "preferred IFR route MSP -> EWR: new routing MSP ZMBRO1 BRIBE KG72M EVOTE NELLS KEEHO J584 SLT FQM3 EWR; aircraft JETS -> RNAV 1 - DME/DME/IRU OR GPS; area none -> FROM ANE, FCM, MSP STP",
+     "preferred IFR route MSP -> FLL: new routing MSP TOTTZ1 ALO IRK STL Q19 HITMN ACORI TEEKY4 FLL; aircraft JETS ONLY,  RNAV 1 - DME/DME/IRU OR GPS. -> JETS ONLY, RNAV 1 - DME/DME/IRU OR GPS.; area TO FLL,FXE,PMP -> FROM ANE, FCM, MSP STP TO FLL,FXE,PMP",
+     "preferred IFR route MSP -> IAD: new routing MSP SNUPE1 DLL J34 DJB MGW GIBBZ6 IAD; aircraft JETS ONLY,  RNAV 1 - DME/DME/IRU OR GPS. -> JETS ONLY: RNAV 1 - DME/DME/IRU OR GPS; area TO JYO, IAD, HEF -> FROM ANE, FCM, MSP STP TO HEF, IAD, JYO",
+     "preferred IFR route MSP -> JFK: new routing MSP SNUPE1 DLL HASTE DAFLU J70 JHW Q476 WLKES PUCKY1 JFK; aircraft RNAV 1 - DME/DME/IRU OR GPS,  250KTS OR GREATER -> RNAV 1 - DME/DME/IRU OR GPS; area none -> FROM  ANE, FCM, MSP STP  TO FRG, JFK",
+     "preferred IFR route MSP -> LGA: new routing MSP SNUPE1 DLL GERBS Q186 WEVEL ETG MIP4 LGA; aircraft none -> RNAV 1 - DME/DME/IRU OR GPS; area none -> FROM ANE, FCM, MSP STP",
+     "preferred IFR route MSP -> MCO: new routing MSP ZMBRO1 BRIBE ENL PLESS Q19 HITMN DEEDA GRNCH5 MCO; aircraft none -> JETS ONLY, RNAV 1 - DME/DME/IRU OR GPS.; area none -> FROM ANE, FCM, MSP STP",
+     "preferred IFR route MSP -> MDW: new routing MSP TOTTZ1 OHHMY ENDEE8 MDW; aircraft TURBOJET -> RNAV 1 - DME/DME/IRU OR GPS; area none -> FROM ANE, FCM, MSP STP",
+     "preferred IFR route MSP -> MEM via MSP RST1 ALO IRK VIH ARG DAWGG2 MEM: discontinued",
+     "preferred IFR route MSP -> MEM via MSP RST1 ALO J233 STL J151 FAM ARG DAWGG2 MEM: discontinued",
+     "preferred IFR route MSP -> MEM: new routing MSP TOTTZ1 ALO IRK WHOLL BRBBQ3 MEM; aircraft TURBOJET -> JETS ONLY, RNAV 1 - DME/DME/IRU OR GPS; area none -> FROM ANE, FCM, MSP STP",
+     "preferred IFR route MSP -> MEM: new routing MSP TOTTZ1 ALO J233 STL J151 FAM WHOLL BRBBQ3 MEM; aircraft TURBOJET -> JETS ONLY, RNAV 1 - DME/DME/IRU OR GPS; area none -> FROM ANE, FCM, MSP STP",
+     "preferred IFR route MSP -> MIA: new routing MSP TOTTZ1 ALO J233 SKBOZ Q19 HITMN ACORI FROGZ5 MIA; area TO 07FA,HST,MIA,TMB,X51 -> FROM ANE, FCM, MSP STP TO 07FA,HST,MIA,TMB,X51",
+     "preferred IFR route MSP -> MKE: new routing MSP SNUPE1 DLL BAE MKE; aircraft none -> RNAV 1 - DME/DME/IRU OR GPS; area none -> FROM ANE, FCM, MSP STP",
+     "preferred IFR route MSP -> MKY: new routing MSP ZMBRO1 BRIBE ENL PLESS Q19 BULZI Q81 NICKI PLYER PIKKR7 MKY; aircraft none -> JETS & TURBOPROP ACFT. ONLY  RNAV 1-DME/DME/IRU OR GPS; area none -> FROM ANE, FCM, MSP STP TO APF, FA54, MKY, PGD",
+     "preferred IFR route MSP -> MSN: new routing MSP SNUPE1 DLL MSN; aircraft none -> RNAV 1 - DME/DME/IRU OR GPS; area none -> FROM ANE, FCM, MSP STP",
+     "preferred IFR route MSP -> MYR: new routing MSP ZMBRO1 BRIBE JOT ERECO IIU RYANS VXV SLOJO BRDWK1 MYR; aircraft JETS ONLY -> RNAV 1 - DME/DME/IRU OR GPS; area none -> FROM ANE, FCM, MSP STP",
+     "preferred IFR route MSP -> ORD [type H] via MSP RST1 RST DBQ JVL JVL1 ORD: discontinued",
+     "preferred IFR route MSP -> ORD [type L] via MSP RST1 RST DBQ JVL JVL1 ORD: discontinued",
+     "preferred IFR route MSP -> ORD: new routing MSP TOTTZ1 ZZIPR FYTTE7 ORD; aircraft TURBOJET -> RNAV 1 - DME/DME/IRU OR GPS; area none -> FROM ANE, FCM, MSP STP",
+     "preferred IFR route MSP -> ORL: new routing MSP ZMBRO1 BRIBE ENL PLESS Q19 HITMN THRSR ZPLEN MJKAL JAFAR3 ORL; aircraft none -> JETS ONLY, RNAV 1 - DME/DME/IRU OR GPS; area none -> FROM ANE, FCM, MSP STP TO ISM, MCO, ORL",
+     "preferred IFR route MSP -> PHL: new routing MSP SNUPE1 DLL J34 VIO CRL SPYDY EWC JST BOJID4 PHL; area none -> FROM ANE, FCM, MSP STP",
+     "preferred IFR route MSP -> PHX: new routing MSP SNOWZ1 LLUKY PUB ALS GUP EAGUL6 PHX; aircraft TURBOJET -> JETS ONLY, RNAV 1 - DME/DME/IRU OR GPS",
+     "preferred IFR route MSP -> RSW: new routing MSP ZMBRO1 BRIBE ENL PLESS Q19 BULZI Q81 NICKI PLYER TYNEE4 RSW; aircraft none -> JETS & TURBOPROP ACFT. ONLY  RNAV 1-DME/DME/IRU OR GPS; area none -> FROM ANE, FCM, MSP STP TO FMY, RSW",
+     "preferred IFR route MSP -> SFO: new routing MSP BITEZ1 LEINY VKING CZI J32 LLC LEGGS BDEGA4 SFO; aircraft TURBOJET ONLY -> RNAV 1 - DME/DME/IRU OR GPS.; area none -> FROM ANE, FCM, MSP STP",
+     "preferred IFR route MSP -> SFO: new routing MSP SNOWZ1 LLUKY CYS J148 OAL INYOE DYAMD5 SFO; aircraft TURBOJET ONLY -> JETS ONLY, RNAV 1 - DME/DME/IRU OR GPS",
+     "preferred IFR route MSP -> SLC: new routing MSP BITEZ1 LEINY RAP DDY CARTR2 SLC; aircraft TURBOJET ONLY -> JETS ONLY, RNAV 1 - GPS; area none -> FROM ANE, FCM, MSP STP",
+     "preferred IFR route MSP -> SRQ: new routing MSP ZMBRO1 BRIBE ENL PLESS Q19 HITMN ACORI BANGZ2 SRQ; aircraft JETS/TURBOPROPS ONLY -> JETS & TURBOPROP ACFT. ONLY  RNAV 1-DME/DME/IRU OR GPS; area none -> FROM ANE, FCM, MSP STP TO CLW, PIE, SPG, SRQ, VNC",
+     "preferred IFR route MSP -> STL: new routing MSP TOTTZ1 ALO IRK LORLE3 STL; aircraft TURBOJET -> JETS ONLY, RNAV 1 - DME/DME/IRU OR GPS; area none -> FROM ANE, FCM, MSP STP",
+     "preferred IFR route MSP -> TEB: new routing MSP SNUPE1 DLL HASTE DAFLU J70 JHW LVZ5 TEB; aircraft JETS -> JETS ONLY, RNAV 1 - DME/DME/IRU OR GPS; area TO 47N, CDW, LDJ, MMU, SMQ, TEB -> FROM  ANE, FCM, MSP STP TO 39N, CDW, LDJ, MMU, N51, SMQ, TEB",
+     "preferred IFR route MSP -> TPA: new routing MSP ZMBRO1 BRIBE ENL PLESS Q19 HITMN ACORI MAATY6 TPA; aircraft RNAV 1 - DME/DME/IRU OR GPS -> JETS & TURBOPROP ACFT. ONLY  RNAV 1-DME/DME/IRU OR; area TO LAL, MCF, TPA, VDF -> FROM ANE, FCM, MSP STP TO LAL, MCF, TPA, VDF"
     ]
    },
    {
@@ -1050,14 +1037,15 @@
     "summary": "preferred IFR routes: 7 changed, 2 removed",
     "source": "PFR",
     "details": [
-     "preferred IFR route CLE -> ORD: new routing CLE GTLKE6 DAIFE WATSN WATSN4 ORD",
-     "preferred IFR route MSP -> ORD: discontinued",
-     "preferred IFR route MSP -> ORD: new routing MSP TOTTZ1 ZZIPR FYTTE7 ORD",
-     "preferred IFR route ORD -> BCT: new routing ORD DENNT DARCY DREGS DUMGE SCOTO SWAPP Q79 ZPLEN VUUDU3 BCT",
-     "preferred IFR route ORD -> DET: new routing ORD DUFEE LOGGR HOSSA PETTE3 DET",
-     "preferred IFR route ORD -> DJT: new routing ORD DENNT DARCY DREGS DUMGE SCOTO SWAPP Q79 ZPLEN VUUDU3 DJT",
-     "preferred IFR route ORD -> MHT: new routing ORD EBAKE WISMO POSTS PADDE SVM DKK PONCT ROZZE3 MHT",
-     "preferred IFR route ORD -> MYR: new routing ORD EARND ELANR EMMLY ETAME EMEGE FLM SLOJO BRDWK1 MYR"
+     "preferred IFR route CLE -> ORD: new routing CLE GTLKE6 DAIFE WATSN WATSN4 ORD; aircraft RNAV ONLY -> RNAV 1 - DME/DME/IRU OR GPS; area FROM CLEVELAND METRO(CLE,CGF,BKL,LNN,LPR) -> FROM CLE,CGF,LNN,LPR",
+     "preferred IFR route MSP -> ORD [type H] via MSP RST1 RST DBQ JVL JVL1 ORD: discontinued",
+     "preferred IFR route MSP -> ORD [type L] via MSP RST1 RST DBQ JVL JVL1 ORD: discontinued",
+     "preferred IFR route MSP -> ORD: new routing MSP TOTTZ1 ZZIPR FYTTE7 ORD; aircraft TURBOJET -> RNAV 1 - DME/DME/IRU OR GPS; area none -> FROM ANE, FCM, MSP STP",
+     "preferred IFR route ORD -> BCT: new routing ORD DENNT DARCY DREGS DUMGE SCOTO SWAPP Q79 ZPLEN VUUDU3 BCT; aircraft none -> JET ONLY, RNAV 1 - DME/DME/IRU OR GPS.; area none -> TO 06FA, BCT, F45, DJT, SUA",
+     "preferred IFR route ORD -> DET: new routing ORD DUFEE LOGGR HOSSA PETTE3 DET; area TO DETROIT SATS(DET,ARB,PTK,YIP,CYQG) -> TO ARB, CYQG, DET, MTC, ONZ, OZW, PTK, TTF, VLL, YIP",
+     "preferred IFR route ORD -> DJT: new routing ORD DENNT DARCY DREGS DUMGE SCOTO SWAPP Q79 ZPLEN VUUDU3 DJT; aircraft none -> JET ONLY, RNAV 1 - DME/DME/IRU OR GPS.; area none -> TO 06FA, BCT, F45, DJT, SUA",
+     "preferred IFR route ORD -> MHT: new routing ORD EBAKE WISMO POSTS PADDE SVM DKK PONCT ROZZE3 MHT; aircraft DME/DME/IRU OR GNSS REQUIRED -> JETS ONLY, RNAV 1 - DME/DME/IRU OR GPS; hours 1100-0300 -> none",
+     "preferred IFR route ORD -> MYR: new routing ORD EARND ELANR EMMLY ETAME EMEGE FLM SLOJO BRDWK1 MYR; aircraft none -> RNAV 1 - DME/DME/IRU OR GPS; area none -> TO CRE GGE MYR"
     ]
    }
   ],
@@ -1070,18 +1058,18 @@
     "summary": "preferred IFR routes: 12 changed",
     "source": "PFR",
     "details": [
-     "preferred IFR route CLE -> PHL: new routing CLE KKIDS1 EWC JST BOJID4 PHL",
-     "preferred IFR route MSP -> PHL: new routing MSP SNUPE1 DLL J34 VIO CRL SPYDY EWC JST BOJID4 PHL",
-     "preferred IFR route PHL -> BCT: new routing PHL OOD TEBEE HAYDO TRPOD Q409 CRPLR PAACK Q97 KENLL CPTAN4 BCT",
-     "preferred IFR route PHL -> BWI: new routing PHL DQO BAINS TRISH5 BWI",
-     "preferred IFR route PHL -> DJT: new routing PHL OOD TEBEE HAYDO TRPOD Q409 CRPLR PAACK Q97 KENLL CPTAN4 DJT",
-     "preferred IFR route PHL -> EYW: new routing PHL OOD TEBEE HAYDO TRPOD Q409 CRPLR PAACK Q97 EBAYY FNTSY1 EYW",
-     "preferred IFR route PHL -> FLL: new routing PHL OOD TEBEE HAYDO TRPOD Q409 CRPLR PAACK Q97 KENLL TARPN3 FLL",
-     "preferred IFR route PHL -> FLL: new routing PHL OOD TEBEE HAYDO TRPOD Q409 CRPLR PAACK Q97 PRMUS CUUDA3 FLL",
-     "preferred IFR route PHL -> MHT: new routing PHL DITCH LUIGI HNNAH LLUND SMYTH ROZZE3 MHT",
-     "preferred IFR route PHL -> MIA: new routing PHL OOD TEBEE HAYDO TRPOD Q409 CRPLR PAACK Q97 DEBRL CSTAL3 MIA",
-     "preferred IFR route PHL -> MYR: new routing PHL OOD TEBEE HAYDO TRPOD Q409 CRPLR KTEEE TORST1 MYR",
-     "preferred IFR route PHL -> SFO: new routing PHL PTW SARAA RAV J64 FWA WHETT EDENS LMN HLC J80 OAL INYOE DYAMD5 SFO"
+     "preferred IFR route CLE -> PHL via CLE KKIDS1 EWC JST BOJID4 PHL: aircraft RNAV ONLY -> RNAV1 DME/DME/IRU OR GPS; area KCLE ONLY -> none",
+     "preferred IFR route MSP -> PHL: new routing MSP SNUPE1 DLL J34 VIO CRL SPYDY EWC JST BOJID4 PHL; area none -> FROM ANE, FCM, MSP STP",
+     "preferred IFR route PHL -> BCT: new routing PHL OOD TEBEE HAYDO TRPOD Q409 CRPLR PAACK Q97 KENLL CPTAN4 BCT; aircraft none -> JETS ONLY,  RNAV 1 - DME/DME/IRU OR GPS",
+     "preferred IFR route PHL -> BWI: new routing PHL DQO BAINS TRISH5 BWI; aircraft TURBOJETS ONLY -> JET ONLY, RNAV 1 - DME/DME/IRU OR GPS.; area none -> TO BWI, MTN",
+     "preferred IFR route PHL -> DJT: new routing PHL OOD TEBEE HAYDO TRPOD Q409 CRPLR PAACK Q97 KENLL CPTAN4 DJT; aircraft none -> JETS ONLY,  RNAV 1 - DME/DME/IRU OR GPS",
+     "preferred IFR route PHL -> EYW: new routing PHL OOD TEBEE HAYDO TRPOD Q409 CRPLR PAACK Q97 EBAYY FNTSY1 EYW; aircraft none -> JETS ONLY,  RNAV 1 - DME/DME/IRU OR GPS; area none -> TO EYW, NQX",
+     "preferred IFR route PHL -> FLL: new routing PHL OOD TEBEE HAYDO TRPOD Q409 CRPLR PAACK Q97 KENLL TARPN3 FLL; aircraft VLJ/TURBPROP ONLY: INCL EA50,E50P,SF50,C510,C525 -> TURBOPROP EA50, E50P, SF50, C510, C525 AIRCRAFT ONLY,   RNAV 1 - DME/DME/IRU OR GPS",
+     "preferred IFR route PHL -> FLL: new routing PHL OOD TEBEE HAYDO TRPOD Q409 CRPLR PAACK Q97 PRMUS CUUDA3 FLL; aircraft none -> JETS ONLY, EXCLUDES EA50, E50P, SF50, C510, C525  RNAV 1 - DME/DME/IRU OR GPS",
+     "preferred IFR route PHL -> MHT: new routing PHL DITCH LUIGI HNNAH LLUND SMYTH ROZZE3 MHT; aircraft none -> JETS ONLY, RNAV 1 - DME/DME/IRU OR GPS; hours 1100-0300 -> none",
+     "preferred IFR route PHL -> MIA: new routing PHL OOD TEBEE HAYDO TRPOD Q409 CRPLR PAACK Q97 DEBRL CSTAL3 MIA; aircraft none -> JETS ONLY, EXCLUDES EA50, E50P, SF50, C510, C525  RNAV 1 - DME/DME/IRU OR GPS",
+     "preferred IFR route PHL -> MYR: new routing PHL OOD TEBEE HAYDO TRPOD Q409 CRPLR KTEEE TORST1 MYR; aircraft none -> RNAV 1 - DME/DME/IRU OR GPS; area none -> TO CRE GGE MYR",
+     "preferred IFR route PHL -> SFO: new routing PHL PTW SARAA RAV J64 FWA WHETT EDENS LMN HLC J80 OAL INYOE DYAMD5 SFO; aircraft none -> RNAV 1 - DME/DME/IRU OR GPS"
     ]
    }
   ],
@@ -1094,9 +1082,9 @@
     "summary": "preferred IFR routes: 3 changed",
     "source": "PFR",
     "details": [
-     "preferred IFR route CLE -> PHX: new routing CLE GTLKE6 YABRO IOW LEFAM HLC PUB ALS GUP EAGUL6 PHX",
-     "preferred IFR route CLE -> PHX: new routing CLE ZAAPA7 SNNOH VHP ICT GUP EAGUL6 PHX",
-     "preferred IFR route MSP -> PHX: new routing MSP SNOWZ1 LLUKY PUB ALS GUP EAGUL6 PHX"
+     "preferred IFR route CLE -> PHX: new routing CLE GTLKE6 YABRO IOW LEFAM HLC PUB ALS GUP EAGUL6 PHX; aircraft RNAV ONLY -> JETS ONLY:  RNAV 1 - DME/DME/IRU OR GPS; area FROM CLEVELAND METRO(CLE,CGF,BKL,LNN,LPR) -> FROM CLE,CGF,LNN,LPR",
+     "preferred IFR route CLE -> PHX: new routing CLE ZAAPA7 SNNOH VHP ICT GUP EAGUL6 PHX; aircraft RNAV ONLY -> JETS ONLY: RNAV 1 - DME/DME/IRU OR GPS; area FROM CLEVELAND METRO(CLE,CGF,BKL,LNN,LPR) -> FROM CLE,CGF,LNN,LPR",
+     "preferred IFR route MSP -> PHX: new routing MSP SNOWZ1 LLUKY PUB ALS GUP EAGUL6 PHX; aircraft TURBOJET -> JETS ONLY, RNAV 1 - DME/DME/IRU OR GPS"
     ]
    }
   ],
@@ -1109,16 +1097,16 @@
     "summary": "preferred IFR routes: 11 changed",
     "source": "PFR",
     "details": [
+     "preferred IFR route HHR -> SAN via HHR SLI JARRD V25 MZB SAN: area HHR TOA (RWY29) TO MYF NRS NZY SAN SDM SEE (LAX E) -> HHR TOA (RWY29) TO MYF NRS NZY SAN SDM SEE (LAXE)",
      "preferred IFR route HHR -> SAN: new routing HHR LIMBO V64 WOKRO V363 DANAH V165 SARGS SAN",
      "preferred IFR route HHR -> SAN: new routing HHR LIMBO V64 WOKRO V363 DANAH V23 MZB SAN",
-     "preferred IFR route HHR -> SAN: new routing HHR SLI JARRD V25 MZB SAN",
      "preferred IFR route HHR -> SAN: new routing HHR SLI V64 WOKRO V363 DANAH V23 MZB SAN",
-     "preferred IFR route SMO -> SAN: new routing SMO SMO POPPR V23 SLI V165 SARGS SAN",
+     "preferred IFR route SMO -> SAN via SMO SMO POPPR V23 SLI V165 SARGS SAN: area SMO TO SAN (SAN E) -> SMO TO SAN (SANE)",
      "preferred IFR route SMO -> SAN: new routing SMO SMO WILMA V64 WOKRO V363 DANAH V165 SARGS SAN",
      "preferred IFR route SMO -> SAN: new routing SMO SMO WILMA V64 WOKRO V363 DANAH V23 MZB SAN",
+     "preferred IFR route TOA -> SAN via TOA SLI JARRD V25 MZB SAN: area HHR TOA (RWY29) TO MYF NRS NZY SAN SDM SEE (LAX E) -> HHR TOA (RWY29) TO MYF NRS NZY SAN SDM SEE (LAXE)",
      "preferred IFR route TOA -> SAN: new routing TOA LIMBO V64 WOKRO V363 DANAH V165 SARGS SAN",
      "preferred IFR route TOA -> SAN: new routing TOA LIMBO V64 WOKRO V363 DANAH V23 MZB SAN",
-     "preferred IFR route TOA -> SAN: new routing TOA SLI JARRD V25 MZB SAN",
      "preferred IFR route TOA -> SAN: new routing TOA SLI V64 WOKRO V363 DANAH V23 MZB SAN"
     ]
    }
@@ -1149,7 +1137,7 @@
     "summary": "preferred IFR routes: 1 changed",
     "source": "PFR",
     "details": [
-     "preferred IFR route CLE -> SEA: new routing CLE GTLKE6 ALPHE J34 BAE J16 PDT CHINS5 SEA"
+     "preferred IFR route CLE -> SEA: new routing CLE GTLKE6 ALPHE J34 BAE J16 PDT CHINS5 SEA; aircraft RNAV ONLY -> RNAV 1 - DME/DME/IRU OR GPS; area FROM CLEVELAND METRO(CLE,CGF,BKL,LNN,LPR) -> FROM CLE,CGF,LNN,LPR  TO BFI, PAE, RNT, SEA"
     ]
    }
   ],
@@ -1162,11 +1150,11 @@
     "summary": "preferred IFR routes: 5 changed",
     "source": "PFR",
     "details": [
-     "preferred IFR route CLE -> SFO: new routing CLE GTLKE6 ALPHE SMUUV OBK DBQ FOD ONL J94 LLC LEGGS BDEGA4 SFO",
-     "preferred IFR route CLE -> SFO: new routing CLE ZAAPA7 SNNOH VHP J80 OAL INYOE DYAMD5 SFO",
-     "preferred IFR route MSP -> SFO: new routing MSP BITEZ1 LEINY VKING CZI J32 LLC LEGGS BDEGA4 SFO",
-     "preferred IFR route MSP -> SFO: new routing MSP SNOWZ1 LLUKY CYS J148 OAL INYOE DYAMD5 SFO",
-     "preferred IFR route PHL -> SFO: new routing PHL PTW SARAA RAV J64 FWA WHETT EDENS LMN HLC J80 OAL INYOE DYAMD5 SFO"
+     "preferred IFR route CLE -> SFO: new routing CLE GTLKE6 ALPHE SMUUV OBK DBQ FOD ONL J94 LLC LEGGS BDEGA4 SFO; area FROM CLE, CGF, BKL, LNN, LPR -> FROM CLE,CGF,LNN,LPR",
+     "preferred IFR route CLE -> SFO: new routing CLE ZAAPA7 SNNOH VHP J80 OAL INYOE DYAMD5 SFO; aircraft RNAV 1- DME/DME/IRU-GPS -> RNAV 1 - DME/DME/IRU OR GPS; area FROM CLEVELAND METRO(CLE,CGF,BKL,LNN,LPR) -> FROM CLE,CGF,LNN,LPR",
+     "preferred IFR route MSP -> SFO: new routing MSP BITEZ1 LEINY VKING CZI J32 LLC LEGGS BDEGA4 SFO; aircraft TURBOJET ONLY -> RNAV 1 - DME/DME/IRU OR GPS.; area none -> FROM ANE, FCM, MSP STP",
+     "preferred IFR route MSP -> SFO: new routing MSP SNOWZ1 LLUKY CYS J148 OAL INYOE DYAMD5 SFO; aircraft TURBOJET ONLY -> JETS ONLY, RNAV 1 - DME/DME/IRU OR GPS",
+     "preferred IFR route PHL -> SFO: new routing PHL PTW SARAA RAV J64 FWA WHETT EDENS LMN HLC J80 OAL INYOE DYAMD5 SFO; aircraft none -> RNAV 1 - DME/DME/IRU OR GPS"
     ]
    }
   ],
@@ -1191,31 +1179,6 @@
     "summary": "removed tower/ATC remark: Salt Lake ARTCC (ZLC) frequencies 128.55/269.175 (Grassy Mountain RCAG) are used for SKEES RNAV STAR and YUTES RNAV STAR.",
     "source": "ATC_RMK",
     "original": "SALT LAKE ARTCC (ZLC) FREQS 128.55/269.175 (GRASSY MOUNTAIN RCAG) USED FOR SKEES RNAV STAR AND YUTES RNAV STAR."
-   },
-   {
-    "id": "a556bfafcb5e",
-    "priority": "action",
-    "category": "runway",
-    "kind": "changed",
-    "summary": "runway HF: length: 60 -> 43 ft; edge light intensity: perimeter (PERI) -> none; width: 60 -> 43 ft",
-    "source": "APT_RWY",
-    "fields": [
-     {
-      "field": "RWY_LEN",
-      "old": "60",
-      "new": "43"
-     },
-     {
-      "field": "RWY_LGT_CODE",
-      "old": "PERI",
-      "new": ""
-     },
-     {
-      "field": "RWY_WIDTH",
-      "old": "60",
-      "new": "43"
-     }
-    ]
    },
    {
     "id": "f8f900e83707",
@@ -1248,12 +1211,12 @@
     "summary": "preferred IFR routes: 7 changed",
     "source": "PFR",
     "details": [
-     "preferred IFR route BOS -> SLC: new routing BOS HYLND7 HYLND HANAA Q816 HOCKE BAE DBQ FOD ONL J94 BFF CKW CARTR2 SLC",
+     "preferred IFR route BOS -> SLC: new routing BOS HYLND7 HYLND HANAA Q816 HOCKE BAE DBQ FOD ONL J94 BFF CKW CARTR2 SLC; aircraft TURBOJETS ONLY: DME/DME/IRU OR GPS REQUIRED -> JETS ONLY: DME/DME/IRU OR GPS REQUIRED; hours 1100-0300 -> none",
      "preferred IFR route EWR -> SLC: new routing EWR GAYEL Q818 WOZEE Q935 HOCKE BAE DBQ FOD ONL J94 BFF CKW CARTR2 SLC",
-     "preferred IFR route HPN -> SLC: new routing HPN GAYEL Q818 WOZEE Q935 HOCKE BAE DBQ FOD ONL J94 BFF CKW CARTR2 SLC",
-     "preferred IFR route JFK -> SLC: new routing JFK GAYEL Q818 WOZEE Q935 HOCKE BAE DBQ FOD ONL J94 BFF CKW CARTR2 SLC",
-     "preferred IFR route LGA -> SLC: new routing LGA GAYEL Q818 WOZEE Q935 HOCKE BAE DBQ FOD ONL J94 BFF CKW CARTR2 SLC",
-     "preferred IFR route MSP -> SLC: new routing MSP BITEZ1 LEINY RAP DDY CARTR2 SLC",
+     "preferred IFR route HPN -> SLC: new routing HPN GAYEL Q818 WOZEE Q935 HOCKE BAE DBQ FOD ONL J94 BFF CKW CARTR2 SLC; aircraft none -> JETS ONLY, RNAV 1 GPS",
+     "preferred IFR route JFK -> SLC: new routing JFK GAYEL Q818 WOZEE Q935 HOCKE BAE DBQ FOD ONL J94 BFF CKW CARTR2 SLC; aircraft none -> JETS ONLY, RNAV 1 GPS",
+     "preferred IFR route LGA -> SLC: new routing LGA GAYEL Q818 WOZEE Q935 HOCKE BAE DBQ FOD ONL J94 BFF CKW CARTR2 SLC; aircraft none -> JETS ONLY, RNAV 1 GPS",
+     "preferred IFR route MSP -> SLC: new routing MSP BITEZ1 LEINY RAP DDY CARTR2 SLC; aircraft TURBOJET ONLY -> JETS ONLY, RNAV 1 - GPS; area none -> FROM ANE, FCM, MSP STP",
      "preferred IFR route TEB -> SLC: new routing TEB GAYEL Q818 WOZEE Q935 HOCKE BAE DBQ FOD ONL J94 BFF CKW CARTR2 SLC"
     ]
    }
@@ -1267,10 +1230,10 @@
     "summary": "preferred IFR routes: 4 changed",
     "source": "PFR",
     "details": [
-     "preferred IFR route MSP -> STL: new routing MSP TOTTZ1 ALO IRK LORLE3 STL",
-     "preferred IFR route STL -> BCT: new routing STL DRUSE5 BNA ACORI VUUDU3 BCT",
-     "preferred IFR route STL -> DJT: new routing STL DRUSE5 BNA ACORI VUUDU3 DJT",
-     "preferred IFR route STL -> MCO: new routing STL DRUSE5 BNA DEEDA GRNCH5 MCO"
+     "preferred IFR route MSP -> STL: new routing MSP TOTTZ1 ALO IRK LORLE3 STL; aircraft TURBOJET -> JETS ONLY, RNAV 1 - DME/DME/IRU OR GPS; area none -> FROM ANE, FCM, MSP STP",
+     "preferred IFR route STL -> BCT: new routing STL DRUSE5 BNA ACORI VUUDU3 BCT; aircraft none -> JET ONLY, RNAV 1 - DME/DME/IRU OR GPS.; area none -> TO 06FA, BCT, F45, DJT, SUA",
+     "preferred IFR route STL -> DJT: new routing STL DRUSE5 BNA ACORI VUUDU3 DJT; aircraft none -> JET ONLY, RNAV 1 - DME/DME/IRU OR GPS.; area none -> TO 06FA, BCT, F45, DJT, SUA",
+     "preferred IFR route STL -> MCO: new routing STL DRUSE5 BNA DEEDA GRNCH5 MCO; aircraft none -> JETS ONLY, RNAV 1 - DME/DME/IRU OR GPS."
     ]
    }
   ],
@@ -1298,9 +1261,10 @@
     "summary": "preferred IFR routes: 4 changed",
     "source": "PFR",
     "details": [
-     "preferred IFR route MSP -> TPA: new routing MSP ZMBRO1 BRIBE ENL PLESS Q19 HITMN ACORI MAATY6 TPA",
-     "preferred IFR route TPA -> DJT: new routing TPA GANDY8 SABEE VUUDU3 DJT",
-     "preferred IFR route TPA -> MHT: new routing TPA BAYPO2 CAMJO Q99 POLYY DADDS Q87 GEARS BBOBO Q22 LLUND SMYTH ROZZE3 MHT"
+     "preferred IFR route MSP -> TPA: new routing MSP ZMBRO1 BRIBE ENL PLESS Q19 HITMN ACORI MAATY6 TPA; aircraft RNAV 1 - DME/DME/IRU OR GPS -> JETS & TURBOPROP ACFT. ONLY  RNAV 1-DME/DME/IRU OR; area TO LAL, MCF, TPA, VDF -> FROM ANE, FCM, MSP STP TO LAL, MCF, TPA, VDF",
+     "preferred IFR route TPA -> DJT [type H]: new routing TPA GANDY8 SABEE VUUDU3 DJT; aircraft none -> JET ONLY, RNAV 1 - DME/DME/IRU OR GPS.; area none -> TO 06FA, BCT, F45, DJT, SUA",
+     "preferred IFR route TPA -> DJT [type L]: new routing TPA GANDY8 SABEE VUUDU3 DJT; aircraft none -> JET ONLY, RNAV 1 - DME/DME/IRU OR GPS.; area none -> TO 06FA, BCT, F45, DJT, SUA",
+     "preferred IFR route TPA -> MHT: new routing TPA BAYPO2 CAMJO Q99 POLYY DADDS Q87 GEARS BBOBO Q22 LLUND SMYTH ROZZE3 MHT; aircraft none -> JETS ONLY, RNAV 1 - DME/DME/IRU OR GPS; hours 1000-0300 -> none"
     ]
    }
   ],
