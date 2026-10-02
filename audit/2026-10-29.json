@@ -3,18 +3,7 @@
  "to_cycle": "2026-10-29",
  "errors": [],
  "warnings": [],
- "watchlists": {
-  "daytona-training": [
-   "DAB",
-   "OMN",
-   "DED",
-   "EVB",
-   "SFB",
-   "ORL",
-   "ISM",
-   "VRB"
-  ]
- },
+ "watchlists": {},
  "airports": {
   "ANC": [
    {
@@ -376,24 +365,6 @@
     ]
    }
   ],
-  "DED": [
-   {
-    "id": "db43bb841ae5",
-    "priority": "action",
-    "category": "remark",
-    "kind": "changed",
-    "summary": "revised remark: Activate Runway End Identifier Lights runway 12 & 30; Medium Intensity Runway Lights runway 05/23, High Intensity Runway Lights runway 12/30 - click the mic on CTAF. Precision Approach Path Indicator runway 05, 12, & 23 operate continuously.",
-    "source": "APT_RMK",
-    "original": "ACTVT REIL RWY 12 & 30; MIRL RWY 05/23, HIRL RWY 12/30 - CTAF.  PAPI RWY 05, 12, & 23 OPER CONSLY.",
-    "fields": [
-     {
-      "field": "REMARK",
-      "old": "ACTVT REIL RWY 12 & 30; PAPI RWY 30; MIRL RWY 05/23, HIRL RWY 12/30 - CTAF.  PAPI RWY 05, 12, & 23 OPER CONSLY.",
-      "new": "ACTVT REIL RWY 12 & 30; MIRL RWY 05/23, HIRL RWY 12/30 - CTAF.  PAPI RWY 05, 12, & 23 OPER CONSLY."
-     }
-    ]
-   }
-  ],
   "DEN": [
    {
     "id": "07d686aa69d4",
@@ -450,103 +421,6 @@
      "preferred IFR route DTW -> MHT: new routing DTW HHOWE4 LNCON JHW Q82 PONCT ROZZE3 MHT",
      "preferred IFR route MSP -> DTW: new routing MSP SNUPE1 DLL PORZL KKISS2 DTW",
      "preferred IFR route MSP -> DTW: new routing MSP SNUPE1 DLL PORZL RKCTY2 DTW"
-    ]
-   }
-  ],
-  "EVB": [
-   {
-    "id": "385890762e36",
-    "priority": "action",
-    "category": "runway",
-    "kind": "changed",
-    "summary": "runway 07/25: length: 5000 -> 4856 ft",
-    "source": "APT_RWY",
-    "fields": [
-     {
-      "field": "RWY_LEN",
-      "old": "5000",
-      "new": "4856"
-     }
-    ]
-   },
-   {
-    "id": "be32c14102a9",
-    "priority": "action",
-    "category": "runway",
-    "kind": "changed",
-    "summary": "runway 07: declared distances: takeoff run available (TORA) 5,000 ft -> 4,856 ft; takeoff distance available (TODA) 5,000 ft -> 4,856 ft; accelerate-stop distance available (ASDA) 4,853 ft -> 4,755 ft; landing distance available (LDA) 4,518 ft -> 4,509 ft; displaced threshold: 335 -> 245 ft; threshold crossing height: 43 -> 47 ft AGL",
-    "source": "APT_RWY_END",
-    "fields": [
-     {
-      "field": "ACLT_STOP_DIST_AVBL",
-      "old": "4853",
-      "new": "4755"
-     },
-     {
-      "field": "DISPLACED_THR_LEN",
-      "old": "335",
-      "new": "245"
-     },
-     {
-      "field": "LNDG_DIST_AVBL",
-      "old": "4518",
-      "new": "4509"
-     },
-     {
-      "field": "THR_CROSSING_HGT",
-      "old": "43",
-      "new": "47"
-     },
-     {
-      "field": "TKOF_DIST_AVBL",
-      "old": "5000",
-      "new": "4856"
-     },
-     {
-      "field": "TKOF_RUN_AVBL",
-      "old": "5000",
-      "new": "4856"
-     }
-    ]
-   },
-   {
-    "id": "6d88e5665512",
-    "priority": "action",
-    "category": "runway",
-    "kind": "changed",
-    "summary": "runway 25: declared distances: takeoff run available (TORA) 5,000 ft -> 4,856 ft; takeoff distance available (TODA) 5,000 ft -> 4,856 ft; accelerate-stop distance available (ASDA) 4,763 ft -> 4,730 ft; landing distance available (LDA) 4,463 ft -> 4,464 ft; displaced threshold: 300 -> 266 ft; threshold crossing height: 46 -> 48 ft AGL",
-    "source": "APT_RWY_END",
-    "fields": [
-     {
-      "field": "ACLT_STOP_DIST_AVBL",
-      "old": "4763",
-      "new": "4730"
-     },
-     {
-      "field": "DISPLACED_THR_LEN",
-      "old": "300",
-      "new": "266"
-     },
-     {
-      "field": "LNDG_DIST_AVBL",
-      "old": "4463",
-      "new": "4464"
-     },
-     {
-      "field": "THR_CROSSING_HGT",
-      "old": "46",
-      "new": "48"
-     },
-     {
-      "field": "TKOF_DIST_AVBL",
-      "old": "5000",
-      "new": "4856"
-     },
-     {
-      "field": "TKOF_RUN_AVBL",
-      "old": "5000",
-      "new": "4856"
-     }
     ]
    }
   ],
@@ -1184,25 +1058,6 @@
      "preferred IFR route ORD -> DJT: new routing ORD DENNT DARCY DREGS DUMGE SCOTO SWAPP Q79 ZPLEN VUUDU3 DJT",
      "preferred IFR route ORD -> MHT: new routing ORD EBAKE WISMO POSTS PADDE SVM DKK PONCT ROZZE3 MHT",
      "preferred IFR route ORD -> MYR: new routing ORD EARND ELANR EMMLY ETAME EMEGE FLM SLOJO BRDWK1 MYR"
-    ]
-   }
-  ],
-  "ORL": [
-   {
-    "id": "1a480e48d21f",
-    "priority": "ifr",
-    "category": "route",
-    "kind": "changed",
-    "summary": "preferred IFR routes: 7 changed",
-    "source": "PFR",
-    "details": [
-     "preferred IFR route MSP -> ORL: new routing MSP ZMBRO1 BRIBE ENL PLESS Q19 HITMN THRSR ZPLEN MJKAL JAFAR3 ORL",
-     "preferred IFR route ORL -> BED: new routing ORL NYTES2 NYTES MZULO HESTA ETECK PELCN Y309 FLRDA SAGGY CHIEZ Q161 KALDA Q97 HEADI YANTC DREEM4 BED",
-     "preferred IFR route ORL -> BED: new routing ORL NYTES2 NYTES WORMS GUANO BKENI VIYAP Q87 JROSS ELLDE Q97 PAACK JAMIE Q481 DPK DREEM4 BED",
-     "preferred IFR route ORL -> BED: new routing ORL TOLLZ2 TOLLZ MZULO HESTA ETECK PELCN Y309 FLRDA SAGGY CHIEZ Q161 KALDA Q97 HEADI YANTC DREEM4 BED",
-     "preferred IFR route ORL -> BED: new routing ORL TOLLZ2 TOLLZ WORMS GUANO BKENI VIYAP Q87 JROSS ELLDE Q97 PAACK JAMIE Q481 DPK DREEM4 BED",
-     "preferred IFR route ORL -> MHT: new routing ORL NYTES2 NYTES MZULO HESTA LENDS GRUBR Y299 SEELO WAALT Q131 EARZZ JAMIE Q133 JFK LLUND SMYTH ROZZE3 MHT",
-     "preferred IFR route ORL -> MHT: new routing ORL TOLLZ2 TOLLZ MZULO HESTA LENDS GRUBR Y299 SEELO WAALT Q131 EARZZ JAMIE Q133 JFK LLUND SMYTH ROZZE3 MHT"
     ]
    }
   ],
