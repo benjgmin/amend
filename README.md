@@ -39,7 +39,7 @@ VRB  Vero Beach Rgnl
 
 - **Any airport:** search by FAA id, ICAO, name or city, or go straight to one like [amend.watch/VRB](https://amend.watch/VRB/) (amend.watch/kvrb works too). Every airport shows what changed this cycle, what's coming next cycle, and its history back to Aug 2024
 - **Ranked:** `ACT` (could change your plan), `IFR` (approaches, STARs, departures, routes) and `FYI`, with the FAA's original text behind every translated remark
-- **Lists:** keep as many lists of airports as you like (one for your training area, one per trip), saved in your browser. Share any list as one link, or give it a name under /list/, like `amend.watch/list/club-svfr`
+- **Lists:** keep as many lists of airports as you like (one for your training area, one per trip), saved in your browser. Share any list as one link, or give it a name under /list/, like `amend.watch/list/flying-club`
 - **Alerts:** every airport and named list has an RSS feed (like [amend.watch/VRB/feed.xml](https://amend.watch/VRB/feed.xml)), one update per FAA cycle, action items first. There's also a [calendar of cycle dates](https://amend.watch/cycles.ics)
 - **Link previews:** a page shared in iMessage or a group chat shows what changed
 

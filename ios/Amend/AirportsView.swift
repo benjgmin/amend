@@ -164,7 +164,7 @@ struct AirportsView: View {
             .refreshable { await store.refresh() }
             .task { await store.refresh() }
             .alert(naming?.title ?? "", isPresented: Binding(get: { naming != nil }, set: { if !$0 { naming = nil } })) {
-                TextField("Name, e.g. Club SVFR or Bahamas trip", text: $nameText)
+                TextField("Name, e.g. Flying club or Bahamas trip", text: $nameText)
                 Button(naming?.action ?? "Save") { saveName() }
                 Button("Cancel", role: .cancel) { naming = nil }
             }
@@ -198,7 +198,7 @@ struct AirportsView: View {
         }
     }
 
-    /// "Club SVFR · 4" with what you can do to the list in use; "Your lists" with more than one
+    /// "Flying club · 4" with what you can do to the list in use; "Your lists" with more than one
     private var listHeader: some View {
         let list = store.activeList
         return HStack {

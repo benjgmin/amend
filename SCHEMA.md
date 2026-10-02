@@ -9,8 +9,8 @@ If a field is added, `schema_version` stays the same. If a field is renamed or r
 ## Web pages (not part of the JSON contract)
 `index.html` (search), `<ID>/index.html` (one page per airport with changes or history) and
 `assets/style.css` and `assets/app.js` (shared by every page), `about/`, `guide/`, `docs/`, `changelog/`, `privacy/`, `terms/`, `list/` (one of the lists saved in the
-browser, `?l=<id>`, or a shared one, `?w=BJC,FDK&n=Club%20SVFR`) and `list/<slug>/` (named
-lists from `watchlists/<slug>.json` in the repo, e.g. amend.watch/list/club-svfr; slugs are
+browser, `?l=<id>`, or a shared one, `?w=BJC,FDK&n=Flying%20club`) and `list/<slug>/` (named
+lists from `watchlists/<slug>.json` in the repo, e.g. amend.watch/list/flying-club; slugs are
 3–40 lowercase letters, digits or dashes). Old links (`watch/?w=`, `watch/<slug>/`, `<slug>/`) redirect
 there. `404.html` is the not-found page: it sends `/kbjc` to `/BJC/` and says when an airport has no changes on record. `cycles.ics` is a calendar feed of the 0901Z cycle changeovers. `favicon.ico`, `site.webmanifest` and `assets/` (styles, scripts,
 fonts, icons, link-preview images) are the site's own files. `build.json` records what the deploy was built from, for the pipeline's own freshness check. `<ID>/feed.xml` (every airport in `airports.json`, even ones with no page yet) and
