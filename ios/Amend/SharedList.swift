@@ -1,7 +1,7 @@
 import Foundation
 
-/// a list someone shared: an amend.watch/list/?w=BJC,VRB&n=Club%20SVFR link, a named list link
-/// (amend.watch/list/club-svfr/), or just airport IDs ("BJC, kfdk PHNL")
+/// a list someone shared: an amend.watch/list/?w=BJC,VRB&n=Flying%20club link, a named list link
+/// (amend.watch/list/flying-club/), or just airport IDs ("BJC, kfdk PHNL")
 struct SharedList: Sendable {
     let name: String
     let ids: [String]

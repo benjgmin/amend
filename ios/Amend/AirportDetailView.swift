@@ -22,7 +22,7 @@ struct AirportDetailView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbarBackground(EFB.bg, for: .navigationBar)
         .alert("New list", isPresented: $newList) {
-            TextField("Name, e.g. Club SVFR or Bahamas trip", text: $newName)
+            TextField("Name, e.g. Flying club or Bahamas trip", text: $newName)
             Button("Create") {
                 let name = newName.trimmingCharacters(in: .whitespacesAndNewlines)
                 if !name.isEmpty { store.createList(name, ids: [id]) }

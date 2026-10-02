@@ -3,7 +3,7 @@ Named watchlists with their own link: amend.watch/list/<slug>
 
 Each list is a JSON file in watchlists/ in this repo:
 
-    {"name": "Club SVFR", "description": "Club airports",
+    {"name": "Flying club", "description": "Club airports",
      "airports": ["BJC", "FDK", "PAO"]}
 
 Only people who can push to the repo can create or change a list, so the owner is whoever

@@ -515,7 +515,7 @@ document.addEventListener("click",ev=>{const b=ev.target.closest("button");if(!b
   else if(b.id==="fold"&&l){LS.fold(l.id,!LS.folded(l.id));renderLists();if(window.AMside)AMside();return document.getElementById("fold").focus()}
   else if(b.id==="share"&&l)return AM.copy(LS.link(l),b);
   else if(b.id==="rename"&&l)return AM.form(document.getElementById("nf"),{value:l.name},n=>{LS.rename(l.id,n);update()});
-  else if(b.id==="newlist")return AM.form(document.getElementById("nf"),{label:"Create",ph:"Name, e.g. Club SVFR or Bahamas trip"},n=>{LS.create(n,[]);update();q.focus()});
+  else if(b.id==="newlist")return AM.form(document.getElementById("nf"),{label:"Create",ph:"Name, e.g. Flying club or Bahamas trip"},n=>{LS.create(n,[]);update();q.focus()});
   else if(b.id==="dellist"&&l)LS.remove(l.id);
   else return;
   update()});
@@ -605,7 +605,7 @@ document.addEventListener("click",ev=>{const b=ev.target.closest("button");if(!b
     say([got.length?"Added "+few(got)+".":"",had.length?"Already on it: "+few(had)+".":"",full.length?"A list holds up to 200 airports, so "+few(full)+" didn’t fit.":"",
       bad.length?"Not found: "+bad.join(", ")+".":""].filter(Boolean).join(" "));head();body()});
   else if(b.id==="rename")AM.form($("nf"),{value:mine.name},n=>{const l=LS.rename(mine.id,n);if(!l)return gone();mine=l;head()});
-  else if(b.id==="newlist")AM.form($("nf"),{label:"Create",ph:"Name, e.g. Club SVFR or Bahamas trip"},n=>{mine=LS.create(n,[]);say("");head();body();$("addapt").click()});
+  else if(b.id==="newlist")AM.form($("nf"),{label:"Create",ph:"Name, e.g. Flying club or Bahamas trip"},n=>{mine=LS.create(n,[]);say("");head();body();$("addapt").click()});
   else if(b.id==="del"&&confirm("Delete “"+mine.name+"”? This can’t be undone.")){LS.remove(mine.id);say("");gone()}
   else if(b.dataset.rm&&mine){const l=LS.set(mine.id,[b.dataset.rm],false);if(!l)return gone();mine=l;const d=b.closest("details");if(d)d.remove();head();if(!mine.ids.length)body()}});
 // after a delete, here or in another tab: show the list in use now, or none
@@ -1344,7 +1344,7 @@ file).</p><div class="btns"><a class="btn ghost" id="opml" download="amend-watch
 
 
 def named_watch_page(slug, wl, meta, info, latest, now, has_card):
-    """static page for a named list at /list/<slug>/ (amend.watch/list/clubsvfr): every change, expanded."""
+    """static page for a named list at /list/<slug>/ (amend.watch/list/flying-club): every change, expanded."""
     upcoming, _ = status(meta, now)
     apts = sorted(wl["airports"], key=lambda a: (-counts(latest.get(a, []))["action"], -len(latest.get(a, [])), a))
     total = {p: sum(counts(latest.get(a, []))[p] for a in apts) for p, _, _ in PRIORITY}

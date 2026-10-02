@@ -276,7 +276,7 @@ final class AirportStore {
     }
 }
 
-/// one list of airports ("Club SVFR", "Bahamas trip"), the same shape as the site's
+/// one list of airports ("Flying club", "Bahamas trip"), the same shape as the site's
 struct AirportList: Codable, Identifiable, Hashable, Sendable {
     let id: String
     var name: String
@@ -284,7 +284,7 @@ struct AirportList: Codable, Identifiable, Hashable, Sendable {
 
     static let maxAirports = 200
 
-    /// amend.watch/list/?w=BJC,VRB&n=Club%20SVFR: anyone can open it, and save it on the site
+    /// amend.watch/list/?w=BJC,VRB&n=Flying%20club: anyone can open it, and save it on the site
     var shareURL: URL? {
         var c = URLComponents(url: API.base.appending(path: "list/"), resolvingAgainstBaseURL: false)
         c?.queryItems = [URLQueryItem(name: "w", value: ids.joined(separator: ",")),
