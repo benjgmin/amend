@@ -3,8 +3,8 @@ Named watchlists with their own link: amend.watch/list/<slug>
 
 Each list is a JSON file in watchlists/ in this repo:
 
-    {"name": "Club SVFR", "description": "Training area airports",
-     "airports": ["DAB", "OMN", "DED", "VRB"]}
+    {"name": "Club SVFR", "description": "Club airports",
+     "airports": ["BJC", "FDK", "PAO"]}
 
 Only people who can push to the repo can create or change a list, so the owner is whoever
 controls the repo. Edit the file (or use `python -m amend watchlist ...`), push, and the site

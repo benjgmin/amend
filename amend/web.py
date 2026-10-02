@@ -55,6 +55,8 @@ FAA_INQUIRY = "https://www.faa.gov/air_traffic/flight_info/aeronav/aero_data/Aer
 CF_BEACON = "d1ab67595c784b45827953de63a28e9a"
 RESERVED = {"latest", "history", "assets", "watch", "list", "about", "guide", "docs", "changelog", "privacy", "terms", "status",
             "index.html", "airports.json", "cycles.ics"}  # never an airport page
+# named lists that were taken down: their old links land on the lists page instead of a not-found page
+RETIRED_LISTS = ("daytona-training",)
 PRIORITY = [("action", "ACT", "Action"), ("ifr", "IFR", "IFR procedures"), ("fyi", "FYI", "FYI")]
 # what the labels mean, same words as the iOS guide (ios/Amend/GuideView.swift): css class, legend, tooltip,
 # full text, example
@@ -592,13 +594,13 @@ async function body(){const my=++run,ids=mine?mine.ids:shared;
       (n||d?chipsHtml(k):'<span class="chips"><span class="ann plain">Not found</span></span>')+'</summary>'+body+(links?'<p class="foot">'+links+'</p>':'')+'</details>'}).join("");
   out.querySelectorAll("details.apt").forEach(x=>{const r=AM.mark(x,x.dataset.apt,META.to_cycle),c=x.querySelector("summary .chips");if(r.n&&c)c.insertAdjacentHTML("afterbegin",AM.pill(r.n))});
   if(window.AMside)AMside()}
-// "DAB, komn PHNL" -> the airport ids Amend knows, plus whatever didn't match
+// "BJC, kfdk PHNL" -> the airport ids Amend knows, plus whatever didn't match
 function airports(v){const ok=[],bad=[];for(const t of v.toUpperCase().split(/[\s,;]+/).filter(Boolean)){
   const id=NAMES[t]?t:ICAO[t]||(NAMES[t.replace(/^K(?=[A-Z]{3}$)/,"")]?t.slice(1):"");id?ok.push(id):bad.push(t)}return{ok:[...new Set(ok)],bad}}
 document.addEventListener("click",ev=>{const b=ev.target.closest("button");if(!b||b.closest("form"))return;
   if(b.id==="copy")AM.copy(mine?LS.link(mine):new URL("?w="+shared.join(",")+(sname?"&n="+encodeURIComponent(sname):""),location.href).href,b);
   else if(b.id==="save"){mine=LS.same(shared,sname)||LS.create(sname||"Shared list",shared);LS.use(mine.id);say("Saved to your lists as “"+mine.name+"”.");head();body()}
-  else if(b.id==="addapt")AM.form($("nf"),{label:"Add",ph:"Airport IDs, e.g. DAB OMN KSFB",aria:"Airport IDs to add",max:600},v=>{const{ok,bad}=airports(v),had=ok.filter(x=>mine.ids.includes(x)),add=ok.filter(x=>!had.includes(x));
+  else if(b.id==="addapt")AM.form($("nf"),{label:"Add",ph:"Airport IDs, e.g. BJC FDK KPAO",aria:"Airport IDs to add",max:600},v=>{const{ok,bad}=airports(v),had=ok.filter(x=>mine.ids.includes(x)),add=ok.filter(x=>!had.includes(x));
     if(add.length){const l=LS.set(mine.id,add,true);if(!l)return gone();mine=l}const got=add.filter(x=>mine.ids.includes(x)),full=add.filter(x=>!got.includes(x)),few=a=>a.length>8?a.length+" airports":a.join(", ");
     say([got.length?"Added "+few(got)+".":"",had.length?"Already on it: "+few(had)+".":"",full.length?"A list holds up to 200 airports, so "+few(full)+" didn’t fit.":"",
       bad.length?"Not found: "+bad.join(", ")+".":""].filter(Boolean).join(" "));head();body()});
@@ -1525,7 +1527,7 @@ before it takes effect.</p>
 {feat("ACT", "act", "Action items first", "Tower and Class D hours, frequencies, closed or renumbered runways, decommissioned navaids, new PPR rules: the changes that matter most when you fly there.")}
 {feat("IFR", "ifr", "Instrument procedures", "Amended, new and removed approaches, STARs and departures, down to which waypoints moved, with the new plate one tap away.")}
 {feat("FYI", "fyi", "Everything else, in plain English", "FAA remarks translated from contractions, with the original text always kept alongside.")}
-{feat("Lists", "ifr", "Lists you can share", "Keep a list for your home area, another for a trip, and share any of them as one link, like amend.watch/list/daytona-training.")}
+{feat("Lists", "ifr", "Lists you can share", "Keep a list for your home area, another for a trip, and share any of them as one link.")}
 {feat("History", "fyi", "Two years of history", "Every change at every airport since August 2024, grouped by cycle.")}
 {feat("iPhone", "ok", "iPhone app", "In testing and not on the App Store yet. It keeps your home airport and lists on your phone and notifies you when a new cycle changes them.")}
 </div></div>
@@ -1744,8 +1746,8 @@ def cycles_ics(meta, now):
 
 
 def not_found_page(meta, now):
-    """site/404.html, which GitHub Pages serves for any address that doesn't exist. People type amend.watch/KDAB or
-    amend.watch/dab, so those go on to /DAB/; anything else gets a way back. Links start at / because this page
+    """site/404.html, which GitHub Pages serves for any address that doesn't exist. People type amend.watch/KBJC or
+    amend.watch/bjc, so those go on to /BJC/; anything else gets a way back. Links start at / because this page
     shows up at any depth."""
     body = r"""<header class="full"><div class="eyebrow">Page not found</div><h1 id="nfh">Nothing here</h1>
 <p class="lede" id="nfp">There’s no page at this address.</p>
@@ -1755,7 +1757,7 @@ def not_found_page(meta, now):
 if(seg.length===1&&["list","guide","about","docs","changelog","privacy","terms","status"].includes(low)&&f!==low)return location.replace("/"+low+"/"+rest);
 if(low==="list"&&seg.length===2){const slug=seg[1].toLowerCase();if(slug!==seg[1])return location.replace("/list/"+slug+"/"+rest);
   h.textContent="No list called “"+seg[1]+"”";p.textContent="Check the link. Lists you saved yourself are under Your lists.";return}
-const id=f.toUpperCase().replace(/^K(?=[A-Z]{3}$)/,"");   // KDAB -> DAB, like the search box
+const id=f.toUpperCase().replace(/^K(?=[A-Z]{3}$)/,"");   // KBJC -> BJC, like the search box
 if(seg.length===1&&/^[A-Z0-9]{2,4}$/.test(id)){if(id!==f)return location.replace("/"+id+"/"+rest);
   h.textContent="No changes on record at "+id;
   p.innerHTML="Airports get a page here once the FAA changes something there. <a href=\"/?q="+encodeURIComponent(id)+"\">Search for "+esc(id)+"</a> to check the ID."}})()</script>"""
@@ -1861,6 +1863,11 @@ def build(site, meta, directory, latest, history_dir, now=None, watchlists=None,
     statuspage.build(site, meta, now)
     with open(os.path.join(site, "404.html"), "w", encoding="utf-8") as f:
         f.write(not_found_page(meta, now))
+    for slug in RETIRED_LISTS:
+        if slug not in (watchlists or {}):
+            redirect(os.path.join(site, "list", slug), "../", "Your lists")
+            redirect(os.path.join(site, "watch", slug), "../../list/", "Your lists")
+            redirect(os.path.join(site, slug), "../list/", "Your lists")
     for slug, wl in (watchlists or {}).items():
         # early links were /watch/<slug>/ and then /<slug>/; keep both working
         redirect(os.path.join(site, "watch", slug), f"../../list/{slug}/", wl["name"])

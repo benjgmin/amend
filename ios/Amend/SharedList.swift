@@ -1,7 +1,7 @@
 import Foundation
 
-/// a list someone shared: an amend.watch/list/?w=DAB,VRB&n=Club%20SVFR link, a named list link
-/// (amend.watch/list/club-svfr/), or just airport IDs ("DAB, komn PHNL")
+/// a list someone shared: an amend.watch/list/?w=BJC,VRB&n=Club%20SVFR link, a named list link
+/// (amend.watch/list/club-svfr/), or just airport IDs ("BJC, kfdk PHNL")
 struct SharedList: Sendable {
     let name: String
     let ids: [String]
@@ -42,7 +42,7 @@ struct SharedList: Sendable {
         return SharedList(name: "Shared list", ids: ids)
     }
 
-    /// "DAB, komn PHNL" -> ["DAB", "OMN", "PHNL"], 200 at most, like the site
+    /// "BJC, kfdk PHNL" -> ["BJC", "FDK", "PHNL"], 200 at most, like the site
     static func parse(_ s: String) -> [String] {
         var out: [String] = []
         for token in s.split(whereSeparator: { $0 == "," || $0 == ";" || $0.isWhitespace }) {

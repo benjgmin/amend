@@ -2,7 +2,7 @@ import BackgroundTasks
 import Foundation
 import UserNotifications
 
-/// "New FAA cycle: VRB 2 ACT · DAB 1 IFR". Runs in a background app refresh task a few
+/// "New FAA cycle: VRB 2 ACT · BJC 1 IFR". Runs in a background app refresh task a few
 /// times a day; iOS decides exactly when. Posts once per cycle.
 @MainActor
 enum NotificationManager {
