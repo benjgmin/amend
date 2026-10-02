@@ -25,6 +25,11 @@ REPO_URL = "https://github.com/benjgmin/amend"
 # names on for every link and forwards the old pages: keep it False until both names open in a browser
 SUBDOMAINS = True
 SUB_URLS = {"status": "https://status.amend.watch/", "docs": "https://docs.amend.watch/"}
+# short share links (list.amend.watch/x7k2mq) from the amend-lists Cloudflare project (cloudflare-lists/). Off, every
+# "Copy share link" copies the long ?w= link, as it always has; on, it asks for a code first and copies the long
+# link whenever that doesn't answer. Keep it False until list.amend.watch/health says ok
+SHORT_LINKS = False
+SHORT_URL = "https://list.amend.watch/"
 
 
 def sub_url(kind, root=None, path=""):
@@ -513,7 +518,7 @@ document.addEventListener("click",ev=>{const b=ev.target.closest("button");if(!b
   else if(b.dataset.rm&&l)LS.set(l.id,[b.dataset.rm],false);
   else if(b.dataset.use)LS.use(b.dataset.use);
   else if(b.id==="fold"&&l){LS.fold(l.id,!LS.folded(l.id));renderLists();if(window.AMside)AMside();return document.getElementById("fold").focus()}
-  else if(b.id==="share"&&l)return AM.copy(LS.link(l),b);
+  else if(b.id==="share"&&l)return LS.share(l,b);
   else if(b.id==="rename"&&l)return AM.form(document.getElementById("nf"),{value:l.name},n=>{LS.rename(l.id,n);update()});
   else if(b.id==="newlist")return AM.form(document.getElementById("nf"),{label:"Create",ph:"Name, e.g. Flying club or Bahamas trip"},n=>{LS.create(n,[]);update();q.focus()});
   else if(b.id==="dellist"&&l)LS.remove(l.id);
@@ -544,7 +549,8 @@ W.addEventListener("click",ev=>{const b=ev.target.closest("button");if(!b)return
 W.hidden=false;intro.hidden=true;show()})();
 """
 WATCH_JS = r"""const META=__META__,NAMES=__NAMES__,SEL=__PRI__,SRC=__SRC__;
-const P=new URLSearchParams(location.search),sname=(P.get("n")||"").trim().slice(0,60);let shared=parseW(P.get("w"));
+const P=new URLSearchParams(location.search),code=AM.short&&/^[a-z2-9]{6,10}$/.test(P.get("s")||"")?P.get("s"):"";
+let sname=(P.get("n")||"").trim().slice(0,60),shared=parseW(P.get("w"));
 const $=id=>document.getElementById(id),out=$("list"),cap=s=>s.charAt(0).toUpperCase()+s.slice(1);
 const ICAO={};for(const k in NAMES)if(NAMES[k][0])ICAO[NAMES[k][0]]=k;
 // one of your lists (?l=, or a link to a list you already saved), a list someone shared (?w=), or the one in use
@@ -598,7 +604,8 @@ async function body(){const my=++run,ids=mine?mine.ids:shared;
 function airports(v){const ok=[],bad=[];for(const t of v.toUpperCase().split(/[\s,;]+/).filter(Boolean)){
   const id=NAMES[t]?t:ICAO[t]||(NAMES[t.replace(/^K(?=[A-Z]{3}$)/,"")]?t.slice(1):"");id?ok.push(id):bad.push(t)}return{ok:[...new Set(ok)],bad}}
 document.addEventListener("click",ev=>{const b=ev.target.closest("button");if(!b||b.closest("form"))return;
-  if(b.id==="copy")AM.copy(mine?LS.link(mine):new URL("?w="+shared.join(",")+(sname?"&n="+encodeURIComponent(sname):""),location.href).href,b);
+  if(b.id==="copy"){if(mine)LS.share(mine,b);else if(code)AM.copy(AM.short+code,b);
+    else AM.share(new URL("?w="+shared.join(",")+(sname?"&n="+encodeURIComponent(sname):""),location.href).href,shared,sname,b)}
   else if(b.id==="save"){mine=LS.same(shared,sname)||LS.create(sname||"Shared list",shared);LS.use(mine.id);say("Saved to your lists as “"+mine.name+"”.");head();body()}
   else if(b.id==="addapt")AM.form($("nf"),{label:"Add",ph:"Airport IDs, e.g. BJC FDK KPAO",aria:"Airport IDs to add",max:600},v=>{const{ok,bad}=airports(v),had=ok.filter(x=>mine.ids.includes(x)),add=ok.filter(x=>!had.includes(x));
     if(add.length){const l=LS.set(mine.id,add,true);if(!l)return gone();mine=l}const got=add.filter(x=>mine.ids.includes(x)),full=add.filter(x=>!got.includes(x)),few=a=>a.length>8?a.length+" airports":a.join(", ");
@@ -613,10 +620,18 @@ function gone(){mine=LS.active();shared=[];if(!mine)history.replaceState(null,""
 // the same list changed in another tab
 addEventListener("storage",ev=>{if(ev.key!=="amend.lists"||!mine)return;const l=LS.all().find(x=>x.id===mine.id);
   if(!l)gone();else if(JSON.stringify(l)!==JSON.stringify(mine)){mine=l;head();body()}});
-if(mine)LS.use(mine.id);
-// a link to airports you already keep under another name opens your list; say so
-if(mine&&shared.length&&sname&&mine.id!==P.get("l")&&mine.name!==sname)say("You already have these airports as “"+mine.name+"”.");
-head();body();
+function start(){if(mine)LS.use(mine.id);
+  // a link to airports you already keep under another name opens your list; say so
+  if(mine&&shared.length&&sname&&mine.id!==P.get("l")&&mine.name!==sname)say("You already have these airports as “"+mine.name+"”.");
+  head();body()}
+// a short link (list.amend.watch/x7k2mq lands here as ?s=x7k2mq): the list comes from there, then it's a shared list
+// like any ?w= one. A code never changes what it points to, so the address bar keeps it
+if(code&&!shared.length&&!P.get("l")){mine=null;head();out.innerHTML='<div class="note">Loading…</div>';
+  fetch(AM.short+code+".json").then(r=>r.ok?r.json():Promise.reject(r.status)).then(j=>{
+    shared=parseW((j.w||[]).join(","));sname=String(j.n||"").trim().slice(0,60);mine=shared.length?LS.same(shared,sname):null;start()},
+  e=>{out.innerHTML='<div class="card box note">'+(e===404?'This shared list doesn’t exist. Check that the link was copied whole.'
+    :'This shared list couldn’t be loaded. Try again in a minute.')+'</div>'})}
+else start();
 """
 # the named-list page (/list/<slug>/): save it to your lists in one tap, or copy its link
 NAMED_JS = r"""(()=>{const b=document.getElementById("savenamed"),c=document.getElementById("copynamed"),ids=b.dataset.ids.split(","),name=b.dataset.name;
@@ -628,7 +643,7 @@ paint();c.hidden=false;c.addEventListener("click",()=>AM.copy(location.href.spli
 # to the next 0901Z changeover, the lists saved in this browser, and the page chrome (the sidebar's lists, the
 # add-to-list menu on airport pages, share, / to search, filter tabs, opening a linked history cycle)
 APP_JS = r"""var esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-var AM=(()=>{const STALE=__STALE__,K="amend.seen",NC="amend.newc",SH="amend.newshown";
+var AM=(()=>{const STALE=__STALE__,SHORT=__SHORT__,K="amend.seen",NC="amend.newc",SH="amend.newshown";
 const rd=(k,st)=>{try{return JSON.parse((st||localStorage).getItem(k)||"{}")||{}}catch(e){return{}}};
 const wr=(k,v,st)=>{try{(st||localStorage).setItem(k,JSON.stringify(v))}catch(e){}};
 // items: [{id, c: cycle}]. new = not seen before and from a cycle at or after the last look. First look marks nothing.
@@ -673,8 +688,17 @@ function fresh(){document.querySelectorAll("time[data-ago]").forEach(t=>{t.textC
     ago(age)+'. Amend’s daily update may have stopped, so newer FAA changes might be missing. Check the official FAA sources before you fly.</span>';st.hidden=false}}}
 function tick2(){flip();tick();fresh()}
 setInterval(tick2,15000);
-function copy(u,b){(navigator.clipboard?navigator.clipboard.writeText(u):Promise.reject()).then(()=>{if(!b)return;const t=b.textContent;
-  b.textContent="Copied";setTimeout(()=>{b.textContent=t},1500)},()=>prompt("Copy this link:",u))}
+const copied=b=>{if(!b)return;const t=b.textContent;b.textContent="Copied";setTimeout(()=>{b.textContent=t},1500)};
+function copy(u,b){(navigator.clipboard?navigator.clipboard.writeText(u):Promise.reject()).then(()=>copied(b),()=>prompt("Copy this link:",u))}
+// a list's share link: a short list.amend.watch code when SHORT is set, else (or if that takes over 2 seconds or
+// fails for any reason) the long link u. The clipboard gets a promise, so Safari still counts it as the click's copy
+function shorten(ids,name){const c=new AbortController(),t=setTimeout(()=>c.abort(),2000);
+  return fetch(SHORT+"new",{method:"POST",headers:{"Content-Type":"text/plain"},body:JSON.stringify({w:ids,n:name}),signal:c.signal})
+    .then(r=>r.ok?r.json():null).then(j=>j&&/^[a-z2-9]{6,10}$/.test(j.code)?SHORT+j.code:null,()=>null).finally(()=>clearTimeout(t))}
+function share(u,ids,name,b){if(!SHORT||!ids.length||!window.ClipboardItem||!navigator.clipboard||!navigator.clipboard.write)return copy(u,b);
+  const got=shorten(ids,name).then(s=>s||u);
+  navigator.clipboard.write([new ClipboardItem({"text/plain":got.then(s=>new Blob([s],{type:"text/plain"}))})])
+    .then(()=>copied(b),()=>got.then(s=>prompt("Copy this link:",s)))}
 // a one-line form in place of prompt(): done(value) on submit, back() on cancel
 function form(el,o,done,back){el.innerHTML='<form class="nf"><input maxlength="'+(o.max||60)+'" required autocomplete="off" aria-label="'+esc(o.aria||"List name")+
   '" placeholder="'+esc(o.ph||"List name")+'"><button class="btn">'+esc(o.label||"Save")+'</button><button type="button" class="btn ghost">Cancel</button></form>';
@@ -682,7 +706,7 @@ function form(el,o,done,back){el.innerHTML='<form class="nf"><input maxlength="'
   i.value=o.value||"";i.focus();i.select();
   f.addEventListener("submit",ev=>{ev.preventDefault();const v=i.value.trim();if(v){shut();done(v)}});
   f.lastChild.addEventListener("click",x);i.addEventListener("keydown",ev=>{if(ev.key==="Escape"){ev.stopPropagation();x()}})}
-return{look,base,mark,pill,tick:tick2,newc:()=>rd(NC),setNewc:m=>wr(NC,m),copy,form,now,flip,sync}})();
+return{look,base,mark,pill,tick:tick2,newc:()=>rd(NC),setNewc:m=>wr(NC,m),copy,share,short:SHORT,form,now,flip,sync}})();
 // the lists saved in this browser: amend.lists = [{id, name, ids}], the one in use in amend.list.on. amend.watch was
 // the single watchlist before there were lists; the first visit turns it (and its name) into the first list, and it
 // keeps every saved airport after that, so nothing still reading it comes up empty
@@ -715,8 +739,9 @@ const folded=id=>shut().includes(id);
 function fold(id,on){const v=shut().filter(x=>x!==id&&all().some(l=>l.id===x));if(on)v.push(id);try{localStorage.setItem(FOLD,JSON.stringify(v))}catch(e){}}
 // a saved list with exactly these airports, the same name first
 function same(ids,name){const s=new Set(ids),m=all().filter(l=>l.ids.length===s.size&&l.ids.every(x=>s.has(x)));return m.find(l=>l.name===name)||m[0]||null}
+const share=(l,b)=>AM.share(link(l),l.ids,l.name,b);
 const link=l=>new URL((document.body.dataset.root||"")+"list/?w="+l.ids.join(",")+"&n="+encodeURIComponent(l.name),location.href).href;
-return{all,active,use,create,rename,set,remove,union,same,link,folded,fold}})();
+return{all,active,use,create,rename,set,remove,union,same,link,share,folded,fold}})();
 // the sidebar: every list, with the one that matches the page open. On a list's page that's the list shown, on an
 // airport page a list with that airport (the one in use first), anywhere else the list in use. Clicking a list's
 // name opens its page, so the sidebar and the page never disagree. The page runs SB.side() right after the
@@ -828,7 +853,7 @@ addEventListener("hashchange",open);open();AM.tick();
 addEventListener("beforeprint",()=>document.querySelectorAll("details.apt").forEach(d=>d.open=true))});
 """
 STALE_HOURS = 36   # the update runs daily; past this the page says so instead of looking current
-APP = APP_JS.replace("__STALE__", str(STALE_HOURS))
+APP = APP_JS.replace("__STALE__", str(STALE_HOURS)).replace("__SHORT__", json.dumps(SHORT_URL if SHORT_LINKS else ""))
 APP_VERSION = hashlib.sha1(APP.encode()).hexdigest()[:10]   # like CSS_VERSION: new pages never run an old cached app.js
 
 
@@ -1565,19 +1590,30 @@ def privacy_page(meta, now):
              if EMAIL_FORM else
              "<p>Amend doesn't collect email addresses. If you use a news reader app to "
              "follow an alert link, that app's own privacy policy applies to what you give it.</p>")
+    # short share links (SHORT_LINKS) are the one thing Amend stores; without them it stores nothing
+    store = ("Amend stores nothing about you; the only thing it saves is a list you share with a short link, below. "
+             if SHORT_LINKS else "Amend runs no server or database of its own; ")
     sections = [
         ("short", "The short version", (
             "<p>No accounts, no cookies, no ads, and nothing sold. Your lists stay in your browser. Visitor counts "
-            "come from cookie-free Cloudflare Web Analytics, and the site is hosted on GitHub Pages. Amend runs no "
-            "server or database of its own; GitHub and Cloudflare keep only what's described below.</p>")),
+            "come from cookie-free Cloudflare Web Analytics, and the site is hosted on GitHub Pages. " + store +
+            "GitHub and Cloudflare keep only what's described below.</p>")),
         ("browser", "What stays in your browser", (
             "<p>Amend saves a few things in your browser's local storage so the site remembers you without an "
             "account:</p><ul><li>your lists of airports and which one you're using</li>"
             "<li>which changes you've already seen, for the <b>New</b> labels</li>"
             "<li>small settings, like which lists are open in the sidebar and whether you've seen the welcome</li>"
-            "</ul><p>None of it is sent to Amend. It leaves your browser only in a share link you choose to copy, "
-            "which carries that list's name and airports. Clearing this site's data in your browser deletes all of "
-            "it.</p>")),
+            "</ul><p>None of it is sent to Amend. It leaves your browser only when you share a list, as described "
+            "below. Clearing this site's data in your browser deletes all of it.</p>")),
+        ("sharing", "Sharing a list", (
+            "<p>When you copy a list's share link, Amend saves the list's name and airport codes on Cloudflare "
+            "under a short random code, like list.amend.watch/x7k2mq, so the link can open it. Nothing else is "
+            "saved with it: no account, no IP address, no time. Anyone with the link can see that list, and the "
+            "same list always gets the same link. If that service doesn't answer, the link carries the list's "
+            "name and airports itself instead.</p>"
+            if SHORT_LINKS else
+            "<p>A share link you choose to copy carries that list's name and airports in the link itself. Amend "
+            "doesn't save it anywhere.</p>")),
         ("analytics", "Visitor counts", (
             "<p>Amend counts visits with Cloudflare Web Analytics, which doesn't use cookies or follow you across "
             "sites. Its script loads from static.cloudflareinsights.com and reports the page you opened, the site "
