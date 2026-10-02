@@ -96,14 +96,15 @@ class TestSite(unittest.TestCase):
 
     def test_off_keeps_long_links(self):
         from amend import web
-        self.assertFalse(web.SHORT_LINKS)
-        self.assertIn('SHORT=""', web.APP)
+        web.SHORT_LINKS = False
+        self.assertIn('SHORT=""', web.APP_JS.replace("__SHORT__", json.dumps(web.SHORT_URL if web.SHORT_LINKS else "")))
         self.assertIn("doesn't save it anywhere", web.privacy_page(
             {"from_cycle": "2026-09-03", "to_cycle": "2026-10-01"}, None))
 
     def test_on(self):
         from amend import web
-        web.SHORT_LINKS = True
+        self.assertTrue(web.SHORT_LINKS)      # live since list.amend.watch answered
+        self.assertIn('SHORT="https://list.amend.watch/"', web.APP)
         app = web.APP_JS.replace("__STALE__", "1").replace("__SHORT__", json.dumps(web.SHORT_URL))
         self.assertIn('SHORT="https://list.amend.watch/"', app)
         self.assertIn("AM.share(link(l),l.ids,l.name,b)", app)
