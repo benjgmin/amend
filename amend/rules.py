@@ -194,6 +194,17 @@ NAV_NAMES = {"VOT": "VOR test signal (VOT)", "VORTAC": "VORTAC", "VOR/DME": "VOR
 # every *_RMK file with a REMARK column is a remark: airport, tower, ILS, navaid, AWOS, frequency...
 REMARK_FILES = ("APT_RMK", "ATC_RMK", "ILS_RMK", "NAV_RMK", "AWOS_RMK", "FRQ_RMK", "COM_RMK",
                 "CLS_ARSP_RMK", "FIX_RMK")
+# numbered remark lists (REF_COL_NAME): an airport's general remarks (APT_RMK A110-1, A110-2...),
+# a tower's, an ILS's or a navaid's. the number is a place in the list, not what the remark is
+# about, and the FAA puts a new remark in a freed number: SMF 2026-01-22 A110-28 "GND VEHICLE
+# SURVEILLANCE SYS IN USE..." -> "WEST RAMP SPOTS 63W, 65W, 66 & F1 RSTRD TO TOW IN...". a remark
+# filed against a field (a runway end's OBSTN_CLNC_SLOPE) is about that field whatever it says
+LIST_REMARK_COLS = ("GENERAL_REMARK", "ATC_REMARK")
+# the columns that only say where a remark sits in its list
+REMARK_SLOT_COLS = ("LEGACY_ELEMENT_NUMBER", "REF_COL_SEQ_NO", "REMARK_NO")
+# words too small to show two remarks are about the same thing
+REMARK_LITTLE_WORDS = {"A", "AN", "THE", "OF", "TO", "AND", "OR", "FOR", "IN", "ON", "AT", "BY",
+                       "WITH", "IS", "ARE", "BE", "FM", "FROM", "ALL", "NO", "NOT", "IF", "WHEN"}
 
 # declared distances (APT_RWY_END): column -> (plain English, standard abbreviation)
 DECLARED_DISTANCES = {
@@ -258,8 +269,10 @@ def is_hours_col(c):
 
 
 def is_helipad(rwy_id):
-    """'H1', 'H2A': a helipad, not a runway (APT_RWY lists both)."""
-    return bool(re.fullmatch(r"H\d+[A-Z]?", rwy_id or ""))
+    """'H1', 'H2A', 'HB', 'H-A', 'H': a helipad, not a runway (APT_RWY lists both). a runway is
+    numbered or named for compass points (N/S, NE/SW), never H: SLC lists its 60 x 60 ft pads as
+    HB and HF, NDZ as H-A to H-F, and 4 other fields letter theirs or call it H (2026-10-01)."""
+    return bool(re.fullmatch(r"H(?:\d+[A-Z]?|-?[A-Z])?", rwy_id or ""))
 
 
 def is_fyi_col(c):

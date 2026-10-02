@@ -9,6 +9,10 @@ def label(field):
     return field.replace("_", " ").lower()
 
 
+# PFR_RMT_FMT columns that aren't one word in the FAA's spelling
+PFR_LABELS = {"Hours1": "hours"}
+
+
 # FRQ's FREQ_USE words. the meanings are the glossary's verified ones (APCH, DEP, LCL, GND, CD,
 # EMERG, OPS, PMSV, D-ATIS, GCO); /P and /S are primary and secondary, the same P and S the APT layout
 # uses for its APCH_P / DEP_S columns. any other word (IC, a sector name) stays as the FAA wrote it,
@@ -253,12 +257,21 @@ def summarize(rec, remarks):
 
     if b == "PFR_RMT_FMT":
         o, d = (row or ctx).get("Orig", "?"), (row or ctx).get("Dest", "?")
+        if rec.get("_tag"):     # what tells it apart from a route that reads the same (collapse)
+            d += f" [{rec['_tag']}]"
         route = (row or ctx).get("Route String", "")
         if kind == "added":
             return f"new preferred IFR route {o} -> {d}: {route}"
         if kind == "removed":
-            return f"preferred IFR route {o} -> {d}: discontinued"
-        return f"preferred IFR route {o} -> {d}: new routing {route}"
+            return f"preferred IFR route {o} -> {d} via {route}: discontinued"
+        # what changed, not always "new routing": LAX -> SBA kept its routing in 2026-09-03 and
+        # only its altitude went J110 -> J100
+        edits = {f["field"]: f for f in rec.get("fields", [])}
+        said = [f"{PFR_LABELS.get(c, label(c))} {f['old'] or 'none'} -> {f['new'] or 'none'}"
+                for c, f in edits.items() if c != "Route String"]
+        if "Route String" in edits:
+            return "; ".join([f"preferred IFR route {o} -> {d}: new routing {route}"] + said)
+        return f"preferred IFR route {o} -> {d} via {route}: " + "; ".join(said or ["updated"])
 
     if b.startswith(("STAR", "DP")):
         what = "arrival (STAR)" if b.startswith("STAR") else "departure (DP)"
@@ -331,10 +344,9 @@ def summarize(rec, remarks):
         if any(not fl.known(f["field"], rec["source"]) for f in rec["fields"]):
             rec["no_template"] = True     # a column the FAA layouts we read don't name: counted
         where = ""
-        if ctx.get("RWY_END_ID"):
-            where = f"runway {ctx['RWY_END_ID']}: "
-        elif ctx.get("RWY_ID"):
-            where = f"runway {ctx['RWY_ID']}: "
+        if ctx.get("RWY_END_ID") or ctx.get("RWY_ID"):
+            rid = ctx.get("RWY_END_ID") or ctx["RWY_ID"]
+            where = f"{'helipad' if is_helipad(ctx.get('RWY_ID') or rid) else 'runway'} {rid}: "
         elif ctx.get("NAV_ID"):
             nm = f" ({ctx['NAME'].title()})" if ctx.get("NAME") else ""
             away = f", {ctx['_NEAR_NM']} NM from the field" if ctx.get("_NEAR_NM") else ""

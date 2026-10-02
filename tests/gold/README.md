@@ -32,6 +32,8 @@ it can show rows about other airports (see the PR that added this).
 | `expected.category` | `tower`, `frequency`, `runway`, `remark`, `navaid`, `airport`, ... (see SCHEMA.md) |
 | `expected.summary_contains` | text the plain-English line must include (FAA values, not paraphrase) |
 | `expected.summary_lacks` | optional: text it must not include (a guessed expansion, a wrong word) |
+| `expected.count` | optional: how many changes the engine says at the airport |
+| `expected.details_count`, `details_contains`, `details_lacks` | optional: the lines under the change (one per preferred route): how many, text one must include, text none may include |
 | `terms` | optional: FAA contractions in the text (`PPR`, `CLSD`, `SS-SR`) |
 | `notes` | why the answer is what it is |
 | `verified_by` | who checked the answer against the FAA source |

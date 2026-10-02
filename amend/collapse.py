@@ -4,7 +4,7 @@ from collections import defaultdict
 
 from . import glossary
 from .diff import _canon, diff
-from .english import PROC_USE, freq_use, ils, ils_part, procedure_name, summarize
+from .english import PFR_LABELS, PROC_USE, freq_use, ils, ils_part, label, procedure_name, summarize
 from .procedures import describe, split_code
 from .rules import REMARK_FILES, base
 
@@ -229,7 +229,36 @@ def _routes(apt, routes):
     return {"airport": apt, "source": "PFR", "kind": "changed", "priority": "ifr",
             "summary_override": f"preferred IFR routes: {parts}",
             "key": key, "values": [str(n) for n in counts.values()],
-            "details": sorted({summarize(r, {}) for r in routes})}
+            "details": _route_lines(routes)}
+
+
+# what tells two preferred routes between the same airports apart when their lines would read
+# the same: LAX -> F70 has one routing for M class jets and one for P and Q class (Area,
+# Altitude), SWF -> ACK one per route type (L and TEC). shown as the FAA wrote them
+ROUTE_TELL_APART = ("Type", "Area", "Altitude", "Aircraft", "Direction", "Hours1")
+
+
+def _route_lines(routes):
+    """one line per route, so the lines add up to the counts in the summary. lines that would
+    read the same get what tells them apart; rows that differ in nothing a pilot sees (only
+    the FAA's sequence number) share a line that says so."""
+    groups = defaultdict(list)
+    for r in routes:
+        groups[summarize(r, {})].append(r)
+    lines = []
+    for line, rs in groups.items():
+        if len(rs) > 1:
+            full = lambda r: r.get("row") or r.get("_row") or {}
+            cols = [c for c in ROUTE_TELL_APART if len({full(r).get(c, "") for r in rs}) > 1]
+            for r in rs:
+                r["_tag"] = ", ".join(f"{PFR_LABELS.get(c, label(c))} {full(r).get(c) or 'none'}" for c in cols)
+            same = defaultdict(int)
+            for r in rs:
+                same[summarize(r, {})] += 1
+            lines += [f"{t} (listed {n} times)" if n > 1 else t for t, n in same.items()]
+        else:
+            lines.append(line)
+    return sorted(lines)
 
 
 RANK = {"fyi": 0, "ifr": 1, "action": 2}

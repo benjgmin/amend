@@ -150,7 +150,11 @@ Each history entry records the `engine` version that produced it (`amend.ENGINE_
    (`diff.py:151-159`).
 2. Each removed row is paired with the most similar added row. Files with pair keys
    (`rules.py:21-35`, e.g. `APT_RWY_END` on runway and end id) only pair when the keys match; files
-   without them need at least 50% of columns equal (`diff.py:162-173`).
+   without them need at least 50% of columns equal (`diff.py:162-173`). A numbered general remark
+   (APT_RMK A110-1, A110-2, ...) never pairs with an unrelated remark that took its number (no word
+   or number in common, under 35% alike): that reads as the old one removed and a new one added
+   (`diff.unrelated_remarks`). A remark that only moved to another number, or one copy of a remark
+   listed twice, drops out before pairing.
 3. A pair becomes one **changed** record listing each field's old and new value, minus noise
    columns (coordinates, survey dates and sources, sequence numbers: `rules.py:112-124`) and survey
    rounding (`rules.py:78-80`, `132-141`) (`diff.py:174-193`).
@@ -172,7 +176,8 @@ Each record gets a priority from `diff.priority` (`diff.py:30-59`):
 Special cases on top: a remark that only got reworded (same numbers and ids, 60% similar) is `fyi`
 (`diff.py:89-95`, `181-182`); a pilot-controlled lighting remark is `action` only if the keying
 frequency changed or a light stopped coming on (`diff.py:113-144`); a declared distance is `action`
-only when it shrinks by 500 ft or 10% (`diff.py:62-75`, `rules.py:103-104`).
+only when it shrinks by 500 ft or 10% (`diff.py:62-75`, `rules.py:103-104`); a helipad (H1, HB, H-A)
+added, removed or changed is `fyi` (`rules.is_helipad`).
 
 ### Translate remarks
 
@@ -207,7 +212,9 @@ glossary, rely on the prompt alone.
    (`collapse.py:169-182`).
 5. The end rows of a runway added or removed outright drop out (`collapse.py:184-190`).
 6. All STAR and DP rows become one IFR line with waypoint detail per procedure; all preferred-route
-   rows become one IFR line (`collapse.py:194-201`, `91-127`, `procedures.py:61-88`).
+   rows become one IFR line (`collapse.py:194-201`, `91-127`, `procedures.py:61-88`) with one detail
+   line per route. Routes whose lines would read the same get their type, area or altitude added
+   (`collapse._route_lines`).
 
 Then several use changes on one frequency merge into one line (`collapse.py:206-225`).
 
