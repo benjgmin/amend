@@ -60,10 +60,21 @@ enum FAALinks {
         return (change.cycle ?? cycle).flatMap { nasr($0) }
     }
 
-    /// "report a wrong change" (a GitHub issue until there's an email address)
-    static func report(_ id: String) -> URL? {
-        var c = URLComponents(string: "https://github.com/benjgmin/amend/issues/new")
-        c?.queryItems = [URLQueryItem(name: "title", value: "\(id): ")]
-        return c?.url
+    static let reportEmail = "hello@amend.watch"
+
+    /// an email to reportEmail with the subject and a short form filled in, like the website's report links.
+    /// no airport: the general "Report a problem"
+    static func report(_ id: String? = nil, cycle: String? = nil) -> URL? {
+        var c = URLComponents()
+        c.scheme = "mailto"
+        c.path = reportEmail
+        let lines = [id.map { "Airport: \($0)" }, cycle.map { "Cycle: \(Cycle.efb($0))" },
+                     id.map { "Page: https://amend.watch/\($0)/" }].compactMap { $0 }
+        let form = "What looks wrong:\n\n\nWhat the FAA source says (a link or screenshot helps):\n"
+        c.queryItems = [
+            URLQueryItem(name: "subject", value: id.map { "Amend: wrong change at \($0)" } ?? "Amend: a problem"),
+            URLQueryItem(name: "body", value: lines.isEmpty ? form : lines.joined(separator: "\n") + "\n\n" + form),
+        ]
+        return c.url
     }
 }

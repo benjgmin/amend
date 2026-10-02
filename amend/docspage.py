@@ -349,7 +349,7 @@ def accuracy_sections(log_dir=runlog.RUNS, cases=gold.CASES):
             "the plate itself.</li>"
             "<li><b>Class E airspace above the surface</b> (E5, starting at 700 or 1,200 ft). Class B, C, D and E "
             "surface areas are covered.</li>"
-            "<li><b>Chart history before fall 2026</b>, because the FAA doesn't keep old chart indexes online. "
+            "<li><b>Chart history before July 2026</b>, because the FAA doesn't keep old chart indexes online. "
             "Airport data goes back to Aug 2024.</li>"
             "<li><b>A plain-English version of every remark.</b> When a translation doesn't pass the check, you "
             "get the FAA text instead.</li>"

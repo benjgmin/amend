@@ -52,7 +52,7 @@ struct GuideView: View {
                             .font(.subheadline.weight(.medium))
                             .foregroundStyle(EFB.cyan)
                     }
-                    Text("History goes back to Aug 2024 for airport data. Chart history starts in fall 2026 because the FAA doesn't keep old chart indexes online.")
+                    Text("History goes back to Aug 2024 for airport data. Chart history starts in July 2026 because the FAA doesn't keep old chart indexes online.")
                         .guideBody()
                 }
 

@@ -469,7 +469,7 @@ private struct SourcesPanel: View {
                 .foregroundStyle(EFB.dim)
                 .fixedSize(horizontal: false, vertical: true)
                 .padding(.top, 10)
-            if let url = FAALinks.report(id) {
+            if let url = FAALinks.report(id, cycle: cycle) {
                 Link("Report a wrong change", destination: url)
                     .font(.footnote.weight(.medium))
                     .foregroundStyle(EFB.cyan)
