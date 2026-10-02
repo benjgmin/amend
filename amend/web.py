@@ -27,8 +27,8 @@ SUBDOMAINS = True
 SUB_URLS = {"status": "https://status.amend.watch/", "docs": "https://docs.amend.watch/"}
 # short share links (list.amend.watch/x7k2mq) from the amend-lists Cloudflare project (cloudflare-lists/). Off, every
 # "Copy share link" copies the long ?w= link, as it always has; on, it asks for a code first and copies the long
-# link whenever that doesn't answer. Keep it False until list.amend.watch/health says ok
-SHORT_LINKS = False
+# link whenever that doesn't answer, so turning it off never breaks sharing; ?s= links stop opening while it is off
+SHORT_LINKS = True
 SHORT_URL = "https://list.amend.watch/"
 
 
