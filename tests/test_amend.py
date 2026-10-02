@@ -938,6 +938,10 @@ class TestWatchlists(unittest.TestCase):
         self.assertIn('content="Club SVFR: 1 of 2 airports change on 01 OCT · ACT 1"', html_)
         self.assertIn("0800-2200 → 0600-2200", html_)
         self.assertIn("No changes in this cycle.", html_)        # DAB
+        # a list that was taken down lands on the lists page, from all three of its old addresses
+        self.assertIn('url=../"', open(os.path.join(site, "list", "daytona-training", "index.html")).read())
+        self.assertIn('url=../../list/"', open(os.path.join(site, "watch", "daytona-training", "index.html")).read())
+        self.assertIn('url=../list/"', open(os.path.join(site, "daytona-training", "index.html")).read())
 
 
 class TestSchema(Case):

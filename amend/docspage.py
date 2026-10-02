@@ -381,8 +381,8 @@ def more_sections():
         ("start", "Quick start", (
             '<ol class="dx-steps">'
             + step("Find your airport", "search", (
-                f'Search on <a href="{site}">amend.watch</a> by FAA ID (<code>DAB</code>), ICAO code '
-                "(<code>KDAB</code>), name or city. If an airport has no changes on record, Amend says so."))
+                f'Search on <a href="{site}">amend.watch</a> by FAA ID (<code>BJC</code>), ICAO code '
+                "(<code>KBJC</code>), name or city. If an airport has no changes on record, Amend says so."))
             + step("Read what changed", "airport page", (
                 "Changes are sorted ACT first, then IFR, then FYI. Each one says what changed in plain English, "
                 "shows the old and new values, and links the FAA source it came from."))
@@ -427,16 +427,16 @@ def more_sections():
             "your lists, and which list each one is on.</li>"
             "<li><b>Share a list</b> with its link. Whoever opens it sees the same airports and can save a copy "
             "to their own lists.</li>"
-            f'<li><b>Named lists</b>, like <a href="{site}list/daytona-training/">daytona-training</a>, have a '
-            "fixed address and their own alert feed, for a school or club.</li></ul>"
+            f'<li><b>Named lists</b> have a fixed address (<code>{site}list/&lt;name&gt;/</code>) '
+            "and their own alert feed, for a school or club.</li></ul>"
             "<p>Your own lists are stored in your browser only. Clearing site data removes them, and they don't "
             "move between devices, so share the link to yourself to copy one.</p>")),
         ("alerts", "Alerts and the cycle calendar", (
             "<p>Amend has no accounts and sends no email. Instead, every airport and every named list has an RSS "
             "feed with one item per cycle with changes. Paste the feed's link into a news reader app (Feedly, "
             "Inoreader, NetNewsWire) and new changes show up there.</p><ul>"
-            f"<li><b>One airport:</b> <code>{site}DAB/feed.xml</code>, or <b>Get alerts</b> on its page.</li>"
-            f"<li><b>A named list:</b> <code>{site}list/daytona-training/feed.xml</code>.</li>"
+            f"<li><b>One airport:</b> <code>{site}BJC/feed.xml</code>, or <b>Get alerts</b> on its page.</li>"
+            f"<li><b>A named list:</b> <code>{site}list/&lt;name&gt;/feed.xml</code>.</li>"
             "<li><b>Your own list:</b> its page has <b>Download all alerts</b>, one file that adds a feed for "
             "every airport on it to your reader.</li>"
             f'<li><b>Cycle dates:</b> <a href="{site}cycles.ics">cycles.ics</a> adds every changeover at 0901Z '
@@ -532,9 +532,9 @@ def api_sections():
     fetch_js = html.escape(
         'const base = "https://amend.watch/";\n'
         'const meta = await (await fetch(base + "latest/meta.json")).json();\n'
-        'const res = await fetch(base + "latest/DAB.json");\n'
+        'const res = await fetch(base + "latest/BJC.json");\n'
         'if (res.status === 404) {\n'
-        '  console.log("No changes at DAB for", meta.to_cycle);\n'
+        '  console.log("No changes at BJC for", meta.to_cycle);\n'
         '} else {\n'
         '  const { changes } = await res.json();\n'
         '  for (const c of changes) console.log(c.priority.toUpperCase(), c.summary);\n'
@@ -557,8 +557,8 @@ def api_sections():
             f'<p>The data carries the same warning as the site: <a href="{site}terms/">not for navigation</a>. '
             "Always use official FAA publications and NOTAMs to fly.</p>")),
         ("quickstart", "Quick start", (
-            "<p>Which cycles are compared, then every change coming up at Daytona Beach (DAB):</p>"
-            f"<pre><code>curl {site}latest/meta.json\ncurl {site}latest/DAB.json</code></pre>"
+            "<p>Which cycles are compared, then every change coming up at Rocky Mountain Metro (BJC):</p>"
+            f"<pre><code>curl {site}latest/meta.json\ncurl {site}latest/BJC.json</code></pre>"
             f"<p>The same in JavaScript, in a browser or Node 18 and later:</p><pre><code>{fetch_js}</code></pre>"
             "<p>A <b>404 on an airport file means no changes</b> at that airport, not an error.</p>")),
         ("files", "Files", table),

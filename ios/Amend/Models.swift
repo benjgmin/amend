@@ -70,7 +70,7 @@ struct AirportInfo: Decodable, Sendable, Identifiable, Hashable {
     let lat: Double?
     let lon: Double?
 
-    /// "Daytona Beach, FL"
+    /// "Denver, CO"
     var location: String {
         [city, state].compactMap { $0 }.joined(separator: ", ")
     }

@@ -1,7 +1,7 @@
 """
 command line:
 
-  python -m amend diff OLD.zip NEW.zip VRB DAB [--dtpp FILE] [--airspace OLD NEW] [--llm] [--json] [--out DIR] [--raw]
+  python -m amend diff OLD.zip NEW.zip VRB BJC [--dtpp FILE] [--airspace OLD NEW] [--llm] [--json] [--out DIR] [--raw]
   python -m amend diff OLD.zip NEW.zip --all-airports [--dtpp FILE] [--airspace OLD NEW] [--llm] [--out DIR] [--print]
   python -m amend latest [--no-llm]      build site/ (what the GitHub Action runs)
   python -m amend history [--llm] [--keep]   add new cycles to history/
@@ -76,7 +76,7 @@ def main(argv=None):
     d = sub.add_parser("diff", help="diff two NASR CSV zips")
     d.add_argument("old")
     d.add_argument("new")
-    d.add_argument("ids", nargs="*", help="FAA airport ids (KDAB works too)")
+    d.add_argument("ids", nargs="*", help="FAA airport ids (KBJC works too)")
     d.add_argument("--all-airports", action="store_true")
     d.add_argument("--dtpp", help="d-TPP metafile XML for the NEW cycle (chart changes)")
     d.add_argument("--airspace", nargs=2, metavar=("OLD", "NEW"),

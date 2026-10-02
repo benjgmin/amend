@@ -175,7 +175,7 @@ final class AirportStore {
 
     // MARK: lists
 
-    /// "kdab " -> "DAB". Returns nil if it doesn't look like an airport id.
+    /// "kbjc " -> "BJC". Returns nil if it doesn't look like an airport id.
     static func normalize(_ raw: String) -> String? {
         var id = raw.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
         if id.count == 4, id.hasPrefix("K"), id.dropFirst().allSatisfy(\.isLetter) {
@@ -284,7 +284,7 @@ struct AirportList: Codable, Identifiable, Hashable, Sendable {
 
     static let maxAirports = 200
 
-    /// amend.watch/list/?w=DAB,VRB&n=Club%20SVFR: anyone can open it, and save it on the site
+    /// amend.watch/list/?w=BJC,VRB&n=Club%20SVFR: anyone can open it, and save it on the site
     var shareURL: URL? {
         var c = URLComponents(url: API.base.appending(path: "list/"), resolvingAgainstBaseURL: false)
         c?.queryItems = [URLQueryItem(name: "w", value: ids.joined(separator: ",")),
