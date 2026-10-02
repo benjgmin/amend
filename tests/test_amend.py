@@ -624,6 +624,24 @@ class TestWeb(unittest.TestCase):
         self.assertIn('data-built="2026-09-24T00:00:00Z"', page)      # the page says when it's stale
         self.assertIn('id="stale" hidden', page)
 
+    def test_data_links_only_to_files_that_exist(self):
+        # latest/<ID>.json is written only for airports changing this cycle, history/<ID>.json only with history
+        import datetime as dt
+        from amend import web
+        meta = {"from_cycle": "2026-09-03", "to_cycle": "2026-10-01", "upcoming": True}
+        now = dt.datetime(2026, 9, 24, tzinfo=dt.timezone.utc)
+        quiet = web.airport_page("X99", {"name": "Quiet Field"}, None, None, meta, now)
+        self.assertNotIn("../latest/X99.json", quiet)
+        self.assertNotIn("../history/X99.json", quiet)
+        self.assertIn('<p class="foot">built 24 Sep 2026 0000Z</p>', quiet)
+        hist = {"entries": []}
+        old = web.airport_page("X99", {"name": "Quiet Field"}, None, hist, meta, now)
+        self.assertNotIn("../latest/X99.json", old)
+        self.assertIn('Data: <a href="../history/X99.json">history</a> · built', old)
+        site, _ = self.build()
+        page = open(os.path.join(site, "VRB", "index.html")).read()
+        self.assertIn('Data: <a href="../latest/VRB.json">latest</a> · <a href="../history/VRB.json">history</a>', page)
+
     def test_countdown_and_calendar(self):
         import datetime as dt
         from amend import web

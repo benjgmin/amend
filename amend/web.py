@@ -1211,8 +1211,10 @@ def airport_page(apt, info, latest, hist, meta, now, has_card=False):
                        f'<span class="chev">▶</span>Effective {nice(cyc)}{chips(counts(g), False)}</summary>'
                        + "".join(change_html(x) for x in g) + "</details>")
         col.append("</div>")
-    col.append(f'<p class="foot">Data: <a href="../latest/{e(apt)}.json">latest</a> · '
-               f'<a href="../history/{e(apt)}.json">history</a> · built {now:%d %b %Y %H%MZ}</p>')
+    # latest/<ID>.json only exists for airports changing this cycle, history/<ID>.json only for ones with history
+    data = ([f'<a href="../latest/{e(apt)}.json">latest</a>'] if latest is not None else []) + \
+           ([f'<a href="../history/{e(apt)}.json">history</a>'] if hist is not None else [])
+    col.append(f'<p class="foot">{"Data: " + " · ".join(data) + " · " if data else ""}built {now:%d %b %Y %H%MZ}</p>')
     body.append(f'<div class="col" data-look="{e(apt)}">{"".join(col)}</div>')
 
     rail = [f'<div class="card box"><h3>{flip(meta, now, lambda up: "Upcoming cycle" if up else "This cycle")}</h3>'
@@ -1690,7 +1692,7 @@ GUIDE_SECTIONS = [
      "compared to the one before it.</span></div>"
      '<p><a href="webcal://amend.watch/cycles.ics">Add the cycle dates to your calendar</a> to get a reminder '
      "before each changeover.</p>"
-     "<p>History goes back to Aug 2024 for airport data. Chart history starts in fall 2026 because the FAA doesn't "
+     "<p>History goes back to Aug 2024 for airport data. Chart history starts in July 2026 because the FAA doesn't "
      "keep old chart indexes online.</p>"),
     ("lists", "Lists",
      '<p>Search for an airport on the <a href="../">home page</a> and tap <b>+</b> to add it to a list, or use '
