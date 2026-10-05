@@ -108,6 +108,8 @@ class TestSite(unittest.TestCase):
         app = web.APP_JS.replace("__STALE__", "1").replace("__SHORT__", json.dumps(web.SHORT_URL))
         self.assertIn('SHORT="https://list.amend.watch/"', app)
         self.assertIn("AM.share(link(l),l.ids,l.name,b)", app)
+        # opening a short link to a list you already have keeps the short link in the address bar
+        self.assertIn('same?"?s="+code', web.WATCH_JS)
         page = web.privacy_page({"from_cycle": "2026-09-03", "to_cycle": "2026-10-01"}, None)
         self.assertIn("list.amend.watch/x7k2mq", page)
         self.assertNotIn("runs no server or database", page)

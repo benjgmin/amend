@@ -557,8 +557,10 @@ const ICAO={};for(const k in NAMES)if(NAMES[k][0])ICAO[NAMES[k][0]]=k;
 let mine=LS.all().find(l=>l.id===P.get("l"))||(shared.length?LS.same(shared,sname):LS.active()),run=0;
 function say(t){$("lnote").textContent=t||"";$("lnote").hidden=!t}
 function head(){const ls=LS.all(),ids=mine?mine.ids:shared,name=mine?mine.name:sname||"Shared list";
-  // your own list keeps its whole share link in the address bar too
-  if(mine)history.replaceState(null,"","?l="+encodeURIComponent(mine.id)+"&w="+mine.ids.join(",")+"&n="+encodeURIComponent(mine.name)+location.hash);
+  // your own list: a short link it was opened from stays in the address bar while the list still matches it; with short
+  // links on, otherwise just ?l= (Copy share link makes the short one); with them off, the whole share link
+  if(mine){const same=code&&shared.length&&mine.name===sname&&mine.ids.length===shared.length&&shared.every(x=>mine.ids.includes(x));
+    history.replaceState(null,"",(same?"?s="+code:"?l="+encodeURIComponent(mine.id)+(AM.short?"":"&w="+mine.ids.join(",")+"&n="+encodeURIComponent(mine.name)))+location.hash)}
   document.body.dataset.list=mine?mine.id:"";
   $("kind").textContent=mine?"Your list":ids.length?"Shared list":"Lists";
   $("title").textContent=mine||ids.length?name:"Your lists";document.title=$("title").textContent+" · Amend";
