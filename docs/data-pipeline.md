@@ -227,9 +227,15 @@ records are only counted (`pipeline.py:101-117`).
 
 ### Charts and airspace
 
-- **Charts:** every `A`, `C` or `D` record for the airport in the new cycle's d-TPP metafile
-  (`dtpp.py:15-39`). Procedures are `ifr`; airport diagrams and hot-spot pages are `fyi`
-  (`dtpp.py:42-58`). Changes link the new plate PDF.
+- **Charts:** every chart with an `A`, `C` or `D` page for the airport in the new cycle's d-TPP
+  metafile (`dtpp.py:19-78`). A chart's extra pages (`TRISH FIVE (RNAV), CONT.1`) are their own
+  records and fold into the chart: all pages added reads added, all deleted reads removed,
+  anything else reads changed. A renumbered DP or STAR keeps its PDF, so only the pages it
+  dropped still carry the old name; the FAA `procuid` links them and the chart reads
+  `MINNEAPOLIS ONE replaces MINNEAPOLIS NINE`. A renumber that drops no page reads
+  `<new name> changed`, since one metafile doesn't show the old name. Procedures are `ifr`;
+  airport diagrams and hot-spot pages are `fyi` (`dtpp.py:81-101`). Changes link the new plate
+  PDF.
 - **Airspace:** class B, C, D and E2 to E4 shapes (E5 is skipped) from both cycles' shapefiles
   (`airspace.py:23-24`, `118-144`). For each public airport under the shape, the layers over the
   field are compared; for the airport the airspace belongs to, shelves added or removed and

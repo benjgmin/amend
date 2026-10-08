@@ -55,7 +55,7 @@ summary line is deterministic code. The web pages and the app never call a model
 | `amend/english.py` | Plain-English summaries for each record | `summarize` (`english.py:137-239`), `field_phrases` (`english.py:11-109`) |
 | `amend/remarks.py` | Remark translation, the glossary, and the checks on each translation | `translate_remarks` (`remarks.py:87-118`), `problems` (`remarks.py:133-147`) |
 | `amend/procedures.py` | Waypoint-level comparison of STAR and DP versions | `describe` (`procedures.py:61-88`), `airports_by_procedure` (`procedures.py:98-112`) |
-| `amend/dtpp.py` | Added, amended and removed charts from the d-TPP metafile | `load_dtpp` (`dtpp.py:15-39`) |
+| `amend/dtpp.py` | Added, amended and removed charts from the d-TPP metafile | `load_dtpp` (`dtpp.py:19-78`) |
 | `amend/airspace.py` | Class B, C, D and E surface-area floors, ceilings and boundaries from the shapefile | `load` (`airspace.py:118-144`), `diff` (`airspace.py:202-257`) |
 | `amend/pipeline.py` | The whole diff in one call, and the public change shape | `run` (`pipeline.py:69-149`), `to_change` (`pipeline.py:53-66`) |
 | `amend/output.py` | Writing `<ID>.json` and `index.json` | `write_diff` (`output.py:16-26`) |

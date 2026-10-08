@@ -66,7 +66,7 @@ Only exists if the airport changed. **A 404 means no changes**, not an error.
 | `fields` | array | no | `[{"field", "old", "new"}]` raw before/after values. A whole row added or removed lists its columns with `old` or `new` empty. `ATTENDANCE` (source `APT_ATT`) is the airport's whole attendance schedule, its rows' MONTH DAY HOUR joined with `; ` |
 | `details` | array of string | no | the lines behind a grouped summary: route-level lines behind "preferred IFR routes", or each FAA frequency row (`removed: 125.2 BETHEL RCAG (LOW)`) behind a grouped frequency change |
 | `procedures` | object | no | `{"updated": [...], "removed": [...]}` STAR/DP names |
-| `chart` | object | no | `{"code", "name", "amdt", "pdf"?}`. `pdf` links the new plate; absent for removed charts |
+| `chart` | object | no | `{"code", "name", "amdt", "pdf"?, "replaces"?}`. `pdf` links the new plate; absent for removed charts. `replaces` is the old name of a renumbered DP or STAR (`"MINNEAPOLIS NINE"`) |
 
 ## `airports.json`
 Every airport in the current FAA cycle, for names and search (~20k entries, sorted by id).
@@ -88,8 +88,8 @@ Every change at an airport since Aug 2024, newest first.
 ```
 Entries added since the engine was versioned also carry `"engine"` (like `"1.2.0"`), the
 engine version that made them; older entries have no `engine`.
-"What changed since X" = entries with `cycle` after X. Chart (d-TPP) history starts Oct 2026;
-the FAA doesn't keep older metafiles online.
+"What changed since X" = entries with `cycle` after X. Chart (d-TPP) history starts with the
+2026-07-09 cycle; the FAA doesn't keep older metafiles online.
 
 ## `history/index.json`
 ```json

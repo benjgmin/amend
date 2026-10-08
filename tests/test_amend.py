@@ -543,6 +543,63 @@ class TestCharts(Case):
                        {"BOS"}, xml)["BOS"]
         self.assertEqual((ch[0]["priority"], ch[0]["summary"]), ("ifr", "arrival WOONS TWO amended (amdt 2)"))
 
+    def charts(self, apt, records, cycle="2611"):
+        """one airport's chart changes from metafile <record>s given as (code, name, action, pdf, procuid)."""
+        xml = os.path.join(tempfile.mkdtemp(), "meta.xml")
+        with open(xml, "w") as f:
+            f.write(f'<digital_tpp cycle="{cycle}"><airport_name apt_ident="{apt}">')
+            for code, name, act, pdf, procuid in records:
+                f.write(f'<record><chart_code>{code}</chart_code><chart_name>{name}</chart_name>'
+                        f'<useraction>{act}</useraction><pdf_name>{pdf}</pdf_name><amdtnum></amdtnum>'
+                        f'<procuid>{procuid}</procuid></record>')
+            f.write('</airport_name></digital_tpp>')
+        base = {"APT_BASE.csv": ["ARPT_ID", apt]}
+        return self.diff(base, base, {apt}, xml).get(apt, [])
+
+    def test_continuation_pages_fold_into_their_chart(self):
+        """the FAA lists a chart's extra pages as their own records (BWI and MSP, 2611)."""
+        ch = self.charts("BWI", [("STR", "TRISH FIVE (RNAV)", "C", "00804TRISH.PDF", "35746"),
+                                 ("STR", "TRISH FIVE (RNAV), CONT.1", "C", "00804TRISH_C.PDF", "35746"),
+                                 ("DP", "SNOWZ ONE (RNAV)", "A", "00264SNOWZ.PDF", "7"),
+                                 ("DP", "SNOWZ ONE (RNAV), CONT.1", "A", "00264SNOWZ_C.PDF", "7"),
+                                 ("DP", "SNOWZ ONE (RNAV), CONT.2", "A", "00264SNOWZ_C2.PDF", "7"),
+                                 ("DP", "CNDEL SIX (RNAV)", "C", "00294CNDEL.PDF", "35228"),
+                                 ("DP", "CNDEL SIX (RNAV), CONT.1", "A", "00294CNDEL_C.PDF", "35228"),
+                                 ("DP", "COULT SEVEN", "D", "DELETED_JOB.PDF", "8"),
+                                 ("DP", "COULT SEVEN, CONT.1", "D", "DELETED_JOB.PDF", "8")])
+        self.assertEqual(sorted(self.summaries(ch)), ["arrival TRISH FIVE (RNAV) changed",
+                                                      "departure CNDEL SIX (RNAV) changed",
+                                                      "departure COULT SEVEN removed",
+                                                      "departure SNOWZ ONE (RNAV) added"])
+        pdf = {c["chart"]["name"]: c["chart"].get("pdf", "") for c in ch}
+        self.assertTrue(pdf["TRISH FIVE (RNAV)"].endswith("/2611/00804TRISH.PDF"))
+        self.assertEqual(pdf["COULT SEVEN"], "")
+
+    def test_only_a_later_page_changed(self):
+        """BUR 2609: THRNE FOUR's first page was unchanged, its CONT.1 changed."""
+        ch = self.charts("BUR", [("STR", "THRNE FOUR (RNAV)", "", "00067THRNE.PDF", "41"),
+                                 ("STR", "THRNE FOUR (RNAV), CONT.1", "C", "00067THRNE_C.PDF", "41")],
+                         cycle="2609")
+        self.assertEqual(self.summaries(ch), ["arrival THRNE FOUR (RNAV) changed"])
+        self.assertTrue(ch[0]["chart"]["pdf"].endswith("/2609/00067THRNE.PDF"))
+
+    def test_renumbered_procedure_reads_as_replacing_the_old_one(self):
+        """MSP 2611: MINNEAPOLIS NINE became ONE on the same pdf; only its dropped CONT.1 page
+        still says NINE. the FAA procuid links them. KBREW TWO -> KBREW ONE (RNAV) is a new
+        procedure (own procuid), so it stays added + removed."""
+        ch = self.charts("MSP", [("DP", "MINNEAPOLIS ONE", "C", "00264MINNEAPOLIS.PDF", "1300"),
+                                 ("DP", "MINNEAPOLIS NINE, CONT.1", "D", "DELETED_JOB.PDF", "1300"),
+                                 ("DP", "KBREW ONE (RNAV)", "A", "00264KBREW.PDF", "52001"),
+                                 ("DP", "KBREW TWO", "D", "DELETED_JOB.PDF", "2201"),
+                                 ("DP", "KBREW TWO, CONT.1", "D", "DELETED_JOB.PDF", "2201")])
+        self.assertEqual(sorted(self.summaries(ch)), ["departure KBREW ONE (RNAV) added",
+                                                      "departure KBREW TWO removed",
+                                                      "departure MINNEAPOLIS ONE replaces MINNEAPOLIS NINE"])
+        mpls = next(c for c in ch if c["chart"]["name"] == "MINNEAPOLIS ONE")
+        self.assertEqual((mpls["kind"], mpls["priority"], mpls["chart"]["replaces"]),
+                         ("changed", "ifr", "MINNEAPOLIS NINE"))
+        self.assertTrue(mpls["chart"]["pdf"].endswith("/2611/00264MINNEAPOLIS.PDF"))
+
 
 class TestDirectory(unittest.TestCase):
     def test_airports_json(self):
