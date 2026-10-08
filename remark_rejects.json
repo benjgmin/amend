@@ -1,5 +1,5 @@
 {
- "engine": "1.3.9",
+ "engine": "1.3.10",
  "remarks": {
   "100 LL 24 HR SELF-SVC.": [
    "HR is 'hour' (CS), not what the translation says",
@@ -27,20 +27,7 @@
    "added 'road'"
   ],
   "30 FT UNMKD PLINE LCTD APPROX 990 FT FROM RWY 18 END.": [
-   "UNMKD is not in the verified glossary; it must stay as written",
    "dropped APPROX"
-  ],
-  "32 FT PLINE MKD WITH ORANGE BALLS 1/2 NM FM RWY 33 THLD ON CTRLN.": [
-   "CTRLN is not in the verified glossary; it must stay as written",
-   "added 'centerline'"
-  ],
-  "58 FT TREES, 197 FT FM RWY THLD, 94 FT RIGHT OF CTRLN. 50 FT TREES, 186 FT FM RWY THLD, 88 FT LEFT OF CTRLN.": [
-   "CTRLN is not in the verified glossary; it must stay as written",
-   "added 'centerline'"
-  ],
-  "81 FT TREES, 189 FT FM RWY THLD; 88 FT RIGHT OF CTRLN.": [
-   "CTRLN is not in the verified glossary; it must stay as written",
-   "added 'centerline'"
   ],
   "ACFT OPRG WITH MGTOW OVR 120000 LBS MUST HAVE PRIOR PMSN. CTC ARPT OPNS FOR PPR LINK, CALL 914-995-4850.": [
    "dropped MGTOW",
@@ -53,9 +40,8 @@
    "added 'additional'"
   ],
   "ALL PILOTS ARE STGLY ENCOURAGED TO FLY A FULL PAT AND ANNC INTNS AND PSN ON 122.90.  STA NOT RCMDD.  MOWERS ON RWYS EQUIPPED WITH SAFETY FLAGS AND RDOS.": [
-   "STGLY is not in the verified glossary; it must stay as written",
    "dropped RDOS",
-   "added 'strongly'"
+   "added 'rds'"
   ],
   "ALT PHONE (678) 767-3516": [
    "ALT is 'altitude' (CS), not what the translation says",
@@ -74,9 +60,8 @@
    "dropped UNATTNDD"
   ],
   "BE ALERT WHEN TAXING NR S RAMP/CORPORATE HNGR.": [
-   "dropped TAXING",
    "NR is 'number' (CS), not what the translation says",
-   "added 'taxiing'"
+   "added 'near'"
   ],
   "COCKPIT OVER CNTRLN TAXI PROHIBITED AT TWY Y INT WITH TWY Y11. JUDGMENTAL OVERSTEER RQRED.": [
    "dropped RQRED",
@@ -92,11 +77,7 @@
   ],
   "CTN: ACFT OP TO PARKSIDE ARPT (W87) 1.2 NM E OF GOHEEN FLD (W52) ACFT OP TO BOTH ARPT SHOULD MNT AND ANNC ON CTAF 122.9.": [
    "OP is not in the verified glossary; it must stay as written",
-   "added 'operating'"
-  ],
-  "CTNG OBSTN EXCEEDS A 45 DEG SLP": [
-   "CTNG is not in the verified glossary; it must stay as written",
-   "added 'continuing'"
+   "added 'operation'"
   ],
   "DO NOT USE ADJ PVT ROAD; RD BET RWY AND PVT CABINS FOR TAKE OFF OR LDG.": [
    "RD is not in the verified glossary; it must stay as written",
@@ -123,9 +104,6 @@
    "HELI is 'heliport' (JO 2-1-1 (GEN)), not what the translation says",
    "added 'helicopter'"
   ],
-  "JET A+ AVBL DRG BUS HRS.": [
-   "added 'plus'"
-  ],
   "LOC UNMNTD WHEN ATCT CLSD.": [
    "UNMNTD is not in the verified glossary; it must stay as written"
   ],
@@ -133,22 +111,9 @@
    "NR is 'number' (CS), not what the translation says",
    "added 'near'"
   ],
-  "MAN-MADE OR NATURAL OBJECTS OBSTRUCT THE APCHS, I.E. A 16 FT HANGER, A 30 FT BLDG, AND A 60 FT TOWER, PER AIRSPACE CASE 96-AGL-1612-NRA.": [
-   "dropped HANGER"
-  ],
   "MIL: ANG RAMP: OPR 1430-2230Z++ MON-THU. CLSD FRI-SUN AND HOL. OFFL BUS ONLY.  PPR REQ 48 HR ALL ACFT, VALID 1 HR +/- ETA. TRAN PRK/SVC EXTREMELY LTD.  BASE OPS DSN 245-2274, C801-245-2274.  MIL ALT HILL AFB (KHIF) 25 NM N.  ALL ACFT CTC HIVE CTL (COMD POST) 20 MIN OUT WITH ETA AND REQ.": [
    "ALT is 'altitude' (CS), not what the translation says",
-   "added 'plus'",
-   "added 'minus'"
-  ],
-  "MRKG ILLEGIBLE/ NO LOGER DISCERNIBLE": [
-   "dropped LOGER",
-   "added 'longer'"
-  ],
-  "NOISE ABATEMENT PROCS: CMB TPA BFR TURNING; AVD FLT OVR SHORE & TOWN; TGL NA.": [
-   "AVD is not in the verified glossary; it must stay as written",
-   "NA has no verified meaning (the FAA lists 'not authorized', and most remarks mean that ('TGL NA', 'AUTO CPD APCH NA BLW 1200 FT MSL'), but dozens of NASR's 576 on 2026-10-01 mean not available ('SNOW REMOVAL NA', 'AFT HR FUEL NA', 'ARFF NA', 'FONE NA'), and 'TGL, SVCS, CELL RECEPTION NA' means both at once. a check can't tell which one a translation picked); it must stay as written",
-   "added a negation: the FAA text has 0, the translation 1"
+   "added 'alternate'"
   ],
   "OBSNT CLNC SLP EXCEEDS A 40 DEG ANGLE": [
    "OBSNT is not in the verified glossary; it must stay as written",
@@ -157,10 +122,6 @@
   "OBSTN CLNCSLOPE 1:1 OVR 50 FT TREE, 93 FT DSTC, 130 FT L.": [
    "dropped CLNCSLOPE",
    "added 'clearance'"
-  ],
-  "OPR 1300-2000++ MON-FRI, EXCLD HOL. PPR RQR FOR FULL STOP ONLY AND VALID +/- 30 MIN. TRAN ALERT SVC AND FAC AVBL 1330-2130Z++ MON-FRI, OT BY PPR APVL ONLY. NO TRAN ALERT MAINT AVBL, NON C130 CREW MUST BE PRESENT FOR REFUEL. LTD FUEL OPR AND EXTREMELY LTD PARK. 139 AW BASE OPS DSN 356-3596/3138/3260. IF NO ANSWER CTC COMD POST DSN 356-3224/3225, C816-236-3224/3225.": [
-   "added 'plus'",
-   "added 'minus'"
   ],
   "PAPI RWY 15 & 33; MIRL RWY 15/33 OPER DUSK - 2400.  AFT 2400 - CTAF.": [
    "added 'click'",
@@ -177,29 +138,17 @@
    "REQD has no verified meaning (REQ + D would read as 'requested'; remarks use REQD for required); it must stay as written",
    "repeated 'required'"
   ],
-  "PRIST AVBL ON DEMAND WITH CREDIT CARD": [
-   "dropped PRIST"
-  ],
-  "PRVDD ALL USERS OF THE BEACH RANCH AIRPORT ARE ADVISED OF THE PROXIMITY OF THE KUHN EMERGENCY AIRPORT LOCATED APPROX 2 MILES NNE.": [
-   "dropped APPROX"
-  ],
   "PUBLIC GOLF COURSE S-W APP END RWY 1.": [
    "W has no verified meaning (the Chart Supplement lists West and White (and Warning Area, Watts), and NASR's 1,489 on 2026-10-01 are mostly west ('300 FT W OF PAD', 'W SIDE'), some white ('MKD WITH W CONES', 'RED & W A-FRAMES'), about 220 written W/ mean with ('FUEL AVBL 24 HRS W/CREDIT CARD', 'MKD W/ ORANGE CONES'), and a few name a taxiway (TWY W). a check can't tell which one a translation picked: 'W RWY MRKG CONES EV 300 FT', on both ends of one runway, read as west); it must stay as written",
    "added 'west'"
   ],
   "RD TRAVERSING APCH END RWY 28 IS A PVT GRVL RD WITH VEHICLES CNTRD BY STOP SIGNS.": [
    "RD is not in the verified glossary; it must stay as written",
-   "CNTRD is 'center' (CS + JO 1-2-3 suffix D), not what the translation says",
    "added 'road'"
   ],
   "REQ 24 HR ADVN NOTICE OR IMT REPORTING UPON LDG FOR ACFT EQUIPPED WITH WX MOFICIATION OR GEOENGINEERING EQUPT 352-465-8545.": [
-   "dropped MOFICIATION",
    "dropped EQUPT",
-   "added 'modification'"
-  ],
-  "RSTD: PPR CTC AFLD MGMT OPS 1100-0300Z++ DSN 574-2504, C757-764-2504. PPR VALID +/- 1 HR OF APVL TIME DUR AFLD OPR HRS. IF OUTSIDE OF APVL TIME SLOT, CTC AFLD MGMT OPS TO UPDATE PPR. ONLY 1 F/W ACFT AUTH FR 1300-1400Z++. TRANSPORT/DV ACFT CTC AFLD MGMT OPS 20 MIN PRIOR LDG VIA PTD VHF 142.3 OR UHF 376.2.": [
-   "added 'plus'",
-   "added 'minus'"
+   "added 'equipment'"
   ],
   "RWU 3- THLD LTS 74 FT BYD THLD BAR.": [
    "LTS is not in the verified glossary; it must stay as written",
@@ -207,8 +156,7 @@
   ],
   "RWY 08/26: LRG HAY BALES ALG NORTH EDGE; +30 FT BLDG, 72 FT SOUTH OF CNTRLN; +60 FT TREE, 96 FT NORTH OF CNTRLN; FARM EQPT PARKED NR RWY ENDS.": [
    "NR is 'number' (CS), not what the translation says",
-   "dropped the sign of +30",
-   "dropped the sign of +60"
+   "added 'near'"
   ],
   "RWY 08: 130 FT UNMKD PLINE, 0.85 MI FM RWY END.": [
    "UNMKD is not in the verified glossary; it must stay as written"
@@ -223,7 +171,7 @@
   ],
   "RWY 31 NSTD AIMING POINT MKGS AT 300 FT.": [
    "MKGS is not in the verified glossary; it must stay as written",
-   "added 'marked'"
+   "added 'markings'"
   ],
   "RWY 7 BSC RWY MARKIINGS": [
    "dropped MARKIINGS",
@@ -249,11 +197,7 @@
   ],
   "SUBD. PROPERTY OWNERS ASSOCIATION INC., OTHER CONTACT PERSON: RON SMITH": [
    "dropped SUBD",
-   "added 'subdivision'"
-  ],
-  "TURF AREA AVBL FOR ACFT OPS ALG RSA N OF RWY 7/25 PVMT ENDS. MKD WITH W MKRS. USE AT PILOT OWN RISK.": [
-   "PVMT is not in the verified glossary; it must stay as written",
-   "added 'pavement'"
+   "added 'subdivided'"
   ],
   "TWP HALL OFC HRS MON-FRI 0900-1600; CLSD HOLS.": [
    "TWP is not in the verified glossary; it must stay as written",
@@ -264,9 +208,6 @@
   ],
   "UNATNDD OFC PH 989-826-6864.": [
    "PH is not in the verified glossary; it must stay as written"
-  ],
-  "WHIDBY ISLAND NAS (AULT FLD) ATIS AVBL ON FREQ 134.15/281.5.": [
-   "dropped WHIDBY"
   ]
  }
 }

@@ -412,20 +412,6 @@
      "amdt": "",
      "pdf": "https://aeronav.faa.gov/d-tpp/2611/00804TRISH.PDF"
     }
-   },
-   {
-    "id": "d970ae3fd4f5",
-    "priority": "ifr",
-    "category": "chart",
-    "kind": "changed",
-    "summary": "arrival TRISH FIVE (RNAV), CONT.1 changed",
-    "source": "D-TPP",
-    "chart": {
-     "code": "STR",
-     "name": "TRISH FIVE (RNAV), CONT.1",
-     "amdt": "",
-     "pdf": "https://aeronav.faa.gov/d-tpp/2611/00804TRISH_C.PDF"
-    }
    }
   ],
   "CLT": [
@@ -1500,20 +1486,6 @@
      "amdt": "",
      "pdf": "https://aeronav.faa.gov/d-tpp/2611/00257MIAMI.PDF"
     }
-   },
-   {
-    "id": "6c8cf26b7fad",
-    "priority": "ifr",
-    "category": "chart",
-    "kind": "changed",
-    "summary": "departure MIAMI THREE, CONT.1 changed",
-    "source": "D-TPP",
-    "chart": {
-     "code": "DP",
-     "name": "MIAMI THREE, CONT.1",
-     "amdt": "",
-     "pdf": "https://aeronav.faa.gov/d-tpp/2611/00257MIAMI_C.PDF"
-    }
    }
   ],
   "MSP": [
@@ -2096,19 +2068,6 @@
     }
    },
    {
-    "id": "0f1acc46202d",
-    "priority": "ifr",
-    "category": "chart",
-    "kind": "removed",
-    "summary": "departure COULT SEVEN, CONT.1 removed",
-    "source": "D-TPP",
-    "chart": {
-     "code": "DP",
-     "name": "COULT SEVEN, CONT.1",
-     "amdt": ""
-    }
-   },
-   {
     "id": "0ec0fa213a8b",
     "priority": "ifr",
     "category": "chart",
@@ -2133,20 +2092,6 @@
      "name": "HTDSH ONE (RNAV)",
      "amdt": "",
      "pdf": "https://aeronav.faa.gov/d-tpp/2611/00264HTDSH.PDF"
-    }
-   },
-   {
-    "id": "c97fdd3c3ff4",
-    "priority": "ifr",
-    "category": "chart",
-    "kind": "added",
-    "summary": "departure HTDSH ONE (RNAV), CONT.1 added",
-    "source": "D-TPP",
-    "chart": {
-     "code": "DP",
-     "name": "HTDSH ONE (RNAV), CONT.1",
-     "amdt": "",
-     "pdf": "https://aeronav.faa.gov/d-tpp/2611/00264HTDSH_C.PDF"
     }
    },
    {
@@ -2177,19 +2122,6 @@
     }
    },
    {
-    "id": "648919c8f021",
-    "priority": "ifr",
-    "category": "chart",
-    "kind": "removed",
-    "summary": "departure KBREW TWO, CONT.1 removed",
-    "source": "D-TPP",
-    "chart": {
-     "code": "DP",
-     "name": "KBREW TWO, CONT.1",
-     "amdt": ""
-    }
-   },
-   {
     "id": "869302ccb084",
     "priority": "ifr",
     "category": "chart",
@@ -2216,29 +2148,17 @@
     }
    },
    {
-    "id": "69478b72f551",
-    "priority": "ifr",
-    "category": "chart",
-    "kind": "removed",
-    "summary": "departure MINNEAPOLIS NINE, CONT.1 removed",
-    "source": "D-TPP",
-    "chart": {
-     "code": "DP",
-     "name": "MINNEAPOLIS NINE, CONT.1",
-     "amdt": ""
-    }
-   },
-   {
-    "id": "5a30a46451ad",
+    "id": "ac92ff623154",
     "priority": "ifr",
     "category": "chart",
     "kind": "changed",
-    "summary": "departure MINNEAPOLIS ONE changed",
+    "summary": "departure MINNEAPOLIS ONE replaces MINNEAPOLIS NINE",
     "source": "D-TPP",
     "chart": {
      "code": "DP",
      "name": "MINNEAPOLIS ONE",
      "amdt": "",
+     "replaces": "MINNEAPOLIS NINE",
      "pdf": "https://aeronav.faa.gov/d-tpp/2611/00264MINNEAPOLIS.PDF"
     }
    },
@@ -2270,19 +2190,6 @@
     }
    },
    {
-    "id": "e238b4a62235",
-    "priority": "ifr",
-    "category": "chart",
-    "kind": "removed",
-    "summary": "departure ORSKY THREE, CONT.1 removed",
-    "source": "D-TPP",
-    "chart": {
-     "code": "DP",
-     "name": "ORSKY THREE, CONT.1",
-     "amdt": ""
-    }
-   },
-   {
     "id": "7172148acc0d",
     "priority": "ifr",
     "category": "chart",
@@ -2296,19 +2203,6 @@
     }
    },
    {
-    "id": "f7e5abc00b02",
-    "priority": "ifr",
-    "category": "chart",
-    "kind": "removed",
-    "summary": "departure ROCHESTER ONE, CONT.1 removed",
-    "source": "D-TPP",
-    "chart": {
-     "code": "DP",
-     "name": "ROCHESTER ONE, CONT.1",
-     "amdt": ""
-    }
-   },
-   {
     "id": "f7c671b1ea30",
     "priority": "ifr",
     "category": "chart",
@@ -2318,19 +2212,6 @@
     "chart": {
      "code": "DP",
      "name": "SCHEP ONE",
-     "amdt": ""
-    }
-   },
-   {
-    "id": "df00345bae5e",
-    "priority": "ifr",
-    "category": "chart",
-    "kind": "removed",
-    "summary": "departure SCHEP ONE, CONT.1 removed",
-    "source": "D-TPP",
-    "chart": {
-     "code": "DP",
-     "name": "SCHEP ONE, CONT.1",
      "amdt": ""
     }
    },
@@ -2375,34 +2256,6 @@
     }
    },
    {
-    "id": "79992c8cc800",
-    "priority": "ifr",
-    "category": "chart",
-    "kind": "added",
-    "summary": "departure SNOWZ ONE (RNAV), CONT.1 added",
-    "source": "D-TPP",
-    "chart": {
-     "code": "DP",
-     "name": "SNOWZ ONE (RNAV), CONT.1",
-     "amdt": "",
-     "pdf": "https://aeronav.faa.gov/d-tpp/2611/00264SNOWZ_C.PDF"
-    }
-   },
-   {
-    "id": "eee637dd1637",
-    "priority": "ifr",
-    "category": "chart",
-    "kind": "added",
-    "summary": "departure SNOWZ ONE (RNAV), CONT.2 added",
-    "source": "D-TPP",
-    "chart": {
-     "code": "DP",
-     "name": "SNOWZ ONE (RNAV), CONT.2",
-     "amdt": "",
-     "pdf": "https://aeronav.faa.gov/d-tpp/2611/00264SNOWZ_C2.PDF"
-    }
-   },
-   {
     "id": "77b9bfe25097",
     "priority": "ifr",
     "category": "chart",
@@ -2444,19 +2297,6 @@
     }
    },
    {
-    "id": "cdafa9dafea7",
-    "priority": "ifr",
-    "category": "chart",
-    "kind": "removed",
-    "summary": "departure WLSTN SEVEN, CONT.1 removed",
-    "source": "D-TPP",
-    "chart": {
-     "code": "DP",
-     "name": "WLSTN SEVEN, CONT.1",
-     "amdt": ""
-    }
-   },
-   {
     "id": "bd42588c0643",
     "priority": "ifr",
     "category": "chart",
@@ -2480,19 +2320,6 @@
     "chart": {
      "code": "DP",
      "name": "ZMBRO SEVEN",
-     "amdt": ""
-    }
-   },
-   {
-    "id": "5dee0530f8a0",
-    "priority": "ifr",
-    "category": "chart",
-    "kind": "removed",
-    "summary": "departure ZMBRO SEVEN, CONT.1 removed",
-    "source": "D-TPP",
-    "chart": {
-     "code": "DP",
-     "name": "ZMBRO SEVEN, CONT.1",
      "amdt": ""
     }
    }
@@ -2553,20 +2380,6 @@
     }
    },
    {
-    "id": "fbdf0ede4c6e",
-    "priority": "ifr",
-    "category": "chart",
-    "kind": "added",
-    "summary": "departure CNDEL SIX (RNAV), CONT.1 added",
-    "source": "D-TPP",
-    "chart": {
-     "code": "DP",
-     "name": "CNDEL SIX (RNAV), CONT.1",
-     "amdt": "",
-     "pdf": "https://aeronav.faa.gov/d-tpp/2611/00294CNDEL_C.PDF"
-    }
-   },
-   {
     "id": "3b2d6fd93f27",
     "priority": "ifr",
     "category": "chart",
@@ -2623,20 +2436,6 @@
     }
    },
    {
-    "id": "51eb0c2b709a",
-    "priority": "ifr",
-    "category": "chart",
-    "kind": "changed",
-    "summary": "departure NUEVO NINE, CONT.1 changed",
-    "source": "D-TPP",
-    "chart": {
-     "code": "DP",
-     "name": "NUEVO NINE, CONT.1",
-     "amdt": "",
-     "pdf": "https://aeronav.faa.gov/d-tpp/2611/00294NUEVO_C.PDF"
-    }
-   },
-   {
     "id": "b88d582e02e6",
     "priority": "ifr",
     "category": "chart",
@@ -2648,20 +2447,6 @@
      "name": "OAKLAND SEVEN",
      "amdt": "",
      "pdf": "https://aeronav.faa.gov/d-tpp/2611/00294OAKLAND.PDF"
-    }
-   },
-   {
-    "id": "8e7d02629231",
-    "priority": "ifr",
-    "category": "chart",
-    "kind": "changed",
-    "summary": "departure OAKLAND SEVEN, CONT.1 changed",
-    "source": "D-TPP",
-    "chart": {
-     "code": "DP",
-     "name": "OAKLAND SEVEN, CONT.1",
-     "amdt": "",
-     "pdf": "https://aeronav.faa.gov/d-tpp/2611/00294OAKLAND_C.PDF"
     }
    },
    {
@@ -2707,20 +2492,6 @@
     }
    },
    {
-    "id": "660d1e83df48",
-    "priority": "ifr",
-    "category": "chart",
-    "kind": "changed",
-    "summary": "departure SILENT FOUR, CONT.1 changed",
-    "source": "D-TPP",
-    "chart": {
-     "code": "DP",
-     "name": "SILENT FOUR, CONT.1",
-     "amdt": "",
-     "pdf": "https://aeronav.faa.gov/d-tpp/2611/00294SILENT_C.PDF"
-    }
-   },
-   {
     "id": "23e7939de6e9",
     "priority": "ifr",
     "category": "chart",
@@ -2732,20 +2503,6 @@
      "name": "SKYLINE TWO",
      "amdt": "",
      "pdf": "https://aeronav.faa.gov/d-tpp/2611/00294SKYLINE.PDF"
-    }
-   },
-   {
-    "id": "fba5ff0b4ceb",
-    "priority": "ifr",
-    "category": "chart",
-    "kind": "changed",
-    "summary": "departure SKYLINE TWO, CONT.1 changed",
-    "source": "D-TPP",
-    "chart": {
-     "code": "DP",
-     "name": "SKYLINE TWO, CONT.1",
-     "amdt": "",
-     "pdf": "https://aeronav.faa.gov/d-tpp/2611/00294SKYLINE_C.PDF"
     }
    }
   ],
@@ -3057,20 +2814,6 @@
     }
    },
    {
-    "id": "125874a553cb",
-    "priority": "ifr",
-    "category": "chart",
-    "kind": "changed",
-    "summary": "arrival CARTR TWO (RNAV), CONT.1 changed",
-    "source": "D-TPP",
-    "chart": {
-     "code": "STR",
-     "name": "CARTR TWO (RNAV), CONT.1",
-     "amdt": "",
-     "pdf": "https://aeronav.faa.gov/d-tpp/2611/00365CARTR_C.PDF"
-    }
-   },
-   {
     "id": "ae5068a950c2",
     "priority": "ifr",
     "category": "chart",
@@ -3082,20 +2825,6 @@
      "name": "PITTT THREE (RNAV)",
      "amdt": "",
      "pdf": "https://aeronav.faa.gov/d-tpp/2611/00365PITTT.PDF"
-    }
-   },
-   {
-    "id": "c90037cfb2b2",
-    "priority": "ifr",
-    "category": "chart",
-    "kind": "changed",
-    "summary": "arrival PITTT THREE (RNAV), CONT.1 changed",
-    "source": "D-TPP",
-    "chart": {
-     "code": "STR",
-     "name": "PITTT THREE (RNAV), CONT.1",
-     "amdt": "",
-     "pdf": "https://aeronav.faa.gov/d-tpp/2611/00365PITTT_C.PDF"
     }
    },
    {
@@ -3113,20 +2842,6 @@
     }
    },
    {
-    "id": "76121e483b2d",
-    "priority": "ifr",
-    "category": "chart",
-    "kind": "changed",
-    "summary": "arrival SKEES SEVEN (RNAV), CONT.1 changed",
-    "source": "D-TPP",
-    "chart": {
-     "code": "STR",
-     "name": "SKEES SEVEN (RNAV), CONT.1",
-     "amdt": "",
-     "pdf": "https://aeronav.faa.gov/d-tpp/2611/00365SKEES_C.PDF"
-    }
-   },
-   {
     "id": "de6d993dd117",
     "priority": "ifr",
     "category": "chart",
@@ -3138,20 +2853,6 @@
      "name": "YUTES THREE (RNAV)",
      "amdt": "",
      "pdf": "https://aeronav.faa.gov/d-tpp/2611/00365YUTES.PDF"
-    }
-   },
-   {
-    "id": "3b890b822084",
-    "priority": "ifr",
-    "category": "chart",
-    "kind": "changed",
-    "summary": "arrival YUTES THREE (RNAV), CONT.1 changed",
-    "source": "D-TPP",
-    "chart": {
-     "code": "STR",
-     "name": "YUTES THREE (RNAV), CONT.1",
-     "amdt": "",
-     "pdf": "https://aeronav.faa.gov/d-tpp/2611/00365YUTES_C.PDF"
     }
    },
    {
