@@ -1408,6 +1408,12 @@ data-name="{e(wl['name'])}">Save to my lists</a><button class="btn ghost" id="co
 
 # what shipped, newest first, for /changelog/. Add a line when something people can see changes.
 UPDATES = [
+    ("Oct 2026", [
+        "A chart with more than one page shows as one change. The FAA lists each extra page (like TRISH FIVE "
+        "(RNAV), CONT.1) as its own record, so a multi-page arrival or departure showed up two or three times, "
+        "in chart history too. A renumbered departure or arrival that dropped a page now says what it "
+        "replaced, like MINNEAPOLIS ONE replaces MINNEAPOLIS NINE.",
+    ]),
     ("Sep 2026", [
         "Amend's code is now under the Functional Source License (FSL-1.1-MIT) instead of MIT. It's still "
         "public and free to read and use, just not to sell a competing product, and each version becomes MIT two "
