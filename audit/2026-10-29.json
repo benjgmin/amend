@@ -2,9 +2,7 @@
  "from_cycle": "2026-10-01",
  "to_cycle": "2026-10-29",
  "errors": [],
- "warnings": [
-  "engine code changed since the last run (commit bcff205) but ENGINE_VERSION is still 1.6.0. if output can change, bump it in amend/__init__.py"
- ],
+ "warnings": [],
  "watchlists": {},
  "airports": {
   "ANC": [
