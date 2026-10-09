@@ -104,11 +104,12 @@ def load_dtpp(path, ids, plates_root="."):
         first = next((p for p in pp if p["first"]), pp[0])
         pdf = next((p["pdf"] for p in [first] + pp
                     if p["act"] != "D" and p["pdf"] and "DELETED" not in p["pdf"].upper()), "")
-        moved = []
+        moved, mins = [], []
         if act == "C" and pdf and day and key not in renamed and code in COURSE_CODES:
-            moved = plates.changes_for(pdf, plates.previous(day), cycle, plates_root)
+            moved, mins = plates.changes_for(pdf, plates.previous(day), cycle, plates_root)
         out[apt].append(_record(apt, code, chart, act, first["amdt"], pdf, cycle, renamed.get(key),
-                                amended=_amended(first["amdt_date"], day), moved=moved))
+                                amended=_amended(first["amdt_date"], day), moved=moved,
+                                mins=mins if code == "IAP" else ()))
     return out
 
 
@@ -128,7 +129,16 @@ def _moved(moved, most=3):
     return s + (f" and {len(moved) - most} more" if len(moved) > most else "")
 
 
-def _record(apt, code, name, act, amdt, pdf, cycle, was=None, amended=None, moved=()):
+def _minimum(kind, old, new, at, arrow=" now "):
+    """('minimum', '680', '700', None) -> 'minimum 680 now 700'; RVR is printed in hundreds of feet"""
+    if kind == "rvr":
+        return f"RVR {int(old) * 100}{arrow}{int(new) * 100} at minimum {at}"
+    if kind == "visibility":
+        return f"visibility {old} SM{arrow}{new} SM at minimum {at}"
+    return f"minimum {old}{arrow}{new}"
+
+
+def _record(apt, code, name, act, amdt, pdf, cycle, was=None, amended=None, moved=(), mins=()):
     what = DTPP_KINDS.get(code, code.lower() or "chart")
     verb = DTPP_ACTIONS[act]
     if code in PROCEDURE_CODES:
@@ -144,10 +154,16 @@ def _record(apt, code, name, act, amdt, pdf, cycle, was=None, amended=None, move
     else:
         s = f"{what} {verb}" if code == "APD" else f"{what} ({name}) {verb}"
         pri = "fyi" if code in ("APD", "HOT") else "ifr"
-    rec_details = None
+    said, rec_details = [], []
     if moved:
-        s += f": {_moved(moved)} on the chart"
-        rec_details = [f"printed on the chart: {a}° -> {b}°" for a, b in moved]
+        said.append(f"{_moved(moved)} on the chart")
+        rec_details += [f"printed on the chart: {a}° -> {b}°" for a, b in moved]
+    if mins:
+        said.append(", ".join(_minimum(*m) for m in mins[:3])
+                    + (f" and {len(mins) - 3} more" if len(mins) > 3 else ""))
+        rec_details += [f"minimums on the plate: {_minimum(*m, arrow=' -> ')}" for m in mins]
+    if said:
+        s += ": " + "; ".join(said)
     chart = {"code": code, "name": name, "amdt": amdt}
     if was:
         chart["replaces"] = was
