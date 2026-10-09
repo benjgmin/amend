@@ -406,12 +406,10 @@ def update(old_edition, new_edition, pdfs, budget=600, root=".", log=print, get=
                 rec = f"failed: {type(e).__name__}"
             prev = have[ed].get(pdf)
             if isinstance(prev, dict) and "courses" in prev and not isinstance(rec, dict):
-                # read once already: keep what it has whatever this attempt got. gone from the
-                # FAA, or failing GIVE_UP times, it has nothing to add and isn't asked again
-                if rec is None:
-                    _settle(prev)
-                    done += 1
-                elif rec != "skipped":
+                # read once already: keep what it has whatever this attempt got. missing or
+                # failing GIVE_UP times (a 403 burst from the FAA looks like missing once), it has
+                # nothing to add and isn't asked again
+                if rec != "skipped":
                     failed += 1
                     prev["failed"] = prev.get("failed", 0) + 1
                     if prev["failed"] >= GIVE_UP:

@@ -1,16 +1,16 @@
-name: scratch plate backfill
-# temporary, working branch only: removed before merge. reads the plates for the editions the
-# FAA still serves again, now with each minimum's row, and commits plates/ to this branch
+name: scratch plate check
+# temporary, working branch only: removed before merge. prints the minimums tables behind the
+# history lines that now name a row, to check them by hand
 on:
   push:
     branches: [ claude/project-thread-oqn9y9 ]
     paths: [ ".github/workflows/scratch-plate-samples.yml" ]
 permissions:
-  contents: write
+  contents: read
 jobs:
-  plates:
+  check:
     runs-on: ubuntu-latest
-    timeout-minutes: 170
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -18,46 +18,22 @@ jobs:
           python-version: "3.12"
       - run: pip install pypdf==6.19.0
       - run: |
-          cp -r plates /tmp/before
-          mkdir -p meta
-          for e in 2607 2608 2609 2610 2611 2612; do
-            curl -sSfL -o meta/$e.xml https://aeronav.faa.gov/d-tpp/$e/xml_data/d-tpp_Metafile.xml \
-              && echo "edition $e served" || { echo "edition $e not served"; rm -f meta/$e.xml; }
-          done
-          for u in 2611/00089R23.PDF 2610/00089R23.PDF 2609/00089R23.PDF; do
-            curl -s -o /dev/null -w "$u %{http_code}\n" https://aeronav.faa.gov/d-tpp/$u
-          done
-          python -m amend plates meta/*.xml --budget 3000
-          for u in 2611/00089R23.PDF 2610/00089R23.PDF; do
-            curl -s -o /dev/null -w "$u %{http_code}\n" https://aeronav.faa.gov/d-tpp/$u
-          done
-      - name: the numbers read before are unchanged; only rows are new
-        if: ${{ !cancelled() }}
-        run: |
           python - <<'PY'
-          import json, glob, os, collections
-          n, same, diff, rows, labels = 0, 0, [], 0, collections.Counter()
-          for p in sorted(glob.glob("plates/*.json")):
-              before = json.load(open("/tmp/before/" + os.path.basename(p)))["charts"]
-              for pdf, rec in json.load(open(p))["charts"].items():
-                  old = before.get(pdf)
-                  m, o = (rec or {}).get("minimums"), (old or {}).get("minimums")
-                  if not isinstance(m, dict) or not isinstance(o, dict):
-                      continue
-                  n += 1
-                  if all(m.get(k) == o.get(k) for k in ("alts", "rvr", "vis", "seen")):
-                      same += 1
-                  else:
-                      diff.append(pdf)
-                  for v in (m.get("rows") or {}).values():
-                      rows += 1
-                      labels[v.split(" cat ")[0].split(" (")[0]] += 1
-          print(f"{n} plates with minimums before and after; {same} same numbers; differ: {diff[:20]}")
-          print(f"{rows} minimums with a row; labels: {labels.most_common(40)}")
+          import io, pypdf
+          from amend import plates
+          pdfs = ['00095IL35.PDF', '00095VA.PDF', '00142RX16R.PDF', '00286R6.PDF', '00286VA.PDF',
+                  '00632IL1.PDF', '00858VB.PDF', '01231IZLZ28.PDF', '01234IL2L.PDF', '05103IL9.PDF',
+                  '05103R33.PDF', '05103R9.PDF', '05216R21.PDF', '05312R29.PDF', '05326R16L.PDF',
+                  '05344R1.PDF', '05531R16.PDF', '05856R20.PDF', '05943R36.PDF', '06019R32.PDF',
+                  '06072R35.PDF', '06172R17.PDF', '06657R35.PDF', '06866R18.PDF', '06866R36.PDF']
+          for pdf in pdfs:
+              b = plates._get(plates.URL.format(edition="2609", pdf=pdf))
+              if b is None:
+                  print("=====", pdf, "not served"); continue
+              page = pypdf.PdfReader(io.BytesIO(b)).pages[0]
+              print("=====", pdf, plates.read(b)["minimums"]["rows"])
+              lines = page.extract_text(extraction_mode="layout").split("\n")
+              i = next((n for n, l in enumerate(lines) if "CATEGORY" in l), None)
+              if i is not None:
+                  print("\n".join(l[:160].rstrip() for l in lines[i:i + 16] if l.strip()))
           PY
-      - if: ${{ !cancelled() }}
-        run: |
-          git config user.name "amend-bot"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add plates
-          git diff --cached --quiet || { git commit -qm "plates: each minimum's row on every chart changed in the editions the FAA still serves" && git push; }

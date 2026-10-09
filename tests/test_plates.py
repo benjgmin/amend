@@ -232,16 +232,18 @@ class TestUpdate(unittest.TestCase):
         plates.read = lambda b: {**plate({"070": 1}), "minimums": {
             "alts": ["700"], "rvr": {}, "vis": {}, "seen": ["700"], "rows": {"700": "LPV DA"}}}
         try:
-            left = plates.update("2610", "2611", ["A.PDF", "GONE.PDF"], root=self.root,
-                                 get=lambda url: None if "GONE" in url else b"%PDF", log=self.log.append)
+            # missing once could be the FAA refusing for a minute: asked again, GIVE_UP builds in all
+            lefts = [plates.update("2610", "2611", ["A.PDF", "GONE.PDF"], root=self.root,
+                                   get=lambda url: None if "GONE" in url else b"%PDF", log=self.log.append)
+                     for _ in range(plates.GIVE_UP)]
         finally:
             plates.read = real
-        self.assertEqual(left, 0)
+        self.assertEqual(lefts, [2, 2, 0])
         got = plates.load("2610", self.root)
         self.assertEqual(got["A.PDF"]["minimums"], {"alts": ["700"], "rvr": {}, "vis": {}, "seen": ["700"],
                                                     "rows": {"700": "LPV DA"}})
         # the FAA no longer serves it: the courses read earlier stay, and it isn't asked again
-        self.assertEqual(got["GONE.PDF"], {**plate({"072": 1}), "minimums": None})
+        self.assertEqual(got["GONE.PDF"], {**plate({"072": 1}), "minimums": None, "failed": 3})
 
 
 # what pypdf pulls off a real approach plate's minimums (2611, cut down): "680/24 444 (500-½)" is
@@ -274,13 +276,14 @@ class TestRereadRows(unittest.TestCase):
         plates.read = lambda b: {**plate({"070": 1}), "minimums": {**mins, "rows": {"680": "LNAV MDA"}}}
         try:
             get = lambda url: asked.append(url) or (None if "GONE" in url else b"%PDF")
-            left = plates.update("2610", "2611", ["A.PDF", "GONE.PDF"], root=self.root, get=get,
-                                 log=self.log.append)
-            self.assertEqual(left, 0)
+            lefts = [plates.update("2610", "2611", ["A.PDF", "GONE.PDF"], root=self.root, get=get,
+                                   log=self.log.append) for _ in range(plates.GIVE_UP)]
+            self.assertEqual(lefts, [2, 2, 0])
             got = plates.load("2610", self.root)
             self.assertEqual(got["A.PDF"]["minimums"]["rows"], {"680": "LNAV MDA"})
             # gone from the FAA: its minimums stay, with rows unknown, and it isn't asked again
             self.assertEqual(got["GONE.PDF"]["minimums"], {**mins, "rows": None})
+            self.assertEqual(got["A.PDF"].get("failed"), None)
             n = len(asked)
             self.assertEqual(plates.update("2610", "2611", ["A.PDF", "GONE.PDF"], root=self.root,
                                            get=get, log=self.log.append), 0)
