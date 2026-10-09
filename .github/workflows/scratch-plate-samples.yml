@@ -1,16 +1,15 @@
-name: scratch plate backfill
-# temporary, working branch only: removed before merge. reads the plates for the editions the
-# FAA still serves and commits plates/ to this branch
+name: scratch plate check
+# temporary, working branch only: removed before merge. prints courses on a few plates per edition
 on:
   push:
     branches: [ claude/project-thread-oqn9y9 ]
     paths: [ ".github/workflows/scratch-plate-samples.yml" ]
 permissions:
-  contents: write
+  contents: read
 jobs:
-  plates:
+  check:
     runs-on: ubuntu-latest
-    timeout-minutes: 170
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -18,14 +17,10 @@ jobs:
           python-version: "3.12"
       - run: pip install pypdf==6.19.0
       - run: |
-          mkdir -p meta
-          for e in 2608 2609 2610 2611; do
-            curl -sSfL -o meta/$e.xml https://aeronav.faa.gov/d-tpp/$e/xml_data/d-tpp_Metafile.xml
-          done
-          python -m amend plates meta/2608.xml meta/2609.xml meta/2610.xml meta/2611.xml --budget 3000
-          ls -la plates
-      - if: ${{ !cancelled() }}
-        run: |
-          git config user.name "amend-bot"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add plates && git commit -qm "plates: courses on every chart changed in the 2608-2611 editions" && git push
+          python - <<'PY'
+          from amend import plates
+          for pdf in ("00110AD.PDF", "00110IL7L.PDF", "00110R7L.PDF", "00110ROYES.PDF"):
+              for ed in ("2607", "2608", "2609", "2610", "2611"):
+                  b = plates._get(plates.URL.format(edition=ed, pdf=pdf))
+                  print(ed, pdf, None if b is None else plates.read(b)["courses"])
+          PY
