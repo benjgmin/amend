@@ -26,11 +26,14 @@ jobs:
           for pdf in pdfs:
               b = plates._get(plates.URL.format(edition="2611", pdf=pdf))
               page = pypdf.PdfReader(io.BytesIO(b)).pages[0]
-              for mode in ("plain", "layout"):
-                  t = page.extract_text() if mode == "plain" else page.extract_text(extraction_mode="layout")
-                  lines = t.split("\n")
-                  i = next((n for n, l in enumerate(lines) if "CATEGORY" in l), None)
-                  print(f"===== {pdf} {mode} (CATEGORY at {i})")
-                  if i is not None:
-                      print("\n".join(lines[max(0, i - 2):i + 22]))
+              text, ch = plates._chunks(page)
+              heads = [(x, y) for x, y, t in ch if t.strip().startswith("CATEGORY")]
+              print(f"===== {pdf} heads {heads}")
+              if heads:
+                  hx, hy = heads[0]
+                  for x, y, t in sorted(ch, key=lambda c: (-c[1], c[0])):
+                      if hy - 200 < y < hy + 3:
+                          print(f"  {x:6.1f} {y:6.1f} {t!r}")
+              print("ROWS", plates.rows(ch))
+              print("MINS", plates.minimums(text)["alts"])
           PY

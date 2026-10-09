@@ -127,6 +127,85 @@ def minimums(text):
             "seen": sorted(seen | alts, key=int)}
 
 
+# a minimums table's row labels, under its CATEGORY header: LPV DA, LNAV/VNAV DA, LNAV MDA, LP MDA,
+# RNP 0.30 DA, S-ILS 7L, S-LOC 25, CIRCLING, SIDESTEP RWY 6R
+LABEL = re.compile(r"^(?:LPV|LP|LNAV/?|VNAV|LNAV MDA|RNP|S-|SIDESTEP|CIRCLING|DA|MDA|RWY|\d)")
+ROW = 14              # points. a value further than this above or below its row's label isn't read
+CATEGORIES = "ABCDE"
+
+
+def _chunks(page):
+    """[(x, y, text), ...]: every piece of text on a pdf page and where it starts."""
+    out = []
+
+    def seen(text, cm, tm, font, size):
+        if text.strip():
+            x = tm[4] * cm[0] + tm[5] * cm[2] + cm[4]
+            y = tm[4] * cm[1] + tm[5] * cm[3] + cm[5]
+            out.append((round(x, 1), round(y, 1), text))
+    text = page.extract_text(visitor_text=seen)
+    return text, out
+
+
+def rows(chunks):
+    """{alt: "LPV DA", ...}: the minimums row each DA/MDA is printed in, from where the text sits on
+    the page. a row is its label at the left of the table under CATEGORY; a value belongs to the
+    row whose label is nearest it up or down, when that's clearly nearer than any other. an alt in
+    two rows (LNAV MDA and circling A, both 1120) gets none. circling minimums printed one per
+    category say which ("CIRCLING cat C"). {} when there's no one CATEGORY header."""
+    heads = [(x, y) for x, y, t in chunks if t.strip().startswith("CATEGORY")]
+    if len(heads) != 1:
+        return {}
+    hx, hy = heads[0]
+    cols = sorted((x, t.strip()) for x, y, t in chunks
+                  if abs(y - hy) < 3 and t.strip() in CATEGORIES and x > hx)
+    fixes = sorted(y for x, y, t in chunks if "FIX MINIMUMS" in t and y < hy)
+    pieces = sorted(((y, x, t.strip()) for x, y, t in chunks
+                     if abs(x - hx) < 15 and hy - 200 < y < hy - 3 and LABEL.match(t.strip())),
+                    reverse=True)
+    labels = []                 # [[y, ...], [text, ...]] per row, top down
+    for y, x, t in pieces:
+        if labels and labels[-1][0][-1] - y < 10:
+            labels[-1][0].append(y)
+            labels[-1][1].append(t)
+        else:
+            labels.append([[y], [t]])
+    named = []
+    for ys, ts in labels:
+        kind = [t for t in ts if t in ("DA", "MDA")]
+        name = ""
+        for t in ts:
+            for w in t.split():
+                if w in ("DA", "MDA") and t not in ("DA", "MDA") and w == t.split()[-1]:
+                    kind.append(w)
+                    continue
+                if t in ("DA", "MDA"):
+                    break
+                name += ("" if name.endswith("/") or not name else " ") + w
+        label = " ".join([name] + kind[:1]).strip()
+        fix = [f for f in fixes if f > sum(ys) / len(ys)]
+        named.append((sum(ys) / len(ys), label, fix[0] if fix else None))
+    out, cells = {}, {}
+    for x, y, t in chunks:
+        if x <= hx + 15 or y >= hy or y < hy - 220:
+            continue
+        for m in MINIMUM.finditer(t.strip()):
+            near = sorted((abs(y - ry), label, fix) for ry, label, fix in named)
+            if not near or near[0][0] > ROW or (len(near) > 1 and near[1][0] - near[0][0] < 3):
+                continue
+            label = near[0][1]
+            if near[0][2] is not None:
+                fix = next(t2 for x2, y2, t2 in chunks if y2 == near[0][2] and "FIX MINIMUMS" in t2)
+                label += f" ({fix.split('FIX')[0].strip()} fix)"
+            cells.setdefault(label, []).append((x, m.group(1)))
+            out.setdefault(m.group(1), set()).add(label)
+    for label, vals in cells.items():
+        if label.startswith("CIRCLING") and len(cols) >= 4 and len(vals) == len(cols):
+            for (x, alt), (_, cat) in zip(sorted(vals), cols):
+                out[alt] = out[alt] - {label} | {f"{label} cat {cat}"}
+    return {a: next(iter(v)) for a, v in sorted(out.items()) if len(v) == 1}
+
+
 def read(pdf_bytes):
     """what's kept of one plate."""
     import pypdf    # only the build reads plates; the rest of amend runs without it
