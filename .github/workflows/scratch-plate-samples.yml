@@ -19,21 +19,20 @@ jobs:
       - run: pip install pypdf==6.19.0
       - run: |
           python - <<'PY'
-          import io, pypdf
+          import io, re, pypdf
           from amend import plates
-          pdfs = ['00095IL35.PDF', '00095VA.PDF', '00142RX16R.PDF', '00286R6.PDF', '00286VA.PDF',
-                  '00632IL1.PDF', '00858VB.PDF', '01231IZLZ28.PDF', '01234IL2L.PDF', '05103IL9.PDF',
-                  '05103R33.PDF', '05103R9.PDF', '05216R21.PDF', '05312R29.PDF', '05326R16L.PDF',
-                  '05344R1.PDF', '05531R16.PDF', '05856R20.PDF', '05943R36.PDF', '06019R32.PDF',
-                  '06072R35.PDF', '06172R17.PDF', '06657R35.PDF', '06866R18.PDF', '06866R36.PDF']
-          for pdf in pdfs:
-              b = plates._get(plates.URL.format(edition="2609", pdf=pdf))
+          for ed, pdf, alt in (("2609", "06072R35.PDF", "884"), ("2611", "05771R19.PDF", "999"),
+                               ("2610", "05771R19.PDF", "999"), ("2611", "00089R23.PDF", "740")):
+              b = plates._get(plates.URL.format(edition=ed, pdf=pdf))
               if b is None:
-                  print("=====", pdf, "not served"); continue
+                  print("=====", ed, pdf, "not served"); continue
               page = pypdf.PdfReader(io.BytesIO(b)).pages[0]
-              print("=====", pdf, plates.read(b)["minimums"]["rows"])
-              lines = page.extract_text(extraction_mode="layout").split("\n")
-              i = next((n for n, l in enumerate(lines) if "CATEGORY" in l), None)
-              if i is not None:
-                  print("\n".join(l[:160].rstrip() for l in lines[i:i + 16] if l.strip()))
+              text, ch = plates._chunks(page)
+              print("=====", ed, pdf, plates.minimums(text))
+              for m in re.finditer(alt, text):
+                  print("  TEXT", repr(text[max(0, m.start() - 40):m.end() + 60]))
+              ys = [y for x, y, t in ch if alt in t]
+              for x, y, t in sorted(ch, key=lambda c: (-c[1], c[0])):
+                  if any(abs(y - y0) < 9 for y0 in ys):
+                      print(f"  {x:6.1f} {y:6.1f} {t!r}")
           PY
