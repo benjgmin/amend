@@ -101,7 +101,7 @@ CAP = 100   # messages kept per list; the counts are always exact
 # (pipeline.py) and every module it imports (a test checks), plus the verified glossary, which
 # is data but decides what a remark's contractions may say in plain English
 ENGINE_FILES = ("airspace.py", "collapse.py", "diff.py", "dtpp.py", "english.py", "fields.py",
-                "glossary.py", "glossary.json", "nasr.py", "output.py", "pipeline.py", "procedures.py", "remarks.py",
+                "glossary.py", "glossary.json", "nasr.py", "output.py", "pipeline.py", "plates.py", "procedures.py", "remarks.py",
                 "rules.py")
 
 

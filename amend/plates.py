@@ -18,6 +18,7 @@ SHIFT degrees, each the other's only near match. Anything else is a redraw amend
 the chart says so without a number.
 """
 import concurrent.futures
+import datetime as dt
 import hashlib
 import io
 import json
@@ -30,14 +31,26 @@ import urllib.request
 PLATES = "plates"
 URL = "https://aeronav.faa.gov/d-tpp/{edition}/{pdf}"
 # a course or heading as printed: 072°, 254°, an airport diagram's 072.4°. never a glide path
-# (3.00°: one digit) or a coordinate (47°58'N: two digits)
-COURSE = re.compile(r"(?<![\d.])([0-3]\d\d(?:\.\d)?)°")
+# (3.00°: one digit) or a coordinate: 47°58'N has two digits, and a longitude's three are
+# followed by its minutes (102°29'W)
+COURSE = re.compile(r"(?<![\d.])([0-3]\d\d(?:\.\d)?)°(?!\s?\d\d?(?:\.\d+)?['’′])")
 SHIFT = 5             # degrees. a magnetic variation update moves a course 1-3°; more is a redesign
 MIN_COURSES = 3       # fewer on either edition: no text layer to read, not "no courses"
 GIVE_UP = 3           # failed downloads of one pdf before a build stops asking for it
 WORKERS = 8
 TIMEOUT = 60
 MISSING = (403, 404, 410)
+
+
+def previous(day):
+    """the d-TPP edition before the one effective on `day`: date(2026, 9, 3) -> '2608'. the same
+    count as cycles.dtpp_id, kept here so the engine doesn't import the download code."""
+    d = day - dt.timedelta(days=28)
+    n, x = 1, d
+    while (x - dt.timedelta(days=28)).year == d.year:
+        x -= dt.timedelta(days=28)
+        n += 1
+    return f"{d.year % 100:02d}{n:02d}"
 
 
 def path(edition, root="."):

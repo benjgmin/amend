@@ -518,17 +518,18 @@ class TestCharts(Case):
     def test_dtpp(self):
         xml = os.path.join(tempfile.mkdtemp(), "meta.xml")
         with open(xml, "w") as f:
-            f.write('<digital_tpp cycle="2610"><airport_name apt_ident="DAB">'
-                    '<record><chart_code>IAP</chart_code><chart_name>ILS OR LOC RWY 07L</chart_name>'
-                    '<useraction>C</useraction><pdf_name>00237IL7L.PDF</pdf_name><amdtnum>9</amdtnum></record>'
-                    '<record><chart_code>IAP</chart_code><chart_name>VOR RWY 16</chart_name>'
+            f.write('<digital_tpp cycle="2610"><airport_name apt_ident="BJC">'
+                    '<record><chart_code>IAP</chart_code><chart_name>ILS OR LOC RWY 30R</chart_name>'
+                    '<useraction>C</useraction><pdf_name>00237IL30R.PDF</pdf_name><amdtnum>9</amdtnum></record>'
+                    '<record><chart_code>IAP</chart_code><chart_name>VOR RWY 12L</chart_name>'
                     '<useraction>D</useraction><pdf_name>DELETED.PDF</pdf_name></record>'
                     '</airport_name></digital_tpp>')
-        ch = self.diff({"APT_BASE.csv": ["ARPT_ID", "DAB"]}, {"APT_BASE.csv": ["ARPT_ID", "DAB"]},
-                       {"DAB"}, xml)["DAB"]
-        self.assertEqual(self.summaries(ch, "ifr"), ["approach ILS OR LOC RWY 07L amended (amdt 9)",
-                                                     "approach VOR RWY 16 removed"])
-        self.assertEqual(ch[0]["chart"]["pdf"], "https://aeronav.faa.gov/d-tpp/2610/00237IL7L.PDF")
+        ch = self.diff({"APT_BASE.csv": ["ARPT_ID", "BJC"]}, {"APT_BASE.csv": ["ARPT_ID", "BJC"]},
+                       {"BJC"}, xml)["BJC"]
+        # no amendment date in the metafile: amend can't tell amended from redrawn
+        self.assertEqual(self.summaries(ch, "ifr"), ["approach ILS OR LOC RWY 30R changed (amdt 9)",
+                                                     "approach VOR RWY 12L removed"])
+        self.assertEqual(ch[0]["chart"]["pdf"], "https://aeronav.faa.gov/d-tpp/2610/00237IL30R.PDF")
         self.assertNotIn("pdf", ch[1]["chart"])
 
     def test_str_is_an_arrival(self):
@@ -541,7 +542,7 @@ class TestCharts(Case):
                     '</record></airport_name></digital_tpp>')
         ch = self.diff({"APT_BASE.csv": ["ARPT_ID", "BOS"]}, {"APT_BASE.csv": ["ARPT_ID", "BOS"]},
                        {"BOS"}, xml)["BOS"]
-        self.assertEqual((ch[0]["priority"], ch[0]["summary"]), ("ifr", "arrival WOONS TWO amended (amdt 2)"))
+        self.assertEqual((ch[0]["priority"], ch[0]["summary"]), ("ifr", "arrival WOONS TWO changed (amdt 2)"))
 
     def charts(self, apt, records, cycle="2611"):
         """one airport's chart changes from metafile <record>s given as (code, name, action, pdf, procuid)."""

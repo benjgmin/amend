@@ -10,7 +10,7 @@ permissions:
 jobs:
   plates:
     runs-on: ubuntu-latest
-    timeout-minutes: 120
+    timeout-minutes: 170
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -22,7 +22,7 @@ jobs:
           for e in 2608 2609 2610 2611; do
             curl -sSfL -o meta/$e.xml https://aeronav.faa.gov/d-tpp/$e/xml_data/d-tpp_Metafile.xml
           done
-          python -m amend plates meta/2608.xml meta/2609.xml meta/2610.xml meta/2611.xml --budget 1500
+          python -m amend plates meta/2608.xml meta/2609.xml meta/2610.xml meta/2611.xml --budget 3000
           ls -la plates
       - if: ${{ !cancelled() }}
         run: |

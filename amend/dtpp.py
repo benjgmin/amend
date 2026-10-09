@@ -5,7 +5,6 @@ import xml.etree.ElementTree as ET
 from collections import defaultdict
 
 from . import plates
-from .cycles import CYCLE, dtpp_id
 
 DTPP_KINDS = {
     "IAP": "approach", "DP": "departure", "ODP": "obstacle departure",
@@ -103,7 +102,7 @@ def load_dtpp(path, ids, plates_root="."):
                     if p["act"] != "D" and p["pdf"] and "DELETED" not in p["pdf"].upper()), "")
         moved = []
         if act == "C" and pdf and day and key not in renamed:
-            moved = plates.changes_for(pdf, dtpp_id(day - CYCLE), cycle, plates_root)
+            moved = plates.changes_for(pdf, plates.previous(day), cycle, plates_root)
         out[apt].append(_record(apt, code, chart, act, first["amdt"], pdf, cycle, renamed.get(key),
                                 amended=_amended(first["amdt_date"], day), moved=moved))
     return out
@@ -170,4 +169,4 @@ def read_plates(path, budget=PLATE_BUDGET, root=".", log=print):
     if not edition or not day:
         log(f"  plates: {path} doesn't say its edition, not reading plates")
         return None
-    return plates.update(dtpp_id(day - CYCLE), edition, pdfs, budget, root, log)
+    return plates.update(plates.previous(day), edition, pdfs, budget, root, log)
