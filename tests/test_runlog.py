@@ -19,7 +19,7 @@ from unittest import mock
 from amend import ENGINE_VERSION, audit, cycles, history, nasr, runlog
 from tests.test_pipeline_ops import REQ, FetchCase, zip_bytes
 
-IDS = {"VRB", "DAB"}
+IDS = {"VRB", "PAO"}
 
 
 def actions_env(test, **env):

@@ -25,22 +25,22 @@ HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TIES = {
     # two frequency uses on one frequency both replaced (CLT/IAD/EQY 124.0: KWEEN DP, BEAVY DP)
     "FRQ.csv": ["SERVICED_FACILITY,FREQ,FREQ_USE,SECTORIZATION",
-                "DAB,124.0,KWEEN DP,NORTH", "DAB,124.0,BEAVY DP,SOUTH"],
+                "PAO,124.0,KWEEN DP,NORTH", "PAO,124.0,BEAVY DP,SOUTH"],
     # BAM: two attendance schedules rewritten
     "APT_ATT.csv": ["ARPT_ID,SKED_SEQ_NO,MONTH,DAY,HOUR",
-                    "DAB,1,ALL,MON-FRI,0800-1700", "DAB,2,ALL,SAT-SUN,0900-1500"],
+                    "PAO,1,ALL,MON-FRI,0800-1700", "PAO,2,ALL,SAT-SUN,0900-1500"],
     # an airport removed: its runways are listed in the one "airport removed" line (0E9, 93TS)
-    "APT_BASE.csv": ["ARPT_ID,ARPT_NAME", "DAB,DAYTONA BEACH INTL", "X50,MASSEY RANCH"],
+    "APT_BASE.csv": ["ARPT_ID,ARPT_NAME", "PAO,PALO ALTO", "C83,BYRON"],
     "APT_RWY.csv": ["ARPT_ID,RWY_ID,RWY_LEN,RWY_WIDTH,SURFACE_TYPE_CODE",
-                    "DAB,07L/25R,10500,150,ASPH", "X50,18/36,4000,75,ASPH", "X50,09/27,3000,60,TURF",
-                    "X50,H1,40,40,CONC"],
+                    "PAO,07L/25R,10500,150,ASPH", "C83,18/36,4000,75,ASPH", "C83,09/27,3000,60,TURF",
+                    "C83,H1,40,40,CONC"],
 }
 TIES_NEW = {
-    "FRQ.csv": ["SERVICED_FACILITY,FREQ,FREQ_USE,SECTORIZATION", "DAB,124.0,BATTA DP,EAST"],
+    "FRQ.csv": ["SERVICED_FACILITY,FREQ,FREQ_USE,SECTORIZATION", "PAO,124.0,BATTA DP,EAST"],
     "APT_ATT.csv": ["ARPT_ID,SKED_SEQ_NO,MONTH,DAY,HOUR",
-                    "DAB,1,ALL,MON-SUN,0800-1600", "DAB,2,ALL,MON-SUN,0900-1600"],
-    "APT_BASE.csv": ["ARPT_ID,ARPT_NAME", "DAB,DAYTONA BEACH INTL"],
-    "APT_RWY.csv": ["ARPT_ID,RWY_ID,RWY_LEN,RWY_WIDTH,SURFACE_TYPE_CODE", "DAB,07L/25R,10500,150,ASPH"],
+                    "PAO,1,ALL,MON-SUN,0800-1600", "PAO,2,ALL,MON-SUN,0900-1600"],
+    "APT_BASE.csv": ["ARPT_ID,ARPT_NAME", "PAO,PALO ALTO"],
+    "APT_RWY.csv": ["ARPT_ID,RWY_ID,RWY_LEN,RWY_WIDTH,SURFACE_TYPE_CODE", "PAO,07L/25R,10500,150,ASPH"],
 }
 
 

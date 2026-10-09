@@ -53,10 +53,10 @@ class TestRules(Case):
         self.assertEqual(s, ["tower hours: 0700-2100 -> 0700-0100 local"])
 
     def test_frequency_belongs_to_served_airport(self):
-        """DAB approach serving NSB is NSB's frequency, not DAB's."""
-        old = {"FRQ.csv": ["FACILITY,SERVICED_FACILITY,FREQ", "DAB,NSB,125.30"]}
-        new = {"FRQ.csv": ["FACILITY,SERVICED_FACILITY,FREQ", "DAB,NSB,125.35"]}
-        self.assertNotIn("DAB", self.diff(old, new, {"DAB"}))
+        """PAO approach serving NSB is NSB's frequency, not PAO's."""
+        old = {"FRQ.csv": ["FACILITY,SERVICED_FACILITY,FREQ", "PAO,NSB,125.30"]}
+        new = {"FRQ.csv": ["FACILITY,SERVICED_FACILITY,FREQ", "PAO,NSB,125.35"]}
+        self.assertNotIn("PAO", self.diff(old, new, {"PAO"}))
 
     def test_navaid_type_change(self):
         """TRV (Treasure): VORTAC -> DME, even with a BOM on the header."""
@@ -66,9 +66,9 @@ class TestRules(Case):
         self.assertIn("TRV (Treasure) navaid: VORTAC -> DME", s)
 
     def test_tpa_does_not_match_tampa(self):
-        old = {"PFR_RMT_FMT.csv": ["Orig,Route String,Dest,Type", "DAB,DAB WORAK DADES1 TPA,TPA,L"]}
-        new = {"PFR_RMT_FMT.csv": ["Orig,Route String,Dest,Type", "DAB,DAB WORAK DADES2 TPA,TPA,L"]}
-        ch = self.diff(old, new, {"DAB"})["DAB"]
+        old = {"PFR_RMT_FMT.csv": ["Orig,Route String,Dest,Type", "PAO,PAO WORAK DADES1 TPA,TPA,L"]}
+        new = {"PFR_RMT_FMT.csv": ["Orig,Route String,Dest,Type", "PAO,PAO WORAK DADES2 TPA,TPA,L"]}
+        ch = self.diff(old, new, {"PAO"})["PAO"]
         self.assertEqual([c["priority"] for c in ch], ["ifr"])
 
     def test_star_frequency_label_is_fyi(self):
@@ -232,7 +232,7 @@ class TestWhyFaaWords(Case):
             json.dump(rejects, f)
         try:
             ch = self.diff({"APT_RMK.csv": [rmk]},
-                           {"APT_RMK.csv": [rmk] + [f'DAB,A{i},"{t}"' for i, t in enumerate(texts)]}, {"DAB"})["DAB"]
+                           {"APT_RMK.csv": [rmk] + [f'PAO,A{i},"{t}"' for i, t in enumerate(texts)]}, {"PAO"})["PAO"]
         finally:
             os.remove(remarks.CACHE_FILE)
             os.remove(remarks._rejects_file())
@@ -276,15 +276,15 @@ class TestRemarkCount(Case):
         rmk = "ARPT_ID,LEGACY_ELEMENT_NUMBER,REMARK"
         d = tempfile.mkdtemp()
         o, n = os.path.join(d, "2026-09-03_CSV.zip"), os.path.join(d, "2026-10-01_CSV.zip")
-        make_zip(o, {"APT_RMK.csv": [rmk, "DAB,A1,PCR VALUE: 401/F/D/X/T", "DAB,A2,DEER ON & INVOF ARPT."]})
-        make_zip(n, {"APT_RMK.csv": [rmk, "DAB,A2,DEER & LRG BIRDS ON & INVOF ARPT.", "DAB,A3,RWY 09 IS CLSD."]})
+        make_zip(o, {"APT_RMK.csv": [rmk, "PAO,A1,PCR VALUE: 401/F/D/X/T", "PAO,A2,DEER ON & INVOF ARPT."]})
+        make_zip(n, {"APT_RMK.csv": [rmk, "PAO,A2,DEER & LRG BIRDS ON & INVOF ARPT.", "PAO,A3,RWY 09 IS CLSD."]})
         with open(remarks.CACHE_FILE, "w") as f:
             json.dump({"RWY 09 IS CLSD.": "Runway 09 is closed."}, f)
         try:
-            res = run(o, n, {"DAB"}, None, log=lambda *_: None)
+            res = run(o, n, {"PAO"}, None, log=lambda *_: None)
         finally:
             os.remove(remarks.CACHE_FILE)
-        read_out = sorted(c["original"] for c in res["airports"]["DAB"] if c.get("original"))
+        read_out = sorted(c["original"] for c in res["airports"]["PAO"] if c.get("original"))
         self.assertEqual(read_out, ["DEER & LRG BIRDS ON & INVOF ARPT.", "RWY 09 IS CLSD."])
         self.assertEqual(res["remarks"], {"texts": 2, "plain_english": 1})
 
@@ -445,17 +445,17 @@ class TestProcedures(Case):
         """TTHOR2 -> TTHOR3: which waypoints and transitions changed."""
         apt = ["ARPT_ID,STAR_COMPUTER_CODE"]
         rte = ["STAR_COMPUTER_CODE,ROUTE_PORTION_TYPE,ROUTE_NAME,POINT_SEQ,POINT"]
-        old = {"APT_BASE.csv": ["ARPT_ID", "DAB"],
-               "STAR_APT.csv": apt + ["DAB,LPERD.TTHOR2"],
+        old = {"APT_BASE.csv": ["ARPT_ID", "PAO"],
+               "STAR_APT.csv": apt + ["PAO,LPERD.TTHOR2"],
                "STAR_RTE.csv": rte + ["LPERD.TTHOR2,BODY,LPERD-TTHOR,10,LPERD",
                                       "LPERD.TTHOR2,BODY,LPERD-TTHOR,20,LAANA",
                                       "COL.TTHOR2,TRANSITION,COL-LPERD,10,COL"]}
-        new = {"APT_BASE.csv": ["ARPT_ID", "DAB"],
-               "STAR_APT.csv": apt + ["DAB,LPERD.TTHOR3"],
+        new = {"APT_BASE.csv": ["ARPT_ID", "PAO"],
+               "STAR_APT.csv": apt + ["PAO,LPERD.TTHOR3"],
                "STAR_RTE.csv": rte + ["LPERD.TTHOR3,BODY,LPERD-TTHOR,10,LPERD",
                                       "LPERD.TTHOR3,BODY,LPERD-TTHOR,20,WOXXO",
                                       "NECCK.TTHOR3,TRANSITION,NECCK-LPERD,10,NECCK"]}
-        ch = self.diff(old, new)["DAB"][0]
+        ch = self.diff(old, new)["PAO"][0]
         self.assertEqual(ch["summary"], "arrival/departure procedures new or updated: TTHOR2 -> TTHOR3")
         self.assertEqual(ch["details"], ["TTHOR2 -> TTHOR3: waypoints added NECCK, WOXXO; waypoints removed COL, LAANA; "
                                          "transitions added NECCK; transitions removed COL"])
@@ -607,12 +607,12 @@ class TestDirectory(unittest.TestCase):
         from amend.airports import directory
         p = os.path.join(tempfile.mkdtemp(), "a.zip")
         make_zip(p, {"APT_BASE.csv": ["ARPT_ID,ICAO_ID,ARPT_NAME,CITY,STATE_CODE,SITE_TYPE_CODE,LAT_DECIMAL,LONG_DECIMAL",
-                                      "DAB,KDAB,DAYTONA BEACH INTL,DAYTONA BEACH,FL,A,29.17991667,-81.05805556",
-                                      "7FL6,,SPRUCE CREEK,DAYTONA BEACH,FL,A,,"]})
+                                      "PAO,KPAO,PALO ALTO,PALO ALTO,CA,A,37.46111111,-122.11500000",
+                                      "0Q5,,SHELTER COVE,SHELTER COVE,CA,A,,"]})
         d = directory(p)
-        self.assertEqual(d[1], {"id": "DAB", "icao": "KDAB", "name": "Daytona Beach Intl",
-                                "city": "Daytona Beach", "state": "FL", "type": "airport",
-                                "lat": 29.1799, "lon": -81.0581})
+        self.assertEqual(d[1], {"id": "PAO", "icao": "KPAO", "name": "Palo Alto",
+                                "city": "Palo Alto", "state": "CA", "type": "airport",
+                                "lat": 37.4611, "lon": -122.115})
         self.assertNotIn("icao", d[0])
 
     def test_name_lists(self):
@@ -646,7 +646,7 @@ class TestWeb(unittest.TestCase):
                            "chart": {"code": "IAP", "name": "ILS", "amdt": "3", "pdf": "https://x/y.PDF"}}]}
         meta = {"from_cycle": "2026-09-03", "to_cycle": "2026-10-01", "upcoming": True, "changed_airports": 1}
         directory = [{"id": "VRB", "icao": "KVRB", "name": "Vero Beach Rgnl", "city": "Vero Beach", "state": "FL"},
-                     {"id": "DAB", "icao": "KDAB", "name": "Daytona Beach Intl"}]
+                     {"id": "PAO", "icao": "KPAO", "name": "Palo Alto"}]
         n = web.build(site, meta, directory, latest, hist, now=dt.datetime(2026, 9, 24, tzinfo=dt.timezone.utc))
         return site, n
 
@@ -693,7 +693,7 @@ class TestWeb(unittest.TestCase):
         self.assertIn("<loc>https://amend.watch/</loc>", sm)
         self.assertIn("<loc>https://amend.watch/guide/</loc>", sm)
         self.assertIn("<loc>https://amend.watch/VRB/</loc>", sm)      # every airport page, linked or not
-        self.assertNotIn("DAB", sm)                                   # no page, so not listed
+        self.assertNotIn("PAO", sm)                                   # no page, so not listed
         self.assertNotIn("404", sm)
         robots = open(os.path.join(site, "robots.txt")).read()
         self.assertIn("Sitemap: https://amend.watch/sitemap.xml", robots)
@@ -785,7 +785,7 @@ class TestWeb(unittest.TestCase):
         self.assertIn('function which(ls,el)', app)                         # the sidebar opens the list the page shows
         self.assertIn('href="list/">Lists</a>', index)                      # phone top bar reaches the lists
         lists = open(os.path.join(site, "list", "index.html")).read()
-        for part in ('id="ltabs"', 'id="actions"', 'id="manage"', 'id="lnote"', '"DAB":["KDAB","Daytona Beach Intl"]'):
+        for part in ('id="ltabs"', 'id="actions"', 'id="manage"', 'id="lnote"', '"PAO":["KPAO","Palo Alto"]'):
             self.assertIn(part, lists)
         nf = open(os.path.join(site, "404.html")).read()
         self.assertIn('<meta name="robots" content="noindex">', nf)
@@ -894,40 +894,40 @@ function load(store, broken) {
 }
 const plain = x => JSON.parse(JSON.stringify(x));
 // the old watchlist and its name become the first list, and amend.watch keeps every saved airport
-let store = {"amend.watch": '["DAB","VRB","dab"]', "amend.watch.name": "Club SVFR"};
+let store = {"amend.watch": '["PAO","VRB","pao"]', "amend.watch.name": "Flying club"};
 let LS = load(store);
 const first = plain(LS.all());
 assert.equal(first.length, 1);
 assert.match(first[0].id, /^w[0-9a-z]+$/);
-assert.deepEqual([first[0].name, first[0].ids], ["Club SVFR", ["DAB", "VRB"]]);
+assert.deepEqual([first[0].name, first[0].ids], ["Flying club", ["PAO", "VRB"]]);
 assert.deepEqual(plain(LS.all()), first);                    // same id on every read
-assert.deepEqual(plain(load({"amend.watch": '["DAB","VRB"]'}).all())[0].name, "My airports");
+assert.deepEqual(plain(load({"amend.watch": '["PAO","VRB"]'}).all())[0].name, "My airports");
 assert.notEqual(plain(load({"amend.watch": '["SFB"]'}).all())[0].id, first[0].id);   // not one id for everyone
 // more lists: the new one is in use, names don't repeat, amend.watch is every airport on any list
 const trip = LS.create("Keys trip", ["EYW", "MTH"]);
 assert.equal(LS.active().id, trip.id);
 assert.equal(LS.create("keys TRIP", []).name, "keys TRIP 2");
-assert.deepEqual(JSON.parse(store["amend.watch"]), ["DAB", "VRB", "EYW", "MTH"]);
+assert.deepEqual(JSON.parse(store["amend.watch"]), ["PAO", "VRB", "EYW", "MTH"]);
 LS.set(trip.id, ["FLL", "EYW"], true);
 assert.deepEqual(plain(LS.all().find(l => l.id === trip.id).ids), ["EYW", "MTH", "FLL"]);
 LS.set(trip.id, ["MTH"], false);
-assert.equal(LS.rename(trip.id, "  Club svfr ").name, "Club svfr 2");
-assert.equal(LS.same(["VRB", "DAB"], "whatever").id, first[0].id);
-assert.equal(LS.same(["DAB"], ""), null);
-assert.equal(LS.link(LS.all()[0]), "https://amend.watch/list/?w=DAB,VRB&n=Club%20SVFR");
+assert.equal(LS.rename(trip.id, "  flying CLUB ").name, "flying CLUB 2");
+assert.equal(LS.same(["VRB", "PAO"], "whatever").id, first[0].id);
+assert.equal(LS.same(["PAO"], ""), null);
+assert.equal(LS.link(LS.all()[0]), "https://amend.watch/list/?w=PAO,VRB&n=Flying%20club");
 LS.use(first[0].id); LS.remove(first[0].id);
 assert.equal(LS.active().id, trip.id);                        // deleting the list in use moves to another
 assert.deepEqual(plain(LS.union()), ["EYW", "FLL"]);
 // junk in storage: bad ids dropped, long names cut, unreadable lists fall back to amend.watch
-store = {"amend.lists": JSON.stringify([{id: "a", name: "x".repeat(99), ids: ["DAB", "no way", 7, "VRB"]}, {name: "no id"}])};
+store = {"amend.lists": JSON.stringify([{id: "a", name: "x".repeat(99), ids: ["PAO", "no way", 7, "VRB"]}, {name: "no id"}])};
 const [a] = plain(load(store).all());
-assert.deepEqual([a.name.length, a.ids], [60, ["DAB", "VRB"]]);
+assert.deepEqual([a.name.length, a.ids], [60, ["PAO", "VRB"]]);
 assert.deepEqual(plain(load({"amend.lists": "{nope", "amend.watch": '["SFB"]'}).all())[0].ids, ["SFB"]);
 // storage blocked (some private modes): no lists, no crash
 LS = load({}, true);
 assert.deepEqual(plain(LS.all()), []);
 assert.equal(LS.active(), null);
-LS.create("x", ["DAB"]);
+LS.create("x", ["PAO"]);
 """
 
 
@@ -955,10 +955,10 @@ class TestFeeds(unittest.TestCase):
         self.assertEqual(page.count('id="alerts"'), 1)                    # opens under the button, not a rail card
         self.assertIn('<script type="speculationrules">', page)          # hover prefetch between pages
         self.assertIn('<div id="sbw" data-on="VRB"></div><script>SB.side()</script>', page)   # lists on first paint
-        quiet = ET.parse(os.path.join(site, "DAB", "feed.xml")).getroot().find("channel")   # no page, still a feed
+        quiet = ET.parse(os.path.join(site, "PAO", "feed.xml")).getroot().find("channel")   # no page, still a feed
         self.assertEqual(quiet.findall("item"), [])
         self.assertEqual(quiet.findtext("link"), "https://amend.watch/")
-        self.assertFalse(os.path.exists(os.path.join(site, "DAB", "index.html")))
+        self.assertFalse(os.path.exists(os.path.join(site, "PAO", "index.html")))
         self.assertIn('id="opml"', open(os.path.join(site, "list", "index.html")).read())
         self.assertIn("Copy alert link", page)                               # pilot words first, RSS under More options
         self.assertIn("<summary>More options</summary>", page)
@@ -969,14 +969,14 @@ class TestFeeds(unittest.TestCase):
         from amend import web
         site = tempfile.mkdtemp()
         hist = tempfile.mkdtemp()
-        with open(os.path.join(hist, "DAB.json"), "w") as f:
-            json.dump({"airport": "DAB", "entries": [
+        with open(os.path.join(hist, "PAO.json"), "w") as f:
+            json.dump({"airport": "PAO", "entries": [
                 {"cycle": "2026-09-03", "priority": "fyi", "category": "remark", "kind": "changed",
                  "summary": "remark reworded", "original": "RWY 7L CLSD", "source": "APT_RMK", "id": "r"}]}, f)
         latest = {"VRB": [{"id": "a", "priority": "action", "category": "tower", "kind": "changed",
                            "summary": "tower hours: 0800-2200 -> 0600-2200 local", "source": "ATC_BASE"}]}
         meta = {"from_cycle": "2026-09-03", "to_cycle": "2026-10-01", "upcoming": True, "changed_airports": 1}
-        lists = {"club": {"name": "Club & Co", "description": "", "airports": ["DAB", "VRB"]}}
+        lists = {"club": {"name": "Club & Co", "description": "", "airports": ["PAO", "VRB"]}}
         now = dt.datetime(2026, 9, 24, tzinfo=dt.timezone.utc)
         web.build(site, meta, [{"id": "VRB", "name": "Vero Beach Rgnl"}], latest, hist, now=now, watchlists=lists)
         items = ET.parse(os.path.join(site, "list", "club", "feed.xml")).getroot().find("channel").findall("item")
@@ -1000,39 +1000,39 @@ class TestFeeds(unittest.TestCase):
 class TestWatchlists(unittest.TestCase):
     def test_validation(self):
         from amend.watchlists import validate
-        self.assertEqual(validate("clubsvfr", {"name": "Club SVFR", "airports": ["DAB", "KOMN"]}), [])
-        self.assertTrue(validate("Club SVFR!", {"name": "x", "airports": ["DAB"]}))     # bad link name
-        self.assertTrue(validate("about", {"name": "x", "airports": ["DAB"]}))          # reserved
-        self.assertTrue(validate("guide", {"name": "x", "airports": ["DAB"]}))
-        self.assertTrue(validate("privacy", {"name": "x", "airports": ["DAB"]}))
-        self.assertTrue(validate("list", {"name": "x", "airports": ["DAB"]}))
-        self.assertTrue(validate("clubsvfr", {"name": "", "airports": ["DAB"]}))        # no name
-        self.assertTrue(validate("clubsvfr", {"name": "x", "airports": ["not an id"]}))
+        self.assertEqual(validate("flying-club", {"name": "Flying club", "airports": ["PAO", "KFDK"]}), [])
+        self.assertTrue(validate("Flying club!", {"name": "x", "airports": ["PAO"]}))     # bad link name
+        self.assertTrue(validate("about", {"name": "x", "airports": ["PAO"]}))          # reserved
+        self.assertTrue(validate("guide", {"name": "x", "airports": ["PAO"]}))
+        self.assertTrue(validate("privacy", {"name": "x", "airports": ["PAO"]}))
+        self.assertTrue(validate("list", {"name": "x", "airports": ["PAO"]}))
+        self.assertTrue(validate("flying-club", {"name": "", "airports": ["PAO"]}))        # no name
+        self.assertTrue(validate("flying-club", {"name": "x", "airports": ["not an id"]}))
 
     def test_named_page(self):
         import datetime as dt
         from amend import web, watchlists
         d = tempfile.mkdtemp()
-        watchlists.save("clubsvfr", "Club SVFR", ["DAB", "KVRB"], "Training area", directory=d)
+        watchlists.save("flying-club", "Flying club", ["PAO", "KVRB"], "Training area", directory=d)
         lists = watchlists.load_all(d)
-        self.assertEqual(lists["clubsvfr"]["airports"], ["DAB", "VRB"])
+        self.assertEqual(lists["flying-club"]["airports"], ["PAO", "VRB"])
         site = tempfile.mkdtemp()
         latest = {"VRB": [{"id": "a", "priority": "action", "category": "tower", "kind": "changed",
                            "summary": "tower hours: 0800-2200 -> 0600-2200 local", "source": "ATC_BASE"}]}
         meta = {"from_cycle": "2026-09-03", "to_cycle": "2026-10-01", "upcoming": True, "changed_airports": 1}
         web.build(site, meta, [{"id": "VRB", "name": "Vero Beach Rgnl"}], latest, None,
                   now=dt.datetime(2026, 9, 24, tzinfo=dt.timezone.utc), watchlists=lists)
-        html_ = open(os.path.join(site, "list", "clubsvfr", "index.html")).read()
-        self.assertIn('url=../../list/clubsvfr/', open(os.path.join(site, "watch", "clubsvfr", "index.html")).read())
-        self.assertIn('url=../list/clubsvfr/', open(os.path.join(site, "clubsvfr", "index.html")).read())
-        self.assertIn('content="https://amend.watch/list/clubsvfr/card.png"', html_)
+        html_ = open(os.path.join(site, "list", "flying-club", "index.html")).read()
+        self.assertIn('url=../../list/flying-club/', open(os.path.join(site, "watch", "flying-club", "index.html")).read())
+        self.assertIn('url=../list/flying-club/', open(os.path.join(site, "flying-club", "index.html")).read())
+        self.assertIn('content="https://amend.watch/list/flying-club/card.png"', html_)
         self.assertIn('href="../../assets/style.css?v=', html_)
         self.assertIn('href="../?w=', html_)                             # save to my lists, even without script
-        self.assertIn('id="savenamed" href="../?w=DAB,VRB&amp;n=Club%20SVFR" data-ids="DAB,VRB"', html_)
+        self.assertIn('id="savenamed" href="../?w=PAO,VRB&amp;n=Flying%20club" data-ids="PAO,VRB"', html_)
         self.assertTrue(os.path.exists(os.path.join(site, "about", "index.html")))
-        self.assertIn('content="Club SVFR: 1 of 2 airports change on 01 OCT · ACT 1"', html_)
+        self.assertIn('content="Flying club: 1 of 2 airports change on 01 OCT · ACT 1"', html_)
         self.assertIn("0800-2200 → 0600-2200", html_)
-        self.assertIn("No changes in this cycle.", html_)        # DAB
+        self.assertIn("No changes in this cycle.", html_)        # PAO
         # a list that was taken down lands on the lists page, from all three of its old addresses
         self.assertIn('url=../"', open(os.path.join(site, "list", "daytona-training", "index.html")).read())
         self.assertIn('url=../../list/"', open(os.path.join(site, "watch", "daytona-training", "index.html")).read())
@@ -1220,9 +1220,9 @@ class TestReleaseAudit(Case):
     def test_chart_from_wrong_cycle(self):
         c = self.ch("approach ILS RWY 11R amended (amdt 2)", priority="ifr", source="D-TPP",
                     chart={"pdf": "https://aeronav.faa.gov/d-tpp/2609/00110IL11R.PDF"})
-        self.assertIn("wrong cycle", self.check({"DAB": [c]})[0][0])
+        self.assertIn("wrong cycle", self.check({"PAO": [c]})[0][0])
         c["chart"]["pdf"] = "https://aeronav.faa.gov/d-tpp/2610/00110IL11R.PDF"
-        self.assertEqual(self.check({"DAB": [c]}), ([], []))
+        self.assertEqual(self.check({"PAO": [c]}), ([], []))
 
     def test_impossible_values_warn(self):
         def fields(name, new):

@@ -1,9 +1,9 @@
 // list.amend.watch: short links for shared lists.
 //
-// A shared list used to travel whole in its link (amend.watch/list/?w=BJC,FDK&n=Club%20SVFR), which grows with every
+// A shared list used to travel whole in its link (amend.watch/list/?w=BJC,FDK&n=Flying%20club), which grows with every
 // airport. This Cloudflare Pages project saves a list under a short code instead:
 //
-//   POST /new  {"w": ["BJC", "FDK"], "n": "Club SVFR"}  ->  {"code": "x7k2mq"}
+//   POST /new  {"w": ["BJC", "FDK"], "n": "Flying club"}  ->  {"code": "x7k2mq"}
 //   GET  /x7k2mq       -> 302 to amend.watch/list/?s=x7k2mq, which loads the list from:
 //   GET  /x7k2mq.json  -> {"w": [...], "n": "..."}
 //
