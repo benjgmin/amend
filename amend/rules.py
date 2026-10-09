@@ -11,7 +11,7 @@ IGNORE_COLS = {"EFF_DATE", "LAST_INFO_RESPONSE", "LAST_INFO_RESPONSE_DATE"}
 ID_COLS = {"SITE_NO", "SITE_TYPE_CODE", "STATE_CODE", "CITY", "COUNTRY_CODE", "ARPT_ID"}
 
 # columns that decide which airport a row belongs to, in order of preference.
-# FRQ rows use SERVICED_FACILITY so "DAB approach serving NSB" goes to NSB, not DAB.
+# FRQ rows use SERVICED_FACILITY so "SJC approach serving PAO" goes to PAO, not SJC.
 ATTRIB_COLS = ("ARPT_ID", "SERVICED_FACILITY", "FACILITY_ID", "NAV_ID", "LOC_ID",
                "ASOS_AWOS_ID", "Orig", "Dest", "ORIGIN_ID", "DSTN_ID")
 

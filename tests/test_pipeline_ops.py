@@ -310,7 +310,7 @@ class TestVerify(unittest.TestCase):
         with open(os.path.join(d, "assets", "app.js"), "w") as f:
             f.write("var AM;" + "x" * 2000)
         head = {"from_cycle": "2026-09-03", "to_cycle": "2026-10-01"}
-        apts = {a: {"action": 1} for a in ["VRB", "DAB", "MCO"][:n_changed]}
+        apts = {a: {"action": 1} for a in ["VRB", "PAO", "MCO"][:n_changed]}
         w("latest/meta.json", {**head, "changed_airports": n_changed})
         w("latest/index.json", {**head, "airports": apts})
         for a in apts:

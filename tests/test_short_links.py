@@ -34,8 +34,8 @@ class TestWorker(unittest.TestCase):
 
     def test_save_and_open(self):
         r = self.run_js("""
-out.a=await post({w:["fdk","KBJC","BJC"],n:"  Club\\nSVFR  "});
-out.again=await post({w:["BJC","FDK"],n:"Club SVFR"});
+out.a=await post({w:["fdk","KBJC","BJC"],n:"  Flying\\nclub  "});
+out.again=await post({w:["BJC","FDK"],n:"Flying club"});
 out.other=await post({w:["BJC","FDK"],n:"Trip"});
 out.writes=writes.length;out.stored=kv.get(out.a.b.code);
 out.json=await call("/"+out.a.b.code+".json");out.go=await call("/"+out.a.b.code);
@@ -47,8 +47,8 @@ out.fetches=fetches;""")
         self.assertEqual(r["again"], {**r["a"], "s": 200})            # same list, same code, no second write
         self.assertNotEqual(r["other"]["b"]["code"], code)            # the name is part of the list
         self.assertEqual(r["writes"], 2)
-        self.assertEqual(json.loads(r["stored"]), {"w": ["BJC", "FDK"], "n": "Club SVFR"})   # ids sorted, name cleaned
-        self.assertEqual(r["json"]["b"], {"w": ["BJC", "FDK"], "n": "Club SVFR"})
+        self.assertEqual(json.loads(r["stored"]), {"w": ["BJC", "FDK"], "n": "Flying club"})   # ids sorted, name cleaned
+        self.assertEqual(r["json"]["b"], {"w": ["BJC", "FDK"], "n": "Flying club"})
         self.assertIn("immutable", r["json"]["cc"])
         self.assertEqual(r["json"]["acao"], "https://amend.watch")
         self.assertEqual((r["go"]["s"], r["go"]["loc"]), (302, "https://amend.watch/list/?s=" + code))
