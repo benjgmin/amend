@@ -5,16 +5,11 @@ on:
     branches: [ claude/project-thread-oqn9y9 ]
     paths: [ ".github/scratch/**", ".github/workflows/scratch-plate-samples.yml" ]
 permissions:
-  contents: write
+  contents: read
 jobs:
   fetch:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
       - run: python .github/scratch/fetch_samples.py
-      - run: |
-          du -sh out; ls out
-          cd out && git init -q -b samples && git add -A
-          git -c user.name=amend-bot -c user.email=41898282+github-actions[bot]@users.noreply.github.com commit -qm "scratch plate samples"
-          git push -f "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}" samples:claude/project-thread-oqn9y9-samples
