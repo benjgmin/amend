@@ -1371,7 +1371,7 @@ approach plates. Keep lists of the airports you fly to, and share one link for a
 <p class="note"><a href="webcal://amend.watch/cycles.ics">Add cycle dates to your calendar</a> (<a href="cycles.ics">.ics</a>)</p></div>
 <div class="card box"><h3>What the labels mean</h3>{legend("")}</div>
 <div class="card box"><h3>For flight schools</h3><p class="note">Email <a href="{e(SCHOOLS_URL)}">{REPORT_EMAIL}</a>
-to set up Amend for your courses' airports.</p></div>
+to set up Amend for your school's airports.</p></div>
 </aside>
 <script>{js}</script>"""
     return page("Amend · what changed at your airport", "See what changed at any US airport each FAA cycle, "
@@ -1443,7 +1443,7 @@ UPDATES = [
     ("Oct 2026", [
         "Chart history no longer links plates the FAA has taken down. The FAA only keeps a plate online for a "
         "couple of editions, so older changes link its d-TPP search instead of a dead page.",
-        "Flight schools can email hello@amend.watch to set Amend up for the airports in their courses. "
+        "Flight schools can email hello@amend.watch to set Amend up for the airports they fly. "
         "Every airport page stays free and open, no account needed.",
         "A chart with more than one page shows as one change. The FAA lists each extra page (like TRISH FIVE "
         "(RNAV), CONT.1) as its own record, so a multi-page arrival or departure showed up two or three times, "
