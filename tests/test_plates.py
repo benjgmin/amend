@@ -7,6 +7,7 @@ import unittest
 
 from amend import charthistory, dtpp, plates
 from amend.freshness import decide
+from tests import plate_tables
 
 # what pypdf pulls off a real plate (05D RNAV (GPS) RWY 12, 2610), cut down: the courses come out
 # as 125°, the glide path as 3.00° and the coordinates as 47°58'N, and a hold reads 215°215°
@@ -228,8 +229,8 @@ class TestUpdate(unittest.TestCase):
         plates.save("2610", {"A.PDF": plate({"072": 1}), "GONE.PDF": plate({"072": 1})}, self.root)
         plates.save("2611", {"A.PDF": plate({"070": 1}), "GONE.PDF": plate({"070": 1})}, self.root)
         real = plates.read
-        plates.read = lambda b: {**plate({"070": 1}),
-                                 "minimums": {"alts": ["700"], "rvr": {}, "vis": {}, "seen": ["700"]}}
+        plates.read = lambda b: {**plate({"070": 1}), "minimums": {
+            "alts": ["700"], "rvr": {}, "vis": {}, "seen": ["700"], "rows": {"700": "LPV DA"}}}
         try:
             left = plates.update("2610", "2611", ["A.PDF", "GONE.PDF"], root=self.root,
                                  get=lambda url: None if "GONE" in url else b"%PDF", log=self.log.append)
@@ -237,7 +238,8 @@ class TestUpdate(unittest.TestCase):
             plates.read = real
         self.assertEqual(left, 0)
         got = plates.load("2610", self.root)
-        self.assertEqual(got["A.PDF"]["minimums"], {"alts": ["700"], "rvr": {}, "vis": {}, "seen": ["700"]})
+        self.assertEqual(got["A.PDF"]["minimums"], {"alts": ["700"], "rvr": {}, "vis": {}, "seen": ["700"],
+                                                    "rows": {"700": "LPV DA"}})
         # the FAA no longer serves it: the courses read earlier stay, and it isn't asked again
         self.assertEqual(got["GONE.PDF"], {**plate({"072": 1}), "minimums": None})
 
@@ -251,6 +253,82 @@ MINS_TEXT = """TDZE 236
 860-1
 1496 (1500-1)6
 503/50 290 (300-1)"""
+
+
+class TestRereadRows(unittest.TestCase):
+    def setUp(self):
+        self.root, self.log = tempfile.mkdtemp(), []
+        plates.forget()
+
+    def test_minimums_read_before_rows_are_read_again_once(self):
+        try:
+            import pypdf  # noqa: F401
+        except ImportError:
+            self.skipTest("needs pypdf")
+        mins = {"alts": ["680"], "rvr": {}, "vis": {}, "seen": ["680"]}
+        plates.save("2610", {"A.PDF": {**plate({"072": 1}), "minimums": dict(mins)},
+                             "GONE.PDF": {**plate({"072": 1}), "minimums": dict(mins)}}, self.root)
+        plates.save("2611", {"A.PDF": {**plate({"070": 1}), "minimums": dict(mins)},
+                             "GONE.PDF": {**plate({"070": 1}), "minimums": dict(mins)}}, self.root)
+        real, asked = plates.read, []
+        plates.read = lambda b: {**plate({"070": 1}), "minimums": {**mins, "rows": {"680": "LNAV MDA"}}}
+        try:
+            get = lambda url: asked.append(url) or (None if "GONE" in url else b"%PDF")
+            left = plates.update("2610", "2611", ["A.PDF", "GONE.PDF"], root=self.root, get=get,
+                                 log=self.log.append)
+            self.assertEqual(left, 0)
+            got = plates.load("2610", self.root)
+            self.assertEqual(got["A.PDF"]["minimums"]["rows"], {"680": "LNAV MDA"})
+            # gone from the FAA: its minimums stay, with rows unknown, and it isn't asked again
+            self.assertEqual(got["GONE.PDF"]["minimums"], {**mins, "rows": None})
+            n = len(asked)
+            self.assertEqual(plates.update("2610", "2611", ["A.PDF", "GONE.PDF"], root=self.root,
+                                           get=get, log=self.log.append), 0)
+            self.assertEqual(len(asked), n)
+        finally:
+            plates.read = real
+
+
+class TestRows(unittest.TestCase):
+    def test_each_minimum_gets_its_row(self):
+        """TUL 2611: 1120 is both the LNAV MDA and circling A, so it gets neither; the runway "A" on
+        the airport sketch beside the header isn't a category."""
+        self.assertEqual(plates.rows(plate_tables.TUL_RNAV_36L),
+                         {"928": "LPV DA", "1088": "LNAV/VNAV DA", "1160": "CIRCLING cat B",
+                          "1500": "CIRCLING cat C", "1520": "CIRCLING cat D"})
+
+    def test_a_label_that_is_not_text_takes_no_numbers(self):
+        """MDT 2611 draws "LPV DA" and "LNAV MDA": 558 sits above the LNAV/VNAV label, too far to be
+        its row, and 1100 (LNAV MDA and circling A-C) isn't said either."""
+        self.assertEqual(plates.rows(plate_tables.MDT_RNAV_31),
+                         {"921": "LNAV/VNAV DA", "1440": "CIRCLING cat D"})
+
+    def test_fix_minimums(self):
+        """HBR 2611: under FAPRA FIX MINIMUMS, circling B is 2020; the S-35 and circling minimums
+        both tables share (2060, 2320, 2460) or that sit in two rows (1980) get none."""
+        self.assertEqual(plates.rows(plate_tables.HBR_VOR_35), {"2020": "CIRCLING cat B (FAPRA fix)"})
+
+    def test_no_header_no_rows(self):
+        self.assertEqual(plates.rows([(20, 100, "LPV DA"), (100, 100, "680/24")]), {})
+
+    def test_a_change_says_its_row_when_both_plates_agree(self):
+        old = {"alts": ["503", "680"], "rvr": {"503": ["50"]}, "vis": {},
+               "rows": {"503": "LPV DA", "680": "LNAV MDA"}}
+        new = {"alts": ["503", "700"], "rvr": {"503": ["45"]}, "vis": {},
+               "rows": {"503": "LPV DA", "700": "LNAV MDA"}}
+        self.assertEqual(plates.minimum_changes(old, new),
+                         [("minimum", "680", "700", None, "LNAV MDA"), ("rvr", "50", "45", "503", "LPV DA")])
+        new["rows"]["700"] = "CIRCLING cat A"
+        self.assertEqual(plates.minimum_changes(old, new)[0], ("minimum", "680", "700", None, None))
+        # an old plate read before rows were kept: the new plate's row alone
+        del old["rows"]
+        self.assertEqual(plates.minimum_changes(old, new)[1], ("rvr", "50", "45", "503", "LPV DA"))
+
+    def test_wording(self):
+        self.assertEqual(dtpp._minimum("rvr", "50", "45", "503", "LPV DA"), "RVR 5000 now 4500 at LPV DA 503")
+        self.assertEqual(dtpp._minimum("minimum", "1040", "1060", None, "CIRCLING cat C"),
+                         "circling cat C 1040 now 1060")
+        self.assertEqual(dtpp._minimum("minimum", "680", "700", None), "minimum 680 now 700")
 
 
 class TestMinimums(unittest.TestCase):
@@ -268,8 +346,8 @@ class TestMinimums(unittest.TestCase):
         old = {"alts": ["503", "680", "860"], "rvr": {"503": ["50"], "680": ["24"]}, "vis": {"860": ["1"]}}
         new = {"alts": ["503", "700", "860"], "rvr": {"503": ["45"], "700": ["24"]}, "vis": {"860": ["1½"]}}
         self.assertEqual(plates.minimum_changes(old, new),
-                         [("minimum", "680", "700", None), ("rvr", "50", "45", "503"),
-                          ("visibility", "1", "1½", "860")])
+                         [("minimum", "680", "700", None, None), ("rvr", "50", "45", "503", None),
+                          ("visibility", "1", "1½", "860", None)])
 
     def test_a_redesigned_approach_says_no_minimum(self):
         old = {"alts": ["600", "740", "760", "422"], "rvr": {}, "vis": {}}

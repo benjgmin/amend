@@ -1,15 +1,16 @@
-name: scratch plate check
-# temporary, working branch only: removed before merge. prints the minimums table text of a few plates
+name: scratch plate backfill
+# temporary, working branch only: removed before merge. reads the plates for the editions the
+# FAA still serves again, now with each minimum's row, and commits plates/ to this branch
 on:
   push:
     branches: [ claude/project-thread-oqn9y9 ]
     paths: [ ".github/workflows/scratch-plate-samples.yml" ]
 permissions:
-  contents: read
+  contents: write
 jobs:
-  check:
+  plates:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 170
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -17,23 +18,38 @@ jobs:
           python-version: "3.12"
       - run: pip install pypdf==6.19.0
       - run: |
+          cp -r plates /tmp/before
+          mkdir -p meta
+          for e in 2608 2609 2610 2611; do
+            curl -sSfL -o meta/$e.xml https://aeronav.faa.gov/d-tpp/$e/xml_data/d-tpp_Metafile.xml
+          done
+          python -m amend plates meta/2608.xml meta/2609.xml meta/2610.xml meta/2611.xml --budget 3000
+      - name: the numbers read before are unchanged; only rows are new
+        if: ${{ !cancelled() }}
+        run: |
           python - <<'PY'
-          import io, pypdf
-          from amend import plates
-          pdfs = ['00875VD13.PDF', '00432R36L.PDF', '05551R2.PDF', '06870R29.PDF', '00188R31.PDF',
-                  '00020IL34.PDF', '06791R20.PDF', '00912V35.PDF', '00859R18.PDF', '06894IYLY23.PDF',
-                  '05818R26.PDF', '00548IL2.PDF']
-          for pdf in pdfs:
-              b = plates._get(plates.URL.format(edition="2611", pdf=pdf))
-              page = pypdf.PdfReader(io.BytesIO(b)).pages[0]
-              text, ch = plates._chunks(page)
-              heads = [(x, y) for x, y, t in ch if t.strip().startswith("CATEGORY")]
-              print(f"===== {pdf} heads {heads}")
-              if heads:
-                  hx, hy = heads[0]
-                  for x, y, t in sorted(ch, key=lambda c: (-c[1], c[0])):
-                      if hy - 200 < y < hy + 3:
-                          print(f"  {x:6.1f} {y:6.1f} {t!r}")
-              print("ROWS", plates.rows(ch))
-              print("MINS", plates.minimums(text)["alts"])
+          import json, glob, os, collections
+          n, same, diff, rows, labels = 0, 0, [], 0, collections.Counter()
+          for p in sorted(glob.glob("plates/*.json")):
+              before = json.load(open("/tmp/before/" + os.path.basename(p)))["charts"]
+              for pdf, rec in json.load(open(p))["charts"].items():
+                  old = before.get(pdf)
+                  m, o = (rec or {}).get("minimums"), (old or {}).get("minimums")
+                  if not isinstance(m, dict) or not isinstance(o, dict):
+                      continue
+                  n += 1
+                  if all(m.get(k) == o.get(k) for k in ("alts", "rvr", "vis", "seen")):
+                      same += 1
+                  else:
+                      diff.append(pdf)
+                  for v in (m.get("rows") or {}).values():
+                      rows += 1
+                      labels[v.split(" cat ")[0].split(" (")[0]] += 1
+          print(f"{n} plates with minimums before and after; {same} same numbers; differ: {diff[:20]}")
+          print(f"{rows} minimums with a row; labels: {labels.most_common(40)}")
           PY
+      - if: ${{ !cancelled() }}
+        run: |
+          git config user.name "amend-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add plates && git commit -qm "plates: each minimum's row on every chart changed in the 2608-2611 editions" && git push
