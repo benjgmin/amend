@@ -136,8 +136,8 @@ def sections():
             f'under a no-guess check. <a href="{using}#remarks">How remarks work</a>.')),
         step("Add charts and airspace", "code", (
             "Approach, STAR and departure charts added, amended, redrawn or removed in the new cycle, each linked "
-            "to its plate, with any course or heading that moved on the plate, and changes to Class B, C, D and E "
-            "surface airspace over each airport.")),
+            "to its plate, with any course, heading or approach minimum that moved on the plate, and changes to "
+            "Class B, C, D and E surface airspace over each airport.")),
         step("Audit the release", "check", (
             "No change can be listed twice, carry junk text like \"None\" or \"undefined\", or link a chart from "
             "the wrong cycle, and the cycle dates have to sit on the FAA's 28-day schedule. The number of ACT items "
@@ -347,9 +347,10 @@ def accuracy_sections(log_dir=runlog.RUNS, cases=gold.CASES):
             "remarks from the data files are covered.</li>"
             "<li><b>Most of what's drawn on a chart.</b> For approaches, departures and arrivals Amend reports that "
             "a chart was added, amended, redrawn under the same amendment, or removed, with a link to the new plate. "
-            "It reads the courses and headings printed on the old and new plate and says when one moved a few "
-            "degrees (072° now 070°), but it doesn't compare the drawings, minimums or notes, so read the plate "
-            "itself.</li>"
+            "It reads the courses, headings and approach minimums printed on the old and new plate and says when "
+            "one moved (072° now 070°, minimum 680 now 700, RVR 4000 now 2600), but it doesn't compare the "
+            "drawings or notes, and a minimum it can't match to one on the old plate isn't said, so read the "
+            "plate itself.</li>"
             "<li><b>Class E airspace above the surface</b> (E5, starting at 700 or 1,200 ft). Class B, C, D and E "
             "surface areas are covered.</li>"
             "<li><b>Chart history before July 2026</b>, because the FAA doesn't keep old chart indexes online. "

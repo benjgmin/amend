@@ -34,6 +34,24 @@ URL = "https://aeronav.faa.gov/d-tpp/{edition}/{pdf}"
 # (3.00°: one digit) or a coordinate: 47°58'N has two digits, and a longitude's three are
 # followed by its minutes (102°29'W)
 COURSE = re.compile(r"(?<![\d.])([0-3]\d\d(?:\.\d)?)°(?!\s?\d\d?(?:\.\d+)?['’′])")
+# approach minimums as printed: a DA or MDA with its RVR (680/24) or visibility (780-1½, the
+# fraction one glyph). pypdf often splits a fraction into two digits ("(500-   )34"), so a
+# visibility is only kept when it's one the FAA prints (VISIBILITIES)
+FRACTIONS = "½¼¾⅛⅜⅝⅞"
+MINIMUM = re.compile(r"(?<![\d/(.,:-])(\d{3,5})(?:/(\d{2,3})(?!\d)|-(\d{0,2}[" + FRACTIONS +
+                     r"]?)(?=[\s)\d]|$|[A-Z]))")
+# a whole minimums entry, "680/24 444 (500-½)": DA, height above touchdown, that height rounded
+# up to 100. the DA minus the height is the touchdown zone or airport elevation, and a number
+# only counts as a minimum when it sits that far above one of those (so 1496 next to a 6 that
+# pypdf glued on isn't a minimum of 14966)
+ENTRY = re.compile(r"(?<![\d/(.,:-])(\d{3,5})(?:/\d{2,3}|-\d{0,2}[" + FRACTIONS +
+                   r"]?)\s+(\d{2,4})\s*\((\d{3,4})-")
+NUMBER = re.compile(r"(?<!\d)(\d{2,5})(?!\d)")
+GLUED = re.compile(r"(?<![\d(])\d{3,}(?=[/-])")     # not a (HAA-vis)
+RVRS = {"16", "18", "20", "24", "26", "30", "35", "40", "45", "50", "55", "60"}
+VISIBILITIES = {"½", "⅝", "¾", "⅞", "1", "1¼", "1⅜", "1½", "1¾", "2", "2¼", "2½", "2¾", "3",
+                "3½", "4", "5"}
+STEP = 200            # feet. a minimum that moved more than this is a redesigned approach
 SHIFT = 5             # degrees. a magnetic variation update moves a course 1-3°; more is a redesign
 MIN_COURSES = 3       # fewer on either edition: no text layer to read, not "no courses"
 GIVE_UP = 3           # failed downloads of one pdf before a build stops asking for it
@@ -82,15 +100,43 @@ def courses(text):
     return dict(sorted(out.items()))
 
 
+def minimums(text):
+    """{"alts": [DA/MDA, ...], "rvr": {alt: [rvr, ...]}, "vis": {alt: [vis, ...]}, "seen": [...]}
+    printed on an approach plate (RVR in hundreds of feet, as printed: 24 is 2400). "seen" is every
+    number that could be a minimum once pypdf's glue is taken off: "783231-" (a split ⅞ stuck on
+    the front) is 3231, so a 3231 on the next edition isn't new."""
+    numbers = set(NUMBER.findall(text))
+    bases = set()
+    for alt, hat, rounded in ENTRY.findall(text):
+        alt, hat, rounded = int(alt), int(hat), int(rounded)
+        if 0 < hat < alt and rounded == -(-hat // 100) * 100:
+            bases.add(alt - hat)
+    alts, rvr, vis = set(), {}, {}
+    for alt, r, v in MINIMUM.findall(text):
+        if not any(int(alt) > b and str(int(alt) - b) in numbers for b in bases):
+            continue
+        alts.add(alt)
+        if r in RVRS:
+            rvr.setdefault(alt, set()).add(r)
+        elif v in VISIBILITIES:
+            vis.setdefault(alt, set()).add(v)
+    seen = {str(int(m[-k:])) for m in GLUED.findall(text) for k in (3, 4, 5) if len(m) >= k}
+    return {"alts": sorted(alts, key=int),
+            "rvr": {a: sorted(v) for a, v in sorted(rvr.items())},
+            "vis": {a: sorted(v) for a, v in sorted(vis.items())},
+            "seen": sorted(seen | alts, key=int)}
+
+
 def read(pdf_bytes):
     """what's kept of one plate."""
     import pypdf    # only the build reads plates; the rest of amend runs without it
     rec = {"sha256": hashlib.sha256(pdf_bytes).hexdigest()}
     try:
         reader = pypdf.PdfReader(io.BytesIO(pdf_bytes))
-        rec["courses"] = courses("\n".join(p.extract_text() or "" for p in reader.pages))
+        text = "\n".join(p.extract_text() or "" for p in reader.pages)
+        rec["courses"], rec["minimums"] = courses(text), minimums(text)
     except Exception as e:      # a pdf pypdf can't parse reads as no text, never stops a build
-        rec["courses"], rec["error"] = {}, type(e).__name__
+        rec["courses"], rec["minimums"], rec["error"] = {}, None, type(e).__name__
     return rec
 
 
@@ -112,7 +158,12 @@ def course_changes(old, new):
         return []
     gone = [v for v in old if old[v] > new.get(v, 0)]
     came = [v for v in new if new[v] > old.get(v, 0)]
-    near = lambda v, pool: [w for w in pool if 0 < _angle(v, w) <= SHIFT]
+    return _pairs(gone, came, lambda a, b: 0 < _angle(a, b) <= SHIFT)
+
+
+def _pairs(gone, came, close):
+    """(gone, came) pairs, each the other's only close match; [] when more go unpaired than pair."""
+    near = lambda v, pool: [w for w in pool if w != v and close(v, w)]
     out = []
     for g in gone:
         m = near(g, came)
@@ -123,12 +174,37 @@ def course_changes(old, new):
     return sorted(out, key=lambda p: float(p[0]))
 
 
+def minimum_changes(old, new):
+    """what moved in an approach's minimums, as (what, old, new, at): ("minimum", "680", "700",
+    None) for a DA or MDA, ("rvr", "40", "26", "1542") or ("visibility", "1", "1½", "780") for
+    the RVR or visibility printed with a minimum both plates have. stricter than courses: every
+    minimum that went must pair with one that came, within STEP feet and each the other's only
+    match, and neither may be anywhere on the other plate (a 3460 that became both 3240 and 3280
+    says nothing). an RVR or visibility only when the minimum carries exactly one on each plate."""
+    if not old or not new or not old.get("alts") or not new.get("alts"):
+        return []
+    a, b = set(old["alts"]), set(new["alts"])
+    gone = sorted(a - b - set(new.get("seen", ())), key=int)
+    came = sorted(b - a - set(old.get("seen", ())), key=int)
+    pairs = _pairs(gone, came, lambda x, y: abs(int(x) - int(y)) <= STEP)
+    if len(pairs) * 2 != len(gone) + len(came) or len(gone) != len(a - b) or len(came) != len(b - a):
+        pairs = []
+    out = [("minimum", x, y, None) for x, y in pairs]
+    for kind, key in (("rvr", "rvr"), ("visibility", "vis")):
+        for alt in sorted(a & b, key=int):
+            x, y = old.get(key, {}).get(alt), new.get(key, {}).get(alt)
+            if x and y and len(x) == 1 and len(y) == 1 and x != y:
+                out.append((kind, x[0], y[0], alt))
+    return out
+
+
 def changes_for(pdf, old_edition, new_edition, root="."):
-    """course_changes for one chart, from what plates/ holds; [] if either side wasn't read."""
+    """(course_changes, minimum_changes) for one chart, from what plates/ holds; ([], []) if either
+    side wasn't read."""
     a, b = load_cached(old_edition, root).get(pdf), load_cached(new_edition, root).get(pdf)
     if not a or not b or "courses" not in a or "courses" not in b:
-        return []
-    return course_changes(a.get("courses"), b.get("courses"))
+        return [], []
+    return course_changes(a.get("courses"), b.get("courses")), minimum_changes(a.get("minimums"), b.get("minimums"))
 
 
 _cache = {}
@@ -178,8 +254,10 @@ def update(old_edition, new_edition, pdfs, budget=600, root=".", log=print, get=
     this machine can't read pdfs."""
     want = [(ed, pdf) for pdf in sorted(set(pdfs)) for ed in (old_edition, new_edition)]
     have = {ed: load(ed, root) for ed in (old_edition, new_edition)}
-    unread = lambda rec: isinstance(rec, dict) and "courses" not in rec \
-        and rec.get("failed", 0) < GIVE_UP
+    # read before minimums were kept: read again while the FAA still serves it
+    unread = lambda rec: isinstance(rec, dict) and (
+        "courses" not in rec and rec.get("failed", 0) < GIVE_UP or "courses" in rec and (
+            "minimums" not in rec or isinstance(rec["minimums"], dict) and "seen" not in rec["minimums"]))
     todo = [(ed, pdf) for ed, pdf in want if pdf not in have[ed] or unread(have[ed][pdf])]
     if not todo:
         return 0
@@ -200,11 +278,23 @@ def update(old_edition, new_edition, pdfs, budget=600, root=".", log=print, get=
                 rec = job.result()
             except Exception as e:      # a worker that died: same as a failed download
                 rec = f"failed: {type(e).__name__}"
+            prev = have[ed].get(pdf)
+            if isinstance(prev, dict) and "courses" in prev and not isinstance(rec, dict):
+                # read once already: keep its courses whatever this attempt got. gone from the
+                # FAA, or failing GIVE_UP times, it has no minimums to add and isn't asked again
+                if rec is None:
+                    prev["minimums"] = None
+                    done += 1
+                elif rec != "skipped":
+                    failed += 1
+                    prev["failed"] = prev.get("failed", 0) + 1
+                    if prev["failed"] >= GIVE_UP:
+                        prev["minimums"] = None
+                continue
             if isinstance(rec, str):
                 if rec != "skipped":
                     failed += 1
-                    prev = have[ed].get(pdf) or {}
-                    have[ed][pdf] = {"failed": prev.get("failed", 0) + 1}
+                    have[ed][pdf] = {"failed": (prev or {}).get("failed", 0) + 1}
                 continue
             have[ed][pdf] = rec
             done += 1

@@ -183,12 +183,13 @@ class TestUpdate(unittest.TestCase):
         def get(url):
             asked.append(url)
             return None if "GONE" in url else b"%PDF-1.4 fake"
-        plates.read = lambda b: plate({"072": 1})
+        plates.read = lambda b: {**plate({"072": 1}), "minimums": None}
         try:
             left = plates.update("2610", "2611", ["A.PDF", "GONE.PDF"], root=self.root, get=get,
                                  log=self.log.append)
             self.assertEqual(left, 0)
-            self.assertEqual(plates.load("2610", self.root), {"A.PDF": plate({"072": 1}), "GONE.PDF": None})
+            self.assertEqual(plates.load("2610", self.root),
+                             {"A.PDF": {**plate({"072": 1}), "minimums": None}, "GONE.PDF": None})
             n = len(asked)
             self.assertEqual(plates.update("2610", "2611", ["A.PDF", "GONE.PDF"], root=self.root, get=get), 0)
             self.assertEqual(len(asked), n)       # nothing asked twice, a 404 included
@@ -217,6 +218,103 @@ class TestUpdate(unittest.TestCase):
                              get=lambda url: b"%PDF", log=self.log.append)
         self.assertEqual(left, 4)
         self.assertEqual(plates.load("2611", self.root), {})
+
+
+    def test_a_plate_read_before_minimums_is_read_again_once(self):
+        try:
+            import pypdf  # noqa: F401
+        except ImportError:
+            self.skipTest("needs pypdf")
+        plates.save("2610", {"A.PDF": plate({"072": 1}), "GONE.PDF": plate({"072": 1})}, self.root)
+        plates.save("2611", {"A.PDF": plate({"070": 1}), "GONE.PDF": plate({"070": 1})}, self.root)
+        real = plates.read
+        plates.read = lambda b: {**plate({"070": 1}),
+                                 "minimums": {"alts": ["700"], "rvr": {}, "vis": {}, "seen": ["700"]}}
+        try:
+            left = plates.update("2610", "2611", ["A.PDF", "GONE.PDF"], root=self.root,
+                                 get=lambda url: None if "GONE" in url else b"%PDF", log=self.log.append)
+        finally:
+            plates.read = real
+        self.assertEqual(left, 0)
+        got = plates.load("2610", self.root)
+        self.assertEqual(got["A.PDF"]["minimums"], {"alts": ["700"], "rvr": {}, "vis": {}, "seen": ["700"]})
+        # the FAA no longer serves it: the courses read earlier stay, and it isn't asked again
+        self.assertEqual(got["GONE.PDF"], {**plate({"072": 1}), "minimums": None})
+
+
+# what pypdf pulls off a real approach plate's minimums (2611, cut down): "680/24 444 (500-½)" is
+# a DA with its RVR, height above touchdown and that height rounded; the touchdown zone is 236
+MINS_TEXT = """TDZE 236
+680/24 444 (500-   )12
+740-1
+504 (600-1) 624 (700-1)
+860-1
+1496 (1500-1)6
+503/50 290 (300-1)"""
+
+
+class TestMinimums(unittest.TestCase):
+    def test_reads_minimums_that_sit_above_the_touchdown_zone(self):
+        """503 has its own height (290), so 213 is a base too; 1496 is glued to a 6 and isn't a
+        minimum (14966 has no height that lands on 236 or 213)."""
+        self.assertEqual(plates.minimums(MINS_TEXT),
+                         {"alts": ["503", "680", "740", "860"], "rvr": {"503": ["50"], "680": ["24"]},
+                          "vis": {"740": ["1"], "860": ["1"]}, "seen": ["503", "680", "740", "860"]})
+
+    def test_a_split_fraction_is_not_a_visibility(self):
+        self.assertEqual(plates.minimums("680-1   467 (500-1)\n680-11 467")["vis"], {"680": ["1"]})
+
+    def test_minimum_changes(self):
+        old = {"alts": ["503", "680", "860"], "rvr": {"503": ["50"], "680": ["24"]}, "vis": {"860": ["1"]}}
+        new = {"alts": ["503", "700", "860"], "rvr": {"503": ["45"], "700": ["24"]}, "vis": {"860": ["1½"]}}
+        self.assertEqual(plates.minimum_changes(old, new),
+                         [("minimum", "680", "700", None), ("rvr", "50", "45", "503"),
+                          ("visibility", "1", "1½", "860")])
+
+    def test_a_redesigned_approach_says_no_minimum(self):
+        old = {"alts": ["600", "740", "760", "422"], "rvr": {}, "vis": {}}
+        new = {"alts": ["720", "780", "513"], "rvr": {}, "vis": {}}
+        self.assertEqual(plates.minimum_changes(old, new), [])
+
+    def test_one_minimum_that_became_two_says_nothing(self):
+        """an LNAV MDA and circling MDA both 3460 became 3240 and 3280 (2609): which is which isn't
+        on the page, so 3460 now 3280 would be half a story."""
+        self.assertEqual(plates.minimum_changes({"alts": ["3460"]}, {"alts": ["3240", "3280"]}), [])
+
+    def test_a_minimum_glued_to_a_split_fraction_is_not_new(self):
+        """the old plate printed 3231 as "783231-" (a ⅞ split onto the front), so 3231 on the new
+        plate isn't the old 3360 moved (2609)."""
+        old = plates.minimums("TDZE 3000\n3360-1 360 (400-1)\n783231-   231 (300-   )78")
+        new = plates.minimums("TDZE 3000\n3231-   231 (300-   )78\n3360 HOLD\n3400-1 400 (400-1)")
+        self.assertIn("3231", old["seen"])
+        self.assertEqual(plates.minimum_changes(old, new), [])
+
+    def test_more_than_200_feet_is_not_a_pair(self):
+        self.assertEqual(plates.minimum_changes({"alts": ["680"]}, {"alts": ["900"]}), [])
+
+    def test_no_minimums_on_one_side_says_nothing(self):
+        self.assertEqual(plates.minimum_changes({"alts": []}, {"alts": ["700"]}), [])
+        self.assertEqual(plates.minimum_changes(None, {"alts": ["700"]}), [])
+
+    def test_approach_summary(self):
+        root = tempfile.mkdtemp()
+        plates.forget()
+        old = {"sha256": "x", "courses": {"072": 4, "252": 1, "300": 2},
+               "minimums": {"alts": ["680", "1542"], "rvr": {"1542": ["40"]}, "vis": {}}}
+        new = {"sha256": "y", "courses": {"072": 4, "252": 1, "300": 2},
+               "minimums": {"alts": ["700", "1542"], "rvr": {"1542": ["26"]}, "vis": {}}}
+        plates.save("2610", {"F1.PDF": old, "F2.PDF": old}, root)
+        plates.save("2611", {"F1.PDF": new, "F2.PDF": new}, root)
+        recs = dtpp.load_dtpp(metafile([("FDK", "IAP", "ILS RWY 23", "C", "F1.PDF", "32A", "10/29/2026"),
+                                        ("FDK", "DP", "CATOC TWO", "C", "F2.PDF", "", "")]),
+                              {"FDK"}, root)["FDK"]
+        plates.forget()
+        self.assertEqual(recs[0]["summary_override"], "approach ILS RWY 23 amended (amdt 32A): "
+                                                      "minimum 680 now 700, RVR 4000 now 2600 at minimum 1542")
+        self.assertEqual(recs[0]["details"], ["minimums on the plate: minimum 680 -> 700",
+                                              "minimums on the plate: RVR 4000 -> 2600 at minimum 1542"])
+        # only an approach has minimums; a departure's numbers aren't read as them
+        self.assertEqual(recs[1]["summary_override"], "departure CATOC TWO changed")
 
 
 class TestRebuildUntilRead(unittest.TestCase):
