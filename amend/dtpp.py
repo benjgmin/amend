@@ -17,6 +17,10 @@ PROCEDURE_CODES = ("IAP", "DP", "ODP", "STAR", "STR", "CVFP")
 # a chart's extra pages are their own records: "TRISH FIVE (RNAV), CONT.1" (the 2609-2611
 # metafiles have CONT.1 to CONT.3, always at the end of the name)
 CONT_PAGE = re.compile(r",? CONT\.\d*$")
+# charts whose printed courses are about the chart's own airport. a minimums, LAHSO or hot spot
+# page is one pdf for many airports (a state's TAKEOFF MINIMUMS page lists dozens), so a heading
+# that moved on it belongs to one of them, not to every airport the page is filed under
+COURSE_CODES = PROCEDURE_CODES + ("APD",)
 
 
 def edition_date(from_edate):
@@ -101,7 +105,7 @@ def load_dtpp(path, ids, plates_root="."):
         pdf = next((p["pdf"] for p in [first] + pp
                     if p["act"] != "D" and p["pdf"] and "DELETED" not in p["pdf"].upper()), "")
         moved = []
-        if act == "C" and pdf and day and key not in renamed:
+        if act == "C" and pdf and day and key not in renamed and code in COURSE_CODES:
             moved = plates.changes_for(pdf, plates.previous(day), cycle, plates_root)
         out[apt].append(_record(apt, code, chart, act, first["amdt"], pdf, cycle, renamed.get(key),
                                 amended=_amended(first["amdt_date"], day), moved=moved))

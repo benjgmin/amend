@@ -141,6 +141,16 @@ class TestChartSummaries(unittest.TestCase):
         self.assertEqual(got["FDK"], ["departure CATOC TWO changed: 010° now 012°, 100° now 102°, "
                                       "190° now 192° and 1 more on the chart"])
 
+    def test_a_page_shared_by_many_airports_says_no_number(self):
+        """a state's TAKEOFF MINIMUMS page is one pdf filed under every airport on it: a heading
+        that moved there belongs to one of them, not all."""
+        plates.save("2610", {"NE1TO.PDF": plate({"172": 2, "300": 2, "010": 1})}, self.root)
+        plates.save("2611", {"NE1TO.PDF": plate({"176": 2, "300": 2, "010": 1})}, self.root)
+        got = self.charts([("FDK", "MIN", "TAKEOFF MINIMUMS", "C", "NE1TO.PDF", "", ""),
+                           ("BJC", "MIN", "TAKEOFF MINIMUMS", "C", "NE1TO.PDF", "", "")])
+        self.assertEqual(got, {"FDK": ["minimums page (TAKEOFF MINIMUMS) changed"],
+                               "BJC": ["minimums page (TAKEOFF MINIMUMS) changed"]})
+
     def test_a_plate_not_read_says_no_number(self):
         plates.save("2611", {"F1.PDF": plate({"070": 4})}, self.root)      # old edition never read
         plates.save("2610", {"F1.PDF": None}, self.root)                   # or the FAA didn't serve it
