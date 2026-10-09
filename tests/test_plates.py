@@ -228,7 +228,8 @@ class TestUpdate(unittest.TestCase):
         plates.save("2610", {"A.PDF": plate({"072": 1}), "GONE.PDF": plate({"072": 1})}, self.root)
         plates.save("2611", {"A.PDF": plate({"070": 1}), "GONE.PDF": plate({"070": 1})}, self.root)
         real = plates.read
-        plates.read = lambda b: {**plate({"070": 1}), "minimums": {"alts": ["700"], "rvr": {}, "vis": {}}}
+        plates.read = lambda b: {**plate({"070": 1}),
+                                 "minimums": {"alts": ["700"], "rvr": {}, "vis": {}, "seen": ["700"]}}
         try:
             left = plates.update("2610", "2611", ["A.PDF", "GONE.PDF"], root=self.root,
                                  get=lambda url: None if "GONE" in url else b"%PDF", log=self.log.append)
@@ -236,7 +237,7 @@ class TestUpdate(unittest.TestCase):
             plates.read = real
         self.assertEqual(left, 0)
         got = plates.load("2610", self.root)
-        self.assertEqual(got["A.PDF"]["minimums"], {"alts": ["700"], "rvr": {}, "vis": {}})
+        self.assertEqual(got["A.PDF"]["minimums"], {"alts": ["700"], "rvr": {}, "vis": {}, "seen": ["700"]})
         # the FAA no longer serves it: the courses read earlier stay, and it isn't asked again
         self.assertEqual(got["GONE.PDF"], {**plate({"072": 1}), "minimums": None})
 
@@ -258,7 +259,7 @@ class TestMinimums(unittest.TestCase):
         minimum (14966 has no height that lands on 236 or 213)."""
         self.assertEqual(plates.minimums(MINS_TEXT),
                          {"alts": ["503", "680", "740", "860"], "rvr": {"503": ["50"], "680": ["24"]},
-                          "vis": {"740": ["1"], "860": ["1"]}})
+                          "vis": {"740": ["1"], "860": ["1"]}, "seen": ["503", "680", "740", "860"]})
 
     def test_a_split_fraction_is_not_a_visibility(self):
         self.assertEqual(plates.minimums("680-1   467 (500-1)\n680-11 467")["vis"], {"680": ["1"]})
@@ -273,6 +274,19 @@ class TestMinimums(unittest.TestCase):
     def test_a_redesigned_approach_says_no_minimum(self):
         old = {"alts": ["600", "740", "760", "422"], "rvr": {}, "vis": {}}
         new = {"alts": ["720", "780", "513"], "rvr": {}, "vis": {}}
+        self.assertEqual(plates.minimum_changes(old, new), [])
+
+    def test_one_minimum_that_became_two_says_nothing(self):
+        """an LNAV MDA and circling MDA both 3460 became 3240 and 3280 (2609): which is which isn't
+        on the page, so 3460 now 3280 would be half a story."""
+        self.assertEqual(plates.minimum_changes({"alts": ["3460"]}, {"alts": ["3240", "3280"]}), [])
+
+    def test_a_minimum_glued_to_a_split_fraction_is_not_new(self):
+        """the old plate printed 3231 as "783231-" (a ⅞ split onto the front), so 3231 on the new
+        plate isn't the old 3360 moved (2609)."""
+        old = plates.minimums("TDZE 3000\n3360-1 360 (400-1)\n783231-   231 (300-   )78")
+        new = plates.minimums("TDZE 3000\n3231-   231 (300-   )78\n3360 HOLD\n3400-1 400 (400-1)")
+        self.assertIn("3231", old["seen"])
         self.assertEqual(plates.minimum_changes(old, new), [])
 
     def test_more_than_200_feet_is_not_a_pair(self):

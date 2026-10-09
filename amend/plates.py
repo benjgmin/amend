@@ -47,6 +47,7 @@ MINIMUM = re.compile(r"(?<![\d/(.,:-])(\d{3,5})(?:/(\d{2,3})(?!\d)|-(\d{0,2}[" +
 ENTRY = re.compile(r"(?<![\d/(.,:-])(\d{3,5})(?:/\d{2,3}|-\d{0,2}[" + FRACTIONS +
                    r"]?)\s+(\d{2,4})\s*\((\d{3,4})-")
 NUMBER = re.compile(r"(?<!\d)(\d{2,5})(?!\d)")
+GLUED = re.compile(r"(?<![\d(])\d{3,}(?=[/-])")     # not a (HAA-vis)
 RVRS = {"16", "18", "20", "24", "26", "30", "35", "40", "45", "50", "55", "60"}
 VISIBILITIES = {"½", "⅝", "¾", "⅞", "1", "1¼", "1⅜", "1½", "1¾", "2", "2¼", "2½", "2¾", "3",
                 "3½", "4", "5"}
@@ -100,8 +101,10 @@ def courses(text):
 
 
 def minimums(text):
-    """{"alts": [DA/MDA, ...], "rvr": {alt: [rvr, ...]}, "vis": {alt: [vis, ...]}} printed on an
-    approach plate (RVR in hundreds of feet, as printed: 24 is 2400)."""
+    """{"alts": [DA/MDA, ...], "rvr": {alt: [rvr, ...]}, "vis": {alt: [vis, ...]}, "seen": [...]}
+    printed on an approach plate (RVR in hundreds of feet, as printed: 24 is 2400). "seen" is every
+    number that could be a minimum once pypdf's glue is taken off: "783231-" (a split ⅞ stuck on
+    the front) is 3231, so a 3231 on the next edition isn't new."""
     numbers = set(NUMBER.findall(text))
     bases = set()
     for alt, hat, rounded in ENTRY.findall(text):
@@ -117,9 +120,11 @@ def minimums(text):
             rvr.setdefault(alt, set()).add(r)
         elif v in VISIBILITIES:
             vis.setdefault(alt, set()).add(v)
+    seen = {str(int(m[-k:])) for m in GLUED.findall(text) for k in (3, 4, 5) if len(m) >= k}
     return {"alts": sorted(alts, key=int),
             "rvr": {a: sorted(v) for a, v in sorted(rvr.items())},
-            "vis": {a: sorted(v) for a, v in sorted(vis.items())}}
+            "vis": {a: sorted(v) for a, v in sorted(vis.items())},
+            "seen": sorted(seen | alts, key=int)}
 
 
 def read(pdf_bytes):
@@ -172,14 +177,19 @@ def _pairs(gone, came, close):
 def minimum_changes(old, new):
     """what moved in an approach's minimums, as (what, old, new, at): ("minimum", "680", "700",
     None) for a DA or MDA, ("rvr", "40", "26", "1542") or ("visibility", "1", "1½", "780") for
-    the RVR or visibility printed with a minimum both plates have. same pairing rules as courses:
-    a minimum within STEP feet, each the other's only match, and not a redesign. an RVR or
-    visibility only when the minimum carries exactly one on each plate."""
+    the RVR or visibility printed with a minimum both plates have. stricter than courses: every
+    minimum that went must pair with one that came, within STEP feet and each the other's only
+    match, and neither may be anywhere on the other plate (a 3460 that became both 3240 and 3280
+    says nothing). an RVR or visibility only when the minimum carries exactly one on each plate."""
     if not old or not new or not old.get("alts") or not new.get("alts"):
         return []
     a, b = set(old["alts"]), set(new["alts"])
-    out = [("minimum", x, y, None) for x, y in
-           _pairs(sorted(a - b, key=int), sorted(b - a, key=int), lambda x, y: abs(int(x) - int(y)) <= STEP)]
+    gone = sorted(a - b - set(new.get("seen", ())), key=int)
+    came = sorted(b - a - set(old.get("seen", ())), key=int)
+    pairs = _pairs(gone, came, lambda x, y: abs(int(x) - int(y)) <= STEP)
+    if len(pairs) * 2 != len(gone) + len(came) or len(gone) != len(a - b) or len(came) != len(b - a):
+        pairs = []
+    out = [("minimum", x, y, None) for x, y in pairs]
     for kind, key in (("rvr", "rvr"), ("visibility", "vis")):
         for alt in sorted(a & b, key=int):
             x, y = old.get(key, {}).get(alt), new.get(key, {}).get(alt)
@@ -246,7 +256,8 @@ def update(old_edition, new_edition, pdfs, budget=600, root=".", log=print, get=
     have = {ed: load(ed, root) for ed in (old_edition, new_edition)}
     # read before minimums were kept: read again while the FAA still serves it
     unread = lambda rec: isinstance(rec, dict) and (
-        "courses" not in rec and rec.get("failed", 0) < GIVE_UP or "courses" in rec and "minimums" not in rec)
+        "courses" not in rec and rec.get("failed", 0) < GIVE_UP or "courses" in rec and (
+            "minimums" not in rec or isinstance(rec["minimums"], dict) and "seen" not in rec["minimums"]))
     todo = [(ed, pdf) for ed, pdf in want if pdf not in have[ed] or unread(have[ed][pdf])]
     if not todo:
         return 0
