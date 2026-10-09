@@ -20,10 +20,11 @@ jobs:
       - run: |
           cp -r plates /tmp/before
           mkdir -p meta
-          for e in 2608 2609 2610 2611; do
-            curl -sSfL -o meta/$e.xml https://aeronav.faa.gov/d-tpp/$e/xml_data/d-tpp_Metafile.xml
+          for e in 2607 2608 2609 2610 2611 2612; do
+            curl -sSfL -o meta/$e.xml https://aeronav.faa.gov/d-tpp/$e/xml_data/d-tpp_Metafile.xml \
+              && echo "edition $e served" || { echo "edition $e not served"; rm -f meta/$e.xml; }
           done
-          python -m amend plates meta/2608.xml meta/2609.xml meta/2610.xml meta/2611.xml --budget 3000
+          python -m amend plates meta/*.xml --budget 3000
       - name: the numbers read before are unchanged; only rows are new
         if: ${{ !cancelled() }}
         run: |
@@ -52,4 +53,5 @@ jobs:
         run: |
           git config user.name "amend-bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add plates && git commit -qm "plates: each minimum's row on every chart changed in the 2608-2611 editions" && git push
+          git add plates
+          git diff --cached --quiet || { git commit -qm "plates: each minimum's row on every chart changed in the editions the FAA still serves" && git push; }
