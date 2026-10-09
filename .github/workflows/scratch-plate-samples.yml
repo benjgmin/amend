@@ -1,16 +1,16 @@
-name: scratch plate check
-# temporary, working branch only: removed before merge. prints the minimums tables behind the
-# history lines that now name a row, to check them by hand
+name: scratch plate backfill
+# temporary, working branch only: removed before merge. reads the plates for the editions the
+# FAA still serves again, now noting visibilities with a fraction drawn beside them, and commits plates/ to this branch
 on:
   push:
     branches: [ claude/project-thread-oqn9y9 ]
     paths: [ ".github/workflows/scratch-plate-samples.yml" ]
 permissions:
-  contents: read
+  contents: write
 jobs:
-  check:
+  plates:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 170
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -18,21 +18,43 @@ jobs:
           python-version: "3.12"
       - run: pip install pypdf==6.19.0
       - run: |
+          cp -r plates /tmp/before
+          mkdir -p meta
+          for e in 2607 2608 2609 2610 2611 2612; do
+            curl -sSfL -o meta/$e.xml https://aeronav.faa.gov/d-tpp/$e/xml_data/d-tpp_Metafile.xml \
+              && echo "edition $e served" || { echo "edition $e not served"; rm -f meta/$e.xml; }
+          done
+          python -m amend plates meta/*.xml --budget 3000
+      - name: the numbers read before are unchanged; only split fractions are new
+        if: ${{ !cancelled() }}
+        run: |
           python - <<'PY'
-          import io, re, pypdf
-          from amend import plates
-          for ed, pdf, alt in (("2609", "06072R35.PDF", "884"), ("2611", "05771R19.PDF", "999"),
-                               ("2610", "05771R19.PDF", "999"), ("2611", "00089R23.PDF", "740")):
-              b = plates._get(plates.URL.format(edition=ed, pdf=pdf))
-              if b is None:
-                  print("=====", ed, pdf, "not served"); continue
-              page = pypdf.PdfReader(io.BytesIO(b)).pages[0]
-              text, ch = plates._chunks(page)
-              print("=====", ed, pdf, plates.minimums(text))
-              for m in re.finditer(alt, text):
-                  print("  TEXT", repr(text[max(0, m.start() - 40):m.end() + 60]))
-              ys = [y for x, y, t in ch if alt in t]
-              for x, y, t in sorted(ch, key=lambda c: (-c[1], c[0])):
-                  if any(abs(y - y0) < 9 for y0 in ys):
-                      print(f"  {x:6.1f} {y:6.1f} {t!r}")
+          import json, glob, os, collections
+          n, same, diff, split = 0, 0, [], []
+          for p in sorted(glob.glob("plates/*.json")):
+              before = json.load(open("/tmp/before/" + os.path.basename(p)))["charts"]
+              for pdf, rec in json.load(open(p))["charts"].items():
+                  old = before.get(pdf)
+                  m, o = (rec or {}).get("minimums"), (old or {}).get("minimums")
+                  if not isinstance(m, dict) or not isinstance(o, dict):
+                      continue
+                  n += 1
+                  s = set(m.get("split") or [])
+                  if s:
+                      split.append((pdf, sorted(s), o.get("vis"), m.get("vis")))
+                  ov = {a: v for a, v in (o.get("vis") or {}).items() if a not in s}
+                  if all(m.get(k) == o.get(k) for k in ("alts", "rvr", "seen", "rows")) and ov == {a: v for a, v in (m.get("vis") or {}).items() if a not in s}:
+                      same += 1
+                  else:
+                      diff.append(pdf)
+          print(f"{n} plates with minimums before and after; {same} same apart from split fractions; differ: {diff[:20]}")
+          print(f"{len(split)} plates with a split fraction")
+          for x in split[:60]:
+              print(*x)
           PY
+      - if: ${{ !cancelled() }}
+        run: |
+          git config user.name "amend-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add plates
+          git diff --cached --quiet || { git commit -qm "plates: note visibilities whose fraction is drawn beside them, for the editions the FAA still serves" && git push; }

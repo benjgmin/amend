@@ -147,6 +147,22 @@ def _chunks(page):
     return page.extract_text(visitor_text=seen), out
 
 
+def split_fractions(chunks):
+    """{alt, ...}: minimums printed with a whole-number visibility ("884-1") that has a fraction
+    drawn beside it as two small stacked digits (a 5 over an 8: 1⅝). the text only says 1, so
+    that visibility isn't read."""
+    digits = [(x, y) for x, y, t in chunks if len(t.strip()) == 1 and t.strip().isdigit()]
+    stacks = [(x1, max(y1, y2)) for i, (x1, y1) in enumerate(digits) for x2, y2 in digits[i + 1:]
+              if abs(x1 - x2) < 8 and 1.5 < abs(y1 - y2) < 6]
+    out = set()
+    for x, y, t in chunks:
+        for m in MINIMUM.finditer(" ".join(t.split())):
+            if m.group(3) and m.group(3).isdigit() and any(
+                    x + 10 < sx < x + 45 and abs(sy - y) < 5 for sx, sy in stacks):
+                out.add(m.group(1))
+    return out
+
+
 def rows(chunks):
     """{alt: "LPV DA", ...}: the minimums row each DA/MDA is printed in, read from where the text
     sits on the plate. the row labels are the column under CATEGORY, left of the A column; a
@@ -226,17 +242,25 @@ def read(pdf_bytes):
     import pypdf    # only the build reads plates; the rest of amend runs without it
     rec = {"sha256": hashlib.sha256(pdf_bytes).hexdigest()}
     try:
-        texts, labels, clash = [], {}, set()
+        texts, labels, clash, split = [], {}, set(), set()
         for page in pypdf.PdfReader(io.BytesIO(pdf_bytes)).pages:
             text, chunks = _chunks(page)
             texts.append(text or "")
             for alt, label in rows(chunks).items():
                 if labels.setdefault(alt, label) != label:
                     clash.add(alt)
+            split |= split_fractions(chunks)
         text = "\n".join(texts)
-        rec["courses"], rec["minimums"] = courses(text), minimums(text)
-        rec["minimums"]["rows"] = {a: v for a, v in labels.items()
-                                   if a not in clash and a in rec["minimums"]["alts"]}
+        rec["courses"], m = courses(text), minimums(text)
+        m["rows"] = {a: v for a, v in labels.items() if a not in clash and a in m["alts"]}
+        m["split"] = sorted(split, key=int)
+        for a in split:     # "884-1" with a ⅝ drawn beside it is 1⅝, not 1
+            keep = [v for v in m["vis"].get(a, ()) if not v.isdigit()]
+            if keep:
+                m["vis"][a] = keep
+            else:
+                m["vis"].pop(a, None)
+        rec["minimums"] = m
     except Exception as e:      # a pdf pypdf can't parse reads as no text, never stops a build
         rec["courses"], rec["minimums"], rec["error"] = {}, None, type(e).__name__
     return rec
@@ -294,6 +318,8 @@ def minimum_changes(old, new):
         pairs = []
     out = [("minimum", x, y, None, _row(old, new, x, y)) for x, y in pairs]
     for kind, key in (("rvr", "rvr"), ("visibility", "vis")):
+        if kind == "visibility" and (old.get("split") is None or new.get("split") is None):
+            continue        # read before split fractions were caught: a 1⅝ may say 1
         for alt in sorted(a & b, key=int):
             x, y = old.get(key, {}).get(alt), new.get(key, {}).get(alt)
             if x and y and len(x) == 1 and len(y) == 1 and x != y:
@@ -364,10 +390,12 @@ def _one(get, edition, pdf, deadline):
 
 def _settle(prev):
     """a plate read before what's missing from it was kept, that can't be read again: minimums
-    with no rows keep their numbers (rows None: unknown); no minimums at all stay None."""
+    keep their numbers, with rows and split None (unknown: no row is named, no visibility said);
+    no minimums at all stay None."""
     m = prev.get("minimums")
     if isinstance(m, dict) and "seen" in m:
-        m["rows"] = None
+        m.setdefault("rows", None)
+        m["split"] = None
     else:
         prev["minimums"] = None
 
@@ -383,7 +411,8 @@ def update(old_edition, new_edition, pdfs, budget=600, root=".", log=print, get=
     unread = lambda rec: isinstance(rec, dict) and (
         "courses" not in rec and rec.get("failed", 0) < GIVE_UP or "courses" in rec and (
             "minimums" not in rec or isinstance(rec["minimums"], dict) and (
-                "seen" not in rec["minimums"] or "rows" not in rec["minimums"])))
+                "seen" not in rec["minimums"] or "rows" not in rec["minimums"]
+                or "split" not in rec["minimums"])))
     todo = [(ed, pdf) for ed, pdf in want if pdf not in have[ed] or unread(have[ed][pdf])]
     if not todo:
         return 0
