@@ -688,10 +688,9 @@
     "priority": "action",
     "category": "remark",
     "kind": "removed",
-    "summary": "removed remark: COCKPIT OVER CNTRLN TAXI PROHIBITED AT TWY Y INT WITH TWY Y11. JUDGMENTAL OVERSTEER RQRED.",
+    "summary": "removed remark: cockpit over centerline taxi prohibited at taxiway Y intersection with taxiway Y11. judgmental oversteer RQRED.",
     "source": "APT_RMK",
-    "original": "COCKPIT OVER CNTRLN TAXI PROHIBITED AT TWY Y INT WITH TWY Y11. JUDGMENTAL OVERSTEER RQRED.",
-    "untranslated": "Kept in the FAA's words: the plain-English version didn't pass Amend's checks."
+    "original": "COCKPIT OVER CNTRLN TAXI PROHIBITED AT TWY Y INT WITH TWY Y11. JUDGMENTAL OVERSTEER RQRED."
    },
    {
     "id": "4dcc1c5c6f35",

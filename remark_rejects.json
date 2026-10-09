@@ -1,26 +1,6 @@
 {
- "engine": "1.5.0",
+ "engine": "1.6.0",
  "remarks": {
-  "12 FT RD, 65 FT DSTC, 225 R.": [
-   "RD is not in the verified glossary; it must stay as written",
-   "added 'road'"
-  ],
-  "15 BRUSH, 0-199 FT DSTC, 145L-250R.": [
-   "changed 145L; a code of letters and digits stays as written",
-   "changed 250R; a code of letters and digits stays as written"
-  ],
-  "15 FT RD 0 FT DSTC 65 FT L; 30 FT TREE 80 FT DSTC, 45 FT L.": [
-   "RD is not in the verified glossary; it must stay as written",
-   "added 'road'"
-  ],
-  "15 FT RD 0 FT DSTC 67 FT L.": [
-   "RD is not in the verified glossary; it must stay as written",
-   "added 'road'"
-  ],
-  "15 FT RD, 150 FT DSTC, 123FT R": [
-   "RD is not in the verified glossary; it must stay as written",
-   "added 'road'"
-  ],
   "30 FT UNMKD PLINE LCTD APPROX 990 FT FROM RWY 18 END.": [
    "dropped APPROX"
   ],
@@ -42,13 +22,8 @@
    "ALT is 'altitude' (CS), not what the translation says",
    "added 'alternate'"
   ],
-  "ANG - WX OBSN AUTOMATED AND AUGMENTED AS RQRD H24. REMOTE BFIEFING SVC AVBL 26 OWS, BARKSDALE AFB, DSN 331-2651; HTTPS://26OWS.US.AF.MIL.": [
-   "dropped BFIEFING",
-   "added 'briefing'"
-  ],
   "ARPT PHY ADS: 19708 EUSTIS ARPT RD, EUSTIS, FL 32736": [
    "PHY is not in the verified glossary; it must stay as written",
-   "RD is not in the verified glossary; it must stay as written",
    "added 'physical'"
   ],
   "ARPT UNATTNDD THANKSGIVING, CHRISTMAS & NEW YEARS DAY.": [
@@ -58,10 +33,6 @@
    "dropped TAXING",
    "NR is 'number' (CS), not what the translation says",
    "added 'taxiing'"
-  ],
-  "COCKPIT OVER CNTRLN TAXI PROHIBITED AT TWY Y INT WITH TWY Y11. JUDGMENTAL OVERSTEER RQRED.": [
-   "dropped RQRED",
-   "added 'reqd'"
   ],
   "CONDL-PROVIDED THE APPROACH TO EACH RWY IS MAINTAINED FOR MIN 20:1 GLIDE SLOPE AND THE TRANSITIONAL SURFACE BE MAINTAINED FOR A 7:1 SLOPE.": [
    "dropped CONDL",
@@ -76,9 +47,8 @@
    "added 'operating'"
   ],
   "DO NOT USE ADJ PVT ROAD; RD BET RWY AND PVT CABINS FOR TAKE OFF OR LDG.": [
-   "RD is not in the verified glossary; it must stay as written",
    "BET is not in the verified glossary; it must stay as written",
-   "repeated 'road'"
+   "added 'between'"
   ],
   "DUE TO TFC VOL, LCL DEP AND ARR OPNS ARE DISCOURAGED AND DLAS CAN BE EXPCD BTN 1500-1730Z++ AND 0130-0300Z++.": [
    "dropped DLAS",
@@ -93,10 +63,6 @@
    "dropped EMER",
    "added 'emergency'"
   ],
-  "INTENSIVE HELI OPS.": [
-   "HELI is 'heliport' (JO 2-1-1 (GEN)), not what the translation says",
-   "added 'helicopter'"
-  ],
   "LOW LVL MIL JETS OPR NR ARPT; ARPT LCTD WI PIKE WEST MOA & 3 NM FM MTR VR1624.": [
    "NR is 'number' (CS), not what the translation says",
    "added 'near'"
@@ -107,7 +73,7 @@
   ],
   "OBSTN CLNCSLOPE 1:1 OVR 50 FT TREE, 93 FT DSTC, 130 FT L.": [
    "dropped CLNCSLOPE",
-   "added 'clear'"
+   "added 'clearance'"
   ],
   "PAPI RWY 15 & 33; MIRL RWY 15/33 OPER DUSK - 2400.  AFT 2400 - CTAF.": [
    "added 'click'",
@@ -122,10 +88,6 @@
   ],
   "RWY 7 BSC RWY MARKIINGS": [
    "dropped MARKIINGS",
-   "added 'markings'"
-  ],
-  "RWY MKGS FADED & WORN.": [
-   "MKGS is not in the verified glossary; it must stay as written",
    "added 'markings'"
   ],
   "SELF SVC FUEL AVBL 24H VIA CREDIT CARD.": [
