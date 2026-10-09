@@ -9,7 +9,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -27,7 +26,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -56,7 +54,6 @@
 "5940",
 "6460"
 ],
-"rows": null,
 "rvr": {
 "5512": [
 "18"
@@ -117,7 +114,6 @@
 "5920",
 "5940"
 ],
-"rows": null,
 "rvr": {
 "5527": [
 "18"
@@ -167,7 +163,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "758",
@@ -188,7 +183,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "728",
@@ -212,7 +206,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "755",
@@ -237,7 +230,6 @@
 "alts": [
 "5745"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "745",
@@ -266,7 +258,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "571",
@@ -291,7 +282,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "619",
@@ -324,7 +314,6 @@
 "5940",
 "6460"
 ],
-"rows": null,
 "rvr": {
 "5512": [
 "24"
@@ -385,7 +374,6 @@
 "5940",
 "6460"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "460",
@@ -438,7 +426,6 @@
 "7460",
 "26380"
 ],
-"rows": null,
 "rvr": {
 "5700": [
 "24",
@@ -500,7 +487,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -524,7 +510,6 @@
 "700",
 "860"
 ],
-"rows": null,
 "rvr": {
 "346": [
 "24"
@@ -579,7 +564,6 @@
 "700",
 "860"
 ],
-"rows": null,
 "rvr": {
 "346": [
 "24"
@@ -638,7 +622,6 @@
 "34700",
 "78395"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "395",
@@ -686,7 +669,6 @@
 "700",
 "860"
 ],
-"rows": null,
 "rvr": {
 "340": [
 "50"
@@ -737,7 +719,6 @@
 "700",
 "860"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "500",
@@ -780,7 +761,6 @@
 "700",
 "860"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "500",
@@ -810,7 +790,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -837,7 +816,6 @@
 "8080",
 "8100"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "40",
@@ -882,7 +860,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "40",
@@ -923,7 +900,6 @@
 "8080",
 "8100"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "0",
@@ -973,7 +949,6 @@
 "8080",
 "8100"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "40",
@@ -1003,7 +978,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -1014,7 +988,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -1025,7 +998,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -1036,7 +1008,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -1047,7 +1018,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -1063,7 +1033,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -1091,7 +1060,6 @@
 "21851",
 "22040"
 ],
-"rows": null,
 "rvr": {
 "1940": [
 "24",
@@ -1141,7 +1109,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -1157,7 +1124,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "121"
@@ -1188,7 +1154,6 @@
 "780",
 "840"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "267",
@@ -1232,7 +1197,6 @@
 "780",
 "2267"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "267",
@@ -1283,7 +1247,6 @@
 "780",
 "840"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "366",
@@ -1320,7 +1283,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -1342,7 +1304,6 @@
 "1480",
 "1520"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "129",
@@ -1388,7 +1349,6 @@
 "1520",
 "21380"
 ],
-"rows": null,
 "rvr": {
 "21380": [
 "24"
@@ -1438,7 +1398,6 @@
 "1480",
 "1520"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "320",
@@ -1483,7 +1442,6 @@
 "1480",
 "1520"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "253",
@@ -1523,7 +1481,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -1545,7 +1502,6 @@
 "2979",
 "3060"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "60",
@@ -1578,7 +1534,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -1589,7 +1544,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -1600,7 +1554,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -1611,7 +1564,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "967"
@@ -1624,7 +1576,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -1635,7 +1586,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -1646,7 +1596,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -1662,7 +1611,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -1676,7 +1624,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -1699,7 +1646,6 @@
 "3740",
 "3820"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "121",
@@ -1737,7 +1683,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "124"
@@ -1760,7 +1705,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "181"
@@ -1790,7 +1734,6 @@
 "3640",
 "3820"
 ],
-"rows": null,
 "rvr": {
 "3036": [
 "18"
@@ -1841,7 +1784,6 @@
 "alts": [
 "3229"
 ],
-"rows": null,
 "rvr": {
 "3229": [
 "35"
@@ -1866,7 +1808,6 @@
 "alts": [
 "3288"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "288",
@@ -1894,7 +1835,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "237",
@@ -1919,7 +1859,6 @@
 "alts": [
 "3219"
 ],
-"rows": null,
 "rvr": {
 "3219": [
 "35"
@@ -1947,7 +1886,6 @@
 "3220",
 "3315"
 ],
-"rows": null,
 "rvr": {
 "3220": [
 "35"
@@ -1979,7 +1917,6 @@
 "3204",
 "3303"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "204",
@@ -2016,7 +1953,6 @@
 "3640",
 "3820"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "44",
@@ -2069,7 +2005,6 @@
 "3640",
 "3820"
 ],
-"rows": null,
 "rvr": {
 "3036": [
 "18"
@@ -2129,7 +2064,6 @@
 "3440",
 "3820"
 ],
-"rows": null,
 "rvr": {
 "3160": [
 "24"
@@ -2184,7 +2118,6 @@
 "alts": [
 "3820"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "121",
@@ -2226,7 +2159,6 @@
 "3820",
 "3880"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "240",
@@ -2272,7 +2204,6 @@
 "3820",
 "3880"
 ],
-"rows": null,
 "rvr": {
 "3380": [
 "24",
@@ -2325,7 +2256,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -2341,7 +2271,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -2357,7 +2286,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -2389,7 +2317,6 @@
 "2240",
 "2320"
 ],
-"rows": null,
 "rvr": {
 "1620": [
 "50"
@@ -2452,7 +2379,6 @@
 "2240",
 "2320"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "240",
@@ -2481,7 +2407,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -2492,7 +2417,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -2516,7 +2440,6 @@
 "1380",
 "1400"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "220",
@@ -2567,7 +2490,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -2585,7 +2507,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -2603,7 +2524,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "151"
@@ -2626,7 +2546,6 @@
 "540",
 "740"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "243",
@@ -2662,7 +2581,6 @@
 "540",
 "740"
 ],
-"rows": null,
 "rvr": {
 "245": [
 "24"
@@ -2702,7 +2620,6 @@
 "315",
 "428"
 ],
-"rows": null,
 "rvr": {
 "315": [
 "24"
@@ -2729,7 +2646,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "427",
@@ -2749,7 +2665,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "419",
@@ -2777,7 +2692,6 @@
 "540",
 "740"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "243",
@@ -2818,7 +2732,6 @@
 "540",
 "14740"
 ],
-"rows": null,
 "rvr": {
 "245": [
 "24"
@@ -2865,7 +2778,6 @@
 "540",
 "740"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "500",
@@ -2898,7 +2810,6 @@
 "540",
 "740"
 ],
-"rows": null,
 "rvr": {
 "460": [
 "24",
@@ -2928,7 +2839,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -2952,7 +2862,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -2985,7 +2894,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -3013,7 +2921,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -3034,7 +2941,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "105",
@@ -3058,7 +2964,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "123"
@@ -3087,7 +2992,6 @@
 "7260",
 "7540"
 ],
-"rows": null,
 "rvr": {
 "6387": [
 "18"
@@ -3150,7 +3054,6 @@
 "6980",
 "7240"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "240",
@@ -3205,7 +3108,6 @@
 "7040",
 "7260"
 ],
-"rows": null,
 "rvr": {
 "6318": [
 "40"
@@ -3264,7 +3166,6 @@
 "6980",
 "7240"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "240",
@@ -3308,7 +3209,6 @@
 "7040",
 "7260"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "40",
@@ -3361,7 +3261,6 @@
 "6644",
 "6920"
 ],
-"rows": null,
 "rvr": {
 "6557": [
 "40"
@@ -3404,7 +3303,6 @@
 "alts": [
 "6659"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "659",
@@ -3434,7 +3332,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "372",
@@ -3459,7 +3356,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "461",
@@ -3486,7 +3382,6 @@
 "7260",
 "26387"
 ],
-"rows": null,
 "rvr": {
 "26387": [
 "18"
@@ -3539,7 +3434,6 @@
 "7040",
 "7260"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "40",
@@ -3592,7 +3486,6 @@
 "7040",
 "7260"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "40",
@@ -3645,7 +3538,6 @@
 "6800",
 "7260"
 ],
-"rows": null,
 "rvr": {
 "6318": [
 "40"
@@ -3705,7 +3597,6 @@
 "alts": [
 "7440"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "440",
@@ -3738,7 +3629,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "128"
@@ -3773,7 +3663,6 @@
 "1040",
 "2900"
 ],
-"rows": null,
 "rvr": {
 "436": [
 "18"
@@ -3837,7 +3726,6 @@
 "860",
 "1040"
 ],
-"rows": null,
 "rvr": {
 "427": [
 "24"
@@ -3891,7 +3779,6 @@
 "960",
 "1040"
 ],
-"rows": null,
 "rvr": {
 "428": [
 "24"
@@ -3948,7 +3835,6 @@
 "860",
 "1040"
 ],
-"rows": null,
 "rvr": {
 "436": [
 "18"
@@ -4003,7 +3889,6 @@
 "860",
 "1040"
 ],
-"rows": null,
 "rvr": {
 "503": [
 "50"
@@ -4053,7 +3938,6 @@
 "860",
 "1040"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "40",
@@ -4098,7 +3982,6 @@
 "860",
 "1040"
 ],
-"rows": null,
 "rvr": {
 "428": [
 "24"
@@ -4152,7 +4035,6 @@
 "860",
 "1040"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "40",
@@ -4191,7 +4073,6 @@
 "8500",
 "34660"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "292",
@@ -4241,7 +4122,6 @@
 "540",
 "660"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "540",
@@ -4279,7 +4159,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -4290,7 +4169,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -4301,7 +4179,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -4312,7 +4189,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -4323,7 +4199,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -4334,7 +4209,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -4345,7 +4219,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -4356,7 +4229,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -4367,7 +4239,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -4378,7 +4249,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -4389,7 +4259,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -4400,7 +4269,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -4411,7 +4279,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -4433,7 +4300,6 @@
 "alts": [
 "6440"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "440",
@@ -4466,7 +4332,6 @@
 "6800",
 "7060"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "60",
@@ -4514,7 +4379,6 @@
 "6215",
 "7140"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "140",
@@ -4550,7 +4414,6 @@
 "6800",
 "7060"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "60",
@@ -4590,7 +4453,6 @@
 "780",
 "1000"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "0",
@@ -4635,7 +4497,6 @@
 "780",
 "1000"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "0",
@@ -4674,7 +4535,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -4691,7 +4551,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -4706,7 +4565,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -4736,7 +4594,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -4752,7 +4609,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -4776,7 +4632,6 @@
 "770",
 "940"
 ],
-"rows": null,
 "rvr": {
 "770": [
 "18"
@@ -4809,7 +4664,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "116"
@@ -4838,7 +4692,6 @@
 "1120",
 "1160"
 ],
-"rows": null,
 "rvr": {
 "770": [
 "18"
@@ -4886,7 +4739,6 @@
 "1120",
 "1160"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "20",
@@ -4926,7 +4778,6 @@
 "1120",
 "1160"
 ],
-"rows": null,
 "rvr": {
 "1120": [
 "40",
@@ -4968,7 +4819,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "0",
@@ -5000,7 +4850,6 @@
 "1120",
 "1160"
 ],
-"rows": null,
 "rvr": {
 "1000": [
 "24",
@@ -5056,7 +4905,6 @@
 "1120",
 "1160"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "100",
@@ -5098,7 +4946,6 @@
 "1520",
 "1620"
 ],
-"rows": null,
 "rvr": {
 "1100": [
 "24"
@@ -5156,7 +5003,6 @@
 "660",
 "900"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "560",
@@ -5192,7 +5038,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -5203,7 +5048,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -5221,7 +5065,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -5239,7 +5082,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "140"
@@ -5264,7 +5106,6 @@
 "4340",
 "4420"
 ],
-"rows": null,
 "rvr": {
 "3880": [
 "18"
@@ -5314,7 +5155,6 @@
 "4340",
 "4420"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "0",
@@ -5361,7 +5201,6 @@
 "4340",
 "4420"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "80",
@@ -5413,7 +5252,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "942",
@@ -5442,7 +5280,6 @@
 "3990",
 "4079"
 ],
-"rows": null,
 "rvr": {
 "3990": [
 "24"
@@ -5481,7 +5318,6 @@
 "4340",
 "4420"
 ],
-"rows": null,
 "rvr": {
 "3869": [
 "40"
@@ -5538,7 +5374,6 @@
 "4340",
 "4420"
 ],
-"rows": null,
 "rvr": {
 "3880": [
 "18"
@@ -5589,7 +5424,6 @@
 "4340",
 "4420"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "0",
@@ -5628,7 +5462,6 @@
 "4140",
 "4320"
 ],
-"rows": null,
 "rvr": {
 "4060": [
 "24"
@@ -5662,7 +5495,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -5683,7 +5515,6 @@
 "1300",
 "1360"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "40",
@@ -5728,7 +5559,6 @@
 "1300",
 "1360"
 ],
-"rows": null,
 "rvr": {
 "1018": [
 "40"
@@ -5791,7 +5621,6 @@
 "1100",
 "1440"
 ],
-"rows": null,
 "rvr": {
 "1100": [
 "55"
@@ -5838,7 +5667,6 @@
 "1320",
 "1400"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "220",
@@ -5882,7 +5710,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "140",
@@ -5908,7 +5735,6 @@
 "640",
 "700"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "520",
@@ -5942,7 +5768,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -5967,7 +5792,6 @@
 "600",
 "980"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "378",
@@ -5993,7 +5817,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -6007,7 +5830,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -6025,7 +5847,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "121"
@@ -6050,7 +5871,6 @@
 "1760",
 "1820"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "720",
@@ -6079,7 +5899,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -6090,7 +5909,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -6101,7 +5919,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -6112,7 +5929,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -6131,7 +5947,6 @@
 "alts": [
 "7420"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "260",
@@ -6161,7 +5976,6 @@
 "alts": [
 "7420"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "420",
@@ -6184,7 +5998,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -6204,7 +6017,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "106"
@@ -6226,7 +6038,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "169"
@@ -6254,7 +6065,6 @@
 "1000",
 "1180"
 ],
-"rows": null,
 "rvr": {
 "510": [
 "40"
@@ -6312,7 +6122,6 @@
 "1000",
 "1180"
 ],
-"rows": null,
 "rvr": {
 "462": [
 "18"
@@ -6370,7 +6179,6 @@
 "1000",
 "1180"
 ],
-"rows": null,
 "rvr": {
 "508": [
 "40"
@@ -6433,7 +6241,6 @@
 "1000",
 "1180"
 ],
-"rows": null,
 "rvr": {
 "525": [
 "40"
@@ -6489,7 +6296,6 @@
 "1180",
 "58820"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "0",
@@ -6541,7 +6347,6 @@
 "1180",
 "14680"
 ],
-"rows": null,
 "rvr": {
 "14680": [
 "40"
@@ -6599,7 +6404,6 @@
 "1000",
 "1180"
 ],
-"rows": null,
 "rvr": {
 "462": [
 "18"
@@ -6651,7 +6455,6 @@
 "1000",
 "1180"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "0",
@@ -6694,7 +6497,6 @@
 "1180",
 "34780"
 ],
-"rows": null,
 "rvr": {
 "34780": [
 "40"
@@ -6752,7 +6554,6 @@
 "1000",
 "1180"
 ],
-"rows": null,
 "rvr": {
 "574": [
 "40"
@@ -6798,7 +6599,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "121"
@@ -6827,7 +6627,6 @@
 "258",
 "520"
 ],
-"rows": null,
 "rvr": {
 "258": [
 "18"
@@ -6858,7 +6657,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "414",
@@ -6882,7 +6680,6 @@
 "324",
 "415"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "165",
@@ -6909,7 +6706,6 @@
 "alts": [
 "384"
 ],
-"rows": null,
 "rvr": {
 "384": [
 "30"
@@ -6937,7 +6733,6 @@
 "520",
 "568"
 ],
-"rows": null,
 "rvr": {
 "261": [
 "18"
@@ -6977,7 +6772,6 @@
 "alts": [
 "840"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "600",
@@ -7001,7 +6795,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -7017,7 +6810,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -7033,7 +6825,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "121"
@@ -7046,7 +6837,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -7057,7 +6847,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -7073,7 +6862,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -7091,7 +6879,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "151",
@@ -7119,7 +6906,6 @@
 "1120",
 "1180"
 ],
-"rows": null,
 "rvr": {
 "544": [
 "24"
@@ -7172,7 +6958,6 @@
 "920",
 "1120"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "120",
@@ -7218,7 +7003,6 @@
 "900",
 "920"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "120",
@@ -7262,7 +7046,6 @@
 "900",
 "920"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "120",
@@ -7299,7 +7082,6 @@
 "920",
 "1120"
 ],
-"rows": null,
 "rvr": {
 "544": [
 "24"
@@ -7343,7 +7125,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -7363,7 +7144,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -7388,7 +7168,6 @@
 "2080",
 "2340"
 ],
-"rows": null,
 "rvr": {
 "1680": [
 "24",
@@ -7438,7 +7217,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "540",
@@ -7460,7 +7238,6 @@
 "alts": [
 "3600"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "600",
@@ -7491,7 +7268,6 @@
 "1759",
 "2049"
 ],
-"rows": null,
 "rvr": {
 "1759": [
 "45"
@@ -7524,7 +7300,6 @@
 "1683",
 "1870"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "683",
@@ -7555,7 +7330,6 @@
 "3320",
 "3460"
 ],
-"rows": null,
 "rvr": {
 "2600": [
 "40",
@@ -7601,7 +7375,6 @@
 "1780",
 "2000"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "0",
@@ -7643,7 +7416,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "680",
@@ -7671,7 +7443,6 @@
 "alts": [
 "2680"
 ],
-"rows": null,
 "rvr": {
 "2680": [
 "60"
@@ -7704,7 +7475,6 @@
 "alts": [
 "3600"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "600",
@@ -7738,7 +7508,6 @@
 "680",
 "880"
 ],
-"rows": null,
 "rvr": {
 "232": [
 "18"
@@ -7793,7 +7562,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -7816,7 +7584,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -7834,7 +7601,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -7853,7 +7619,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -7872,7 +7637,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "147"
@@ -7894,7 +7658,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "102"
@@ -7916,7 +7679,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "168"
@@ -7938,7 +7700,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -7962,7 +7723,6 @@
 "1360",
 "1620"
 ],
-"rows": null,
 "rvr": {
 "1041": [
 "18"
@@ -8011,7 +7771,6 @@
 "1460",
 "1620"
 ],
-"rows": null,
 "rvr": {
 "1042": [
 "18"
@@ -8063,7 +7822,6 @@
 "1460",
 "1620"
 ],
-"rows": null,
 "rvr": {
 "1023": [
 "18"
@@ -8115,7 +7873,6 @@
 "1460",
 "1620"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "72",
@@ -8160,7 +7917,6 @@
 "alts": [
 "1684"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "684",
@@ -8194,7 +7950,6 @@
 "1360",
 "1620"
 ],
-"rows": null,
 "rvr": {
 "1034": [
 "18"
@@ -8242,7 +7997,6 @@
 "1660",
 "2100"
 ],
-"rows": null,
 "rvr": {
 "1220": [
 "55"
@@ -8300,7 +8054,6 @@
 "1620",
 "1800"
 ],
-"rows": null,
 "rvr": {
 "1420": [
 "40"
@@ -8344,7 +8097,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "340",
@@ -8373,7 +8125,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -8397,7 +8148,6 @@
 "1660",
 "1800"
 ],
-"rows": null,
 "rvr": {
 "1190": [
 "40"
@@ -8457,7 +8207,6 @@
 "1660",
 "1800"
 ],
-"rows": null,
 "rvr": {
 "1032": [
 "24"
@@ -8516,7 +8265,6 @@
 "alts": [
 "1243"
 ],
-"rows": null,
 "rvr": {
 "1243": [
 "40"
@@ -8545,7 +8293,6 @@
 "alts": [
 "1251"
 ],
-"rows": null,
 "rvr": {
 "1251": [
 "40"
@@ -8574,7 +8321,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "150",
@@ -8600,7 +8346,6 @@
 "1097",
 "1298"
 ],
-"rows": null,
 "rvr": {
 "1097": [
 "50"
@@ -8633,7 +8378,6 @@
 "1291",
 "1345"
 ],
-"rows": null,
 "rvr": {
 "1213": [
 "35"
@@ -8674,7 +8418,6 @@
 "1460",
 "1620"
 ],
-"rows": null,
 "rvr": {
 "1041": [
 "18"
@@ -8732,7 +8475,6 @@
 "1460",
 "1620"
 ],
-"rows": null,
 "rvr": {
 "1042": [
 "18"
@@ -8791,7 +8533,6 @@
 "1360",
 "1620"
 ],
-"rows": null,
 "rvr": {
 "1023": [
 "18"
@@ -8848,7 +8589,6 @@
 "1460",
 "1620"
 ],
-"rows": null,
 "rvr": {
 "1072": [
 "40"
@@ -8904,7 +8644,6 @@
 "21300",
 "81204"
 ],
-"rows": null,
 "rvr": {
 "1034": [
 "18"
@@ -8952,7 +8691,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -8977,7 +8715,6 @@
 "740",
 "1160"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "160",
@@ -9006,7 +8743,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -9021,7 +8757,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -9042,7 +8777,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "101",
@@ -9071,7 +8805,6 @@
 "560",
 "700"
 ],
-"rows": null,
 "rvr": {
 "223": [
 "24"
@@ -9116,7 +8849,6 @@
 "560",
 "700"
 ],
-"rows": null,
 "rvr": {
 "225": [
 "40"
@@ -9161,7 +8893,6 @@
 "560",
 "700"
 ],
-"rows": null,
 "rvr": {
 "465": [
 "50"
@@ -9202,7 +8933,6 @@
 "560",
 "700"
 ],
-"rows": null,
 "rvr": {
 "225": [
 "40"
@@ -9247,7 +8977,6 @@
 "560",
 "740"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "560",
@@ -9278,7 +9007,6 @@
 "560",
 "740"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "560",
@@ -9299,7 +9027,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -9321,7 +9048,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -9343,7 +9069,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -9360,7 +9085,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -9377,7 +9101,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -9395,7 +9118,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -9413,7 +9135,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "200",
@@ -9431,7 +9152,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -9445,7 +9165,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "200",
@@ -9467,7 +9186,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -9488,7 +9206,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -9502,7 +9219,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -9518,7 +9234,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "121"
@@ -9531,7 +9246,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -9547,7 +9261,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -9582,7 +9295,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -9593,7 +9305,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -9604,7 +9315,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -9615,7 +9325,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -9637,7 +9346,6 @@
 "620",
 "880"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "146",
@@ -9670,7 +9378,6 @@
 "620",
 "880"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "480",
@@ -9704,7 +9411,6 @@
 "880",
 "34620"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "500",
@@ -9746,7 +9452,6 @@
 "620",
 "34880"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "620",
@@ -9773,7 +9478,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -9784,7 +9488,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -9795,7 +9498,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -9806,7 +9508,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "896"
@@ -9819,7 +9520,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -9830,7 +9530,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -9841,7 +9540,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -9852,7 +9550,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -9868,7 +9565,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -9889,7 +9585,6 @@
 "2460",
 "2800"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "40",
@@ -9936,7 +9631,6 @@
 "2800",
 "21880"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "460",
@@ -9981,7 +9675,6 @@
 "alts": [
 "1475"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "475",
@@ -10009,7 +9702,6 @@
 "1491",
 "1633"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "491",
@@ -10044,7 +9736,6 @@
 "1646",
 "2115"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "115",
@@ -10080,7 +9771,6 @@
 "1444",
 "1605"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "444",
@@ -10111,7 +9801,6 @@
 "alts": [
 "3000"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "0",
@@ -10151,7 +9840,6 @@
 "2640",
 "2820"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "300",
@@ -10199,7 +9887,6 @@
 "2460",
 "2800"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "460",
@@ -10244,7 +9931,6 @@
 "1840",
 "1860"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "700",
@@ -10299,7 +9985,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -10325,7 +10010,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -10346,7 +10030,6 @@
 "4481",
 "4597"
 ],
-"rows": null,
 "rvr": {
 "4481": [
 "24"
@@ -10380,7 +10063,6 @@
 "4530",
 "4643"
 ],
-"rows": null,
 "rvr": {
 "4490": [
 "24"
@@ -10419,7 +10101,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -10448,7 +10129,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -10459,7 +10139,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -10474,7 +10153,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -10485,7 +10163,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -10496,7 +10173,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -10507,7 +10183,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -10518,7 +10193,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -10529,7 +10203,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -10540,7 +10213,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -10556,7 +10228,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -10576,7 +10247,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -10594,7 +10264,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -10605,7 +10274,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -10616,7 +10284,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -10634,7 +10301,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -10645,7 +10311,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -10656,7 +10321,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -10667,7 +10331,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -10678,7 +10341,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -10694,7 +10356,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -10708,7 +10369,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "121"
@@ -10726,7 +10386,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "121"
@@ -10742,7 +10401,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -10770,7 +10428,6 @@
 "4588",
 "4740"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "256",
@@ -10824,7 +10481,6 @@
 "2060",
 "2100"
 ],
-"rows": null,
 "rvr": {
 "1630": [
 "18"
@@ -10884,7 +10540,6 @@
 "2100",
 "2200"
 ],
-"rows": null,
 "rvr": {
 "1674": [
 "24"
@@ -10942,7 +10597,6 @@
 "2060",
 "81920"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "60",
@@ -10994,7 +10648,6 @@
 "1980",
 "2060"
 ],
-"rows": null,
 "rvr": {
 "1630": [
 "18"
@@ -11044,7 +10697,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "960",
@@ -11071,7 +10723,6 @@
 "2060",
 "2200"
 ],
-"rows": null,
 "rvr": {
 "1741": [
 "24"
@@ -11121,7 +10772,6 @@
 "1980",
 "2060"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "60",
@@ -11173,7 +10823,6 @@
 "alts": [
 "2000"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "0",
@@ -11208,7 +10857,6 @@
 "2200",
 "2300"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "60",
@@ -11263,7 +10911,6 @@
 "2200",
 "2300"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "60",
@@ -11308,7 +10955,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -11319,7 +10965,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -11330,7 +10975,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -11341,7 +10985,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -11352,7 +10995,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -11363,7 +11005,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -11374,7 +11015,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -11390,7 +11030,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -11412,7 +11051,6 @@
 "580",
 "720"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "580",
@@ -11444,7 +11082,6 @@
 "500",
 "720"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "440",
@@ -11469,7 +11106,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -11480,7 +11116,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -11491,7 +11126,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -11502,7 +11136,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -11513,7 +11146,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "895"
@@ -11526,7 +11158,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -11537,7 +11168,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -11548,7 +11178,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -11559,7 +11188,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -11570,7 +11198,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -11586,7 +11213,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -11607,7 +11233,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "139"
@@ -11630,7 +11255,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "192"
@@ -11660,7 +11284,6 @@
 "2320",
 "2500"
 ],
-"rows": null,
 "rvr": {
 "1718": [
 "18"
@@ -11722,7 +11345,6 @@
 "2320",
 "2500"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "100",
@@ -11759,7 +11381,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -11784,7 +11405,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "116"
@@ -11811,7 +11431,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "166"
@@ -11841,7 +11460,6 @@
 "1200",
 "1520"
 ],
-"rows": null,
 "rvr": {
 "1200": [
 "60"
@@ -11905,7 +11523,6 @@
 "868",
 "1180"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "180",
@@ -11951,7 +11568,6 @@
 "1520",
 "81300"
 ],
-"rows": null,
 "rvr": {
 "1060": [
 "24",
@@ -12015,7 +11631,6 @@
 "1160",
 "1520"
 ],
-"rows": null,
 "rvr": {
 "1080": [
 "24",
@@ -12073,7 +11688,6 @@
 "1500",
 "1520"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "180",
@@ -12117,7 +11731,6 @@
 "1160",
 "1520"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "89",
@@ -12159,7 +11772,6 @@
 "1160",
 "1520"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "88",
@@ -12208,7 +11820,6 @@
 "1160",
 "1520"
 ],
-"rows": null,
 "rvr": {
 "1120": [
 "24",
@@ -12265,7 +11876,6 @@
 "1160",
 "1520"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "60",
@@ -12313,7 +11923,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -12338,7 +11947,6 @@
 "1160",
 "1520"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "80",
@@ -12387,7 +11995,6 @@
 "1200",
 "1520"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "80",
@@ -12435,7 +12042,6 @@
 "820",
 "880"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "600",
@@ -12467,7 +12073,6 @@
 "820",
 "880"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "540",
@@ -12493,7 +12098,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -12504,7 +12108,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -12515,7 +12118,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -12526,7 +12128,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -12537,7 +12138,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -12548,7 +12148,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -12559,7 +12158,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -12570,7 +12168,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -12581,7 +12178,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -12592,7 +12188,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -12603,7 +12198,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -12621,7 +12215,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -12632,7 +12225,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -12643,7 +12235,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -12654,7 +12245,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "896"
@@ -12667,7 +12257,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "433"
@@ -12680,7 +12269,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -12691,7 +12279,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -12735,7 +12322,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -12746,7 +12332,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -12757,7 +12342,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -12768,7 +12352,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -12786,7 +12369,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -12804,7 +12386,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -12827,7 +12408,6 @@
 "1840",
 "2060"
 ],
-"rows": null,
 "rvr": {
 "1449": [
 "55"
@@ -12881,7 +12461,6 @@
 "781",
 "883"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "187",
@@ -12917,7 +12496,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "187",
@@ -12948,7 +12526,6 @@
 "940",
 "34601"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "40",
@@ -13001,7 +12578,6 @@
 "8880",
 "78793"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "40",
@@ -13047,7 +12623,6 @@
 "1040",
 "1100"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "40",
@@ -13089,7 +12664,6 @@
 "alts": [
 "760"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "580",
@@ -13111,7 +12685,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -13134,7 +12707,6 @@
 "600",
 "2600"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "404",
@@ -13173,7 +12745,6 @@
 "414",
 "420"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "374",
@@ -13207,7 +12778,6 @@
 "alts": [
 "500"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "500"
@@ -13235,7 +12805,6 @@
 "577",
 "580"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "385",
@@ -13260,7 +12829,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -13271,7 +12839,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -13282,7 +12849,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -13296,7 +12862,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -13314,7 +12879,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -13330,7 +12894,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -13348,7 +12911,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "400"
@@ -13377,7 +12939,6 @@
 "880",
 "8880"
 ],
-"rows": null,
 "rvr": {
 "441": [
 "18"
@@ -13414,7 +12975,6 @@
 "870",
 "1080"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "80",
@@ -13453,7 +13013,6 @@
 "880",
 "4840"
 ],
-"rows": null,
 "rvr": {
 "455": [
 "45"
@@ -13499,7 +13058,6 @@
 "441",
 "900"
 ],
-"rows": null,
 "rvr": {
 "441": [
 "18"
@@ -13544,7 +13102,6 @@
 "2920",
 "2980"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "486",
@@ -13603,7 +13160,6 @@
 "2920",
 "81680"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "509",
@@ -13664,7 +13220,6 @@
 "2700",
 "2900"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "700",
@@ -13708,7 +13263,6 @@
 "2880",
 "3000"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "0",
@@ -13753,7 +13307,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -13764,7 +13317,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -13775,7 +13327,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -13786,7 +13337,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -13797,7 +13347,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -13808,7 +13357,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -13819,7 +13367,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -13830,7 +13377,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -13841,7 +13387,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -13855,7 +13400,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -13879,7 +13423,6 @@
 "7340",
 "7660"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "340",
@@ -13931,7 +13474,6 @@
 "7340",
 "7660"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "340",
@@ -13985,7 +13527,6 @@
 "7340",
 "7660"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "340",
@@ -14037,7 +13578,6 @@
 "7340",
 "7660"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "263",
@@ -14083,7 +13623,6 @@
 "7340",
 "7660"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "263",
@@ -14126,7 +13665,6 @@
 "7340",
 "7660"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "263",
@@ -14179,7 +13717,6 @@
 "7340",
 "7660"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "340",
@@ -14229,7 +13766,6 @@
 "7340",
 "7660"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "340",
@@ -14257,7 +13793,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -14268,7 +13803,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -14279,7 +13813,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -14290,7 +13823,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -14301,7 +13833,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -14312,7 +13843,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "12"
@@ -14325,7 +13855,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -14336,7 +13865,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -14347,7 +13875,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -14358,7 +13885,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -14369,7 +13895,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -14380,7 +13905,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -14391,7 +13915,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -14402,7 +13925,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -14413,7 +13935,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -14424,7 +13945,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -14435,7 +13955,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -14446,7 +13965,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -14457,7 +13975,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -14468,7 +13985,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -14479,7 +13995,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -14499,7 +14014,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "101"
@@ -14521,7 +14035,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "145"
@@ -14541,7 +14054,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "104"
@@ -14561,7 +14073,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "106"
@@ -14580,7 +14091,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "164"
@@ -14600,7 +14110,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "101"
@@ -14620,7 +14129,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "157"
@@ -14641,7 +14149,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "106"
@@ -14662,7 +14169,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "158"
@@ -14688,7 +14194,6 @@
 "500",
 "740"
 ],
-"rows": null,
 "rvr": {
 "290": [
 "18"
@@ -14727,7 +14232,6 @@
 "520",
 "740"
 ],
-"rows": null,
 "rvr": {
 "290": [
 "18"
@@ -14768,7 +14272,6 @@
 "540",
 "740"
 ],
-"rows": null,
 "rvr": {
 "294": [
 "18"
@@ -14806,7 +14309,6 @@
 "420",
 "740"
 ],
-"rows": null,
 "rvr": {
 "288": [
 "18"
@@ -14846,7 +14348,6 @@
 "740",
 "12460"
 ],
-"rows": null,
 "rvr": {
 "12460": [
 "24"
@@ -14890,7 +14391,6 @@
 "440",
 "740"
 ],
-"rows": null,
 "rvr": {
 "293": [
 "40"
@@ -14931,7 +14431,6 @@
 "740",
 "2440"
 ],
-"rows": null,
 "rvr": {
 "2440": [
 "24"
@@ -14974,7 +14473,6 @@
 "660",
 "740"
 ],
-"rows": null,
 "rvr": {
 "290": [
 "18"
@@ -15018,7 +14516,6 @@
 "480",
 "740"
 ],
-"rows": null,
 "rvr": {
 "296": [
 "40"
@@ -15058,7 +14555,6 @@
 "2288",
 "2500"
 ],
-"rows": null,
 "rvr": {
 "2288": [
 "18"
@@ -15103,7 +14599,6 @@
 "540",
 "740"
 ],
-"rows": null,
 "rvr": {
 "292": [
 "18"
@@ -15144,7 +14639,6 @@
 "358",
 "444"
 ],
-"rows": null,
 "rvr": {
 "358": [
 "24"
@@ -15174,7 +14668,6 @@
 "389",
 "450"
 ],
-"rows": null,
 "rvr": {
 "389": [
 "24"
@@ -15204,7 +14697,6 @@
 "360",
 "430"
 ],
-"rows": null,
 "rvr": {
 "360": [
 "24"
@@ -15234,7 +14726,6 @@
 "380",
 "458"
 ],
-"rows": null,
 "rvr": {
 "380": [
 "45"
@@ -15265,7 +14756,6 @@
 "513",
 "740"
 ],
-"rows": null,
 "rvr": {
 "290": [
 "18"
@@ -15307,7 +14797,6 @@
 "540",
 "740"
 ],
-"rows": null,
 "rvr": {
 "294": [
 "18"
@@ -15349,7 +14838,6 @@
 "460",
 "740"
 ],
-"rows": null,
 "rvr": {
 "290": [
 "18"
@@ -15392,7 +14880,6 @@
 "480",
 "740"
 ],
-"rows": null,
 "rvr": {
 "293": [
 "40"
@@ -15435,7 +14922,6 @@
 "1040",
 "1120"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "40",
@@ -15476,7 +14962,6 @@
 "780",
 "860"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "780",
@@ -15504,7 +14989,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -15535,7 +15019,6 @@
 "5400",
 "5420"
 ],
-"rows": null,
 "rvr": {
 "4935": [
 "24"
@@ -15596,7 +15079,6 @@
 "5400",
 "5420"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "80",
@@ -15645,7 +15127,6 @@
 "5011",
 "5120"
 ],
-"rows": null,
 "rvr": {
 "5011": [
 "24"
@@ -15681,7 +15162,6 @@
 "5050",
 "5146"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "50",
@@ -15720,7 +15200,6 @@
 "24985",
 "25100"
 ],
-"rows": null,
 "rvr": {
 "24985": [
 "24"
@@ -15785,7 +15264,6 @@
 "5400",
 "5420"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "2",
@@ -15840,7 +15318,6 @@
 "5400",
 "5420"
 ],
-"rows": null,
 "rvr": {
 "5400": [
 "24"
@@ -15879,7 +15356,6 @@
 "alts": [
 "5300"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "300",
@@ -15911,7 +15387,6 @@
 "1020",
 "1026"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "20",
@@ -15940,7 +15415,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -15956,7 +15430,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -15970,7 +15443,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -15986,7 +15458,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -16005,7 +15476,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -16016,7 +15486,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -16032,7 +15501,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -16043,7 +15511,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -16054,7 +15521,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -16065,7 +15531,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -16089,7 +15554,6 @@
 "1140",
 "1400"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "140",
@@ -16129,7 +15593,6 @@
 "1140",
 "1400"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "140",
@@ -16163,7 +15626,6 @@
 "1160",
 "1400"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "160",
@@ -16201,7 +15663,6 @@
 "1140",
 "1400"
 ],
-"rows": null,
 "rvr": {
 "1000": [
 "60"
@@ -16250,7 +15711,6 @@
 "1140",
 "1400"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "140",
@@ -16296,7 +15756,6 @@
 "1140",
 "1400"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "140",
@@ -16335,7 +15794,6 @@
 "1140",
 "1400"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "80",
@@ -16377,7 +15835,6 @@
 "740",
 "920"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "602",
@@ -16414,7 +15871,6 @@
 "740",
 "920"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "680",
@@ -16452,7 +15908,6 @@
 "1409",
 "1760"
 ],
-"rows": null,
 "rvr": {
 "1409": [
 "24"
@@ -16496,7 +15951,6 @@
 "1580",
 "1620"
 ],
-"rows": null,
 "rvr": {
 "1418": [
 "24"
@@ -16550,7 +16004,6 @@
 "1780",
 "1800"
 ],
-"rows": null,
 "rvr": {
 "1426": [
 "24"
@@ -16613,7 +16066,6 @@
 "1780",
 "1800"
 ],
-"rows": null,
 "rvr": {
 "1409": [
 "24"
@@ -16669,7 +16121,6 @@
 "1780",
 "1800"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "418",
@@ -16715,7 +16166,6 @@
 "1780",
 "1800"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "399",
@@ -16762,7 +16212,6 @@
 "1780",
 "1800"
 ],
-"rows": null,
 "rvr": {
 "1680": [
 "24",
@@ -16801,7 +16250,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -16820,7 +16268,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "433",
@@ -16844,7 +16291,6 @@
 "alts": [
 "21555"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "555",
@@ -16873,7 +16319,6 @@
 "2072",
 "2417"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "72",
@@ -16913,7 +16358,6 @@
 "1595",
 "1762"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "595",
@@ -16951,7 +16395,6 @@
 "3900",
 "23180"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "180",
@@ -16993,7 +16436,6 @@
 "3200",
 "3900"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "200",
@@ -17034,7 +16476,6 @@
 "720",
 "960"
 ],
-"rows": null,
 "rvr": {
 "270": [
 "24"
@@ -17081,7 +16522,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -17097,7 +16537,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "121"
@@ -17117,7 +16556,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "113",
@@ -17144,7 +16582,6 @@
 "1080",
 "1200"
 ],
-"rows": null,
 "rvr": {
 "639": [
 "18"
@@ -17199,7 +16636,6 @@
 "1080",
 "1200"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "80",
@@ -17245,7 +16681,6 @@
 "826",
 "950"
 ],
-"rows": null,
 "rvr": {
 "826": [
 "35"
@@ -17274,7 +16709,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "788"
@@ -17304,7 +16738,6 @@
 "1080",
 "1200"
 ],
-"rows": null,
 "rvr": {
 "1060": [
 "24",
@@ -17364,7 +16797,6 @@
 "1080",
 "1200"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "80",
@@ -17405,7 +16837,6 @@
 "880",
 "980"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "640",
@@ -17446,7 +16877,6 @@
 "820",
 "980"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "515",
@@ -17497,7 +16927,6 @@
 "980",
 "1080"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "80",
@@ -17543,7 +16972,6 @@
 "980",
 "1080"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "80",
@@ -17587,7 +17015,6 @@
 "6640",
 "6800"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "380",
@@ -17624,7 +17051,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -17650,7 +17076,6 @@
 "780",
 "800"
 ],
-"rows": null,
 "rvr": {
 "300": [
 "24"
@@ -17707,7 +17132,6 @@
 "780",
 "800"
 ],
-"rows": null,
 "rvr": {
 "284": [
 "24"
@@ -17755,7 +17179,6 @@
 "780",
 "800"
 ],
-"rows": null,
 "rvr": {
 "300": [
 "24"
@@ -17807,7 +17230,6 @@
 "780",
 "800"
 ],
-"rows": null,
 "rvr": {
 "284": [
 "24"
@@ -17864,7 +17286,6 @@
 "4120",
 "4240"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "120",
@@ -17907,7 +17328,6 @@
 "4120",
 "4240"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "0",
@@ -17958,7 +17378,6 @@
 "3939",
 "4040"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "40",
@@ -18001,7 +17420,6 @@
 "3903",
 "4020"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "20",
@@ -18035,7 +17453,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "200",
@@ -18055,7 +17472,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -18067,7 +17483,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -18078,7 +17493,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -18096,7 +17510,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "121"
@@ -18119,7 +17532,6 @@
 "1340",
 "1560"
 ],
-"rows": null,
 "rvr": {
 "1068": [
 "24"
@@ -18164,7 +17576,6 @@
 "1340",
 "1560"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "156",
@@ -18209,7 +17620,6 @@
 "1340",
 "1560"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "220",
@@ -18252,7 +17662,6 @@
 "1340",
 "1560"
 ],
-"rows": null,
 "rvr": {
 "1068": [
 "24"
@@ -18302,7 +17711,6 @@
 "1340",
 "1560"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "280",
@@ -18335,7 +17743,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -18346,7 +17753,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -18357,7 +17763,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -18368,7 +17773,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -18379,7 +17783,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -18390,7 +17793,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -18415,7 +17817,6 @@
 "2320",
 "2340"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "0",
@@ -18463,7 +17864,6 @@
 "2020",
 "2320"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "20",
@@ -18495,7 +17895,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "300",
@@ -18524,7 +17923,6 @@
 "1360",
 "1440"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "61",
@@ -18569,7 +17967,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -18580,7 +17977,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -18591,7 +17987,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -18618,7 +18013,6 @@
 "1780",
 "1880"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "491",
@@ -18661,7 +18055,6 @@
 "1780",
 "1880"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "499",
@@ -18699,7 +18092,6 @@
 "1780",
 "1880"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "491",
@@ -18738,7 +18130,6 @@
 "1780",
 "1880"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "660",
@@ -18779,7 +18170,6 @@
 "1780",
 "1880"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "660",
@@ -18827,7 +18217,6 @@
 "1780",
 "1880"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "499",
@@ -18872,7 +18261,6 @@
 "1780",
 "1880"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "780",
@@ -18900,7 +18288,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "121"
@@ -18921,7 +18308,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -18942,7 +18328,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -18960,7 +18345,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -18985,7 +18369,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -19003,7 +18386,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -19024,7 +18406,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -19042,7 +18423,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -19065,7 +18445,6 @@
 "740",
 "1140"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "140",
@@ -19112,7 +18491,6 @@
 "620",
 "1180"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "180",
@@ -19157,7 +18535,6 @@
 "740",
 "1140"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "140",
@@ -19194,7 +18571,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -19219,7 +18595,6 @@
 "1680",
 "1820"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "380",
@@ -19256,7 +18631,6 @@
 "1680",
 "1820"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "380",
@@ -19297,7 +18671,6 @@
 "1680",
 "1820"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "405",
@@ -19349,7 +18722,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "105"
@@ -19381,7 +18753,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "135"
@@ -19414,7 +18785,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "111"
@@ -19447,7 +18817,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "161"
@@ -19483,7 +18852,6 @@
 "1540",
 "1580"
 ],
-"rows": null,
 "rvr": {
 "1195": [
 "18"
@@ -19536,7 +18904,6 @@
 "alts": [
 "1280"
 ],
-"rows": null,
 "rvr": {
 "1280": [
 "24"
@@ -19585,7 +18952,6 @@
 "1540",
 "1580"
 ],
-"rows": null,
 "rvr": {
 "1214": [
 "18"
@@ -19642,7 +19008,6 @@
 "1540",
 "1580"
 ],
-"rows": null,
 "rvr": {
 "1217": [
 "18"
@@ -19703,7 +19068,6 @@
 "1540",
 "1580"
 ],
-"rows": null,
 "rvr": {
 "1227": [
 "24"
@@ -19759,7 +19123,6 @@
 "1540",
 "1580"
 ],
-"rows": null,
 "rvr": {
 "1266": [
 "40"
@@ -19801,7 +19164,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "310",
@@ -19824,7 +19186,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "287",
@@ -19849,7 +19210,6 @@
 "alts": [
 "1418"
 ],
-"rows": null,
 "rvr": {
 "1418": [
 "40"
@@ -19878,7 +19238,6 @@
 "alts": [
 "1280"
 ],
-"rows": null,
 "rvr": {
 "1280": [
 "24"
@@ -19907,7 +19266,6 @@
 "1371",
 "1506"
 ],
-"rows": null,
 "rvr": {
 "1371": [
 "30"
@@ -19937,7 +19295,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "319",
@@ -19965,7 +19322,6 @@
 "1540",
 "1580"
 ],
-"rows": null,
 "rvr": {
 "1195": [
 "18"
@@ -20017,7 +19373,6 @@
 "1540",
 "1580"
 ],
-"rows": null,
 "rvr": {
 "1191": [
 "18"
@@ -20067,7 +19422,6 @@
 "1328",
 "1380"
 ],
-"rows": null,
 "rvr": {
 "1214": [
 "18"
@@ -20112,7 +19466,6 @@
 "1540",
 "1580"
 ],
-"rows": null,
 "rvr": {
 "1217": [
 "18"
@@ -20165,7 +19518,6 @@
 "1540",
 "1580"
 ],
-"rows": null,
 "rvr": {
 "1227": [
 "24"
@@ -20217,7 +19569,6 @@
 "1540",
 "1580"
 ],
-"rows": null,
 "rvr": {
 "1316": [
 "40"
@@ -20269,7 +19620,6 @@
 "920",
 "1060"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "60",
@@ -20309,7 +19659,6 @@
 "1080",
 "12880"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "80",
@@ -20350,7 +19699,6 @@
 "920",
 "1080"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "80",
@@ -20392,7 +19740,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "400"
@@ -20413,7 +19760,6 @@
 "920",
 "1080"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "80",
@@ -20445,7 +19791,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "400",
@@ -20468,7 +19813,6 @@
 "alts": [
 "4620"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "620",
@@ -20497,7 +19841,6 @@
 "alts": [
 "4620"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "620",
@@ -20525,7 +19868,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -20552,7 +19894,6 @@
 "3460",
 "3780"
 ],
-"rows": null,
 "rvr": {
 "3030": [
 "40"
@@ -20613,7 +19954,6 @@
 "3480",
 "3760"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "108",
@@ -20672,7 +20012,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -20688,7 +20027,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -20709,7 +20047,6 @@
 "2500",
 "2660"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "200",
@@ -20751,7 +20088,6 @@
 "2660",
 "2800"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "100",
@@ -20799,7 +20135,6 @@
 "2540",
 "2660"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "420",
@@ -20836,7 +20171,6 @@
 "2500",
 "2660"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "200",
@@ -20876,7 +20210,6 @@
 "285",
 "345"
 ],
-"rows": null,
 "rvr": {
 "285": [
 "24"
@@ -20908,7 +20241,6 @@
 "4160",
 "4440"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "20",
@@ -20951,7 +20283,6 @@
 "4160",
 "4440"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "120",
@@ -20979,7 +20310,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -21000,7 +20330,6 @@
 "1640",
 "2020"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "20",
@@ -21047,7 +20376,6 @@
 "1820",
 "2020"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "20",
@@ -21099,7 +20427,6 @@
 "1880",
 "2020"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "20",
@@ -21142,7 +20469,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "740",
@@ -21171,7 +20497,6 @@
 "1880",
 "2020"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "20",
@@ -21211,7 +20536,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -21231,7 +20555,6 @@
 "1460",
 "1620"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "380",
@@ -21259,7 +20582,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -21281,7 +20603,6 @@
 "1960",
 "2260"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "260",
@@ -21325,7 +20646,6 @@
 "1960",
 "2260"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "260",
@@ -21371,7 +20691,6 @@
 "4920",
 "4960"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "700",
@@ -21415,7 +20734,6 @@
 "4920",
 "4960"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "680",
@@ -21458,7 +20776,6 @@
 "960",
 "2505"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "0",
@@ -21485,7 +20802,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -21517,7 +20833,6 @@
 "3760",
 "4440"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "166",
@@ -21569,7 +20884,6 @@
 "3680",
 "3760"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "500",
@@ -21622,7 +20936,6 @@
 "3418",
 "3637"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "346",
@@ -21664,7 +20977,6 @@
 "3680",
 "3760"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "166",
@@ -21721,7 +21033,6 @@
 "3680",
 "3760"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "480",
@@ -21765,7 +21076,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -21781,7 +21091,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "206",
@@ -21811,7 +21120,6 @@
 "1040",
 "34241"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "40",
@@ -21860,7 +21168,6 @@
 "820",
 "1040"
 ],
-"rows": null,
 "rvr": {
 "255": [
 "40"
@@ -21909,7 +21216,6 @@
 "alts": [
 "760"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "760"
@@ -21939,7 +21245,6 @@
 "820",
 "1040"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "40",
@@ -21981,7 +21286,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "116",
@@ -22005,7 +21309,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "116",
@@ -22031,7 +21334,6 @@
 "960",
 "1040"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "40",
@@ -22076,7 +21378,6 @@
 "820",
 "1040"
 ],
-"rows": null,
 "rvr": {
 "459": [
 "45"
@@ -22125,7 +21426,6 @@
 "1040",
 "1096"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "40",
@@ -22167,7 +21467,6 @@
 "820",
 "1040"
 ],
-"rows": null,
 "rvr": {
 "255": [
 "40"
@@ -22218,7 +21517,6 @@
 "1260",
 "1480"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "100",
@@ -22260,7 +21558,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -22274,7 +21571,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -22299,7 +21595,6 @@
 "1440",
 "1680"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "140",
@@ -22342,7 +21637,6 @@
 "1440",
 "1680"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "16",
@@ -22389,7 +21683,6 @@
 "1440",
 "1680"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "100",
@@ -22424,7 +21717,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -22435,7 +21727,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -22446,7 +21737,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -22468,7 +21758,6 @@
 "3980",
 "4100"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "100",
@@ -22513,7 +21802,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "100",
@@ -22538,7 +21826,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -22563,7 +21850,6 @@
 "920",
 "960"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "522",
@@ -22617,7 +21903,6 @@
 "2780",
 "2920"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "522",
@@ -22675,7 +21960,6 @@
 "920",
 "960"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "492",
@@ -22726,7 +22010,6 @@
 "920",
 "960"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "880",
@@ -22763,7 +22046,6 @@
 "2320",
 "2460"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "80",
@@ -22815,7 +22097,6 @@
 "2320",
 "2460"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "20",
@@ -22875,7 +22156,6 @@
 "2320",
 "2460"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "20",
@@ -22913,7 +22193,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -22924,7 +22203,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -22935,7 +22213,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -22946,7 +22223,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -22957,7 +22233,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -22968,7 +22243,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -22979,7 +22253,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -22990,7 +22263,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -23001,7 +22273,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -23012,7 +22283,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -23023,7 +22293,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -23034,7 +22303,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -23045,7 +22313,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -23056,7 +22323,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -23080,7 +22346,6 @@
 "1620",
 "1820"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "289",
@@ -23116,7 +22381,6 @@
 "1620",
 "1820"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "289",
@@ -23158,7 +22422,6 @@
 "1620",
 "1820"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "500",
@@ -23189,7 +22452,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -23200,7 +22462,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -23211,7 +22472,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "222"
@@ -23224,7 +22484,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -23245,7 +22504,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -23261,7 +22519,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "121"
@@ -23279,7 +22536,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -23300,7 +22556,6 @@
 "560",
 "700"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "253",
@@ -23341,7 +22596,6 @@
 "700",
 "8440"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "224",
@@ -23396,7 +22650,6 @@
 "560",
 "700"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "374",
@@ -23448,7 +22701,6 @@
 "560",
 "700"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "253",
@@ -23491,7 +22743,6 @@
 "560",
 "700"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "345",
@@ -23544,7 +22795,6 @@
 "2000",
 "81680"
 ],
-"rows": null,
 "rvr": {
 "1521": [
 "24"
@@ -23598,7 +22848,6 @@
 "540",
 "660"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "540",
@@ -23627,7 +22876,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "0",
@@ -23652,7 +22900,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "0",
@@ -23670,7 +22917,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "300",
@@ -23690,7 +22936,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "121"
@@ -23716,7 +22961,6 @@
 "520",
 "1540"
 ],
-"rows": null,
 "rvr": {
 "328": [
 "24"
@@ -23767,7 +23011,6 @@
 "1540",
 "12520"
 ],
-"rows": null,
 "rvr": {
 "328": [
 "24"
@@ -23822,7 +23065,6 @@
 "520",
 "1540"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "520",
@@ -23844,7 +23086,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -23855,7 +23096,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -23866,7 +23106,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -23877,7 +23116,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -23888,7 +23126,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -23899,7 +23136,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -23910,7 +23146,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -23923,7 +23158,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -23948,7 +23182,6 @@
 "1460",
 "1620"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "460",
@@ -23990,7 +23223,6 @@
 "1460",
 "1620"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "460",
@@ -24032,7 +23264,6 @@
 "1460",
 "1620"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "320",
@@ -24073,7 +23304,6 @@
 "298",
 "520"
 ],
-"rows": null,
 "rvr": {
 "298": [
 "24"
@@ -24111,7 +23341,6 @@
 "298",
 "520"
 ],
-"rows": null,
 "rvr": {
 "298": [
 "24"
@@ -24146,7 +23375,6 @@
 "348",
 "520"
 ],
-"rows": null,
 "rvr": {
 "298": [
 "24"
@@ -24184,7 +23412,6 @@
 "407",
 "480"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "344",
@@ -24216,7 +23443,6 @@
 "alts": [
 "520"
 ],
-"rows": null,
 "rvr": {
 "520": [
 "24",
@@ -24254,7 +23480,6 @@
 "580",
 "680"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "480",
@@ -24292,7 +23517,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "262",
@@ -24318,7 +23542,6 @@
 "900",
 "960"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "340",
@@ -24363,7 +23586,6 @@
 "960",
 "12580"
 ],
-"rows": null,
 "rvr": {
 "262": [
 "24"
@@ -24423,7 +23645,6 @@
 "960",
 "12580"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "273",
@@ -24470,7 +23691,6 @@
 "900",
 "960"
 ],
-"rows": null,
 "rvr": {
 "520": [
 "45"
@@ -24511,7 +23731,6 @@
 "960",
 "8480"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "480",
@@ -24556,7 +23775,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "108",
@@ -24582,7 +23800,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "115"
@@ -24607,7 +23824,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "245"
@@ -24638,7 +23854,6 @@
 "800",
 "920"
 ],
-"rows": null,
 "rvr": {
 "328": [
 "18"
@@ -24691,7 +23906,6 @@
 "920",
 "34920"
 ],
-"rows": null,
 "rvr": {
 "332": [
 "18"
@@ -24726,7 +23940,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -24737,7 +23950,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -24748,7 +23960,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -24765,7 +23976,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "740",
@@ -24784,7 +23994,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "840"
@@ -24797,7 +24006,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -24808,7 +24016,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -24819,7 +24026,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -24830,7 +24036,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -24841,7 +24046,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -24854,7 +24058,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -24865,7 +24068,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -24878,7 +24080,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -24889,7 +24090,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -24900,7 +24100,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -24911,7 +24110,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -24929,7 +24127,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -24956,7 +24153,6 @@
 "860",
 "1480"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "415",
@@ -24991,7 +24187,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -25002,7 +24197,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -25013,7 +24207,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -25024,7 +24217,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -25035,7 +24227,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -25046,7 +24237,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -25057,7 +24247,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -25068,7 +24257,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -25079,7 +24267,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -25090,7 +24277,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -25101,7 +24287,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -25112,7 +24297,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -25123,7 +24307,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -25134,7 +24317,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -25145,7 +24327,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -25174,7 +24355,6 @@
 "841",
 "860"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "780",
@@ -25216,7 +24396,6 @@
 "740",
 "760"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "292",
@@ -25257,7 +24436,6 @@
 "740",
 "760"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "245",
@@ -25305,7 +24483,6 @@
 "1440",
 "1560"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "213",
@@ -25355,7 +24532,6 @@
 "1440",
 "1560"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "322",
@@ -25391,7 +24567,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -25410,7 +24585,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -25426,7 +24600,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -25450,7 +24623,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -25476,7 +24648,6 @@
 "1560",
 "1640"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "73",
@@ -25518,7 +24689,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -25542,7 +24712,6 @@
 "1560",
 "1640"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "73",
@@ -25592,7 +24761,6 @@
 "1560",
 "1640"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "175",
@@ -25639,7 +24807,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -25655,7 +24822,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -25671,7 +24837,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -25687,7 +24852,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -25706,7 +24870,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "504",
@@ -25738,7 +24901,6 @@
 "1780",
 "1900"
 ],
-"rows": null,
 "rvr": {
 "1480": [
 "18"
@@ -25787,7 +24949,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "104"
@@ -25808,7 +24969,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "204"
@@ -25835,7 +24995,6 @@
 "1780",
 "1900"
 ],
-"rows": null,
 "rvr": {
 "1504": [
 "18"
@@ -25889,7 +25048,6 @@
 "1780",
 "1900"
 ],
-"rows": null,
 "rvr": {
 "1640": [
 "24",
@@ -25948,7 +25106,6 @@
 "1780",
 "1900"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "555",
@@ -26001,7 +25158,6 @@
 "1780",
 "1900"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "567",
@@ -26059,7 +25215,6 @@
 "1900",
 "21640"
 ],
-"rows": null,
 "rvr": {
 "1504": [
 "18"
@@ -26120,7 +25275,6 @@
 "1520",
 "1660"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "214",
@@ -26163,7 +25317,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -26178,7 +25331,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -26200,7 +25352,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -26227,7 +25378,6 @@
 "960",
 "1100"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "100",
@@ -26269,7 +25419,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -26280,7 +25429,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -26296,7 +25444,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "400"
@@ -26314,7 +25461,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -26339,7 +25485,6 @@
 "1540",
 "1640"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "101",
@@ -26393,7 +25538,6 @@
 "1540",
 "1640"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "101",
@@ -26452,7 +25596,6 @@
 "1540",
 "1640"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "500",
@@ -26486,7 +25629,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "400"
@@ -26509,7 +25651,6 @@
 "1540",
 "1640"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "460",
@@ -26559,7 +25700,6 @@
 "2260",
 "2280"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "40",
@@ -26610,7 +25750,6 @@
 "2260",
 "2280"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "0",
@@ -26652,7 +25791,6 @@
 "2260",
 "2280"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "120",
@@ -26699,7 +25837,6 @@
 "2260",
 "2280"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "100",
@@ -26749,7 +25886,6 @@
 "2260",
 "2280"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "40",
@@ -26791,7 +25927,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -26809,7 +25944,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -26830,7 +25964,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -26848,7 +25981,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -26868,7 +26000,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "300"
@@ -26898,7 +26029,6 @@
 "1160",
 "1480"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "160",
@@ -26935,7 +26065,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "40",
@@ -26970,7 +26099,6 @@
 "1280",
 "1480"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "60",
@@ -27021,7 +26149,6 @@
 "1280",
 "1480"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "0",
@@ -27070,7 +26197,6 @@
 "1280",
 "1480"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "220",
@@ -27110,7 +26236,6 @@
 "1280",
 "1480"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "40",
@@ -27165,7 +26290,6 @@
 "1280",
 "1480"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "80",
@@ -27206,7 +26330,6 @@
 "1100",
 "1120"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "100",
@@ -27238,7 +26361,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -27252,7 +26374,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -27270,7 +26391,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -27297,7 +26417,6 @@
 "2020",
 "2220"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "0",
@@ -27336,7 +26455,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "400"
@@ -27354,7 +26472,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -27374,7 +26491,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "122",
@@ -27405,7 +26521,6 @@
 "1360",
 "1480"
 ],
-"rows": null,
 "rvr": {
 "1200": [
 "24",
@@ -27462,7 +26577,6 @@
 "1340",
 "1360"
 ],
-"rows": null,
 "rvr": {
 "1108": [
 "50"
@@ -27517,7 +26631,6 @@
 "1340",
 "1360"
 ],
-"rows": null,
 "rvr": {
 "1180": [
 "24",
@@ -27575,7 +26688,6 @@
 "1140",
 "1420"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "0",
@@ -27619,7 +26731,6 @@
 "alts": [
 "765"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "765",
@@ -27648,7 +26759,6 @@
 "1140",
 "1420"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "0",
@@ -27697,7 +26807,6 @@
 "alts": [
 "1440"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "440",
@@ -27728,7 +26837,6 @@
 "1100",
 "1420"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "60",
@@ -27768,7 +26876,6 @@
 "alts": [
 "1420"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "300",
@@ -27807,7 +26914,6 @@
 "1660",
 "1700"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "274",
@@ -27858,7 +26964,6 @@
 "1720",
 "1820"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "640",
@@ -27891,7 +26996,6 @@
 "1720",
 "1820"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "514",
@@ -27933,7 +27037,6 @@
 "1720",
 "1820"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "512",
@@ -27980,7 +27083,6 @@
 "1820",
 "2060"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "60",
@@ -28015,7 +27117,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "0",
@@ -28045,7 +27146,6 @@
 "760",
 "1000"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "0",
@@ -28087,7 +27187,6 @@
 "543",
 "740"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "0",
@@ -28124,7 +27223,6 @@
 "1380",
 "1620"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "60",
@@ -28168,7 +27266,6 @@
 "1380",
 "1620"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "155",
@@ -28218,7 +27315,6 @@
 "1380",
 "1620"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "60",
@@ -28255,7 +27351,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -28266,7 +27361,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -28277,7 +27371,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -28296,7 +27389,6 @@
 "1980",
 "2100"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "100",
@@ -28351,7 +27443,6 @@
 "1780",
 "1980"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "556",
@@ -28397,7 +27488,6 @@
 "1780",
 "1980"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "485",
@@ -28449,7 +27539,6 @@
 "1380",
 "1480"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "56",
@@ -28501,7 +27590,6 @@
 "1560",
 "2000"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "0",
@@ -28536,7 +27624,6 @@
 "1320",
 "1820"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "0",
@@ -28575,7 +27662,6 @@
 "1560",
 "1740"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "202",
@@ -28622,7 +27708,6 @@
 "1560",
 "1740"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "252",
@@ -28663,7 +27748,6 @@
 "alts": [
 "1780"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "780",
@@ -28696,7 +27780,6 @@
 "1300",
 "1540"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "200",
@@ -28740,7 +27823,6 @@
 "1020",
 "1280"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "20",
@@ -28775,7 +27857,6 @@
 "1340",
 "1540"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "340",
@@ -28811,7 +27892,6 @@
 "1300",
 "1540"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "180",
@@ -28855,7 +27935,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -28878,7 +27957,6 @@
 "1520",
 "1820"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "335",
@@ -28915,7 +27993,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "481",
@@ -28944,7 +28021,6 @@
 "1860",
 "1985"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "335",
@@ -28987,7 +28063,6 @@
 "1080",
 "1200"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "0",
@@ -29031,7 +28106,6 @@
 "1060",
 "1200"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "60",
@@ -29071,7 +28145,6 @@
 "1020",
 "1200"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "0",
@@ -29106,7 +28179,6 @@
 "1120",
 "1200"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "120",
@@ -29145,7 +28217,6 @@
 "500",
 "600"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "390",
@@ -29182,7 +28253,6 @@
 "1520",
 "1540"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "230",
@@ -29215,7 +28285,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -29240,7 +28309,6 @@
 "840",
 "880"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "392",
@@ -29285,7 +28353,6 @@
 "840",
 "880"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "442",
@@ -29334,7 +28401,6 @@
 "840",
 "880"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "494",
@@ -29377,7 +28443,6 @@
 "640",
 "680"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "640",
@@ -29419,7 +28484,6 @@
 "840",
 "920"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "620",
@@ -29468,7 +28532,6 @@
 "1060",
 "1380"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "60",
@@ -29517,7 +28580,6 @@
 "1340",
 "1440"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "160",
@@ -29559,7 +28621,6 @@
 "1440",
 "1607"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "43",
@@ -29601,7 +28662,6 @@
 "1440",
 "1620"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "320",
@@ -29647,7 +28707,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -29669,7 +28728,6 @@
 "1700",
 "1820"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "294",
@@ -29717,7 +28775,6 @@
 "1700",
 "1820"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "240",
@@ -29775,7 +28832,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -29797,7 +28853,6 @@
 "1620",
 "81480"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "178",
@@ -29846,7 +28901,6 @@
 "1440",
 "1620"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "229",
@@ -29887,7 +28941,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -29915,7 +28968,6 @@
 "1820",
 "1940"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "171",
@@ -29958,7 +29010,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -29975,7 +29026,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -30002,7 +29052,6 @@
 "673",
 "920"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "673",
@@ -30034,7 +29083,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -30053,7 +29101,6 @@
 "alts": [
 "920"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "460",
@@ -30079,7 +29126,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -30104,7 +29150,6 @@
 "1780",
 "1980"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "620",
@@ -30134,7 +29179,6 @@
 "1860",
 "2160"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "160",
@@ -30169,7 +29213,6 @@
 "1760",
 "1980"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "270",
@@ -30210,7 +29253,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -30228,7 +29270,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "300",
@@ -30247,7 +29288,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -30263,7 +29303,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -30279,7 +29318,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -30303,7 +29341,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -30317,7 +29354,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -30330,7 +29366,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -30343,7 +29378,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -30361,7 +29395,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -30379,7 +29412,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -30392,7 +29424,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -30414,7 +29445,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -30436,7 +29466,6 @@
 "680",
 "780"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "640",
@@ -30469,7 +29498,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -30487,7 +29515,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -30503,7 +29530,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -30521,7 +29547,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -30542,7 +29567,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -30569,7 +29593,6 @@
 "680",
 "780"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "200",
@@ -30617,7 +29640,6 @@
 "680",
 "780"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "451",
@@ -30660,7 +29682,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -30678,7 +29699,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -30696,7 +29716,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -30713,7 +29732,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -30736,7 +29754,6 @@
 "1369",
 "1620"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "38",
@@ -30781,7 +29798,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -30806,7 +29822,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -30821,7 +29836,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -30834,7 +29848,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -30857,7 +29870,6 @@
 "1240",
 "1260"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "160",
@@ -30898,7 +29910,6 @@
 "1440",
 "1580"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "279",
@@ -30949,7 +29960,6 @@
 "1580",
 "81340"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "201",
@@ -30991,7 +30001,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -31006,7 +30015,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -31026,7 +30034,6 @@
 "alts": [
 "1170"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "132",
@@ -31059,7 +30066,6 @@
 "1097",
 "1360"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "81",
@@ -31101,7 +30107,6 @@
 "2600",
 "2680"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "308",
@@ -31144,7 +30149,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -31171,7 +30175,6 @@
 "2416",
 "2680"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "20",
@@ -31209,7 +30212,6 @@
 "780",
 "1020"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "20",
@@ -31248,7 +30250,6 @@
 "472",
 "580"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "20",
@@ -31267,7 +30268,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -31290,7 +30290,6 @@
 "700",
 "800"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "257",
@@ -31335,7 +30334,6 @@
 "700",
 "800"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "257",
@@ -31377,7 +30375,6 @@
 "700",
 "800"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "403",
@@ -31424,7 +30421,6 @@
 "700",
 "800"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "231",
@@ -31473,7 +30469,6 @@
 "700",
 "2800"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "335",
@@ -31521,7 +30516,6 @@
 "620",
 "700"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "500",
@@ -31561,7 +30555,6 @@
 "1500",
 "1520"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "147",
@@ -31604,7 +30597,6 @@
 "1500",
 "1520"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "106",
@@ -31650,7 +30642,6 @@
 "1200",
 "1560"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "100",
@@ -31686,7 +30677,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -31711,7 +30701,6 @@
 "1360",
 "1440"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "360",
@@ -31747,7 +30736,6 @@
 "1420",
 "1440"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "420",
@@ -31782,7 +30770,6 @@
 "1260",
 "1440"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "138",
@@ -31837,7 +30824,6 @@
 "1360",
 "1440"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "32",
@@ -31878,7 +30864,6 @@
 "1380",
 "1720"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "111",
@@ -31913,7 +30898,6 @@
 "1168",
 "1260"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "114",
@@ -31953,7 +30937,6 @@
 "1380",
 "1720"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "161",
@@ -31999,7 +30982,6 @@
 "1620",
 "1720"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "620",
@@ -32027,7 +31009,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -32054,7 +31035,6 @@
 "3480",
 "3740"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "60",
@@ -32112,7 +31092,6 @@
 "760",
 "780"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "640",
@@ -32151,7 +31130,6 @@
 "760",
 "780"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "600",
@@ -32201,7 +31179,6 @@
 "1240",
 "1340"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "60",
@@ -32252,7 +31229,6 @@
 "1260",
 "1340"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "30",
@@ -32300,7 +31276,6 @@
 "3280",
 "3700"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "40",
@@ -32362,7 +31337,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "400"
@@ -32383,7 +31357,6 @@
 "540",
 "620"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "224",
@@ -32417,7 +31390,6 @@
 "580",
 "620"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "380",
@@ -32447,7 +31419,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -32464,7 +31435,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "400",
@@ -32482,7 +31452,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -32496,7 +31465,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -32520,7 +31488,6 @@
 "1974",
 "2101"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "40",
@@ -32564,7 +31531,6 @@
 "2200",
 "2220"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "140",
@@ -32606,7 +31572,6 @@
 "2200",
 "2220"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "0",
@@ -32653,7 +31618,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "80",
@@ -32675,7 +31639,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -32691,7 +31654,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -32715,7 +31677,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -32731,7 +31692,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -32751,7 +31711,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -32770,7 +31729,6 @@
 "alts": [
 "1123"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "97",
@@ -32804,7 +31762,6 @@
 "520",
 "580"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "293",
@@ -32847,7 +31804,6 @@
 "520",
 "580"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "321",
@@ -32889,7 +31845,6 @@
 "1400",
 "1440"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "99",
@@ -32927,7 +31882,6 @@
 "1420",
 "1440"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "260",
@@ -32964,7 +31918,6 @@
 "1143",
 "1420"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "142",
@@ -33001,7 +31954,6 @@
 "1920",
 "2080"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "80",
@@ -33059,7 +32011,6 @@
 "1920",
 "2080"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "80",
@@ -33104,7 +32055,6 @@
 "560",
 "680"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "560",
@@ -33128,7 +32078,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -33144,7 +32093,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -33170,7 +32118,6 @@
 "2700",
 "34460"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "301",
@@ -33212,7 +32159,6 @@
 "640",
 "700"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "301",
@@ -33261,7 +32207,6 @@
 "640",
 "700"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "343",
@@ -33312,7 +32257,6 @@
 "640",
 "700"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "301",
@@ -33364,7 +32308,6 @@
 "640",
 "700"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "398",
@@ -33415,7 +32358,6 @@
 "640",
 "700"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "431",
@@ -33453,7 +32395,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -33464,7 +32405,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -33475,7 +32415,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -33486,7 +32425,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -33497,7 +32435,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -33508,7 +32445,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -33532,7 +32468,6 @@
 "1140",
 "1188"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "80",
@@ -33582,7 +32517,6 @@
 "1100",
 "1140"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "60",
@@ -33630,7 +32564,6 @@
 "780",
 "920"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "321",
@@ -33674,7 +32607,6 @@
 "780",
 "920"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "351",
@@ -33711,7 +32643,6 @@
 "580",
 "640"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "580",
@@ -33739,7 +32670,6 @@
 "900",
 "960"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "880",
@@ -33777,7 +32707,6 @@
 "1260",
 "1580"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "200",
@@ -33822,7 +32751,6 @@
 "1140",
 "1320"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "140",
@@ -33868,7 +32796,6 @@
 "1140",
 "1320"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "80",
@@ -33900,7 +32827,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "300"
@@ -33929,7 +32855,6 @@
 "4740",
 "23600"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "210",
@@ -33980,7 +32905,6 @@
 "1460",
 "1560"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "117",
@@ -34034,7 +32958,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -34054,7 +32977,6 @@
 "575",
 "580"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "454",
@@ -34087,7 +33009,6 @@
 "577",
 "600"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "470",
@@ -34121,7 +33042,6 @@
 "509",
 "520"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "447",
@@ -34154,7 +33074,6 @@
 "539",
 "540"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "442",
@@ -34189,7 +33108,6 @@
 "1600",
 "1700"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "288",
@@ -34231,7 +33149,6 @@
 "1600",
 "1700"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "307",
@@ -34270,7 +33187,6 @@
 "1560",
 "1700"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "560",
@@ -34297,7 +33213,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -34322,7 +33237,6 @@
 "1260",
 "1380"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "160",
@@ -34368,7 +33282,6 @@
 "1260",
 "1380"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "20",
@@ -34417,7 +33330,6 @@
 "1260",
 "1380"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "100",
@@ -34460,7 +33372,6 @@
 "1260",
 "1380"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "0",
@@ -34512,7 +33423,6 @@
 "1260",
 "1380"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "40",
@@ -34560,7 +33470,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "0",
@@ -34588,7 +33497,6 @@
 "1560",
 "1600"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "275",
@@ -34624,7 +33532,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -34638,7 +33545,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -34652,7 +33558,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -34672,7 +33577,6 @@
 "1320",
 "1380"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "300",
@@ -34714,7 +33618,6 @@
 "1380",
 "1560"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "160",
@@ -34759,7 +33662,6 @@
 "740",
 "860"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "580",
@@ -34799,7 +33701,6 @@
 "740",
 "860"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "720",
@@ -34831,7 +33732,6 @@
 "800",
 "860"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "367",
@@ -34867,7 +33767,6 @@
 "740",
 "860"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "371",
@@ -34915,7 +33814,6 @@
 "640",
 "780"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "480",
@@ -34957,7 +33855,6 @@
 "640",
 "780"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "420",
@@ -35009,7 +33906,6 @@
 "640",
 "780"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "359",
@@ -35059,7 +33955,6 @@
 "640",
 "780"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "442",
@@ -35106,7 +34001,6 @@
 "1660",
 "1740"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "660",
@@ -35140,7 +34034,6 @@
 "1540",
 "1560"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "319",
@@ -35183,7 +34076,6 @@
 "1540",
 "1560"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "319",
@@ -35221,7 +34113,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -35243,7 +34134,6 @@
 "820",
 "960"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "395",
@@ -35286,7 +34176,6 @@
 "820",
 "34960"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "660",
@@ -35329,7 +34218,6 @@
 "1280",
 "1480"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "60",
@@ -35379,7 +34267,6 @@
 "1280",
 "1480"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "10",
@@ -35426,7 +34313,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -35444,7 +34330,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -35460,7 +34345,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "660",
@@ -35482,7 +34366,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "660",
@@ -35509,7 +34392,6 @@
 "680",
 "880"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "343",
@@ -35561,7 +34443,6 @@
 "680",
 "880"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "460",
@@ -35600,7 +34481,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "457",
@@ -35626,7 +34506,6 @@
 "1820",
 "2000"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "0",
@@ -35661,7 +34540,6 @@
 "1420",
 "1480"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "320",
@@ -35696,7 +34574,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -35718,7 +34595,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -35734,7 +34610,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "280",
@@ -35757,7 +34632,6 @@
 "1154",
 "1200"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "148",
@@ -35793,7 +34667,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -35819,7 +34692,6 @@
 "1440",
 "1460"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "80",
@@ -35869,7 +34741,6 @@
 "1440",
 "1460"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "240",
@@ -35917,7 +34788,6 @@
 "1440",
 "1460"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "240",
@@ -35964,7 +34834,6 @@
 "1440",
 "1460"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "100",
@@ -36020,7 +34889,6 @@
 "2100",
 "2280"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "0",
@@ -36064,7 +34932,6 @@
 "2100",
 "2280"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "100",
@@ -36106,7 +34973,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -36126,7 +34992,6 @@
 "1100",
 "1260"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "20",
@@ -36172,7 +35037,6 @@
 "1100",
 "1260"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "60",
@@ -36218,7 +35082,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -36239,7 +35102,6 @@
 "1480",
 "1540"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "480",
@@ -36275,7 +35137,6 @@
 "1200",
 "1300"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "91",
@@ -36320,7 +35181,6 @@
 "1180",
 "1300"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "120",
@@ -36352,7 +35212,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "5",
@@ -36378,7 +35237,6 @@
 "1480",
 "1640"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "164",
@@ -36425,7 +35283,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "300"
@@ -36450,7 +35307,6 @@
 "1920",
 "1940"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "548",
@@ -36505,7 +35361,6 @@
 "1940",
 "81780"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "548",
@@ -36559,7 +35414,6 @@
 "1620",
 "1760"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "377",
@@ -36610,7 +35464,6 @@
 "1620",
 "1760"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "480",
@@ -36659,7 +35512,6 @@
 "920",
 "1200"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "200",
@@ -36696,7 +35548,6 @@
 "680",
 "34860"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "20",
@@ -36743,7 +35594,6 @@
 "860",
 "1020"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "20",
@@ -36784,7 +35634,6 @@
 "1580",
 "1600"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "560",
@@ -36823,7 +35672,6 @@
 "1300",
 "1340"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "240",
@@ -36860,7 +35708,6 @@
 "alts": [
 "1380"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "380",
@@ -36889,7 +35736,6 @@
 "1780",
 "1820"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "340",
@@ -36937,7 +35783,6 @@
 "1820",
 "2380"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "380",
@@ -36977,7 +35822,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "375",
@@ -37005,7 +35849,6 @@
 "2120",
 "2260"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "19",
@@ -37053,7 +35896,6 @@
 "1320",
 "1400"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "320",
@@ -37086,7 +35928,6 @@
 "1400",
 "21400"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "220",
@@ -37129,7 +35970,6 @@
 "alts": [
 "1320"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "320",
@@ -37159,7 +35999,6 @@
 "1320",
 "1340"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "320",
@@ -37192,7 +36031,6 @@
 "700",
 "820"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "496",
@@ -37227,7 +36065,6 @@
 "1580",
 "1680"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "500",
@@ -37263,7 +36100,6 @@
 "1160",
 "1200"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "6",
@@ -37304,7 +36140,6 @@
 "1860",
 "1920"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "840",
@@ -37340,7 +36175,6 @@
 "1760",
 "1800"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "760",
@@ -37376,7 +36210,6 @@
 "1400",
 "1420"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "380",
@@ -37418,7 +36251,6 @@
 "1610",
 "1740"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "560",
@@ -37459,7 +36291,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "40",
@@ -37493,7 +36324,6 @@
 "780",
 "800"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "194",
@@ -37546,7 +36376,6 @@
 "780",
 "800"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "640",
@@ -37595,7 +36424,6 @@
 "8330",
 "8620"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "330",
@@ -37631,7 +36459,6 @@
 "alts": [
 "9220"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "220",
@@ -37662,7 +36489,6 @@
 "6937",
 "7204"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "204",
@@ -37694,7 +36520,6 @@
 "6814",
 "7181"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "181",
@@ -37732,7 +36557,6 @@
 "7980",
 "28020"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "20",
@@ -37797,7 +36621,6 @@
 "2480",
 "2520"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "87",
@@ -37832,7 +36655,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -37850,7 +36672,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -37871,7 +36692,6 @@
 "alts": [
 "700"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "700"
@@ -37902,7 +36722,6 @@
 "520",
 "680"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "303",
@@ -37939,7 +36758,6 @@
 "520",
 "680"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "308",
@@ -37983,7 +36801,6 @@
 "520",
 "680"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "152",
@@ -38017,7 +36834,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -38038,7 +36854,6 @@
 "1139",
 "1460"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "139",
@@ -38075,7 +36890,6 @@
 "1380",
 "21400"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "142",
@@ -38116,7 +36930,6 @@
 "560",
 "680"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "440",
@@ -38154,7 +36967,6 @@
 "560",
 "680"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "440",
@@ -38194,7 +37006,6 @@
 "560",
 "680"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "281",
@@ -38232,7 +37043,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -38252,7 +37062,6 @@
 "2920",
 "3120"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "120",
@@ -38294,7 +37103,6 @@
 "2920",
 "3120"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "120",
@@ -38330,7 +37138,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "120",
@@ -38351,7 +37158,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "100",
@@ -38377,7 +37183,6 @@
 "1160",
 "1260"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "80",
@@ -38412,7 +37217,6 @@
 "1160",
 "1260"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "100",
@@ -38453,7 +37257,6 @@
 "1580",
 "2240"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "240",
@@ -38498,7 +37301,6 @@
 "920",
 "1100"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "100",
@@ -38546,7 +37348,6 @@
 "1480",
 "1820"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "277",
@@ -38595,7 +37396,6 @@
 "1281",
 "1360"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "276",
@@ -38623,7 +37423,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -38643,7 +37442,6 @@
 "2600",
 "2680"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "376",
@@ -38684,7 +37482,6 @@
 "2616",
 "2680"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "314",
@@ -38727,7 +37524,6 @@
 "680",
 "800"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "620",
@@ -38763,7 +37559,6 @@
 "1740",
 "1840"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "740",
@@ -38796,7 +37591,6 @@
 "alts": [
 "4160"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "160",
@@ -38823,7 +37617,6 @@
 "860",
 "1260"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "260",
@@ -38853,7 +37646,6 @@
 "alts": [
 "1300"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "300",
@@ -38877,7 +37669,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "880",
@@ -38896,7 +37687,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -38916,7 +37706,6 @@
 "920",
 "940"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "920",
@@ -38940,7 +37729,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -38962,7 +37750,6 @@
 "2580",
 "2800"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "160",
@@ -39008,7 +37795,6 @@
 "alts": [
 "4240"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "240",
@@ -39035,7 +37821,6 @@
 "alts": [
 "4100"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "100",
@@ -39062,7 +37847,6 @@
 "4167",
 "4280"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "167",
@@ -39096,7 +37880,6 @@
 "alts": [
 "4340"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "340",
@@ -39129,7 +37912,6 @@
 "720",
 "780"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "640",
@@ -39158,7 +37940,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -39175,7 +37956,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "300"
@@ -39193,7 +37973,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "300"
@@ -39213,7 +37992,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "300"
@@ -39226,7 +38004,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -39241,7 +38018,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "300"
@@ -39257,7 +38033,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "300"
@@ -39273,7 +38048,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "300"
@@ -39296,7 +38070,6 @@
 "916",
 "1100"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "100",
@@ -39326,7 +38099,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "300"
@@ -39346,7 +38118,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "300"
@@ -39363,7 +38134,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "300"
@@ -39380,7 +38150,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "300"
@@ -39395,7 +38164,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "300"
@@ -39419,7 +38187,6 @@
 "1100",
 "1272"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "100",
@@ -39463,7 +38230,6 @@
 "1160",
 "1260"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "30",
@@ -39499,7 +38265,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "300"
@@ -39525,7 +38290,6 @@
 "alts": [
 "1240"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "240",
@@ -39553,7 +38317,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "240",
@@ -39578,7 +38341,6 @@
 "1346",
 "1500"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "153",
@@ -39618,7 +38380,6 @@
 "alts": [
 "1280"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "280",
@@ -39650,7 +38411,6 @@
 "4100",
 "4240"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "60",
@@ -39694,7 +38454,6 @@
 "3560",
 "3620"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "241",
@@ -39742,7 +38501,6 @@
 "1100",
 "1180"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "0",
@@ -39778,7 +38536,6 @@
 "3780",
 "3840"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "780",
@@ -39811,7 +38568,6 @@
 "3540",
 "3840"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "540",
@@ -39842,7 +38598,6 @@
 "1060",
 "1160"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "60",
@@ -39883,7 +38638,6 @@
 "3660",
 "3980"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "384",
@@ -39929,7 +38683,6 @@
 "3860",
 "3980"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "382",
@@ -39969,7 +38722,6 @@
 "1760",
 "1980"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "720",
@@ -40016,7 +38768,6 @@
 "3100",
 "3220"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "60",
@@ -40057,7 +38808,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "60",
@@ -40090,7 +38840,6 @@
 "480",
 "580"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "220",
@@ -40140,7 +38889,6 @@
 "480",
 "580"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "270",
@@ -40183,7 +38931,6 @@
 "580",
 "21480"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "420",
@@ -40214,7 +38961,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -40238,7 +38984,6 @@
 "1280",
 "1400"
 ],
-"rows": null,
 "rvr": {
 "1122": [
 "35"
@@ -40287,7 +39032,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -40309,7 +39053,6 @@
 "5329",
 "5340"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "121",
@@ -40346,7 +39089,6 @@
 "5680",
 "5820"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "133",
@@ -40403,7 +39145,6 @@
 "5820",
 "5960"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "420",
@@ -40445,7 +39186,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -40464,7 +39204,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "300"
@@ -40484,7 +39223,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "300"
@@ -40506,7 +39244,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "300"
@@ -40519,7 +39256,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -40536,7 +39272,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "300"
@@ -40553,7 +39288,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "300"
@@ -40571,7 +39305,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "300"
@@ -40589,7 +39322,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "300"
@@ -40614,7 +39346,6 @@
 "1460",
 "1660"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "149",
@@ -40666,7 +39397,6 @@
 "1460",
 "1660"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "149",
@@ -40716,7 +39446,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "300"
@@ -40735,7 +39464,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "300"
@@ -40754,7 +39482,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "300"
@@ -40771,7 +39498,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "300"
@@ -40796,7 +39522,6 @@
 "1440",
 "1660"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "141",
@@ -40844,7 +39569,6 @@
 "1440",
 "1660"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "332",
@@ -40886,7 +39610,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "300"
@@ -40904,7 +39627,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -40931,7 +39653,6 @@
 "1620",
 "1860"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "79",
@@ -40986,7 +39707,6 @@
 "1560",
 "1880"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "170",
@@ -41030,7 +39750,6 @@
 "alts": [
 "1960"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "960",
@@ -41060,7 +39779,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "101"
@@ -41091,7 +39809,6 @@
 "1360",
 "1380"
 ],
-"rows": null,
 "rvr": {
 "1220": [
 "24",
@@ -41152,7 +39869,6 @@
 "1360",
 "1380"
 ],
-"rows": null,
 "rvr": {
 "1240": [
 "24",
@@ -41212,7 +39928,6 @@
 "1360",
 "1380"
 ],
-"rows": null,
 "rvr": {
 "1016": [
 "24"
@@ -41273,7 +39988,6 @@
 "1320",
 "1380"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "17",
@@ -41332,7 +40046,6 @@
 "1380",
 "1437"
 ],
-"rows": null,
 "rvr": {
 "1240": [
 "24",
@@ -41393,7 +40106,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -41420,7 +40132,6 @@
 "680",
 "34380"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "380",
@@ -41470,7 +40181,6 @@
 "520",
 "680"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "309",
@@ -41523,7 +40233,6 @@
 "520",
 "680"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "348",
@@ -41575,7 +40284,6 @@
 "2020",
 "2060"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "20",
@@ -41622,7 +40330,6 @@
 "2360",
 "2420"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "130",
@@ -41667,7 +40374,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "53",
@@ -41696,7 +40402,6 @@
 "700",
 "780"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "332",
@@ -41737,7 +40442,6 @@
 "740",
 "8480"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "340",
@@ -41778,7 +40482,6 @@
 "600",
 "740"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "377",
@@ -41818,7 +40521,6 @@
 "600",
 "740"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "373",
@@ -41860,7 +40562,6 @@
 "2140",
 "2380"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "140",
@@ -41907,7 +40608,6 @@
 "2140",
 "2380"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "140",
@@ -41943,7 +40643,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "20",
@@ -41970,7 +40669,6 @@
 "460",
 "940"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "208",
@@ -42020,7 +40718,6 @@
 "1470",
 "1820"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "144",
@@ -42071,7 +40768,6 @@
 "1423",
 "1800"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "144",
@@ -42119,7 +40815,6 @@
 "700",
 "14700"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "264",
@@ -42159,7 +40854,6 @@
 "540",
 "860"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "540",
@@ -42190,7 +40884,6 @@
 "860",
 "14477"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "253",
@@ -42232,7 +40925,6 @@
 "1120",
 "1180"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "40",
@@ -42279,7 +40971,6 @@
 "1040",
 "1120"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "40",
@@ -42321,7 +41012,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -42338,7 +41028,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -42354,7 +41043,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -42377,7 +41065,6 @@
 "1560",
 "1760"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "91",
@@ -42421,7 +41108,6 @@
 "1480",
 "1560"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "153",
@@ -42462,7 +41148,6 @@
 "alts": [
 "1560"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "360",
@@ -42499,7 +41184,6 @@
 "1560",
 "1760"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "91",
@@ -42531,7 +41215,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -42556,7 +41239,6 @@
 "1740",
 "1940"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "302",
@@ -42601,7 +41283,6 @@
 "1740",
 "1940"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "390",
@@ -42651,7 +41332,6 @@
 "1740",
 "1940"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "309",
@@ -42698,7 +41378,6 @@
 "340",
 "540"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "279",
@@ -42735,7 +41414,6 @@
 "540",
 "640"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "480",
@@ -42763,7 +41441,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "500",
@@ -42782,7 +41459,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -42805,7 +41481,6 @@
 "760",
 "800"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "298",
@@ -42843,7 +41518,6 @@
 "alts": [
 "580"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "580",
@@ -42874,7 +41548,6 @@
 "760",
 "800"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "298",
@@ -42916,7 +41589,6 @@
 "760",
 "800"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "271",
@@ -42960,7 +41632,6 @@
 "680",
 "880"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "580",
@@ -42991,7 +41662,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -43012,7 +41682,6 @@
 "940",
 "1300"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "300",
@@ -43052,7 +41721,6 @@
 "1000",
 "34604"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "0",
@@ -43092,7 +41760,6 @@
 "828",
 "1000"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "0",
@@ -43126,7 +41793,6 @@
 "2960",
 "3080"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "80",
@@ -43162,7 +41828,6 @@
 "alts": [
 "3660"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "660",
@@ -43190,7 +41855,6 @@
 "1760",
 "1840"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "700",
@@ -43222,7 +41886,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "100",
@@ -43248,7 +41911,6 @@
 "580",
 "960"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "304",
@@ -43295,7 +41957,6 @@
 "580",
 "587"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "343",
@@ -43337,7 +41998,6 @@
 "960",
 "78587"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "343",
@@ -43385,7 +42045,6 @@
 "alts": [
 "580"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "540",
@@ -43417,7 +42076,6 @@
 "1380",
 "1640"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "120",
@@ -43463,7 +42121,6 @@
 "1400",
 "1640"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "52",
@@ -43518,7 +42175,6 @@
 "1640",
 "14966"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "40",
@@ -43578,7 +42234,6 @@
 "740",
 "760"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "394",
@@ -43618,7 +42273,6 @@
 "740",
 "760"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "394",
@@ -43665,7 +42319,6 @@
 "740",
 "760"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "394",
@@ -43704,7 +42357,6 @@
 "960",
 "1100"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "100",
@@ -43739,7 +42391,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "40",
@@ -43760,7 +42411,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "500",
@@ -43782,7 +42432,6 @@
 "440",
 "480"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "440",
@@ -43816,7 +42465,6 @@
 "540",
 "680"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "298",
@@ -43858,7 +42506,6 @@
 "540",
 "680"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "298",
@@ -43900,7 +42547,6 @@
 "1120",
 "1215"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "120",
@@ -43940,7 +42586,6 @@
 "1040",
 "1420"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "40",
@@ -43984,7 +42629,6 @@
 "7536",
 "7880"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "144",
@@ -44028,7 +42672,6 @@
 "5440",
 "5660"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "160",
@@ -44076,7 +42719,6 @@
 "3440",
 "83280"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "280",
@@ -44113,7 +42755,6 @@
 "3420",
 "3440"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "380",
@@ -44147,7 +42788,6 @@
 "480",
 "740"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "480",
@@ -44177,7 +42817,6 @@
 "440",
 "560"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "380",
@@ -44211,7 +42850,6 @@
 "1760",
 "1973"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "512",
@@ -44245,7 +42883,6 @@
 "1920",
 "1938"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "353",
@@ -44273,7 +42910,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "300",
@@ -44299,7 +42935,6 @@
 "2260",
 "2740"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "41",
@@ -44348,7 +42983,6 @@
 "3480",
 "3540"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "480",
@@ -44374,7 +43008,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -44395,7 +43028,6 @@
 "1420",
 "1500"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "326",
@@ -44424,7 +43056,6 @@
 "alts": [
 "2300"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "300",
@@ -44450,7 +43081,6 @@
 "alts": [
 "1820"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "820",
@@ -44479,7 +43109,6 @@
 "680",
 "960"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "500",
@@ -44507,7 +43136,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -44524,7 +43152,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "300",
@@ -44548,7 +43175,6 @@
 "2620",
 "2760"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "420",
@@ -44591,7 +43217,6 @@
 "2620",
 "2780"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "380",
@@ -44634,7 +43259,6 @@
 "2000",
 "2200"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "0",
@@ -44680,7 +43304,6 @@
 "2200",
 "82094"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "94",
@@ -44734,7 +43357,6 @@
 "1000",
 "1380"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "0",
@@ -44783,7 +43405,6 @@
 "1340",
 "1380"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "340",
@@ -44819,7 +43440,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "60",
@@ -44838,7 +43458,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "80",
@@ -44852,7 +43471,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -44863,7 +43481,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "0",
@@ -44926,7 +43543,6 @@
 "1540",
 "1920"
 ],
-"rows": null,
 "rvr": {
 "375": [
 "18"
@@ -45106,7 +43722,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "0",
@@ -45152,7 +43767,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "0",
@@ -45173,7 +43787,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -45219,7 +43832,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "0",
@@ -45241,7 +43853,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "0",
@@ -45263,7 +43874,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -45274,7 +43884,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "0",
@@ -45298,7 +43907,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -45385,7 +43993,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "0",
@@ -45410,7 +44017,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -45421,7 +44027,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "0",
@@ -45511,7 +44116,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "0",
@@ -45534,7 +44138,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "0",
@@ -45629,7 +44232,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "0",
@@ -45653,7 +44255,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "0",
@@ -45689,7 +44290,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -45816,7 +44416,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "0",
@@ -45861,7 +44460,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "0",
@@ -45891,7 +44489,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -46012,7 +44609,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "0",
@@ -46049,7 +44645,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "0",
@@ -46150,7 +44745,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "0",
@@ -46188,7 +44782,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "0",
@@ -46340,7 +44933,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "0",
@@ -46375,7 +44967,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "0",
@@ -46584,7 +45175,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "0",
@@ -46647,7 +45237,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "0",
@@ -46685,7 +45274,6 @@
 "860",
 "960"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "223",
@@ -46724,7 +45312,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "0",
@@ -46802,7 +45389,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "0",
@@ -46833,7 +45419,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "0",
@@ -46909,7 +45494,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "0",
@@ -46936,7 +45520,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "0",
@@ -46958,7 +45541,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -47007,7 +45589,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "0",
@@ -47029,7 +45610,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "0",
@@ -47059,7 +45639,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -47137,7 +45716,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "0",
@@ -47175,7 +45753,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "0",
@@ -47234,7 +45811,6 @@
 "740",
 "916"
 ],
-"rows": null,
 "rvr": {},
 "seen": [
 "116",
@@ -47429,7 +46005,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "0",
@@ -47466,7 +46041,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "0",
@@ -47493,7 +46067,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "0",
@@ -47517,7 +46090,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [],
 "vis": {}
@@ -47639,7 +46211,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "0",
@@ -47672,7 +46243,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "0",
@@ -47826,7 +46396,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "100",
@@ -47867,7 +46436,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "0",
@@ -48004,7 +46572,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "0",
@@ -48050,7 +46617,6 @@
 "courses": {},
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "0",
@@ -48171,7 +46737,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "23",
@@ -48316,7 +46881,6 @@
 },
 "minimums": {
 "alts": [],
-"rows": null,
 "rvr": {},
 "seen": [
 "0",

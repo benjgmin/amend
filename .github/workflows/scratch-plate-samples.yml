@@ -24,7 +24,13 @@ jobs:
             curl -sSfL -o meta/$e.xml https://aeronav.faa.gov/d-tpp/$e/xml_data/d-tpp_Metafile.xml \
               && echo "edition $e served" || { echo "edition $e not served"; rm -f meta/$e.xml; }
           done
+          for u in 2611/00089R23.PDF 2610/00089R23.PDF 2609/00089R23.PDF; do
+            curl -s -o /dev/null -w "$u %{http_code}\n" https://aeronav.faa.gov/d-tpp/$u
+          done
           python -m amend plates meta/*.xml --budget 3000
+          for u in 2611/00089R23.PDF 2610/00089R23.PDF; do
+            curl -s -o /dev/null -w "$u %{http_code}\n" https://aeronav.faa.gov/d-tpp/$u
+          done
       - name: the numbers read before are unchanged; only rows are new
         if: ${{ !cancelled() }}
         run: |
