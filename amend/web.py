@@ -17,6 +17,7 @@ import shutil
 from . import brand
 
 from . import feeds
+from .cycles import dtpp_id
 
 SITE_URL = "https://amend.watch/"
 REPO_URL = "https://github.com/benjgmin/amend"
@@ -908,10 +909,10 @@ SUPPLEMENT_SEARCH = "https://www.faa.gov/air_traffic/flight_info/aeronav/digital
 NOTAM_SEARCH = "https://notams.aim.faa.gov/notamSearch/"
 
 
-def source_link(c, cycle):
+def source_link(c, cycle, oldest=None):
     """the FAA publication a change came from: the plate for charts, the NASR cycle page for the rest."""
     if (c.get("source") or "").upper() == "D-TPP" or c.get("chart"):
-        if c.get("chart", {}).get("pdf"):
+        if plate_served(c, oldest):
             return ""   # "View plate" already links the official plate
         return (f'<a class="src" href="{DTPP_SEARCH}" target="_blank" rel="noopener" '
                 f'title="FAA d-TPP (terminal procedures) search">FAA source ↗</a>')
@@ -921,12 +922,13 @@ def source_link(c, cycle):
             f'title="FAA NASR data, cycle {nice(cycle)}, file {e(c.get("source", ""))}">FAA source ↗</a>')
 
 
-def change_html(c, cycle=None):
+def change_html(c, cycle=None, oldest=None):
+    """oldest: the oldest d-TPP edition aeronav still serves, so an older plate gets no dead "View plate" link"""
     extra = []
     if c.get("chart", {}).get("amdt"):
         a = c["chart"]["amdt"]
         extra.append(f'<span class="ann fyi plain">{"Original" if a.upper() in ("0", "ORIG") else "Amdt " + e(a)}</span>')
-    if c.get("chart", {}).get("pdf"):
+    if plate_served(c, oldest):
         extra.append(f'<a href="{e(c["chart"]["pdf"])}" target="_blank" rel="noopener" '
                      f'title="Official FAA plate (d-TPP)">View plate ↗</a>')
     more = ""
@@ -937,7 +939,7 @@ def change_html(c, cycle=None):
                 + "\n".join(arrow(d) for d in c["details"]) + "</pre></details>")
     if c.get("untranslated"):
         more = f'<div class="why">{e(c["untranslated"])}</div>' + more
-    extra.append(source_link(c, c.get("cycle") or cycle))
+    extra.append(source_link(c, c.get("cycle") or cycle, oldest))
     ids = (f' data-id="{e(c["id"])}"' if c.get("id") else "") + (f' data-c="{e(c["cycle"])}"' if c.get("cycle") else "")
     return (f'<div class="it p-{e(c["priority"])}"{ids}><span class="k">{e(cap(c["category"]))}</span>'
             f'<div class="s">{arrow(cap(c["summary"]))}{more}</div><div class="m">{"".join(extra)}</div></div>')
@@ -1095,6 +1097,21 @@ def effective(cycle):
     return dt.datetime.fromisoformat(cycle).replace(hour=9, minute=1, tzinfo=dt.timezone.utc)
 
 
+def oldest_plate_edition(meta, now):
+    """the oldest d-TPP edition whose plates aeronav still serves: the one before the edition in effect. Older
+    plates are gone (404), so chart history from before it links the FAA's d-TPP search instead (checked 9 Oct
+    2026: 2609-2611 served, 2607 and 2608 gone)."""
+    in_effect = meta["to_cycle"] if now >= effective(meta["to_cycle"]) else meta["from_cycle"]
+    return dtpp_id(dt.date.fromisoformat(in_effect) - dt.timedelta(days=28))
+
+
+def plate_served(c, oldest):
+    """the change's plate link, unless it's from an edition older than `oldest` (None: no limit)"""
+    pdf = c.get("chart", {}).get("pdf")
+    m = re.search(r"/d-tpp/(\d{4})/", pdf or "")
+    return pdf if pdf and not (oldest and m and m.group(1) < oldest) else None
+
+
 def next_changeover(meta, now):
     """(when, upcoming?): the upcoming cycle's 0901Z, or once it's in effect, the one 28 days later."""
     upcoming, _ = status(meta, now)
@@ -1242,12 +1259,13 @@ def airport_page(apt, info, latest, hist, meta, now, has_card=False):
             f'{"On" if up else "In the"} {nice(meta["to_cycle"])} {"· current data stays the same" if up else "cycle"}'))
             + '</div>')
     if cycles:
+        oldest = oldest_plate_edition(meta, now)
         col.append('<h2 class="h2">History since Aug 2024</h2><div class="hlist">')
         for i, cyc in enumerate(cycles):
             g = by_cycle[cyc]
             col.append(f'<details class="cycle lst" id="c-{e(cyc)}"{" open" if i < 3 else ""}><summary>'
                        f'<span class="chev">▶</span>Effective {nice(cyc)}{chips(counts(g), False)}</summary>'
-                       + "".join(change_html(x) for x in g) + "</details>")
+                       + "".join(change_html(x, oldest=oldest) for x in g) + "</details>")
         col.append("</div>")
     # latest/<ID>.json only exists for airports changing this cycle, history/<ID>.json only for ones with history
     data = ([f'<a href="../latest/{e(apt)}.json">latest</a>'] if latest is not None else []) + \
@@ -1423,6 +1441,8 @@ data-name="{e(wl['name'])}">Save to my lists</a><button class="btn ghost" id="co
 # what shipped, newest first, for /changelog/. Add a line when something people can see changes.
 UPDATES = [
     ("Oct 2026", [
+        "Chart history no longer links plates the FAA has taken down. The FAA only keeps a plate online for a "
+        "couple of editions, so older changes link its d-TPP search instead of a dead page.",
         "Flight schools can email hello@amend.watch to set Amend up for the airports in their courses. "
         "Every airport page stays free and open, no account needed.",
         "A chart with more than one page shows as one change. The FAA lists each extra page (like TRISH FIVE "

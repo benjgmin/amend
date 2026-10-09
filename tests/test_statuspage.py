@@ -18,9 +18,16 @@ REAL = sorted(glob.glob(os.path.join("audit", "runs", "*", "*-latest-*.json")))
 
 
 def good():
-    """a real published site-build record from the repo's run log"""
-    with open(REAL[-1], encoding="utf-8") as f:
-        return json.load(f)
+    """the newest real published site-build record from the repo's run log that passed every check. the very
+    newest can carry a warning (an engine file edited without an ENGINE_VERSION bump warns once), and that's
+    no reason for every build after it to fail its tests"""
+    for path in reversed(REAL):
+        with open(path, encoding="utf-8") as f:
+            r = json.load(f)
+        c = r.get("checks") or {}
+        if r.get("published") and not c.get("error_count") and not c.get("warning_count"):
+            return r
+    raise AssertionError("no clean published run in audit/runs")
 
 
 def failed(started):

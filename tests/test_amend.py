@@ -687,6 +687,24 @@ class TestWeb(unittest.TestCase):
         self.assertIn('data-built="2026-09-24T00:00:00Z"', page)      # the page says when it's stale
         self.assertIn('id="stale" hidden', page)
 
+    def test_old_plates_not_linked(self):
+        """aeronav drops a plate a couple of editions later, so old chart history links the d-TPP search instead"""
+        import datetime as dt
+        from amend import web
+        meta = {"from_cycle": "2026-10-01", "to_cycle": "2026-10-29"}
+        before, after = dt.datetime(2026, 10, 9, tzinfo=dt.timezone.utc), dt.datetime(2026, 10, 30, tzinfo=dt.timezone.utc)
+        self.assertEqual(web.oldest_plate_edition(meta, before), "2609")   # 2610 in effect: 2609-2611 served
+        self.assertEqual(web.oldest_plate_edition(meta, after), "2610")
+        self.assertEqual(web.oldest_plate_edition({"from_cycle": "2026-12-24", "to_cycle": "2027-01-21"}, after), "2612")
+        chart = lambda ed: {"priority": "ifr", "category": "chart", "kind": "changed", "summary": "approach amended",
+                            "source": "d-TPP", "chart": {"amdt": "2", "pdf": f"https://aeronav.faa.gov/d-tpp/{ed}/00449R13.PDF"}}
+        old, kept = web.change_html(chart("2608"), oldest="2609"), web.change_html(chart("2609"), oldest="2609")
+        self.assertNotIn("2608/00449R13.PDF", old)
+        self.assertIn("dtpp/search/", old)                              # still links an FAA source
+        self.assertIn('2609/00449R13.PDF" target="_blank"', kept)
+        self.assertIn("2608/00449R13.PDF", web.change_html(chart("2608")))   # no limit: this cycle's changes
+        self.assertNotIn("2612/00449R13.PDF", web.change_html(chart("2612"), oldest="2701"))   # across a year
+
     def test_sitemap_and_robots(self):
         site, _ = self.build()
         sm = open(os.path.join(site, "sitemap.xml")).read()
