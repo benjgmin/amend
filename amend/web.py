@@ -52,6 +52,8 @@ def report_url(subject="Amend: a problem", airport="", cycle="", page=""):
 
 
 REPORT_URL = report_url()
+# the home page's "For flight schools" line: a plain email, no account. Airport pages stay open to everyone
+SCHOOLS_URL = f"mailto:{REPORT_EMAIL}?subject={quote('Amend for our flight school', safe='')}"
 ISSUES_URL = REPO_URL + "/issues/new"    # for developers, on the docs' API page
 # the FAA's own form for a mistake in its data (charts, procedures, airport and navaid data). Amend can't fix those
 FAA_INQUIRY = "https://www.faa.gov/air_traffic/flight_info/aeronav/aero_data/Aeronautical_Inquiries/"
@@ -1350,6 +1352,8 @@ approach plates. Keep lists of the airports you fly to, and share one link for a
 <p class="note">{F(lambda up: landing_note(meta, now, up))}</p>
 <p class="note"><a href="webcal://amend.watch/cycles.ics">Add cycle dates to your calendar</a> (<a href="cycles.ics">.ics</a>)</p></div>
 <div class="card box"><h3>What the labels mean</h3>{legend("")}</div>
+<div class="card box"><h3>For flight schools</h3><p class="note">Email <a href="{e(SCHOOLS_URL)}">{REPORT_EMAIL}</a>
+to set up Amend for your courses' airports.</p></div>
 </aside>
 <script>{js}</script>"""
     return page("Amend · what changed at your airport", "See what changed at any US airport each FAA cycle, "
@@ -1419,6 +1423,8 @@ data-name="{e(wl['name'])}">Save to my lists</a><button class="btn ghost" id="co
 # what shipped, newest first, for /changelog/. Add a line when something people can see changes.
 UPDATES = [
     ("Oct 2026", [
+        "Flight schools can email hello@amend.watch to set Amend up for the airports in their courses. "
+        "Every airport page stays free and open, no account needed.",
         "A chart with more than one page shows as one change. The FAA lists each extra page (like TRISH FIVE "
         "(RNAV), CONT.1) as its own record, so a multi-page arrival or departure showed up two or three times, "
         "in chart history too. A renumbered departure or arrival that dropped a page now says what it "
