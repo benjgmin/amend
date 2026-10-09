@@ -129,13 +129,17 @@ def _moved(moved, most=3):
     return s + (f" and {len(moved) - most} more" if len(moved) > most else "")
 
 
-def _minimum(kind, old, new, at, arrow=" now "):
-    """('minimum', '680', '700', None) -> 'minimum 680 now 700'; RVR is printed in hundreds of feet"""
+def _minimum(kind, old, new, at, row=None, arrow=" now "):
+    """('minimum', '680', '700', None, 'LNAV MDA') -> 'LNAV MDA 680 now 700', 'minimum 680 now 700'
+    without a row; ('rvr', '50', '45', '503', 'LPV DA') -> 'RVR 5000 now 4500 at LPV DA 503'. RVR
+    is printed in hundreds of feet"""
+    where = (row.replace("CIRCLING", "circling").replace("SIDESTEP", "sidestep")
+             if row else "minimum")
     if kind == "rvr":
-        return f"RVR {int(old) * 100}{arrow}{int(new) * 100} at minimum {at}"
+        return f"RVR {int(old) * 100}{arrow}{int(new) * 100} at {where} {at}"
     if kind == "visibility":
-        return f"visibility {old} SM{arrow}{new} SM at minimum {at}"
-    return f"minimum {old}{arrow}{new}"
+        return f"visibility {old} SM{arrow}{new} SM at {where} {at}"
+    return f"{where} {old}{arrow}{new}"
 
 
 def _record(apt, code, name, act, amdt, pdf, cycle, was=None, amended=None, moved=(), mins=()):
