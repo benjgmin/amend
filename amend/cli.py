@@ -10,6 +10,7 @@ command line:
   python -m amend check                  scheduled runs: is a rebuild needed? (build=true/false)
   python -m amend verify [DIR]           refuse to deploy an empty or half-built site/
   python -m amend archive [CYCLE ...] [--backfill] [--list]   keep raw FAA files as GitHub Releases
+  python -m amend plates METAFILE ... [--budget S]   read the courses on each changed chart's old and new plate
 """
 import argparse
 import sys
@@ -110,6 +111,11 @@ def main(argv=None):
     ar.add_argument("--backfill", action="store_true", help="every cycle since Aug 2024")
     ar.add_argument("--list", action="store_true", help="show what the FAA still serves; download nothing")
 
+    pl = sub.add_parser("plates", help="read the courses printed on every chart a d-TPP metafile changed, "
+                                       "old edition and new, into plates/ (the build does this itself)")
+    pl.add_argument("metafiles", nargs="+")
+    pl.add_argument("--budget", type=int, default=3600, help="seconds to spend per metafile")
+
     wl = sub.add_parser("watchlist", help="create or list named watchlists (watchlists/*.json)")
     wl.add_argument("action", choices=["create", "list"])
     wl.add_argument("slug", nargs="?", help="link name, e.g. flying-club -> amend.watch/list/flying-club")
@@ -162,6 +168,11 @@ def main(argv=None):
     elif a.cmd == "archive":
         from .archive import main as archive
         archive(a)
+    elif a.cmd == "plates":
+        from .dtpp import read_plates
+        left = [read_plates(m, budget=a.budget) for m in a.metafiles]
+        if any(n for n in left):
+            sys.exit(f"plates still unread: {left}")
     elif a.cmd == "watchlist":
         from . import watchlists
         if a.action == "list":

@@ -8,6 +8,7 @@ from . import ENGINE_VERSION, SCHEMA_VERSION
 from . import audit, watchlists, web
 from .airports import directory
 from .cycles import CYCLE, airspace_path, forget, get_airspace_pair, get_cycle, get_dtpp, in_effect, zip_path
+from .dtpp import PLATE_BUDGET, read_plates
 from .freshness import fingerprint
 from .output import dump, write_diff
 from .pipeline import run
@@ -39,6 +40,9 @@ def _build(llm, log):
     dtpp = get_dtpp(new)
     airspace = get_airspace_pair(old, new)
     log.faa_sources(old, new, dtpp, airspace)
+    # the courses on each changed plate, old edition against new (amend/plates.py). a build reads
+    # for PLATE_BUDGET seconds and the next one carries on; meta.json says when every plate is in
+    plates_left = read_plates(dtpp, budget=PLATE_BUDGET) if dtpp else None
 
     shutil.rmtree(SITE, ignore_errors=True)
     out = os.path.join(SITE, "latest")
@@ -66,6 +70,7 @@ def _build(llm, log):
     dump({"schema_version": SCHEMA_VERSION, "engine": ENGINE_VERSION,
           "from_cycle": old.isoformat(), "to_cycle": new.isoformat(),
           "upcoming": upcoming, "effective": f"{new.isoformat()}T09:01:00Z", "includes_charts": bool(dtpp),
+          "includes_plates": None if plates_left is None else plates_left == 0,
           "includes_airspace": result["includes_airspace"], "changed_airports": n,
           "generated": dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds")},
          os.path.join(out, "meta.json"))
