@@ -741,6 +741,9 @@ class TestWeb(unittest.TestCase):
         self.assertIn('id="welcome" hidden', index)       # shown by script on a first visit only
         self.assertIn("How to read it", index)
         self.assertIn('href="guide/"', index)
+        # schools get one email line, no account; the address the report links use
+        self.assertIn("For flight schools", index)
+        self.assertIn('href="mailto:hello@amend.watch?subject=Amend%20for%20our%20flight%20school"', index)
 
     def test_json_paths_untouched(self):
         site, _ = self.build()
