@@ -41,8 +41,14 @@
     "priority": "ifr",
     "category": "chart",
     "kind": "changed",
-    "summary": "approach ILS OR LOC RWY 07L amended (amdt 5A)",
+    "summary": "approach ILS OR LOC RWY 07L amended (amdt 5A): 030° now 033°, 074° now 076°, 210° now 213° and 1 more on the chart",
     "source": "D-TPP",
+    "details": [
+     "printed on the chart: 030° -> 033°",
+     "printed on the chart: 074° -> 076°",
+     "printed on the chart: 210° -> 213°",
+     "printed on the chart: 254° -> 256°"
+    ],
     "chart": {
      "code": "IAP",
      "name": "ILS OR LOC RWY 07L",
@@ -55,8 +61,14 @@
     "priority": "ifr",
     "category": "chart",
     "kind": "changed",
-    "summary": "approach ILS OR LOC RWY 07R amended (amdt 5A)",
+    "summary": "approach ILS OR LOC RWY 07R amended (amdt 5A): 030° now 033°, 074° now 076°, 210° now 213° and 1 more on the chart",
     "source": "D-TPP",
+    "details": [
+     "printed on the chart: 030° -> 033°",
+     "printed on the chart: 074° -> 076°",
+     "printed on the chart: 210° -> 213°",
+     "printed on the chart: 254° -> 256°"
+    ],
     "chart": {
      "code": "IAP",
      "name": "ILS OR LOC RWY 07R",
@@ -69,8 +81,14 @@
     "priority": "ifr",
     "category": "chart",
     "kind": "changed",
-    "summary": "approach ILS RWY 07R (SA CAT I) amended (amdt 5A)",
+    "summary": "approach ILS RWY 07R (SA CAT I) amended (amdt 5A): 030° now 033°, 074° now 076°, 210° now 213° and 1 more on the chart",
     "source": "D-TPP",
+    "details": [
+     "printed on the chart: 030° -> 033°",
+     "printed on the chart: 074° -> 076°",
+     "printed on the chart: 210° -> 213°",
+     "printed on the chart: 254° -> 256°"
+    ],
     "chart": {
      "code": "IAP",
      "name": "ILS RWY 07R (SA CAT I)",
@@ -83,8 +101,14 @@
     "priority": "ifr",
     "category": "chart",
     "kind": "changed",
-    "summary": "approach ILS RWY 07L (SA CAT I - II) amended (amdt 5A)",
+    "summary": "approach ILS RWY 07L (SA CAT I - II) amended (amdt 5A): 030° now 033°, 074° now 076°, 210° now 213° and 1 more on the chart",
     "source": "D-TPP",
+    "details": [
+     "printed on the chart: 030° -> 033°",
+     "printed on the chart: 074° -> 076°",
+     "printed on the chart: 210° -> 213°",
+     "printed on the chart: 254° -> 256°"
+    ],
     "chart": {
      "code": "IAP",
      "name": "ILS RWY 07L (SA CAT I - II)",
@@ -97,8 +121,14 @@
     "priority": "ifr",
     "category": "chart",
     "kind": "changed",
-    "summary": "approach ILS RWY 07R (CAT II - III) amended (amdt 5A)",
+    "summary": "approach ILS RWY 07R (CAT II - III) amended (amdt 5A): 030° now 033°, 074° now 076°, 210° now 213° and 1 more on the chart",
     "source": "D-TPP",
+    "details": [
+     "printed on the chart: 030° -> 033°",
+     "printed on the chart: 074° -> 076°",
+     "printed on the chart: 210° -> 213°",
+     "printed on the chart: 254° -> 256°"
+    ],
     "chart": {
      "code": "IAP",
      "name": "ILS RWY 07R (CAT II - III)",
@@ -830,7 +860,7 @@
     "priority": "ifr",
     "category": "chart",
     "kind": "changed",
-    "summary": "approach ILS OR LOC RWY 30 amended (amdt 35)",
+    "summary": "approach ILS OR LOC RWY 30 redrawn (still amdt 35)",
     "source": "D-TPP",
     "chart": {
      "code": "IAP",
@@ -844,7 +874,7 @@
     "priority": "ifr",
     "category": "chart",
     "kind": "changed",
-    "summary": "approach RNAV (RNP) RWY 12 amended (amdt 2)",
+    "summary": "approach RNAV (RNP) RWY 12 redrawn (still amdt 2)",
     "source": "D-TPP",
     "chart": {
      "code": "IAP",
@@ -858,7 +888,7 @@
     "priority": "ifr",
     "category": "chart",
     "kind": "changed",
-    "summary": "approach RNAV (RNP) RWY 26R amended (amdt 2)",
+    "summary": "approach RNAV (RNP) RWY 26R redrawn (still amdt 2)",
     "source": "D-TPP",
     "chart": {
      "code": "IAP",
@@ -872,7 +902,7 @@
     "priority": "ifr",
     "category": "chart",
     "kind": "changed",
-    "summary": "approach RNAV (RNP) Y RWY 30 amended (amdt 3)",
+    "summary": "approach RNAV (RNP) Y RWY 30 redrawn (still amdt 3)",
     "source": "D-TPP",
     "chart": {
      "code": "IAP",
@@ -886,7 +916,7 @@
     "priority": "ifr",
     "category": "chart",
     "kind": "changed",
-    "summary": "approach RNAV (GPS) Z RWY 30 amended (amdt 4)",
+    "summary": "approach RNAV (GPS) Z RWY 30 redrawn (still amdt 4)",
     "source": "D-TPP",
     "chart": {
      "code": "IAP",
@@ -900,7 +930,7 @@
     "priority": "ifr",
     "category": "chart",
     "kind": "changed",
-    "summary": "approach VOR OR TACAN RWY 30 amended (amdt 9A)",
+    "summary": "approach VOR OR TACAN RWY 30 redrawn (still amdt 9A)",
     "source": "D-TPP",
     "chart": {
      "code": "IAP",
@@ -990,7 +1020,7 @@
     "priority": "ifr",
     "category": "chart",
     "kind": "changed",
-    "summary": "approach ILS OR LOC RWY 17L amended (amdt 4B)",
+    "summary": "approach ILS OR LOC RWY 17L changed (amdt 4B)",
     "source": "D-TPP",
     "chart": {
      "code": "IAP",
@@ -1004,7 +1034,7 @@
     "priority": "ifr",
     "category": "chart",
     "kind": "changed",
-    "summary": "approach ILS OR LOC RWY 17R amended (amdt 5F)",
+    "summary": "approach ILS OR LOC RWY 17R changed (amdt 5F)",
     "source": "D-TPP",
     "chart": {
      "code": "IAP",
@@ -1018,7 +1048,7 @@
     "priority": "ifr",
     "category": "chart",
     "kind": "changed",
-    "summary": "approach ILS OR LOC RWY 18R amended (amdt 11A)",
+    "summary": "approach ILS OR LOC RWY 18R changed (amdt 11A)",
     "source": "D-TPP",
     "chart": {
      "code": "IAP",
@@ -1032,7 +1062,7 @@
     "priority": "ifr",
     "category": "chart",
     "kind": "changed",
-    "summary": "approach ILS OR LOC RWY 35L amended (amdt 8A)",
+    "summary": "approach ILS OR LOC RWY 35L changed (amdt 8A)",
     "source": "D-TPP",
     "chart": {
      "code": "IAP",
@@ -1046,7 +1076,7 @@
     "priority": "ifr",
     "category": "chart",
     "kind": "changed",
-    "summary": "approach ILS OR LOC RWY 35R amended (amdt 5B)",
+    "summary": "approach ILS OR LOC RWY 35R changed (amdt 5B)",
     "source": "D-TPP",
     "chart": {
      "code": "IAP",
@@ -1060,7 +1090,7 @@
     "priority": "ifr",
     "category": "chart",
     "kind": "changed",
-    "summary": "approach ILS OR LOC RWY 36L amended (original)",
+    "summary": "approach ILS OR LOC RWY 36L changed (original)",
     "source": "D-TPP",
     "chart": {
      "code": "IAP",
@@ -1074,7 +1104,7 @@
     "priority": "ifr",
     "category": "chart",
     "kind": "changed",
-    "summary": "approach ILS OR LOC RWY 36R amended (amdt 11A)",
+    "summary": "approach ILS OR LOC RWY 36R changed (amdt 11A)",
     "source": "D-TPP",
     "chart": {
      "code": "IAP",
@@ -1088,7 +1118,7 @@
     "priority": "ifr",
     "category": "chart",
     "kind": "changed",
-    "summary": "approach ILS RWY 17L (SA CAT I) amended (amdt 4B)",
+    "summary": "approach ILS RWY 17L (SA CAT I) changed (amdt 4B)",
     "source": "D-TPP",
     "chart": {
      "code": "IAP",
@@ -1102,7 +1132,7 @@
     "priority": "ifr",
     "category": "chart",
     "kind": "changed",
-    "summary": "approach ILS RWY 35L (SA CAT I) amended (amdt 8A)",
+    "summary": "approach ILS RWY 35L (SA CAT I) changed (amdt 8A)",
     "source": "D-TPP",
     "chart": {
      "code": "IAP",
@@ -1116,7 +1146,7 @@
     "priority": "ifr",
     "category": "chart",
     "kind": "changed",
-    "summary": "approach ILS RWY 35R (SA CAT I) amended (amdt 5B)",
+    "summary": "approach ILS RWY 35R (SA CAT I) changed (amdt 5B)",
     "source": "D-TPP",
     "chart": {
      "code": "IAP",
@@ -1130,7 +1160,7 @@
     "priority": "ifr",
     "category": "chart",
     "kind": "changed",
-    "summary": "approach ILS RWY 36R (SA CAT I) amended (amdt 11A)",
+    "summary": "approach ILS RWY 36R (SA CAT I) changed (amdt 11A)",
     "source": "D-TPP",
     "chart": {
      "code": "IAP",
@@ -1144,7 +1174,7 @@
     "priority": "ifr",
     "category": "chart",
     "kind": "changed",
-    "summary": "approach ILS RWY 17R (CAT II) amended (amdt 5F)",
+    "summary": "approach ILS RWY 17R (CAT II) changed (amdt 5F)",
     "source": "D-TPP",
     "chart": {
      "code": "IAP",
@@ -1158,7 +1188,7 @@
     "priority": "ifr",
     "category": "chart",
     "kind": "changed",
-    "summary": "approach ILS RWY 17L (CAT II - III) amended (amdt 4B)",
+    "summary": "approach ILS RWY 17L (CAT II - III) changed (amdt 4B)",
     "source": "D-TPP",
     "chart": {
      "code": "IAP",
@@ -1172,7 +1202,7 @@
     "priority": "ifr",
     "category": "chart",
     "kind": "changed",
-    "summary": "approach ILS RWY 35L (CAT II - III) amended (amdt 8A)",
+    "summary": "approach ILS RWY 35L (CAT II - III) changed (amdt 8A)",
     "source": "D-TPP",
     "chart": {
      "code": "IAP",
@@ -1186,7 +1216,7 @@
     "priority": "ifr",
     "category": "chart",
     "kind": "changed",
-    "summary": "approach ILS RWY 35R (CAT II - III) amended (amdt 5B)",
+    "summary": "approach ILS RWY 35R (CAT II - III) changed (amdt 5B)",
     "source": "D-TPP",
     "chart": {
      "code": "IAP",
@@ -1200,7 +1230,7 @@
     "priority": "ifr",
     "category": "chart",
     "kind": "changed",
-    "summary": "approach ILS RWY 36R (CAT II - III) amended (amdt 11A)",
+    "summary": "approach ILS RWY 36R (CAT II - III) changed (amdt 11A)",
     "source": "D-TPP",
     "chart": {
      "code": "IAP",
@@ -1214,7 +1244,7 @@
     "priority": "ifr",
     "category": "chart",
     "kind": "changed",
-    "summary": "approach RNAV (RNP) Z RWY 17L amended (amdt 0A)",
+    "summary": "approach RNAV (RNP) Z RWY 17L redrawn (still amdt 0A)",
     "source": "D-TPP",
     "chart": {
      "code": "IAP",
@@ -1228,7 +1258,7 @@
     "priority": "ifr",
     "category": "chart",
     "kind": "changed",
-    "summary": "approach RNAV (RNP) Z RWY 18R amended (original)",
+    "summary": "approach RNAV (RNP) Z RWY 18R redrawn (still original)",
     "source": "D-TPP",
     "chart": {
      "code": "IAP",
@@ -1242,7 +1272,7 @@
     "priority": "ifr",
     "category": "chart",
     "kind": "changed",
-    "summary": "approach RNAV (RNP) Z RWY 35R amended (original)",
+    "summary": "approach RNAV (RNP) Z RWY 35R redrawn (still original)",
     "source": "D-TPP",
     "chart": {
      "code": "IAP",
@@ -1256,7 +1286,7 @@
     "priority": "ifr",
     "category": "chart",
     "kind": "changed",
-    "summary": "approach RNAV (RNP) Z RWY 36L amended (original)",
+    "summary": "approach RNAV (RNP) Z RWY 36L redrawn (still original)",
     "source": "D-TPP",
     "chart": {
      "code": "IAP",
@@ -1270,7 +1300,7 @@
     "priority": "ifr",
     "category": "chart",
     "kind": "changed",
-    "summary": "approach RNAV (GPS) RWY 17R amended (amdt 0E)",
+    "summary": "approach RNAV (GPS) RWY 17R redrawn (still amdt 0E)",
     "source": "D-TPP",
     "chart": {
      "code": "IAP",
@@ -1284,7 +1314,7 @@
     "priority": "ifr",
     "category": "chart",
     "kind": "changed",
-    "summary": "approach RNAV (GPS) RWY 18L amended (amdt 1)",
+    "summary": "approach RNAV (GPS) RWY 18L redrawn (still amdt 1)",
     "source": "D-TPP",
     "chart": {
      "code": "IAP",
@@ -1298,7 +1328,7 @@
     "priority": "ifr",
     "category": "chart",
     "kind": "changed",
-    "summary": "approach RNAV (GPS) RWY 35L amended (amdt 1B)",
+    "summary": "approach RNAV (GPS) RWY 35L redrawn (still amdt 1B)",
     "source": "D-TPP",
     "chart": {
      "code": "IAP",
@@ -1312,7 +1342,7 @@
     "priority": "ifr",
     "category": "chart",
     "kind": "changed",
-    "summary": "approach RNAV (GPS) RWY 36R amended (amdt 2)",
+    "summary": "approach RNAV (GPS) RWY 36R redrawn (still amdt 2)",
     "source": "D-TPP",
     "chart": {
      "code": "IAP",
@@ -1326,7 +1356,7 @@
     "priority": "ifr",
     "category": "chart",
     "kind": "changed",
-    "summary": "approach RNAV (GPS) Y RWY 17L amended (amdt 2C)",
+    "summary": "approach RNAV (GPS) Y RWY 17L redrawn (still amdt 2C)",
     "source": "D-TPP",
     "chart": {
      "code": "IAP",
@@ -1340,7 +1370,7 @@
     "priority": "ifr",
     "category": "chart",
     "kind": "changed",
-    "summary": "approach RNAV (GPS) Y RWY 18R amended (amdt 2B)",
+    "summary": "approach RNAV (GPS) Y RWY 18R redrawn (still amdt 2B)",
     "source": "D-TPP",
     "chart": {
      "code": "IAP",
@@ -1354,7 +1384,7 @@
     "priority": "ifr",
     "category": "chart",
     "kind": "changed",
-    "summary": "approach RNAV (GPS) Y RWY 35R amended (amdt 2B)",
+    "summary": "approach RNAV (GPS) Y RWY 35R redrawn (still amdt 2B)",
     "source": "D-TPP",
     "chart": {
      "code": "IAP",
@@ -1368,7 +1398,7 @@
     "priority": "ifr",
     "category": "chart",
     "kind": "changed",
-    "summary": "approach RNAV (GPS) Y RWY 36L amended (amdt 4A)",
+    "summary": "approach RNAV (GPS) Y RWY 36L redrawn (still amdt 4A)",
     "source": "D-TPP",
     "chart": {
      "code": "IAP",
@@ -1639,7 +1669,7 @@
     "priority": "ifr",
     "category": "chart",
     "kind": "changed",
-    "summary": "approach ILS OR LOC RWY 12L amended (amdt 12A)",
+    "summary": "approach ILS OR LOC RWY 12L changed (amdt 12A)",
     "source": "D-TPP",
     "chart": {
      "code": "IAP",
@@ -1653,7 +1683,7 @@
     "priority": "ifr",
     "category": "chart",
     "kind": "changed",
-    "summary": "approach ILS OR LOC RWY 12R amended (amdt 13)",
+    "summary": "approach ILS OR LOC RWY 12R changed (amdt 13)",
     "source": "D-TPP",
     "chart": {
      "code": "IAP",
@@ -1667,7 +1697,7 @@
     "priority": "ifr",
     "category": "chart",
     "kind": "changed",
-    "summary": "approach ILS OR LOC RWY 30L amended (amdt 48A)",
+    "summary": "approach ILS OR LOC RWY 30L changed (amdt 48A)",
     "source": "D-TPP",
     "chart": {
      "code": "IAP",
@@ -1681,7 +1711,7 @@
     "priority": "ifr",
     "category": "chart",
     "kind": "changed",
-    "summary": "approach ILS OR LOC RWY 30R amended (amdt 17)",
+    "summary": "approach ILS OR LOC RWY 30R redrawn (still amdt 17)",
     "source": "D-TPP",
     "chart": {
      "code": "IAP",
@@ -1709,7 +1739,7 @@
     "priority": "ifr",
     "category": "chart",
     "kind": "changed",
-    "summary": "approach ILS RWY 12L (SA CAT I) amended (amdt 12A)",
+    "summary": "approach ILS RWY 12L (SA CAT I) changed (amdt 12A)",
     "source": "D-TPP",
     "chart": {
      "code": "IAP",
@@ -1723,7 +1753,7 @@
     "priority": "ifr",
     "category": "chart",
     "kind": "changed",
-    "summary": "approach ILS RWY 12R (SA CAT I) amended (amdt 13)",
+    "summary": "approach ILS RWY 12R (SA CAT I) changed (amdt 13)",
     "source": "D-TPP",
     "chart": {
      "code": "IAP",
@@ -1751,7 +1781,7 @@
     "priority": "ifr",
     "category": "chart",
     "kind": "changed",
-    "summary": "approach ILS RWY 30L (CAT II) amended (amdt 48A)",
+    "summary": "approach ILS RWY 30L (CAT II) changed (amdt 48A)",
     "source": "D-TPP",
     "chart": {
      "code": "IAP",
@@ -1765,7 +1795,7 @@
     "priority": "ifr",
     "category": "chart",
     "kind": "changed",
-    "summary": "approach ILS RWY 12L (CAT II - III) amended (amdt 12A)",
+    "summary": "approach ILS RWY 12L (CAT II - III) changed (amdt 12A)",
     "source": "D-TPP",
     "chart": {
      "code": "IAP",
@@ -1779,7 +1809,7 @@
     "priority": "ifr",
     "category": "chart",
     "kind": "changed",
-    "summary": "approach ILS RWY 12R (CAT II - III) amended (amdt 13)",
+    "summary": "approach ILS RWY 12R (CAT II - III) changed (amdt 13)",
     "source": "D-TPP",
     "chart": {
      "code": "IAP",
@@ -1807,7 +1837,7 @@
     "priority": "ifr",
     "category": "chart",
     "kind": "changed",
-    "summary": "approach ILS V RWY 35 (CONVERGING) amended (amdt 6)",
+    "summary": "approach ILS V RWY 35 (CONVERGING) changed (amdt 6)",
     "source": "D-TPP",
     "chart": {
      "code": "IAP",
@@ -1821,7 +1851,7 @@
     "priority": "ifr",
     "category": "chart",
     "kind": "changed",
-    "summary": "approach RNAV (RNP) Y RWY 12L amended (amdt 1)",
+    "summary": "approach RNAV (RNP) Y RWY 12L redrawn (still amdt 1)",
     "source": "D-TPP",
     "chart": {
      "code": "IAP",
@@ -1835,7 +1865,7 @@
     "priority": "ifr",
     "category": "chart",
     "kind": "changed",
-    "summary": "approach RNAV (RNP) Y RWY 12R amended (amdt 2)",
+    "summary": "approach RNAV (RNP) Y RWY 12R redrawn (still amdt 2)",
     "source": "D-TPP",
     "chart": {
      "code": "IAP",
@@ -1849,7 +1879,7 @@
     "priority": "ifr",
     "category": "chart",
     "kind": "changed",
-    "summary": "approach RNAV (RNP) Y RWY 30L amended (amdt 2)",
+    "summary": "approach RNAV (RNP) Y RWY 30L redrawn (still amdt 2)",
     "source": "D-TPP",
     "chart": {
      "code": "IAP",
@@ -1863,7 +1893,7 @@
     "priority": "ifr",
     "category": "chart",
     "kind": "changed",
-    "summary": "approach RNAV (RNP) Y RWY 30R amended (amdt 2)",
+    "summary": "approach RNAV (RNP) Y RWY 30R redrawn (still amdt 2)",
     "source": "D-TPP",
     "chart": {
      "code": "IAP",
@@ -1877,7 +1907,7 @@
     "priority": "ifr",
     "category": "chart",
     "kind": "changed",
-    "summary": "approach RNAV (RNP) Y RWY 35 amended (amdt 3)",
+    "summary": "approach RNAV (RNP) Y RWY 35 redrawn (still amdt 3)",
     "source": "D-TPP",
     "chart": {
      "code": "IAP",
@@ -1891,7 +1921,7 @@
     "priority": "ifr",
     "category": "chart",
     "kind": "changed",
-    "summary": "approach RNAV (GPS) RWY 04 amended (amdt 3)",
+    "summary": "approach RNAV (GPS) RWY 04 redrawn (still amdt 3)",
     "source": "D-TPP",
     "chart": {
      "code": "IAP",
@@ -1905,7 +1935,7 @@
     "priority": "ifr",
     "category": "chart",
     "kind": "changed",
-    "summary": "approach RNAV (GPS) RWY 22 amended (amdt 1C)",
+    "summary": "approach RNAV (GPS) RWY 22 redrawn (still amdt 1C)",
     "source": "D-TPP",
     "chart": {
      "code": "IAP",
@@ -1919,7 +1949,7 @@
     "priority": "ifr",
     "category": "chart",
     "kind": "changed",
-    "summary": "approach RNAV (GPS) Z RWY 12L amended (amdt 6)",
+    "summary": "approach RNAV (GPS) Z RWY 12L redrawn (still amdt 6)",
     "source": "D-TPP",
     "chart": {
      "code": "IAP",
@@ -1933,7 +1963,7 @@
     "priority": "ifr",
     "category": "chart",
     "kind": "changed",
-    "summary": "approach RNAV (GPS) Z RWY 12R amended (amdt 5)",
+    "summary": "approach RNAV (GPS) Z RWY 12R redrawn (still amdt 5)",
     "source": "D-TPP",
     "chart": {
      "code": "IAP",
@@ -1947,7 +1977,7 @@
     "priority": "ifr",
     "category": "chart",
     "kind": "changed",
-    "summary": "approach RNAV (GPS) Z RWY 30L amended (amdt 6)",
+    "summary": "approach RNAV (GPS) Z RWY 30L redrawn (still amdt 6)",
     "source": "D-TPP",
     "chart": {
      "code": "IAP",
@@ -1961,7 +1991,7 @@
     "priority": "ifr",
     "category": "chart",
     "kind": "changed",
-    "summary": "approach RNAV (GPS) Z RWY 30R amended (amdt 5)",
+    "summary": "approach RNAV (GPS) Z RWY 30R redrawn (still amdt 5)",
     "source": "D-TPP",
     "chart": {
      "code": "IAP",
@@ -1975,7 +2005,7 @@
     "priority": "ifr",
     "category": "chart",
     "kind": "changed",
-    "summary": "approach RNAV (GPS) Z RWY 35 amended (amdt 5)",
+    "summary": "approach RNAV (GPS) Z RWY 35 redrawn (still amdt 5)",
     "source": "D-TPP",
     "chart": {
      "code": "IAP",
@@ -1989,7 +2019,7 @@
     "priority": "ifr",
     "category": "chart",
     "kind": "changed",
-    "summary": "approach LOC RWY 04 amended (amdt 2)",
+    "summary": "approach LOC RWY 04 redrawn (still amdt 2)",
     "source": "D-TPP",
     "chart": {
      "code": "IAP",
@@ -2003,7 +2033,7 @@
     "priority": "ifr",
     "category": "chart",
     "kind": "changed",
-    "summary": "approach LOC RWY 17 amended (amdt 1C)",
+    "summary": "approach LOC RWY 17 changed (amdt 1C)",
     "source": "D-TPP",
     "chart": {
      "code": "IAP",
@@ -2017,7 +2047,7 @@
     "priority": "ifr",
     "category": "chart",
     "kind": "changed",
-    "summary": "approach LOC RWY 22 amended (amdt 2)",
+    "summary": "approach LOC RWY 22 changed (amdt 2)",
     "source": "D-TPP",
     "chart": {
      "code": "IAP",
