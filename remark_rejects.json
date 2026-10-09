@@ -1,11 +1,6 @@
 {
- "engine": "1.4.0",
+ "engine": "1.5.0",
  "remarks": {
-  "100 LL 24 HR SELF-SVC.": [
-   "HR is 'hour' (CS), not what the translation says",
-   "lost number 24",
-   "added 'continuous'"
-  ],
   "12 FT RD, 65 FT DSTC, 225 R.": [
    "RD is not in the verified glossary; it must stay as written",
    "added 'road'"
@@ -41,7 +36,7 @@
   ],
   "ALL PILOTS ARE STGLY ENCOURAGED TO FLY A FULL PAT AND ANNC INTNS AND PSN ON 122.90.  STA NOT RCMDD.  MOWERS ON RWYS EQUIPPED WITH SAFETY FLAGS AND RDOS.": [
    "dropped RDOS",
-   "added 'rds'"
+   "added 'radios'"
   ],
   "ALT PHONE (678) 767-3516": [
    "ALT is 'altitude' (CS), not what the translation says",
@@ -53,6 +48,7 @@
   ],
   "ARPT PHY ADS: 19708 EUSTIS ARPT RD, EUSTIS, FL 32736": [
    "PHY is not in the verified glossary; it must stay as written",
+   "RD is not in the verified glossary; it must stay as written",
    "added 'physical'"
   ],
   "ARPT UNATTNDD THANKSGIVING, CHRISTMAS & NEW YEARS DAY.": [
@@ -65,7 +61,7 @@
   ],
   "COCKPIT OVER CNTRLN TAXI PROHIBITED AT TWY Y INT WITH TWY Y11. JUDGMENTAL OVERSTEER RQRED.": [
    "dropped RQRED",
-   "added 'required'"
+   "added 'reqd'"
   ],
   "CONDL-PROVIDED THE APPROACH TO EACH RWY IS MAINTAINED FOR MIN 20:1 GLIDE SLOPE AND THE TRANSITIONAL SURFACE BE MAINTAINED FOR A 7:1 SLOPE.": [
    "dropped CONDL",
@@ -111,42 +107,18 @@
   ],
   "OBSTN CLNCSLOPE 1:1 OVR 50 FT TREE, 93 FT DSTC, 130 FT L.": [
    "dropped CLNCSLOPE",
-   "added 'clearance'"
+   "added 'clear'"
   ],
   "PAPI RWY 15 & 33; MIRL RWY 15/33 OPER DUSK - 2400.  AFT 2400 - CTAF.": [
    "added 'click'",
    "added 'mic'"
   ],
-  "PILOTS REQD TO CMPLT THE ARPT USAGE LOG UPON ARR.": [
-   "REQD has no verified meaning (REQ + D would read as 'requested'; remarks use REQD for required); it must stay as written",
-   "added 'required'"
-  ],
   "PPR REQ FOR ALL NON OWNER OR NON BASED ACFT": [
    "REQ is 'request' (CS), not what the translation says"
-  ],
-  "PPR: USE OF RWY IS FOR MEMBER HOME OWNERS AND INVITED GUESTS ONLY; SEE  VANAIRE.ORG FOR POLICIES AND REQD PILOT PERMISSION FORM.": [
-   "REQD has no verified meaning (REQ + D would read as 'requested'; remarks use REQD for required); it must stay as written",
-   "repeated 'required'"
-  ],
-  "RD TRAVERSING APCH END RWY 28 IS A PVT GRVL RD WITH VEHICLES CNTRD BY STOP SIGNS.": [
-   "RD is not in the verified glossary; it must stay as written",
-   "added 'road'"
   ],
   "RWU 3- THLD LTS 74 FT BYD THLD BAR.": [
    "LTS is not in the verified glossary; it must stay as written",
    "added 'lights'"
-  ],
-  "RWY 13 120' RISING TERRAIN 0.4 MI NW OF RWY END.  NSTD AIMING POINT MKGS AT 500 FT,  2490 FT REMAINING.": [
-   "MKGS is not in the verified glossary; it must stay as written",
-   "added 'markings'"
-  ],
-  "RWY 28 ALSO 15 FT RD 60 FT L AT RWY END.": [
-   "RD is not in the verified glossary; it must stay as written",
-   "added 'road'"
-  ],
-  "RWY 31 NSTD AIMING POINT MKGS AT 300 FT.": [
-   "MKGS is not in the verified glossary; it must stay as written",
-   "added 'markings'"
   ],
   "RWY 7 BSC RWY MARKIINGS": [
    "dropped MARKIINGS",
@@ -166,10 +138,6 @@
   "SFC ROUGHT WITH LRG STONES, STEEP GRADES, NO LN OF SIGHT BTN RWY ENDS, TREES GROWING ON RWY.": [
    "dropped ROUGHT"
   ],
-  "SGL LGT GUN CO-LCTD WITH DIGITAL TWR (D-TWR), SEE ARPT DIAGRAM/SKETCH.": [
-   "SGL is 'signal' (JO 2-1-1 (GEN)), not what the translation says",
-   "added 'single'"
-  ],
   "SUBD. PROPERTY OWNERS ASSOCIATION INC., OTHER CONTACT PERSON: RON SMITH": [
    "dropped SUBD",
    "added 'subdivision'"
@@ -180,9 +148,6 @@
   ],
   "TXL G NW OF TWY H LTD TO ACFT WITH WINGSPAN OF 79 FT OR LESS. TXL G SECTION BTW TWY H & TWY G1 LTD TO ACFT WITH WINGSPAN OF 49 FT OR LESS.": [
    "BTW is not in the verified glossary; it must stay as written"
-  ],
-  "UNATNDD OFC PH 989-826-6864.": [
-   "PH is not in the verified glossary; it must stay as written"
   ]
  }
 }
