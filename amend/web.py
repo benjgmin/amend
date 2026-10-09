@@ -1065,7 +1065,7 @@ SPECULATION = ('<script type="speculationrules">' + json.dumps({"prefetch": [{"w
 
 
 def page(title, description, url, body, root, og_title=None, image=None, active="", meta=None, now=None,
-         two=False, on="", feed=None, head=""):
+         two=False, on="", feed=None, head="", og_description=None):
     img = (f'<meta property="og:image" content="{e(image)}"><meta property="og:image:width" content="1200">'
            f'<meta property="og:image:height" content="630"><meta name="twitter:card" content="summary_large_image">'
            if image else '<meta name="twitter:card" content="summary">')
@@ -1074,7 +1074,7 @@ def page(title, description, url, body, root, og_title=None, image=None, active=
 <title>{e(title)}</title>
 <meta name="description" content="{e(description)}">
 <meta property="og:type" content="website"><meta property="og:site_name" content="Amend">
-<meta property="og:title" content="{e(og_title or title)}"><meta property="og:description" content="{e(description)}">
+<meta property="og:title" content="{e(og_title or title)}"><meta property="og:description" content="{e(og_description or description)}">
 {f'<meta property="og:url" content="{e(url)}">' if url else ''}{img}
 <meta name="theme-color" content="#F6F8FA" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#09121C" media="(prefers-color-scheme: dark)">
@@ -1192,7 +1192,16 @@ def airport_page(apt, info, latest, hist, meta, now, has_card=False):
         desc = f"{' · '.join(parts)} · {top[:1].upper() + top[1:]}".replace(" -> ", " → ")
     else:
         desc = f"No {'upcoming ' if upcoming else ''}changes at {apt} in the {efb(meta['to_cycle'])} cycle."
-    title = f"{apt} · {name}" if name else apt
+    # what search engines show: the words people type ("KBJC", the airport's name, "FAA changes") in the title, and a
+    # sentence instead of the label chips. Link previews keep the chips (og_description)
+    code = f"{apt} ({info['icao']})" if info.get("icao") and info.get("icao") != apt else apt
+    title = f"{code} · {name} · FAA changes · Amend" if name else f"{code} · FAA changes · Amend"
+    where = ", ".join(x for x in (name, loc) if x)
+    plain = ", ".join(f"{c[p]} {'IFR' if p == 'ifr' else 'FYI' if p == 'fyi' else 'that could change your plan'}"
+                      for p, _, _ in PRIORITY if c[p])
+    search_desc = (f"What changed at {apt}{' (' + where + ')' if where else ''} in the {nice(meta['to_cycle'])} FAA "
+                   + (f"cycle: {plain}. {top[:1].upper() + top[1:]}".replace(" -> ", " → ") if changes
+                      else "cycle: no changes to runways, frequencies, tower hours, navaids or procedures."))
     when = f"{'on' if upcoming else 'since'} {efb(meta['to_cycle'])[:6]}"
     og_title = (f"{apt}: {' · '.join(parts)} {when}" if changes
                 else f"{apt}: no changes on {efb(meta['to_cycle'])[:6]}" if upcoming
@@ -1266,8 +1275,9 @@ def airport_page(apt, info, latest, hist, meta, now, has_card=False):
 
     image = (f"{SITE_URL}{apt}/card.png" if has_card
              else f"{SITE_URL}assets/nochange.png" if not changes else f"{SITE_URL}assets/card.png")
-    return page(title, desc, f"{SITE_URL}{apt}/", "".join(body), "../", og_title, image, meta=meta, now=now,
-                two=True, on=apt, feed=(f"{SITE_URL}{apt}/feed.xml", f"{apt} changes each FAA cycle"))
+    return page(title, search_desc, f"{SITE_URL}{apt}/", "".join(body), "../", og_title, image, meta=meta, now=now,
+                two=True, on=apt, feed=(f"{SITE_URL}{apt}/feed.xml", f"{apt} changes each FAA cycle"),
+                og_description=desc)
 
 
 def landing_note(meta, now, upcoming):
@@ -1401,7 +1411,7 @@ data-name="{e(wl['name'])}">Save to my lists</a><button class="btn ghost" id="co
 {alerts_box(f"{SITE_URL}list/{slug}/feed.xml", wl["name"], f"list:{slug}")}
 <div class="card box"><h3>What the labels mean</h3>{legend("../../")}</div></aside><script>{NAMED_JS}</script>"""
     image = f"{SITE_URL}list/{slug}/card.png" if has_card else f"{SITE_URL}assets/card.png"
-    return page(f"{wl['name']} · Amend", desc, f"{SITE_URL}list/{slug}", body, "../../",
+    return page(f"{wl['name']} · Amend", desc, f"{SITE_URL}list/{slug}/", body, "../../",
                 f"{wl['name']}: {desc}", image, active="list", meta=meta, now=now, two=True,
                 feed=(f"{SITE_URL}list/{slug}/feed.xml", f"{wl['name']} changes each FAA cycle"))
 
@@ -1822,6 +1832,19 @@ def redirect(folder, to, title, keep_query=False):
         f.write(f'<!doctype html><meta charset="utf-8">{refresh}<a href="{to}">{e(title)}</a>')
 
 
+def write_sitemap(site, airports, lists):
+    """site/sitemap.xml and site/robots.txt. Most airport pages aren't linked from the home page (search finds them
+    with a script), so the sitemap is how search engines learn they exist. No lastmod: every page is rebuilt every
+    run, so the date would say nothing."""
+    paths = ["", "list/", "guide/", "about/", "changelog/", "privacy/", "terms/"]
+    paths += [f"list/{s}/" for s in lists] + [f"{a}/" for a in airports]
+    with open(os.path.join(site, "sitemap.xml"), "w", encoding="utf-8") as f:
+        f.write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+                + "".join(f"<url><loc>{e(SITE_URL + p)}</loc></url>\n" for p in paths) + "</urlset>\n")
+    with open(os.path.join(site, "robots.txt"), "w", encoding="utf-8") as f:
+        f.write(f"User-agent: *\nAllow: /\n\nSitemap: {SITE_URL}sitemap.xml\n")
+
+
 def build(site, meta, directory, latest, history_dir, now=None, watchlists=None, screenshots_dir="docs/screenshots"):
     """write site/assets/style.css, site/<ID>/index.html for every airport with data, site/index.html."""
     now = now or dt.datetime.now(dt.timezone.utc)
@@ -1909,6 +1932,7 @@ def build(site, meta, directory, latest, history_dir, now=None, watchlists=None,
     statuspage.build(site, meta, now)
     with open(os.path.join(site, "404.html"), "w", encoding="utf-8") as f:
         f.write(not_found_page(meta, now))
+    write_sitemap(site, sorted(ids), sorted(watchlists or {}))
     for slug in RETIRED_LISTS:
         if slug not in (watchlists or {}):
             redirect(os.path.join(site, "list", slug), "../", "Your lists")

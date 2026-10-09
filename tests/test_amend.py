@@ -657,7 +657,12 @@ class TestWeb(unittest.TestCase):
         self.assertIn('<meta property="og:title" content="VRB: ACT 1 · IFR 1 on 01 OCT · Vero Beach Rgnl">', page)
         self.assertIn('content="https://amend.watch/VRB/card.png"', page)
         self.assertTrue(os.path.exists(os.path.join(site, "VRB", "card.png")))
-        self.assertIn('content="ACT 1 · IFR 1 · Tower hours: 0800-2200 → 0600-2200 local"', page)
+        self.assertIn('<meta property="og:description" content="ACT 1 · IFR 1 · Tower hours: 0800-2200 → 0600-2200 local"', page)
+        # search engines get the words people type, and a sentence instead of the chips
+        self.assertIn('<title>VRB (KVRB) · Vero Beach Rgnl · FAA changes · Amend</title>', page)
+        self.assertIn('<meta name="description" content="What changed at VRB (Vero Beach Rgnl, Vero Beach, FL) in the '
+                      '01 Oct 2026 FAA cycle: 1 that could change your plan, 1 IFR. Tower hours: 0800-2200 → 0600-2200 '
+                      'local">', page)
         self.assertIn("Not in effect yet", page)
         self.assertIn("0800-2200 → 0600-2200", page)
         self.assertIn("View plate", page)
@@ -681,6 +686,17 @@ class TestWeb(unittest.TestCase):
                       '<time datetime="2026-09-24T00:00:00Z" data-ago="2026-09-24T00:00:00Z">24 Sep 0000Z</time>', page)
         self.assertIn('data-built="2026-09-24T00:00:00Z"', page)      # the page says when it's stale
         self.assertIn('id="stale" hidden', page)
+
+    def test_sitemap_and_robots(self):
+        site, _ = self.build()
+        sm = open(os.path.join(site, "sitemap.xml")).read()
+        self.assertIn("<loc>https://amend.watch/</loc>", sm)
+        self.assertIn("<loc>https://amend.watch/guide/</loc>", sm)
+        self.assertIn("<loc>https://amend.watch/VRB/</loc>", sm)      # every airport page, linked or not
+        self.assertNotIn("DAB", sm)                                   # no page, so not listed
+        self.assertNotIn("404", sm)
+        robots = open(os.path.join(site, "robots.txt")).read()
+        self.assertIn("Sitemap: https://amend.watch/sitemap.xml", robots)
 
     def test_data_links_only_to_files_that_exist(self):
         # latest/<ID>.json is written only for airports changing this cycle, history/<ID>.json only with history
