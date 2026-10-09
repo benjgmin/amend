@@ -1,0 +1,36 @@
+name: scratch plate check
+# temporary, working branch only: removed before merge. prints the minimums table text of a few plates
+on:
+  push:
+    branches: [ claude/project-thread-oqn9y9 ]
+    paths: [ ".github/workflows/scratch-plate-samples.yml" ]
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install pypdf==6.19.0
+      - run: |
+          python - <<'PY'
+          import io, pypdf
+          from amend import plates
+          pdfs = ['00875VD13.PDF', '00432R36L.PDF', '05551R2.PDF', '06870R29.PDF', '00188R31.PDF',
+                  '00020IL34.PDF', '06791R20.PDF', '00912V35.PDF', '00859R18.PDF', '06894IYLY23.PDF',
+                  '05818R26.PDF', '00548IL2.PDF']
+          for pdf in pdfs:
+              b = plates._get(plates.URL.format(edition="2611", pdf=pdf))
+              page = pypdf.PdfReader(io.BytesIO(b)).pages[0]
+              for mode in ("plain", "layout"):
+                  t = page.extract_text() if mode == "plain" else page.extract_text(extraction_mode="layout")
+                  lines = t.split("\n")
+                  i = next((n for n, l in enumerate(lines) if "CATEGORY" in l), None)
+                  print(f"===== {pdf} {mode} (CATEGORY at {i})")
+                  if i is not None:
+                      print("\n".join(lines[max(0, i - 2):i + 22]))
+          PY
