@@ -87,8 +87,9 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: install Pillow (link-preview images)
-        run: pip install pillow
+      # pypdf reads the courses printed on each changed chart (amend/plates.py)
+      - name: install Pillow (link-preview images) and pypdf (plates)
+        run: pip install pillow pypdf==6.19.0
 
       - name: tests
         run: python -m unittest discover -s tests -t .
@@ -126,7 +127,8 @@ jobs:
       # remark_cache.json is committed, not kept in the Actions cache: translations are paid for
       # once, never lost to cache eviction, and change ids (which hash the summary) stay stable.
       # so is remark_rejects.json, so a remark whose answer broke the checks isn't paid for again
-      # every build.
+      # every build. so is plates/: the FAA serves a plate for a few editions only, so what was
+      # read off it has to outlive the cache.
       # also commits the audit packet the daily review reads (audit/<cycle>.json) and the run
       # log (audit/runs/), and runs when the history step or the build failed too, so a blocked
       # or crashed run is on record. history only ever holds audited cycles (history.py audits
@@ -138,9 +140,10 @@ jobs:
           git config user.name "amend-bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add history remark_cache.json remark_rejects.json
+          if [ -d plates ]; then git add plates; fi
           if [ -d audit ]; then git add audit; fi
           git diff --cached --quiet && exit 0
-          git commit -m "data: history, remark translations, audit and run log"
+          git commit -m "data: history, remark translations, plates, audit and run log"
           for i in 1 2 3; do     # a merge landing mid-run makes the first push bounce
             git pull --rebase origin "${{ github.ref_name }}" && git push && exit 0
             git rebase --abort 2>/dev/null || true

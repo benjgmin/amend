@@ -12,6 +12,7 @@ from . import ENGINE_VERSION, SCHEMA_VERSION
 from .audit import audit, report_to_actions
 from .cycles import (CYCLE, FIRST_ARCHIVED, airspace_path, dtpp_path, forget, get_airspace_pair,
                      get_cycle, get_dtpp, in_effect, zip_path)
+from .dtpp import PLATE_BUDGET, read_plates
 from .output import dump
 from .pipeline import run
 from .runlog import Run
@@ -100,6 +101,8 @@ def _step(prev, new, state, llm, keep, log):
     print(f"\n=== {prev} -> {new} ===")
     dtpp, airspace = get_dtpp(new), get_airspace_pair(prev, new)
     log.faa_sources(prev, new, dtpp, airspace)
+    if dtpp:     # read during the preview weeks; this only fills in what those builds missed
+        read_plates(dtpp, budget=PLATE_BUDGET)
     result = run(zip_path(prev), zip_path(new), None, dtpp, llm, log=lambda *_: None,
                  airspace=airspace)
     log.result(result)

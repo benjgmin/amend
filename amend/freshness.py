@@ -23,7 +23,8 @@ SITE_URL = os.environ.get("AMEND_SITE_URL", "https://amend.watch")
 MAX_AGE = dt.timedelta(hours=20)   # rebuild at least this often (the site calls 36h stale)
 # what the site is built from, besides FAA data. the build records a hash of these in
 # build.json; a different hash in the repo means a merge (or a data commit) isn't live yet
-INPUTS = ("amend/*.py", "amend/fonts/*", "watchlists/*.json", "history/*.json", "remark_cache.json")
+INPUTS = ("amend/*.py", "amend/fonts/*", "watchlists/*.json", "history/*.json", "remark_cache.json",
+          "plates/*.json")
 
 
 def fingerprint(root="."):
@@ -63,6 +64,8 @@ def decide(now, meta, build, inputs, history_cycles, posted):
                    + (" (upcoming)" if want > cur else ""))
     elif not meta.get("includes_charts") and posted(dtpp_url(want)) is not False:
         why.append(f"d-TPP charts for {want} may be posted now")
+    elif meta.get("includes_plates") is False:     # a build reads plates for a few minutes
+        why.append(f"the changed plates for {want} aren't all read yet")
     elif not meta.get("includes_airspace") and all(
             posted(airspace_url(d)) is not False for d in (want - CYCLE, want)):   # needs both
         why.append(f"airspace shapes for {want} may be posted now")

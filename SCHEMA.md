@@ -27,6 +27,7 @@ Which cycles `latest/` compares.
 | `upcoming` | bool | `true`: `to_cycle` hadn't taken effect when this file was built. Don't show it as-is: files are rebuilt on a schedule, not at the changeover. Compare `effective` with the time now instead |
 | `effective` | string | when `to_cycle` takes effect, always 0901Z on its date (`2026-10-01T09:01:00Z`). In effect once the time is at or past this, by a clock you trust (amend.watch checks the device's against the server's `Date` header) |
 | `includes_charts` | bool | d-TPP chart changes included |
+| `includes_plates` | bool or null | every changed chart's old and new plate has been read for the courses printed on it (null: no charts, or this build couldn't read plates) |
 | `includes_airspace` | bool | class airspace shape changes (floors, ceilings, boundaries) included |
 | `changed_airports` | int | |
 | `engine` | string | version of the engine that made these changes (`1.2.0`) |
@@ -64,9 +65,9 @@ Only exists if the airport changed. **A 404 means no changes**, not an error.
 | `original` | string | no | raw FAA remark text (show under translated remarks) |
 | `untranslated` | string | no | why a remark's `summary` shows FAA words, ready to display: all of it ("Kept in the FAA's words: Amend has no verified meaning for RT.") or a term the translation leaves as written because remarks use it more than one way ("NA is left as the FAA wrote it: it can mean not authorized or not available, and Amend doesn't guess which."). Absent when there's nothing to explain. Older `history/` entries may lack it |
 | `fields` | array | no | `[{"field", "old", "new"}]` raw before/after values. A whole row added or removed lists its columns with `old` or `new` empty. `ATTENDANCE` (source `APT_ATT`) is the airport's whole attendance schedule, its rows' MONTH DAY HOUR joined with `; ` |
-| `details` | array of string | no | the lines behind a grouped summary: route-level lines behind "preferred IFR routes", or each FAA frequency row (`removed: 125.2 BETHEL RCAG (LOW)`) behind a grouped frequency change |
+| `details` | array of string | no | the lines behind a grouped summary: route-level lines behind "preferred IFR routes", or each FAA frequency row (`removed: 125.2 BETHEL RCAG (LOW)`) behind a grouped frequency change, or a changed chart's courses and headings that moved on the plate (`printed on the chart: 074° -> 076°`, old edition's plate against the new one) |
 | `procedures` | object | no | `{"updated": [...], "removed": [...]}` STAR/DP names |
-| `chart` | object | no | `{"code", "name", "amdt", "pdf"?, "replaces"?}`. `pdf` links the new plate; absent for removed charts. `replaces` is the old name of a renumbered DP or STAR (`"MINNEAPOLIS NINE"`) |
+| `chart` | object | no | `{"code", "name", "amdt", "pdf"?, "replaces"?}`. `pdf` links the new plate; absent for removed charts. `replaces` is the old name of a renumbered DP or STAR (`"MINNEAPOLIS NINE"`). A changed approach's summary says `amended (amdt X)` when the amendment is dated this edition, `redrawn (still amdt X)` when the FAA reissued the plate under an older amendment, and `changed (amdt X)` when the FAA gives no date |
 
 ## `airports.json`
 Every airport in the current FAA cycle, for names and search (~20k entries, sorted by id).
